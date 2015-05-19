@@ -24,16 +24,22 @@ scalacOptions ++= Seq(
     // Warn when local and private vals, vars, defs, and types are unused
     "-Ywarn-unused",
     // Warn when imports are unused
-    "-Ywarn-unused-import",
+    // "-Ywarn-unused-import",
     // Warn when non-Unit expression results are unused
     "-Ywarn-value-discard"
 )
 
 // Change this to another test framework if you prefer
 libraryDependencies ++= Seq(
-	"org.scalatest" %% "scalatest" % "2.2.4" % "test",
 	"io.reactivex" %% "rxscala" % "0.24.1",
-	"org.scala-lang.modules" %% "scala-pickling" % "0.10.0"
+	"org.scala-lang.modules" %% "scala-pickling" % "0.10.0",
+	
+	"com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
+	"ch.qos.logback" % "logback-classic" % "1.1.2",
+	
+	"org.mockito" % "mockito-all" % "1.10.19" % "test",
+	"org.scalatest" %% "scalatest" % "2.2.5" % "test"
+	
 	)
 
 // Uncomment to use Akka

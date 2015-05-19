@@ -7,7 +7,7 @@ package de.codecentric.wittig.scala.model
 trait Auth {
   self: Person =>
 
-  def authenticate(name: String) {
-    this.name == name
+  def authenticate(name: String) = {
+    self.name == name
   }
 }

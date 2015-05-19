@@ -1,6 +1,9 @@
 package de.codecentric.wittig.scala.pickling
 import scala.pickling.Defaults._
 
+import language.reflectiveCalls
+import language.implicitConversions
+
 object Pickler extends App {
 
   case class Person(name: String, alter: Int, zeitreisender: Boolean, adresse: Adresse)

@@ -1,4 +1,6 @@
 package com.example.typeclass
+import scala.language.reflectiveCalls
+import scala.language.implicitConversions
 
 trait Serializable[T] {
   def ser(t: T): String
