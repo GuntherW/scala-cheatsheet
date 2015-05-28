@@ -38,7 +38,8 @@ libraryDependencies ++= Seq(
 	"ch.qos.logback" % "logback-classic" % "1.1.2",
 	
 	"org.mockito" % "mockito-all" % "1.10.19" % "test",
-	"org.scalatest" %% "scalatest" % "2.2.5" % "test"
+	"org.scalatest" %% "scalatest" % "2.2.5" % "test",
+	"org.seleniumhq.selenium" % "selenium-java" % "2.45.0" % "test"
 	
 	)
 

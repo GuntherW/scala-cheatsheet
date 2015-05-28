@@ -12,17 +12,22 @@ class ServiceUnterTestTest extends FunSuite with MockitoSugar {
 
     //Mocken
     val m = mock[AbhaengigerService]
+    val m2 = mock[AbhaengigerService2]
 
     //Bedingungen
     when(m.auchAufruf).thenReturn(2)
+    when(m2.auchAufruf).thenReturn(3)
 
     //SUT
-    val service = new ServiceUnterTest(m)
+    val service = new ServiceUnterTest(m) {
+      override val andererService = m2
+    }
 
-    assert(service.aufruf == 5)
+    assert(service.aufruf == 6)
 
     //Verify
-    verify(m, times(2)).auchAufruf
+    verify(m, times(1)).auchAufruf
+    verify(m2, times(1)).auchAufruf
 
   }
 }

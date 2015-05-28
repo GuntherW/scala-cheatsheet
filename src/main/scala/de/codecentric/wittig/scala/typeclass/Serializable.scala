@@ -22,11 +22,14 @@ object Serializable {
 }
 
 trait Serializer {
-  def serialize[T](t: T)(implicit serializer: Serializable[T]) = {
-    serializer.ser(t)
+
+  def serialize[T](t: T)(implicit serializable: Serializable[T]) = {
+    serializable.ser(t)
   }
-  implicit def addSerializable[T](t: T)(implicit s: Serializable[T]) = new {
-    def serialisiere = s.ser(t)
+
+  // Hier noch ein zusätzliches Bonbon, um zusätzlich zu serialize(p) ein p.serialisiere zuzulassen.
+  implicit def addSerializable[T](t: T)(implicit serializable: Serializable[T]) = new {
+    def serialisiere = serializable.ser(t)
   }
 }
 

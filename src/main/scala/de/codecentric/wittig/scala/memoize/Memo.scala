@@ -17,7 +17,9 @@ object Memo extends App {
   }
 
   def rot(offset: Int)(c: Char) = {
-    val ro = memoize[Char, Char] { x => (x + offset).toChar }
+    val ro = memoize[Char, Char] {
+      x => (x + offset).toChar
+    }
     normalize(ro(c))
   }
   val rot13 = rot(13)(_)

@@ -5,15 +5,20 @@ package de.codecentric.wittig.scala.mockito
  */
 class ServiceUnterTest(val abh: AbhaengigerService) extends Service {
 
+  override val andererService = new AbhaengigerService2 {}
   def aufruf: Int = {
-    abh.auchAufruf + abh.auchAufruf + 1
+    abh.auchAufruf + andererService.auchAufruf + 1
   }
 }
 
 trait Service {
   def aufruf: Int
+  val andererService: AbhaengigerService2
 }
 
 trait AbhaengigerService {
+  def auchAufruf: Int = 1
+}
+trait AbhaengigerService2 {
   def auchAufruf: Int = 1
 }
