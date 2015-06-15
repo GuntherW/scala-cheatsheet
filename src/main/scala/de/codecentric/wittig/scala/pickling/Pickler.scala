@@ -19,6 +19,7 @@ object Pickler extends App {
     val zurueck = json.unpickle[Person]
     println(zurueck)
   }
+
   def serializeToBinary(p: Person) = {
     import scala.pickling.binary._
     val bin = p.pickle

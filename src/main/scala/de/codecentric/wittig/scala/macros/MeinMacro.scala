@@ -10,6 +10,7 @@ object MeinMacro extends App {
     // Ohne Parameter
     def hello(): Unit = macro hello_impl
 
+    // c:Context ist so'ne Art Compilationcontext
     def hello_impl(c: Context)(): c.Expr[Unit] = {
       import c.universe._
       reify { println("Hello World!") }

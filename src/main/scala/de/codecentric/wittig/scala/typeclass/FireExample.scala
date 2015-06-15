@@ -8,6 +8,7 @@ object FireExample {
   case class Water(liters: Double)
 
   case class Fire(heat: Double)
+
   trait Flammable[A] {
     def burn(fuel: A): Fire
   }

@@ -32,19 +32,22 @@ scalacOptions ++= Seq(
 // Change this to another test framework if you prefer
 libraryDependencies ++= Seq(
 	"io.reactivex" %% "rxscala" % "0.24.1",
-	"org.scala-lang.modules" %% "scala-pickling" % "0.10.0",
+	"org.scala-lang.modules" %% "scala-pickling" % "0.10.2-SNAPSHOT",
 	
 	"com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
 	"ch.qos.logback" % "logback-classic" % "1.1.2",
 	
 	"org.mockito" % "mockito-all" % "1.10.19" % "test",
 	"org.scalatest" %% "scalatest" % "2.2.5" % "test",
-	"org.seleniumhq.selenium" % "selenium-java" % "2.45.0" % "test"
+	"org.seleniumhq.selenium" % "selenium-java" % "2.45.0" % "test",
+	"org.scalacheck" %% "scalacheck" % "1.12.3" % "test"
 	
 	)
 
 // Uncomment to use Akka
 //libraryDependencies += "com.typesafe.akka" % "akka-actor_2.11" % "2.3.9"
+
+resolvers += Resolver.sonatypeRepo("snapshots")
 
 // Improved Incremental compilation
 incOptions := incOptions.value.withNameHashing(true)
