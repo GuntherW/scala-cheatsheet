@@ -2,7 +2,7 @@ name := """scalacheat"""
 
 version := "1.0"
 
-scalaVersion := "2.11.6"
+scalaVersion := "2.11.7"
 
 
 scalacOptions ++= Seq(
@@ -34,8 +34,17 @@ libraryDependencies ++= Seq(
 	"io.reactivex" %% "rxscala" % "0.24.1",
 	"org.scala-lang.modules" %% "scala-pickling" % "0.10.2-SNAPSHOT",
 	
+	"org.scalaz" %% "scalaz-core" % "7.1.3",
+	
 	"com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
 	"ch.qos.logback" % "logback-classic" % "1.1.2",
+	
+	"org.scala-lang" % "scala-reflect" % "2.11.7",
+	
+	"org.scodec" % "scodec-core_2.11" % "1.8.0", // 
+	
+	"com.github.mpilquist" % "simulacrum_2.11" % "0.3.0", // Functor
+	"org.scalamacros" % "paradise_2.11.6" % "2.1.0-M5", // @typeclass Functor
 	
 	"org.mockito" % "mockito-all" % "1.10.19" % "test",
 	"org.scalatest" %% "scalatest" % "2.2.5" % "test",
@@ -48,9 +57,17 @@ libraryDependencies ++= Seq(
 //libraryDependencies += "com.typesafe.akka" % "akka-actor_2.11" % "2.3.9"
 
 resolvers += Resolver.sonatypeRepo("snapshots")
+resolvers += Resolver.sonatypeRepo("pulblic")
+resolvers += "bintray/non" at "http://dl.bintray.com/non/maven"
 
 // Improved Incremental compilation
-incOptions := incOptions.value.withNameHashing(true)
+//incOptions := incOptions.value.withNameHashing(true)
 
-// Improved dependency management
+addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0-M5" cross CrossVersion.full)
+
+// addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.6.0" cross CrossVersion.binary)// Improved dependency management
+	
 updateOptions := updateOptions.value.withCachedResolution(true)
+
+EclipseKeys.preTasks := Seq(compile in Compile)                  // Compile the project before generating Eclipse files, so that .class files for views and routes are present
+

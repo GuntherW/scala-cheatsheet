@@ -1,11 +1,10 @@
 package de.codecentric.wittig.scala.types
-
+import scala.language.implicitConversions
 /**
  * @author gunther
  * (View Bounds) https://twitter.github.io/scala_school/advanced-types.html
  */
 object TypeClasses extends App {
-
   implicit def strToInt(s: String) = s.toInt
 
   viewBounds
@@ -13,7 +12,7 @@ object TypeClasses extends App {
 
   // View bounds, like type bounds demand such a function exists for the given type.
   // You specify a view bound with <% e.g.,
-  def viewBounds = {
+  def viewBounds() = {
     class Container[A <% Int] {
       def addInt(x: A) = 123 + x
     }
@@ -22,7 +21,7 @@ object TypeClasses extends App {
   }
 
   // Mit "normalem" Upper Bound Type <: gibt es einen Compilerfehler
-  def view = {
+  def view() = {
     class Container[A <: Int] {
       def addInt(x: A) = 123 + x
     }

@@ -8,9 +8,10 @@ activator.bat
 activator-launch-1.3.0.jar
 
 # sbt specific
-.cache
+.cache*
 .history
 .lib/
+.settings*
 dist/*
 target/
 lib_managed/
@@ -21,3 +22,4 @@ project/plugins/project/
 # Scala-IDE specific
 .scala_dependencies
 .worksheet
+/bin/*

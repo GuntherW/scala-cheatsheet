@@ -2,6 +2,7 @@ package de.codecentric.wittig.scala.scalacheck
 import org.scalacheck.Properties
 import org.scalacheck.Prop.forAll
 import org.scalacheck.Gen
+import org.scalacheck.Arbitrary
 
 object StringSpecification extends Properties("String") {
 
@@ -36,8 +37,10 @@ object StringSpecification extends Properties("String") {
     (a._1 + 10) < a._2
   }
 
+  //Generieren von geraden Zahlen auf unterschiedliche Weise.
+  val evenInteger = Arbitrary.arbitrary[Int] suchThat (_ % 2 == 0)
   val smallEvenInteger = Gen.choose(0, 200) suchThat (_ % 2 == 0)
-  property("Gerade Ints") = forAll(smallEvenInteger, smallEvenInteger) { (a: Int, b: Int) =>
+  property("Gerade Ints") = forAll(smallEvenInteger, evenInteger) { (a: Int, b: Int) =>
     (a + b) % 2 == 0
   }
 
