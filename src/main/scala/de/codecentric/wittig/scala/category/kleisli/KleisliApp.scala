@@ -1,5 +1,9 @@
 package de.codecentric.wittig.scala.category.kleisli
 
+/**
+ *
+ * http://www.leonardoborges.com/writings/2014/06/17/functional-composition-with-monads-kleisli-functors/
+ */
 object KleisliApp extends App {
   import scalaz._
   import Scalaz._
