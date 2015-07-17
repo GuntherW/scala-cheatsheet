@@ -11,5 +11,4 @@ object Main extends App {
   val p2 = p.copy(adresse = p.adresse.copy(strasse = "lll"))
 
   println(p2)
-
 }
