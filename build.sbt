@@ -31,24 +31,24 @@ scalacOptions ++= Seq(
 
 // Change this to another test framework if you prefer
 libraryDependencies ++= Seq(
-	"io.reactivex" %% "rxscala" % "0.24.1",
+	"io.reactivex" %% "rxscala" % "0.25.0",
 	"org.scala-lang.modules" %% "scala-pickling" % "0.10.2-SNAPSHOT",
 	
 	"org.scalaz" %% "scalaz-core" % "7.1.3",
 	
 	"com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
-	"ch.qos.logback" % "logback-classic" % "1.1.2",
+	"ch.qos.logback" % "logback-classic" % "1.1.3",
 	
 	"org.scala-lang" % "scala-reflect" % "2.11.7",
 	
-	"org.scodec" % "scodec-core_2.11" % "1.8.0", // 
+	"org.scodec" % "scodec-core_2.11" % "1.8.1", // 
 	
-	"com.github.mpilquist" % "simulacrum_2.11" % "0.3.0", // Functor
+	"com.github.mpilquist" % "simulacrum_2.11" % "0.4.0", // Functor
 	"org.scalamacros" % "paradise_2.11.6" % "2.1.0-M5", // @typeclass Functor
 	
 	"org.mockito" % "mockito-all" % "1.10.19" % "test",
 	"org.scalatest" %% "scalatest" % "2.2.5" % "test",
-	"org.seleniumhq.selenium" % "selenium-java" % "2.45.0" % "test",
+	"org.seleniumhq.selenium" % "selenium-java" % "2.47.1" % "test",
 	"org.scalacheck" %% "scalacheck" % "1.12.3" % "test"
 	
 	)
