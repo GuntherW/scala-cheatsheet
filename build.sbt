@@ -49,8 +49,7 @@ libraryDependencies ++= Seq(
 	"org.mockito" % "mockito-all" % "1.10.19" % "test",
 	"org.scalatest" %% "scalatest" % "2.2.5" % "test",
 	"org.seleniumhq.selenium" % "selenium-java" % "2.47.1" % "test",
-	"org.scalacheck" %% "scalacheck" % "1.12.3" % "test"
-	
+	"org.scalacheck" %% "scalacheck" % "1.12.3" % "test"	
 	)
 
 // Uncomment to use Akka
@@ -71,3 +70,4 @@ updateOptions := updateOptions.value.withCachedResolution(true)
 
 EclipseKeys.preTasks := Seq(compile in Compile)                  // Compile the project before generating Eclipse files, so that .class files for views and routes are present
 
+tutSettings
