@@ -4,7 +4,6 @@ import scala.concurrent.duration._
 import rx.lang.scala.Observable
 
 import scala.language.postfixOps
-import io.StdIn._
 
 object Obs extends App {
 
@@ -14,7 +13,7 @@ object Obs extends App {
 
   val subscribtion = bufs.subscribe(println(_))
 
-  readLine()
+  System.in.read
 
   subscribtion.unsubscribe()
 
