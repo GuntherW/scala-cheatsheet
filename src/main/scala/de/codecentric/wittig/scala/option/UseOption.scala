@@ -1,10 +1,10 @@
 package de.codecentric.wittig.scala.option
 
 /**
-  * Thanks to Marconi Lanna!
-  * https://skillsmatter.com/skillscasts/7040-lightning-talks-4
-  *
-  */
+ * Thanks to Marconi Lanna!
+ * https://skillsmatter.com/skillscasts/7040-lightning-talks-4
+ *
+ */
 object UseOption extends App {
 
   type Opt = Option[String]
@@ -90,6 +90,13 @@ object UseOption extends App {
       case None    => false
     },
     _.contains("c"))
+
+  test(
+    _ match {
+      case Some(a) => a.forall(_.isUpper)
+      case None    => false
+    },
+    _.exists(_.forall(_.isUpper)))
 
   println("All Tests passed")
 

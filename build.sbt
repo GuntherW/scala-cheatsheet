@@ -2,7 +2,7 @@ name := """scalacheat"""
 
 version := "1.0"
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
 
 scalacOptions ++= Seq(
@@ -34,16 +34,16 @@ libraryDependencies ++= Seq(
 	"io.reactivex" %% "rxscala" % "0.26.0",
 	"org.scala-lang.modules" %% "scala-pickling" % "0.10.2-SNAPSHOT",
 	
-	"org.scalaz" %% "scalaz-core" % "7.2.1",
+	"org.scalaz" %% "scalaz-core" % "7.2.6",
 	
 	"com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
-	"ch.qos.logback" % "logback-classic" % "1.1.6",
+	"ch.qos.logback" % "logback-classic" % "1.1.7",
 	
-	"org.scala-lang" % "scala-reflect" % "2.11.7",
+	"org.scala-lang" % "scala-reflect" % "2.11.8",
 	
 	"org.scodec" % "scodec-core_2.11" % "1.9.0", // 
 	
-	"com.github.mpilquist" %% "simulacrum" % "0.7.0", // Functor
+	"com.github.mpilquist" %% "simulacrum" % "0.9.0", // Functor
 	"org.scalamacros" % "paradise_2.11.6" % "2.1.0", // @typeclass Functor
 	
 	"com.chuusai" %% "shapeless" % "2.3.0",
@@ -53,14 +53,14 @@ libraryDependencies ++= Seq(
   	"io.circe" %% "circe-parser" % "0.3.0",
 
 	// cats  	
-	"org.typelevel" %% "cats" % "0.4.1",
+	"org.typelevel" %% "cats" % "0.7.2",
 	
 		// Ammonite
-    "com.lihaoyi" % "ammonite-repl" % "0.5.5" cross CrossVersion.full,
+    "com.lihaoyi" % "ammonite-repl" % "0.5.7" cross CrossVersion.full,
 		
 	"org.mockito" % "mockito-all" % "1.10.19" % "test",
-	"org.scalatest" %% "scalatest" % "2.2.6" % "test",
-	"org.seleniumhq.selenium" % "selenium-java" % "2.52.0" % "test",
+	"org.scalatest" %% "scalatest" % "3.0.0" % "test",
+	"org.seleniumhq.selenium" % "selenium-java" % "2.53.1" % "test",
 	"org.scalacheck" %% "scalacheck" % "1.13.0" % "test"	
 	)
 
