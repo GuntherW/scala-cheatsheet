@@ -1,4 +1,4 @@
 # scalacheat
 
-just to collect some interesting scala issues for myself.
+Just to collect some interesting scala issues for myself.
 
