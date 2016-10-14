@@ -4,6 +4,7 @@ version := "1.0"
 
 scalaVersion := "2.11.8"
 
+val monocleVersion = "1.2.2"
 
 scalacOptions ++= Seq(
     // Emit warning for usages of features that should be impoirted explicitly
@@ -31,29 +32,40 @@ scalacOptions ++= Seq(
 
 // Change this to another test framework if you prefer
 libraryDependencies ++= Seq(
-	"io.reactivex" %% "rxscala" % "0.26.0",
-	"org.scala-lang.modules" %% "scala-pickling" % "0.10.2-SNAPSHOT",
+	"io.reactivex" %% "rxscala" % "0.26.3",
+	"org.scala-lang.modules" %% "scala-pickling" % "0.11.0-M2",
 	
 	"org.scalaz" %% "scalaz-core" % "7.2.6",
 	
-	"com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
+	"com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
 	"ch.qos.logback" % "logback-classic" % "1.1.7",
 	
 	"org.scala-lang" % "scala-reflect" % "2.11.8",
 	
-	"org.scodec" % "scodec-core_2.11" % "1.9.0", // 
+	"org.scodec" %% "scodec-core" % "1.10.2", // 
 	
 	"com.github.mpilquist" %% "simulacrum" % "0.9.0", // Functor
 	"org.scalamacros" % "paradise_2.11.6" % "2.1.0", // @typeclass Functor
 	
-	"com.chuusai" %% "shapeless" % "2.3.0",
+	"com.chuusai" %% "shapeless" % "2.3.2",
 	
-	"io.circe" %% "circe-core" % "0.3.0",
-  	"io.circe" %% "circe-generic" % "0.3.0",
-  	"io.circe" %% "circe-parser" % "0.3.0",
+	"io.circe" %% "circe-core" % "0.5.3",
+  	"io.circe" %% "circe-generic" % "0.5.3",
+  	"io.circe" %% "circe-parser" % "0.5.3",
 
 	// cats  	
 	"org.typelevel" %% "cats" % "0.7.2",
+	
+	
+	//monocle
+  "com.github.julien-truffaut"  %%  "monocle-core"    % monocleVersion,
+  "com.github.julien-truffaut"  %%  "monocle-generic" % monocleVersion,
+  "com.github.julien-truffaut"  %%  "monocle-macro"   % monocleVersion,        
+  "com.github.julien-truffaut"  %%  "monocle-state"   % monocleVersion,     
+  "com.github.julien-truffaut"  %%  "monocle-refined" % monocleVersion,
+  "com.github.julien-truffaut"  %%  "monocle-law"     % monocleVersion % "test",
+	
+	
 	
 		// Ammonite
     "com.lihaoyi" % "ammonite-repl" % "0.5.7" cross CrossVersion.full,
@@ -61,7 +73,7 @@ libraryDependencies ++= Seq(
 	"org.mockito" % "mockito-all" % "1.10.19" % "test",
 	"org.scalatest" %% "scalatest" % "3.0.0" % "test",
 	"org.seleniumhq.selenium" % "selenium-java" % "2.53.1" % "test",
-	"org.scalacheck" %% "scalacheck" % "1.13.0" % "test"	
+	"org.scalacheck" %% "scalacheck" % "1.13.2" % "test"	
 	)
 
 // Uncomment to use Akka
@@ -74,7 +86,6 @@ resolvers += "bintray/non" at "http://dl.bintray.com/non/maven"
 // Improved Incremental compilation
 //incOptions := incOptions.value.withNameHashing(true)
 
-addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 
 // addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.6.0" cross CrossVersion.binary)// Improved dependency management
 	
@@ -106,3 +117,7 @@ val ammoniteInitialCommands = """
 initialCommands in console := s"""
   |ammonite.repl.Main.run(\"\"\"$ammoniteInitialCommands\"\"\")
 """.trim.stripMargin
+
+
+// for @Lenses macro support
+addCompilerPlugin("org.scalamacros" %% "paradise" % "2.1.0" cross CrossVersion.full)

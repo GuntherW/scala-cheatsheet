@@ -21,7 +21,7 @@ object RegexTester extends App {
   val dates = "Date: 2004-01-20 17:25:18 GMT (10 years, 28 weeks, 5 days, 17 hours and 51 minutes ago)"
   val s2 = dates match {
     case embeddedDate(year, "01", "20") => year
-    case _ => "nicht gematched"
+    case _                              => "nicht gematched"
   }
   val s3 = date findFirstIn dates getOrElse "nicht gematched"
   println(s"s2: $s2")
@@ -31,13 +31,13 @@ object RegexTester extends App {
 
   // Find all:
   val s5 = for (m <- date findAllMatchIn dates) yield m group 1
-  s5.map { x => "s5: " + x }.foreach { println }
+  s5.map { x => "s5: " + x }.foreach(println)
 
   val dates2 = "Date: 2004-01-20 1950-01-20 1960-01-20 "
   val mi = date findAllIn dates2
   //  mi.toList.foreach { x => println("s6: " + x) }
   val s6 = mi filter (_ => (mi group 1).toInt < 1960) map (s => s"s6: $s")
-  s6.foreach { println }
+  s6.foreach(println)
 
   // Replacement:
   val s7 = date replaceAllIn (dates, m => m group 1)
@@ -47,7 +47,7 @@ object RegexTester extends App {
   val docSpree = """2004(?:-\d{2}){2}""".r
   val docView = date replaceAllIn (dates, _ match {
     case docSpree() => "Historic doc spree!"
-    case _ => "Something else happened"
+    case _          => "Something else happened"
   })
 
   println(docView)
