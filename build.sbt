@@ -4,7 +4,7 @@ version := "1.0"
 
 scalaVersion := "2.11.8"
 
-val monocleVersion = "1.2.2"
+val monocleVersion = "1.3.1"
 
 scalacOptions ++= Seq(
     // Emit warning for usages of features that should be impoirted explicitly
@@ -42,16 +42,16 @@ libraryDependencies ++= Seq(
 	
 	"org.scala-lang" % "scala-reflect" % "2.11.8",
 	
-	"org.scodec" %% "scodec-core" % "1.10.2", // 
+	"org.scodec" %% "scodec-core" % "1.10.3", // 
 	
-	"com.github.mpilquist" %% "simulacrum" % "0.9.0", // Functor
+	"com.github.mpilquist" %% "simulacrum" % "0.10.0", // Functor
 	"org.scalamacros" % "paradise_2.11.6" % "2.1.0", // @typeclass Functor
 	
 	"com.chuusai" %% "shapeless" % "2.3.2",
 	
-	"io.circe" %% "circe-core" % "0.5.3",
-  	"io.circe" %% "circe-generic" % "0.5.3",
-  	"io.circe" %% "circe-parser" % "0.5.3",
+	"io.circe" %% "circe-core" % "0.5.4",
+  	"io.circe" %% "circe-generic" % "0.5.4",
+  	"io.circe" %% "circe-parser" % "0.5.4",
 
 	// cats  	
 	"org.typelevel" %% "cats" % "0.7.2",
@@ -72,8 +72,8 @@ libraryDependencies ++= Seq(
 		
 	"org.mockito" % "mockito-all" % "1.10.19" % "test",
 	"org.scalatest" %% "scalatest" % "3.0.0" % "test",
-	"org.seleniumhq.selenium" % "selenium-java" % "2.53.1" % "test",
-	"org.scalacheck" %% "scalacheck" % "1.13.2" % "test"	
+	"org.seleniumhq.selenium" % "selenium-java" % "3.0.1" % "test",
+	"org.scalacheck" %% "scalacheck" % "1.13.3" % "test"	
 	)
 
 // Uncomment to use Akka
