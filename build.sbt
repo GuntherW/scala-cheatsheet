@@ -23,7 +23,7 @@ scalacOptions ++= Seq(
     
     //Do not adapt an argument list to match the receiver -> z.B. List(1,2,3).toSet()
     "-Yno-adapted-args",
-    // Warn when deat code is identified
+    // Warn when dead code is identified
     "-Ywarn-dead-code",
     // Warn when local and private vals, vars, defs, and types are unused
     "-Ywarn-unused",
