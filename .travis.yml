@@ -1,8 +1,5 @@
 language: scala
 scala:
   - 2.11.8
-env:
-- JDK=oraclejdk8
-- JDK=openjdk8
-before_script:
-- jdk_switcher use $JDK
+jdk:
+  - oraclejdk8
