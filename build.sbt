@@ -7,6 +7,9 @@ scalaVersion := "2.11.8"
 val monocleVersion = "1.3.1"
 
 scalacOptions ++= Seq(
+	"-language:_",
+	"-target:jvm-1.8",
+	"-encoding", "UTF-8",
     // Emit warning for usages of features that should be impoirted explicitly
     "-feature",
     // Emit warning for usages of deprecated APIs
@@ -29,6 +32,9 @@ scalacOptions ++= Seq(
     // Warn when non-Unit expression results are unused
     "-Ywarn-value-discard"
 )
+
+
+
 
 // Change this to another test framework if you prefer
 libraryDependencies ++= Seq(
