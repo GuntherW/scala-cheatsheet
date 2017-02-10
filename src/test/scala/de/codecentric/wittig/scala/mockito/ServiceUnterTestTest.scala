@@ -1,6 +1,6 @@
 package de.codecentric.wittig.scala.mockito
 import org.scalatest._
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import org.mockito.Mockito._
 
 /**

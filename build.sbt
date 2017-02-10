@@ -2,9 +2,8 @@ name := """scalacheat"""
 
 version := "1.0"
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.12.1"
 
-val monocleVersion = "1.3.1"
 
 scalacOptions ++= Seq(
 	"-language:_",
@@ -36,31 +35,33 @@ scalacOptions ++= Seq(
 
 
 
+val monocleVersion = "1.4.0"
+val circeVersion = "0.7.0"
+
 // Change this to another test framework if you prefer
 libraryDependencies ++= Seq(
-	"io.reactivex" %% "rxscala" % "0.26.3",
-	"org.scala-lang.modules" %% "scala-pickling" % "0.11.0-M2",
+	"io.reactivex" %% "rxscala" % "0.26.5",
 	
-	"org.scalaz" %% "scalaz-core" % "7.2.6",
+	"org.scalaz" %% "scalaz-core" % "7.2.8",
 	
 	"com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
-	"ch.qos.logback" % "logback-classic" % "1.1.7",
+	"ch.qos.logback" % "logback-classic" % "1.2.1",
 	
 	"org.scala-lang" % "scala-reflect" % "2.11.8",
 	
 	"org.scodec" %% "scodec-core" % "1.10.3", // 
 	
 	"com.github.mpilquist" %% "simulacrum" % "0.10.0", // Functor
-	"org.scalamacros" % "paradise_2.11.6" % "2.1.0", // @typeclass Functor
+	"org.scalamacros" % "paradise_2.12.1" % "2.1.0", // @typeclass Functor
 	
 	"com.chuusai" %% "shapeless" % "2.3.2",
 	
-	"io.circe" %% "circe-core" % "0.5.4",
-  	"io.circe" %% "circe-generic" % "0.5.4",
-  	"io.circe" %% "circe-parser" % "0.5.4",
+	"io.circe" %% "circe-core" % circeVersion,
+  	"io.circe" %% "circe-generic" % circeVersion,
+  	"io.circe" %% "circe-parser" % circeVersion,
 
 	// cats  	
-	"org.typelevel" %% "cats" % "0.7.2",
+	"org.typelevel" %% "cats" % "0.9.0",
 	
 	
 	//monocle
@@ -74,12 +75,12 @@ libraryDependencies ++= Seq(
 	
 	
 		// Ammonite
-    "com.lihaoyi" % "ammonite-repl" % "0.5.7" cross CrossVersion.full,
+    "com.lihaoyi" % "ammonite-repl" % "0.8.2" cross CrossVersion.full,
 		
 	"org.mockito" % "mockito-all" % "1.10.19" % "test",
-	"org.scalatest" %% "scalatest" % "3.0.0" % "test",
+	"org.scalatest" %% "scalatest" % "3.0.1" % "test",
 	"org.seleniumhq.selenium" % "selenium-java" % "3.0.1" % "test",
-	"org.scalacheck" %% "scalacheck" % "1.13.3" % "test"	
+	"org.scalacheck" %% "scalacheck" % "1.13.4" % "test"	
 	)
 
 // Uncomment to use Akka
@@ -100,8 +101,6 @@ updateOptions := updateOptions.value.withCachedResolution(true)
 EclipseKeys.preTasks := Seq(compile in Compile)                  // Compile the project before generating Eclipse files, so that .class files for views and routes are present
 
 tutSettings
-
-
 
 
 /// Ammonite
