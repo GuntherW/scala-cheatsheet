@@ -36,16 +36,19 @@ scalacOptions ++= Seq(
 
 
 val monocleVersion = "1.4.0"
-val circeVersion = "0.7.0"
+val circeVersion = "0.7.1"
+val akkaVersion = "2.4.17"
 
 // Change this to another test framework if you prefer
 libraryDependencies ++= Seq(
+
+	"com.typesafe.akka" %% "akka-stream" % akkaVersion,
 	"io.reactivex" %% "rxscala" % "0.26.5",
 	
-	"org.scalaz" %% "scalaz-core" % "7.2.8",
+	"org.scalaz" %% "scalaz-core" % "7.2.10",
 	
 	"com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
-	"ch.qos.logback" % "logback-classic" % "1.2.1",
+	"ch.qos.logback" % "logback-classic" % "1.2.3",
 	
 	"org.scala-lang" % "scala-reflect" % "2.11.8",
 	
@@ -79,8 +82,8 @@ libraryDependencies ++= Seq(
 		
 	"org.mockito" % "mockito-all" % "1.10.19" % "test",
 	"org.scalatest" %% "scalatest" % "3.0.1" % "test",
-	"org.seleniumhq.selenium" % "selenium-java" % "3.0.1" % "test",
-	"org.scalacheck" %% "scalacheck" % "1.13.4" % "test"	
+	"org.seleniumhq.selenium" % "selenium-java" % "3.3.1" % "test",
+	"org.scalacheck" %% "scalacheck" % "1.13.5" % "test"	
 	)
 
 // Uncomment to use Akka
@@ -99,6 +102,7 @@ resolvers += "bintray/non" at "http://dl.bintray.com/non/maven"
 updateOptions := updateOptions.value.withCachedResolution(true)
 
 EclipseKeys.preTasks := Seq(compile in Compile)                  // Compile the project before generating Eclipse files, so that .class files for views and routes are present
+EclipseKeys.withBundledScalaContainers:=false
 
 tutSettings
 

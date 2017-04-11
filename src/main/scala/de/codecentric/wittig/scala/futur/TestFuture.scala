@@ -2,18 +2,24 @@ package de.codecentric.wittig.scala.futur
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.Failure
+import scala.util.Success
+
 /**
  * @author gunther
  */
 object TestFuture extends App {
 
-  def zahl = 3 + 4
+  val f = Future { 5 }
+  f andThen {
+    case r => {
+      println("gunther")
+      throw new IllegalArgumentException("dd")
+    }
+  } andThen {
+    case Failure(t) => println(t)
+    case Success(v) => println(v)
+  }
 
-  val f = Future(zahl)
-  val f2 = Future.successful(zahl)
-
-  f.foreach(println)
-  f2.foreach { println }
-
-  println("lkj")
+  Thread.sleep(1000)
 }
