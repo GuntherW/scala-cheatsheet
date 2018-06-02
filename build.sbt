@@ -37,7 +37,7 @@ scalacOptions ++= Seq(
 
 val monocleVersion = "1.5.0"
 val circeVersion = "0.9.3"
-val akkaVersion = "2.5.12"
+val akkaVersion = "2.5.13"
 
 // Change this to another test framework if you prefer
 libraryDependencies ++= Seq(
