@@ -1,14 +1,16 @@
 package de.codecentric.wittig.scala.types
 import scala.language.implicitConversions
+
 /**
- * @author gunther
- * (View Bounds) https://twitter.github.io/scala_school/advanced-types.html
- */
+  * @author gunther
+  * (View Bounds) https://twitter.github.io/scala_school/advanced-types.html
+  */
 object TypeClasses extends App {
+
   implicit def strToInt(s: String) = s.toInt
 
-  viewBounds
-  view
+  viewBounds()
+  view()
 
   // View bounds, like type bounds demand such a function exists for the given type.
   // You specify a view bound with <% e.g.,

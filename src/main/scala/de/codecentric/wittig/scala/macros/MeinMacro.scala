@@ -1,6 +1,7 @@
 package de.codecentric.wittig.scala.macros
 import language.experimental.macros
 import reflect.macros.whitebox.Context
+import scala.reflect.macros.whitebox
 
 object MeinMacro extends App {
 
@@ -11,7 +12,7 @@ object MeinMacro extends App {
     def hello(): Unit = macro hello_impl
 
     // c:Context ist so'ne Art Compilationcontext
-    def hello_impl(c: Context)(): c.Expr[Unit] = {
+    def hello_impl(c: whitebox.Context)(): c.Expr[Unit] = {
       import c.universe._
       reify { println("Hello World!") }
     }

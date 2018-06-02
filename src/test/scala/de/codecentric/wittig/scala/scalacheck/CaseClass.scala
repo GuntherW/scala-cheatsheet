@@ -6,8 +6,8 @@ import Arbitrary._
 import org.scalacheck.Prop.forAll
 
 /**
- * @author gunther
- */
+  * @author gunther
+  */
 object CaseClass extends Properties("Person") {
 
   case class Person(name: String, age: Int) {
@@ -15,7 +15,7 @@ object CaseClass extends Properties("Person") {
   }
 
   // Diese impliciter Arbitrary[Person] kann auch durch shapeless-scalacheck automatisch erzeugt werden. Jedoch nur mit Standardwerten für die einfachen Typen (String und Int)
-  implicit val arbPerson = Arbitrary {
+  implicit val arbPerson: Arbitrary[Person] = Arbitrary {
     for {
       name <- arbitrary[String]
       age <- Gen.choose(0, 300)

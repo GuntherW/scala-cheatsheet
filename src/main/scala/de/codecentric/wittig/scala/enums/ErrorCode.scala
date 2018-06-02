@@ -3,7 +3,6 @@ package de.axa.transactional.bodyguard.model
 /**
   * @author gunther
   */
-
 sealed trait ErrorCode { def code: Int }
 
 object ErrorCode {
@@ -13,5 +12,11 @@ object ErrorCode {
   case object InvalidJson extends ErrorCode { val code = 4 }
   case object DbError extends ErrorCode { val code = 5 }
 
-  val all: List[ErrorCode] = List(UserNotExists, TwilioError, ParameterMissing, InvalidJson, DbError).sortBy(x => x.code)
+  val all: List[ErrorCode] = List(
+    UserNotExists,
+    TwilioError,
+    ParameterMissing,
+    InvalidJson,
+    DbError
+  ).sortBy(x => x.code)
 }

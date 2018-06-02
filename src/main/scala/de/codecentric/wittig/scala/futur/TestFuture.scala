@@ -6,16 +6,15 @@ import scala.util.Failure
 import scala.util.Success
 
 /**
- * @author gunther
- */
+  * @author gunther
+  */
 object TestFuture extends App {
 
   val f = Future { 5 }
   f andThen {
-    case r => {
+    case _ =>
       println("gunther")
       throw new IllegalArgumentException("dd")
-    }
   } andThen {
     case Failure(t) => println(t)
     case Success(v) => println(v)

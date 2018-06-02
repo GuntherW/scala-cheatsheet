@@ -1,6 +1,5 @@
 package de.codecentric.wittig.scala.cats.validated
 
-import enumeratum._
 import enumeratum.values._
 
 sealed abstract class Error(

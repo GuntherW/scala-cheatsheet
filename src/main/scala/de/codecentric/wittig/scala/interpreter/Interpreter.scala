@@ -1,11 +1,8 @@
 package de.codecentric.wittig.scala.interpreter
 
-import scala.reflect.runtime.currentMirror
-import scala.tools.reflect.ToolBox
-
 /**
- * @author gunther
- */
+  * @author gunther
+  */
 object Interpreter extends App {
 
   import scala.reflect.runtime.currentMirror

@@ -1,11 +1,9 @@
 package de.codecentric.wittig.scala.compose
 
-import shapeless.PolyDefns.Case
-
 object Compose extends App {
 
-  composeMethods
-  composeFunctions
+  composeMethods()
+  composeFunctions()
 
   def composeMethods() = {
     def add1(x: Int) = x + 1

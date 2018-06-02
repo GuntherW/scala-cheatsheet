@@ -1,11 +1,10 @@
 package de.codecentric.wittig.scala.regex
 
-import java.util.Calendar
 import scala.util.matching.Regex
 
 /**
- * @author gunther
- */
+  * @author gunther
+  */
 object RegexTester extends App {
 
   val date = """(\d\d\d\d)-(\d\d)-(\d\d)""".r
@@ -18,7 +17,8 @@ object RegexTester extends App {
 
   //In a pattern match, Regex normally matches the entire input. However, an unanchored Regex finds the pattern anywhere in the input.
   val embeddedDate = date.unanchored
-  val dates = "Date: 2004-01-20 17:25:18 GMT (10 years, 28 weeks, 5 days, 17 hours and 51 minutes ago)"
+  val dates =
+    "Date: 2004-01-20 17:25:18 GMT (10 years, 28 weeks, 5 days, 17 hours and 51 minutes ago)"
   val s2 = dates match {
     case embeddedDate(year, "01", "20") => year
     case _                              => "nicht gematched"
@@ -31,7 +31,10 @@ object RegexTester extends App {
 
   // Find all:
   val s5 = for (m <- date findAllMatchIn dates) yield m group 1
-  s5.map { x => "s5: " + x }.foreach(println)
+  s5.map { x =>
+      "s5: " + x
+    }
+    .foreach(println)
 
   val dates2 = "Date: 2004-01-20 1950-01-20 1960-01-20 "
   val mi = date findAllIn dates2

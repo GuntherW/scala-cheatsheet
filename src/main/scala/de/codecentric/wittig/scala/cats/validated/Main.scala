@@ -2,6 +2,7 @@ package de.codecentric.wittig.scala.cats.validated
 
 import cats.data._
 import cats.implicits._
+import de.codecentric.wittig.scala.cats.validated.Data.Validation._
 
 case class Data(
     email: String,
@@ -24,30 +25,30 @@ object Data {
   private val phoneRegex = """^\+(?:[0-9] ?){6,14}[0-9]$""".r
 
   def validateEmail(email: String): Validation[String] = email match {
-    case e if emailRegex.findFirstMatchIn(e).isDefined => Validation.success(e)
-    case _                                             => Validation.failure(Error.InvalidEmail)
+    case e if emailRegex.findFirstMatchIn(e).isDefined => success(e)
+    case _                                             => failure(Error.InvalidEmail)
   }
 
   def validatePhone(phone: String): Validation[String] = phone match {
-    case p if phoneRegex.findFirstMatchIn(p).isDefined => Validation.success(p)
-    case _                                             => Validation.failure(Error.InvalidPhone)
+    case p if phoneRegex.findFirstMatchIn(p).isDefined => success(p)
+    case _                                             => failure(Error.InvalidPhone)
   }
 
   def validateAge(age: Int): Validation[Int] = age match {
-    case i: Int if i > 18 => Validation.success(i)
-    case _                => Validation.failure(Error.InvalidAge)
+    case i: Int if i > 18 => success(i)
+    case _                => failure(Error.InvalidAge)
   }
 
   def validateRank(rank: Int): Validation[Int] = rank match {
-    case i: Int if i > 0 => Validation.success(i)
-    case _               => Validation.failure(Error.InvalidRank)
+    case i: Int if i > 0 => success(i)
+    case _               => failure(Error.InvalidRank)
   }
 
   def validateAgeAndRank(age: Int, rank: Int): Validation[Unit] =
     if (age > rank)
-      Validation.success(Unit)
+      success(Unit)
     else
-      Validation.failure(Error.InvalidAgeBiggerRank)
+      failure(Error.InvalidAgeBiggerRank)
 
   def validateData(d: Data): Validation[Data] = {
 

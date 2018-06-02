@@ -1,10 +1,10 @@
 package de.codecentric.wittig.scala.option
 
 /**
- * Thanks to Marconi Lanna!
- * https://skillsmatter.com/skillscasts/7040-lightning-talks-4
- *
- */
+  * Thanks to Marconi Lanna!
+  * https://skillsmatter.com/skillscasts/7040-lightning-talks-4
+  *
+  */
 object UseOption extends App {
 
   type Opt = Option[String]
@@ -15,102 +15,109 @@ object UseOption extends App {
   val f: String => String = _.toUpperCase
 
   test(
-    _ match {
-      case Some(a) => Some(f(a))
+    {
+      case Some(x) => Some(f(x))
       case None    => None
     },
-    _.map(f))
+    _.map(f)
+  )
 
   test(
-    _ match {
-      case Some(a) => a
+    {
+      case Some(x) => x
       case None    => "b"
     },
-    _.getOrElse("b"))
+    _.getOrElse("b")
+  )
 
   test(
-    _ match {
-      case Some(a) => f(a)
+    {
+      case Some(x) => f(x)
       case None    => "b"
     },
-    _.fold("b")(f))
+    _.fold("b")(f)
+  )
 
   test(
-    _ match {
-      case Some(a) => true
+    {
+      case Some(_) => true
       case None    => false
     },
-    _.isDefined)
+    _.isDefined
+  )
 
   test(
-    _ match {
-      case Some(a) => false
+    {
+      case Some(_) => false
       case None    => true
     },
-    _.isEmpty)
+    _.isEmpty
+  )
 
   test(
-    _ match {
-      case Some(a) => 1
+    {
+      case Some(_) => 1
       case None    => 0
     },
-    _.size)
+    _.size
+  )
 
   test(
-    _ match {
-      case Some(a) => Some(a)
+    {
+      case Some(x) => Some(x)
       case None    => Some("b")
     },
-    _.orElse(Some("b")))
+    _.orElse(Some("b"))
+  )
 
   test(
-    _ match {
-      case Some(a) => a
+    {
+      case Some(x) => x
       case None    => null
     },
-    _.orNull) // maybe for compability reasons for java libs
+    _.orNull
+  ) // maybe for compability reasons for java libs
 
   test(
-    _ match {
-      case Some(a) if p(a) => Some(a)
+    {
+      case Some(x) if p(x) => Some(x)
       case _               => None
     },
-    _.filter(p))
+    _.filter(p)
+  )
 
   test(
-    _ match {
-      case Some(a) if !p(a) => Some(a)
+    {
+      case Some(x) if !p(x) => Some(x)
       case _                => None
     },
-    _.filterNot(p))
+    _.filterNot(p)
+  )
 
   test(
-    _ match {
-      case Some(a) => a == "c"
+    {
+      case Some(x) => x == "c"
       case None    => false
     },
-    _.contains("c"))
+    _.contains("c")
+  )
 
   test(
-    _ match {
-      case Some(a) => a.forall(_.isUpper)
+    {
+      case Some(x) => x.forall(_.isUpper)
       case None    => false
     },
-    _.exists(_.forall(_.isUpper)))
+    _.exists(_.forall(_.isUpper))
+  )
 
   println("All Tests passed")
 
   def test[A](g: Opt => A, h: Opt => A): Unit = {
-    import scala.io.AnsiColor.{ GREEN, RED }
     val all = Seq(a, empty, none)
     all.foreach { opt =>
       val aa = g(opt)
       val bb = h(opt)
       assert(aa == bb)
-      //      if (aa == bb)
-      //        println(f"$GREEN OK: $opt%-7s -> $aa == $bb")
-      //      else
-      //        println(f"$RED Bad: $opt%-7s -> $aa != $bb")
     }
   }
 }

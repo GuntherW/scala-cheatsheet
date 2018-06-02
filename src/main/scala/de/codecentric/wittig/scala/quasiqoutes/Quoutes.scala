@@ -1,14 +1,13 @@
 package de.codecentric.wittig.scala.quasiqoutes
 
-import scala.tools.reflect.ToolBox
-import scala.reflect.quasiquotes.Quasiquotes
-
 /**
- * @author gunther
- */
+  * @author gunther
+  */
 object Quoutes extends App {
-  val universe: scala.reflect.runtime.universe.type = scala.reflect.runtime.universe
+  val universe: scala.reflect.runtime.universe.type =
+    scala.reflect.runtime.universe
   import universe._
+
   import scala.reflect.runtime.currentMirror
   import scala.tools.reflect.ToolBox
   val toolbox = currentMirror.mkToolBox()
