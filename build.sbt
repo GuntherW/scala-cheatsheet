@@ -36,14 +36,14 @@ scalacOptions ++= Seq(
 )
 
 val monocleVersion = "1.5.0"
-val circeVersion = "0.9.3"
-val akkaVersion = "2.5.13"
+val circeVersion = "0.10.0"
+val akkaVersion = "2.5.16"
 
 // Change this to another test framework if you prefer
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
   "io.reactivex" %% "rxscala" % "0.26.5",
-  "org.scalaz" %% "scalaz-core" % "7.2.23",
+  "org.scalaz" %% "scalaz-core" % "7.2.26",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.0",
   "ch.qos.logback" % "logback-classic" % "1.2.3",
   "org.scala-lang" % "scala-reflect" % "2.12.6",
@@ -56,8 +56,8 @@ libraryDependencies ++= Seq(
   "io.monix" %% "monix" % "3.0.0-RC1",
 
   // cats
-  "org.typelevel" %% "cats-core" % "1.1.0",
-  "org.typelevel" %% "cats-free" % "1.1.0",
+  "org.typelevel" %% "cats-core" % "1.4.0",
+  "org.typelevel" %% "cats-free" % "1.4.0",
   //monocle
   "com.github.julien-truffaut" %% "monocle-core" % monocleVersion,
   "com.github.julien-truffaut" %% "monocle-generic" % monocleVersion,
@@ -72,7 +72,7 @@ libraryDependencies ++= Seq(
  // "com.lihaoyi" %% "ammonite-ops" % "1.1.0" % "test",
   "org.mockito" % "mockito-all" % "1.10.19" % "test",
   "org.scalatest" %% "scalatest" % "3.0.5" % "test",
-  "org.seleniumhq.selenium" % "selenium-java" % "3.12.0" % "test",
+  "org.seleniumhq.selenium" % "selenium-java" % "3.14.0" % "test",
   "org.scalacheck" %% "scalacheck" % "1.14.0" % "test"
 )
 
