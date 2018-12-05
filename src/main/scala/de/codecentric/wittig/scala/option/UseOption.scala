@@ -7,10 +7,6 @@ package de.codecentric.wittig.scala.option
   */
 object UseOption extends App {
 
-  type Opt = Option[String]
-  val a: Opt = Some("a")
-  val empty: Opt = Some("")
-  val none: Opt = None
   val p: String => Boolean = _.isEmpty
   val f: String => String = _.toUpperCase
 
@@ -112,12 +108,14 @@ object UseOption extends App {
 
   println("All Tests passed")
 
-  def test[A](g: Opt => A, h: Opt => A): Unit = {
-    val all = Seq(a, empty, none)
-    all.foreach { opt =>
-      val aa = g(opt)
-      val bb = h(opt)
-      assert(aa == bb)
-    }
+  def test[A](g: Option[String] => A, h: Option[String] => A): Unit = {
+    val someString = Some("a")
+    val someEmptyString = Some("")
+    List(someString, someEmptyString, None)
+      .foreach { opt =>
+        val aa = g(opt)
+        val bb = h(opt)
+        assert(aa == bb)
+      }
   }
 }

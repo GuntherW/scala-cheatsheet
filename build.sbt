@@ -2,7 +2,7 @@ name := """scalacheat"""
 
 version := "1.0"
 
-scalaVersion := "2.12.6"
+scalaVersion := "2.12.8"
 
 organization := "de.wittig"
 
@@ -36,17 +36,18 @@ scalacOptions ++= Seq(
 )
 
 val monocleVersion = "1.5.0"
-val circeVersion = "0.10.0"
-val akkaVersion = "2.5.16"
+val circeVersion = "0.10.1"
+val akkaVersion = "2.5.18"
+val catsVersion = "1.5.0"
 
 // Change this to another test framework if you prefer
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
   "io.reactivex" %% "rxscala" % "0.26.5",
-  "org.scalaz" %% "scalaz-core" % "7.2.26",
+  "org.scalaz" %% "scalaz-core" % "7.2.27",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.0",
   "ch.qos.logback" % "logback-classic" % "1.2.3",
-  "org.scala-lang" % "scala-reflect" % "2.12.6",
+  "org.scala-lang" % "scala-reflect" % "2.12.8",
   "org.scodec" %% "scodec-core" % "1.10.3", //
   "com.chuusai" %% "shapeless" % "2.3.3",
   "io.circe" %% "circe-core" % circeVersion,
@@ -56,8 +57,8 @@ libraryDependencies ++= Seq(
   "io.monix" %% "monix" % "3.0.0-RC1",
 
   // cats
-  "org.typelevel" %% "cats-core" % "1.4.0",
-  "org.typelevel" %% "cats-free" % "1.4.0",
+  "org.typelevel" %% "cats-core" % catsVersion,
+  "org.typelevel" %% "cats-free" % catsVersion,
   //monocle
   "com.github.julien-truffaut" %% "monocle-core" % monocleVersion,
   "com.github.julien-truffaut" %% "monocle-generic" % monocleVersion,
@@ -72,7 +73,7 @@ libraryDependencies ++= Seq(
  // "com.lihaoyi" %% "ammonite-ops" % "1.1.0" % "test",
   "org.mockito" % "mockito-all" % "1.10.19" % "test",
   "org.scalatest" %% "scalatest" % "3.0.5" % "test",
-  "org.seleniumhq.selenium" % "selenium-java" % "3.14.0" % "test",
+  "org.seleniumhq.selenium" % "selenium-java" % "3.141.59" % "test",
   "org.scalacheck" %% "scalacheck" % "1.14.0" % "test"
 )
 
