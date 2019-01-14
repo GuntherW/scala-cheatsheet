@@ -18,6 +18,7 @@ object Example extends App {
   println(processThingWithTypeTag(Thing(Seq(1))))
   println(processThingWithTypeTag(Thing(Seq("1"))))
 
+  // Example with type erasure problem
   def processThing(thing: Thing[_]) = {
     thing match {
       case Thing(value: Int)      => "Thing of int"
@@ -27,6 +28,7 @@ object Example extends App {
     }
   }
 
+  // a way to identify type at runtime
   import scala.reflect.runtime.universe._
   def processThingWithTypeTag[T: TypeTag](thing: Thing[T]) = {
     typeOf[T] match {
@@ -37,6 +39,7 @@ object Example extends App {
     }
   }
 
+  // way how to do it
   def processThingHowToDoIt[T: TypeTag](thing: Thing[T]) = {
     thing match {
       case Thing(value: Int)                                                   => "Thing of int " + value.toString
