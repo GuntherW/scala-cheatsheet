@@ -50,4 +50,7 @@ object Main extends App {
   val s = Street("kkk", 22)
   val sn = Street.number.set(44)(s)
   println(sn)
+
+  // Oder ohne Annotation
+  println(GenLens[Employee](_.company.address.street.number).set(11)(employee))
 }
