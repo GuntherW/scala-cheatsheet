@@ -48,14 +48,14 @@ libraryDependencies ++= Seq(
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
   "ch.qos.logback" % "logback-classic" % "1.2.3",
   "org.scala-lang" % "scala-reflect" % "2.12.8",
-  "org.scodec" %% "scodec-core" % "1.11.2", //
+  "org.scodec" %% "scodec-core" % "1.11.3", //
   "com.chuusai" %% "shapeless" % "2.3.3",
   "io.circe" %% "circe-core" % circeVersion,
   "io.circe" %% "circe-generic" % circeVersion,
   "io.circe" %% "circe-parser" % circeVersion,
   "com.github.julien-truffaut" %% "monocle-core" % "1.5.0",
   "io.monix" %% "monix" % "3.0.0-RC1",
-  "org.scalaz" %% "scalaz-zio" % "0.9", // ZIO
+  "org.scalaz" %% "scalaz-zio" % "0.11", // ZIO
 
   // cats
   "org.typelevel" %% "cats-core" % catsVersion,
