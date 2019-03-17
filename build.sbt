@@ -54,8 +54,7 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-generic" % circeVersion,
   "io.circe" %% "circe-parser" % circeVersion,
   "com.github.julien-truffaut" %% "monocle-core" % "1.5.0",
-  "io.monix" %% "monix" % "3.0.0-RC1",
-  "org.scalaz" %% "scalaz-zio" % "0.11", // ZIO
+  "org.scalaz" %% "scalaz-zio" % "0.12", // ZIO
 
   // cats
   "org.typelevel" %% "cats-core" % catsVersion,
@@ -68,7 +67,7 @@ libraryDependencies ++= Seq(
   "com.github.julien-truffaut" %% "monocle-refined" % monocleVersion,
   "com.github.julien-truffaut" %% "monocle-law" % monocleVersion % "test",
   "com.beachape" %% "enumeratum" % "1.5.13",
-  "io.monix" %% "monix" % "3.0.0-RC1",
+  "io.monix" %% "monix" % "3.0.0-RC2",
   "com.github.mpilquist" %% "simulacrum" % "0.15.0",
 
 

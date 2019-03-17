@@ -21,7 +21,7 @@ object FuturesVsTask extends App {
 
   time("task") {
     val a = Task.sequence((1 to amount).map(task))
-    Await.result(a.runAsync, Duration.Inf)
+    Await.result(a.runToFuture, Duration.Inf)
   }
 
   private def future(i: Int) =

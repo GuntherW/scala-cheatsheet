@@ -3,6 +3,8 @@ import cats.data.Reader
 
 object ReaderMonadExample extends App {
 
+  case class Config(x: String, y: String)
+
   def hallo1: Reader[Config, String] = Reader(f => s"hallo1 ${f.x}")
   def hallo2: Reader[Config, String] = Reader(f => s"hallo2 ${f.y}")
 
@@ -14,5 +16,3 @@ object ReaderMonadExample extends App {
 
   println(program.run(Config("x", "y")))
 }
-
-case class Config(x: String, y: String)

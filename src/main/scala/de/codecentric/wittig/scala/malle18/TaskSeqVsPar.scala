@@ -21,13 +21,13 @@ object TaskSeqVsPar extends App {
       i2 <- t2
       i3 <- t3
     } yield i1 + i2 + i3
-    Await.result(seq.runAsync, Duration.Inf)
+    Await.result(seq.runToFuture, Duration.Inf)
   }
 
   // Zweiter Versuch
   time("3 Tasks parallel") {
     val par = Task.gather(List(t1, t2, t3)).map(l => l.sum)
-    Await.result(par.runAsync, Duration.Inf)
+    Await.result(par.runToFuture, Duration.Inf)
   }
 
   private def createTask(i: Int) = Task {

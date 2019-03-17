@@ -66,9 +66,9 @@ object Tasks extends App {
       xy <- task3
     } yield xy._1 + xy._2
 
-  Await.result(notParallel.runAsync, Duration.Inf)
+  Await.result(notParallel.runToFuture, Duration.Inf)
   println("-----")
-  Await.result(parallel.runAsync, Duration.Inf)
+  Await.result(parallel.runToFuture, Duration.Inf)
   println("-----")
 
   private val f1 = future1
