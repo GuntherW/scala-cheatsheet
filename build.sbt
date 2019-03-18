@@ -54,7 +54,7 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-generic" % circeVersion,
   "io.circe" %% "circe-parser" % circeVersion,
   "com.github.julien-truffaut" %% "monocle-core" % "1.5.0",
-  "org.scalaz" %% "scalaz-zio" % "0.12", // ZIO
+  "org.scalaz" %% "scalaz-zio" % "0.15", // ZIO
 
   // cats
   "org.typelevel" %% "cats-core" % catsVersion,
