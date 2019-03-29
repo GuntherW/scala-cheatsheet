@@ -26,5 +26,5 @@ object Dyn extends App {
 
   val x = new A
   x.someOther(5) // applyDynamic
-  println(x.b) // selectDymamic
+  println(x.b)   // selectDymamic
 }

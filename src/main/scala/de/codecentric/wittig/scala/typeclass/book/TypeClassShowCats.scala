@@ -12,7 +12,7 @@ object DrittesBeispiel extends App {
   // Oder direkt so.
   implicit val katzenShow = Show.show[Cat](c => s"${c.name} is a ${c.age} year-old ${c.color} cat")
 
-  val cat = Cat("Tina", 243, "rot")
+  val cat  = Cat("Tina", 243, "rot")
   val hund = Dog("Heide", 24, "braun")
 
   println(cat.show)

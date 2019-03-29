@@ -8,7 +8,7 @@ package de.codecentric.wittig.scala.option
 object UseOption extends App {
 
   val p: String => Boolean = _.isEmpty
-  val f: String => String = _.toUpperCase
+  val f: String => String  = _.toUpperCase
 
   test(
     {
@@ -109,7 +109,7 @@ object UseOption extends App {
   println("All Tests passed")
 
   def test[A](g: Option[String] => A, h: Option[String] => A): Unit = {
-    val someString = Some("a")
+    val someString      = Some("a")
     val someEmptyString = Some("")
     List(someString, someEmptyString, None)
       .foreach { opt =>

@@ -1,15 +1,15 @@
 package de.codecentric.wittig.scala.typeclass.book
 
 /**
- * 1. Die Type Class. Ein Trait mit der gewünschten API
- */
+  * 1. Die Type Class. Ein Trait mit der gewünschten API
+  */
 trait Printable[A] {
   def format(a: A): String
 }
 
 /**
- * 2. Ein Objekt mit Instanzen für alle gewünschten Typen
- */
+  * 2. Ein Objekt mit Instanzen für alle gewünschten Typen
+  */
 object PrintDefaults {
   implicit val printableInt = new Printable[Int] {
     def format(i: Int) = i.toString
@@ -23,19 +23,19 @@ object PrintDefaults {
 }
 
 /**
- * 3. Eine Api für den User
- */
+  * 3. Eine Api für den User
+  */
 object Print {
   def format[A](a: A)(implicit p: Printable[A]): String = p.format(a)
-  def print[A](a: A)(implicit p: Printable[A]): Unit = println(p.format(a))
+  def print[A](a: A)(implicit p: Printable[A]): Unit    = println(p.format(a))
 }
 
 /**
- * 4. (optional) Eine Einrichment Klasse.
- */
+  * 4. (optional) Eine Einrichment Klasse.
+  */
 object PrintSyntax {
   implicit class PrintOps[A](value: A) {
-    def print(implicit p: Printable[A]) = println(p.format(value))
+    def print(implicit p: Printable[A])  = println(p.format(value))
     def format(implicit p: Printable[A]) = p.format(value)
   }
 }

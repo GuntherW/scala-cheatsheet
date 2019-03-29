@@ -10,7 +10,7 @@ import cats.syntax.monoid._
 object WithOwnIntMonoid extends App {
 
   implicit val m = new Monoid[Int] {
-    override def empty: Int = 1
+    override def empty: Int                   = 1
     override def combine(x: Int, y: Int): Int = x * y
   }
 

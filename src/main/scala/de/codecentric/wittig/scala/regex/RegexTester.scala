@@ -7,7 +7,7 @@ import scala.util.matching.Regex
   */
 object RegexTester extends App {
 
-  val date = """(\d\d\d\d)-(\d\d)-(\d\d)""".r
+  val date        = """(\d\d\d\d)-(\d\d)-(\d\d)""".r
   val datePattern = new Regex("""(\d\d\d\d)-(\d\d)-(\d\d)""", "year", "month", "day")
 
   val s1 = "2004-01-20" match {
@@ -37,7 +37,7 @@ object RegexTester extends App {
     .foreach(println)
 
   val dates2 = "Date: 2004-01-20 1950-01-20 1960-01-20 "
-  val mi = date findAllIn dates2
+  val mi     = date findAllIn dates2
   //  mi.toList.foreach { x => println("s6: " + x) }
   val s6 = mi filter (_ => (mi group 1).toInt < 1960) map (s => s"s6: $s")
   s6.foreach(println)

@@ -35,7 +35,7 @@ trait Serializer {
 
 object Main extends App with Serializer {
   val person = new Person("Henning", 3)
-  val hallo = Hallo("wert")
+  val hallo  = Hallo("wert")
 
   println(serialize(person))
   println(hallo.serialisiere)

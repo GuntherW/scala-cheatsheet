@@ -1,8 +1,8 @@
 package de.codecentric.wittig.scala.mockito
 
 /**
- * @author gunther
- */
+  * @author gunther
+  */
 class ServiceUnterTest(val abh: AbhaengigerService) extends Service {
 
   override val andererService = new AbhaengigerService2 {}

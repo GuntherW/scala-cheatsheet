@@ -8,5 +8,7 @@ object Prop {
 }
 
 object Main {
-  Prop.forAll { (x: Int) => x > 2 }
+  Prop.forAll { (x: Int) =>
+    x > 2
+  }
 }

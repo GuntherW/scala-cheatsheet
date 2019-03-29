@@ -10,7 +10,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 object Advent1 extends App {
 
-  implicit val system = ActorSystem("Advent1")
+  implicit val system       = ActorSystem("Advent1")
   implicit val materializer = ActorMaterializer()
 
   def l(): Iterator[Char] = scala.io.Source.fromFile("input.txt").getLines.flatMap(_.toArray)
@@ -28,8 +28,8 @@ object Advent1 extends App {
 
   val collectDouble = Flow[Char].statefulMapConcat { () =>
     var firstChar: Option[Char] = None
-    var lastChar: Option[Char] = None
-    var listOfRes = List.empty[Char]
+    var lastChar: Option[Char]  = None
+    var listOfRes               = List.empty[Char]
 
     currentChar =>
       if (firstChar.isEmpty)

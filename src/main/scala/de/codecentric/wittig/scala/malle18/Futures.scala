@@ -10,7 +10,7 @@ class Futures {
 
   def saveTransaction(i: Int): Future[Unit] = Future { println("saving transaction") }
 
-  private val eventualUnit: Task[Unit] = Task.defer(Task.fromFuture(saveUser("")))
+  private val eventualUnit: Task[Unit]  = Task.defer(Task.fromFuture(saveUser("")))
   private val eventualUnit2: Task[Unit] = Task.fromFuture(saveTransaction(1))
 
   val result: Task[Unit] = for {

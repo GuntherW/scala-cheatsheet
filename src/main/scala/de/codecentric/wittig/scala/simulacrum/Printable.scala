@@ -13,5 +13,5 @@ trait Printable[A] {
 
 object Printable {
   implicit def personPrinterN: Printable[Person] = a => s"Name: ${a.name}, alter: ${a.alter}"
-  implicit def stringPrinter: Printable[String] = a => a.toLowerCase
+  implicit def stringPrinter: Printable[String]  = a => a.toLowerCase
 }

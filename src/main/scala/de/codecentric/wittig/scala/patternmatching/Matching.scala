@@ -10,7 +10,7 @@ object Matching extends App {
     def score: Int
   }
   class FreeUser(val name: String, val score: Int, val upgradeProbability: Double) extends User
-  class PremiumUser(val name: String, val score: Int) extends User
+  class PremiumUser(val name: String, val score: Int)                              extends User
 
   object FreeUser {
     def unapply(user: FreeUser): Option[(String, Int, Double)] = Some((user.name, user.score, user.upgradeProbability))

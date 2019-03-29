@@ -1,15 +1,15 @@
 package de.codecentric.wittig.scala.algebraicdatatype.patternmatching
 
 /**
- * @author gunther
- *
- * Einem algebraic data type kann man über Patternmatching oder über Polymorphismus benutzen
- */
+  * @author gunther
+  *
+  * Einem algebraic data type kann man über Patternmatching oder über Polymorphismus benutzen
+  */
 sealed trait Visitor {
   def sagHallo: String = {
     this match {
       case Anonymous(i) => "Hallo"
-      case User(i, n) => s"Hallo $n"
+      case User(i, n)   => s"Hallo $n"
     }
   }
 }

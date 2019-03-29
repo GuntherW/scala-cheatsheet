@@ -1,8 +1,8 @@
 package de.codecentric.wittig.scala.typeclass
 
 /**
- * @author gunther
- */
+  * @author gunther
+  */
 object FireExample {
   case class Alcohol(liters: Double)
   case class Water(liters: Double)

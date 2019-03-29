@@ -6,9 +6,9 @@ package de.codecentric.wittig.scala.monocle
 object MainPrism extends App {
 
   sealed trait Json
-  case object JNull extends Json
-  case class JStr(v: String) extends Json
-  case class JNum(v: Double) extends Json
+  case object JNull                     extends Json
+  case class JStr(v: String)            extends Json
+  case class JNum(v: Double)            extends Json
   case class JObj(v: Map[String, Json]) extends Json
 
   import monocle.Prism

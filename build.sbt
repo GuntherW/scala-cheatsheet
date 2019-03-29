@@ -31,7 +31,6 @@ scalacOptions ++= Seq(
   // "-Ywarn-unused-import",
   // Warn when non-Unit expression results are unused
   "-Ywarn-value-discard",
-
   "-Ypartial-unification"
 )
 
@@ -54,11 +53,12 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-generic" % circeVersion,
   "io.circe" %% "circe-parser" % circeVersion,
   "com.github.julien-truffaut" %% "monocle-core" % "1.5.0",
-  "org.scalaz" %% "scalaz-zio" % "0.15", // ZIO
+  "org.scalaz" %% "scalaz-zio" % "0.19", // ZIO
 
   // cats
   "org.typelevel" %% "cats-core" % catsVersion,
   "org.typelevel" %% "cats-free" % catsVersion,
+  "org.typelevel" %% "kittens" % "1.2.1",
   //monocle
   "com.github.julien-truffaut" %% "monocle-core" % monocleVersion,
   "com.github.julien-truffaut" %% "monocle-generic" % monocleVersion,
@@ -69,13 +69,11 @@ libraryDependencies ++= Seq(
   "com.beachape" %% "enumeratum" % "1.5.13",
   "io.monix" %% "monix" % "3.0.0-RC2",
   "com.github.mpilquist" %% "simulacrum" % "0.15.0",
-
-
 // Ammonite
- // "com.lihaoyi" % "ammonite" % "1.1.0" % "test" cross CrossVersion.full,
- // "com.lihaoyi" %% "ammonite-ops" % "1.1.0" % "test",
+  // "com.lihaoyi" % "ammonite" % "1.1.0" % "test" cross CrossVersion.full,
+  // "com.lihaoyi" %% "ammonite-ops" % "1.1.0" % "test",
   "org.mockito" % "mockito-all" % "1.10.19" % "test",
-  "org.scalatest" %% "scalatest" % "3.0.6" % "test",
+  "org.scalatest" %% "scalatest" % "3.0.7" % "test",
   "org.seleniumhq.selenium" % "selenium-java" % "3.141.59" % "test",
   "org.scalacheck" %% "scalacheck" % "1.14.0" % "test"
 )
@@ -103,6 +101,5 @@ initialCommands in (Test, console) := """ammonite.Main().run()"""
 
 // for @Lenses macro support
 addCompilerPlugin("org.scalamacros" %% "paradise" % "2.1.1" cross CrossVersion.full)
-
 
 updateConfiguration in updateSbtClassifiers := (updateConfiguration in updateSbtClassifiers).value.withMissingOk(true)

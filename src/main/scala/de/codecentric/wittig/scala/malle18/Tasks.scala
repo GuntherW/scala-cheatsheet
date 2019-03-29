@@ -62,7 +62,7 @@ object Tasks extends App {
 
   def parallel =
     for {
-      _ <- Task.now(println("Starting"))
+      _  <- Task.now(println("Starting"))
       xy <- task3
     } yield xy._1 + xy._2
 

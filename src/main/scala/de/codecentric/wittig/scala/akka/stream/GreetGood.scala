@@ -11,12 +11,12 @@ import scala.concurrent.duration._
 import akka.stream.scaladsl.Keep
 
 /**
- * Example from Heiko Seeberger
- */
+  * Example from Heiko Seeberger
+  */
 object GreetGood extends App {
 
   implicit val system = ActorSystem()
-  implicit val mat = ActorMaterializer()
+  implicit val mat    = ActorMaterializer()
   import system.dispatcher
 
   val done =

@@ -1,9 +1,9 @@
 package de.codecentric.wittig.scala.category.kleisli
 
 /**
- *
- * http://www.leonardoborges.com/writings/2014/06/17/functional-composition-with-monads-kleisli-functors/
- */
+  *
+  * http://www.leonardoborges.com/writings/2014/06/17/functional-composition-with-monads-kleisli-functors/
+  */
 object KleisliApp extends App {
   import scalaz._
   import Scalaz._
@@ -35,24 +35,23 @@ object KleisliApp extends App {
   }
 
   def mitOption() = {
-    val make = (x: Int) => (x == 1).option(Make(1, "Suzuki"))
-    val parts = (x: Make) =>
-      (x.id == 1).option(NonEmptyList(Part(1, s"Gear Box $x"), Part(2, "Clutch cable")))
+    val make  = (x: Int) => (x == 1).option(Make(1, "Suzuki"))
+    val parts = (x: Make) => (x.id == 1).option(NonEmptyList(Part(1, s"Gear Box $x"), Part(2, "Clutch cable")))
 
     println(make(1))
 
-    val f2 = (x: Int) => for {
-      m <- make(x)
-      p <- parts(m)
-    } yield p
+    val f2 = (x: Int) =>
+      for {
+        m <- make(x)
+        p <- parts(m)
+      } yield p
 
     println(f2(1))
   }
 
   def mitOptionKleisli() = {
-    val make = (x: Int) => (x == 1).option(Make(1, "Suzuki"))
-    val parts = (x: Make) =>
-      (x.id == 1).option(NonEmptyList(Part(1, s"Gear Box $x"), Part(2, "Clutch cable")))
+    val make  = (x: Int) => (x == 1).option(Make(1, "Suzuki"))
+    val parts = (x: Make) => (x.id == 1).option(NonEmptyList(Part(1, s"Gear Box $x"), Part(2, "Clutch cable")))
 
     //A Kleisli arrow is simply a wrapper for a function of type A => F[B].
     val a = kleisli(parts)

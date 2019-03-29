@@ -4,7 +4,7 @@ import cats.arrow.FunctionK
 import cats.free.Free
 
 sealed trait KeyValueInstr[A]
-case class Get(key: String) extends KeyValueInstr[Int]
+case class Get(key: String)             extends KeyValueInstr[Int]
 case class Put(key: String, value: Int) extends KeyValueInstr[Unit]
 
 object KeyValueInstr {

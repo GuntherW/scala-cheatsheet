@@ -2,9 +2,10 @@ package de.codecentric.wittig.scala.scodec
 
 import scodec.Codec
 import scodec.codecs.implicits._
+
 /**
- * @author gunther
- */
+  * @author gunther
+  */
 object Codierung extends App {
   case class Point(x: Int, y: Int)
   case class Line(start: Point, end: Point)

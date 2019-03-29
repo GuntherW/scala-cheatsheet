@@ -1,8 +1,8 @@
 package de.codecentric.wittig.scala.category
 
 /**
- * @author gunther
- */
+  * @author gunther
+  */
 object Category {
   def id[A]: A => A = a => a
   def compose[A, B, C](g: B => C, f: A => B): A => C =

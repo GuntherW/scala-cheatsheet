@@ -12,9 +12,9 @@ object Error extends IntEnum[Error] {
 
   val values = findValues
 
-  case object InvalidEmail extends Error(1)
-  case object InvalidPhone extends Error(2)
-  case object InvalidAge extends Error(3)
-  case object InvalidRank extends Error(4)
+  case object InvalidEmail         extends Error(1)
+  case object InvalidPhone         extends Error(2)
+  case object InvalidAge           extends Error(3)
+  case object InvalidRank          extends Error(4)
   case object InvalidAgeBiggerRank extends Error(5)
 }

@@ -5,7 +5,7 @@ class CoContra {
     def legs: Int
   }
   class Bird extends Animal {
-    def legs = 2
+    def legs       = 2
     def wings: Int = 2
   }
   class Fish extends Animal {
@@ -25,7 +25,7 @@ class CoContra {
 
   trait MyList[+A]
   case class Cons[A](head: A, tail: MyList[A]) extends MyList[A]
-  case object Empty extends MyList[Nothing]
+  case object Empty                            extends MyList[Nothing]
 
   trait Predicate[-A] {
     def check(input: A): Boolean

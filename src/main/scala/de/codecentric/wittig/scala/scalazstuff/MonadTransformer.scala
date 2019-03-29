@@ -4,13 +4,12 @@ import scala.concurrent.Future
 import scalaz.OptionT
 import scalaz._
 import Scalaz._
+
 /**
- * Ein Monadtransformer ist eine Monade, die das Arbeiten mit zwei ineinaner verschachtelte Monaden erleichtert.
- *
- *
- *
- * @author gunther
- */
+  * Ein Monadtransformer ist eine Monade, die das Arbeiten mit zwei ineinaner verschachtelte Monaden erleichtert.
+  *
+  * @author gunther
+  */
 object MonadTransformer extends App {
 
   val getX: Future[Option[Int]] = Future(Some(2))

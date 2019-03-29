@@ -2,14 +2,15 @@ package de.codecentric.wittig.scala.scalazstuff
 
 import scalaz._
 import Scalaz._
+
 /**
- * @author gunther
- */
+  * @author gunther
+  */
 object ScalazsEither extends App {
 
   def age(s: String): String \/ Int = s match {
     case "Erik" => \/-(30)
-    case other => -\/(s"name of $other is unknown")
+    case other  => -\/(s"name of $other is unknown")
   }
 
   println(age("Erik")) // \/-(30)

@@ -1,8 +1,8 @@
 package de.codecentric.wittig.scala.varianz
 
 /**
- * @author gunther
- */
+  * @author gunther
+  */
 object Varianz extends App {
 
   class Covariant[+A]

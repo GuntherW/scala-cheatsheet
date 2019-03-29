@@ -16,7 +16,7 @@ object Data {
   type Validation[A] = ValidatedNel[Error, A]
 
   object Validation {
-    def success[T](t: T): Validation[T] = Validated.valid(t)
+    def success[T](t: T): Validation[T]     = Validated.valid(t)
     def failure[T](e: Error): Validation[T] = Validated.invalidNel(e)
   }
 
@@ -52,10 +52,10 @@ object Data {
 
   def validateData(d: Data): Validation[Data] = {
 
-    val validEmail = validateEmail(d.email)
-    val validPhone = validatePhone(d.phone)
-    val validAge = validateAge(d.age)
-    val validRank = validateRank(d.rank)
+    val validEmail      = validateEmail(d.email)
+    val validPhone      = validatePhone(d.phone)
+    val validAge        = validateAge(d.age)
+    val validRank       = validateRank(d.rank)
     val validAgeAndRank = validateAgeAndRank(d.age, d.rank)
 
     val valid = validEmail |@| validPhone |@| validAge |@| validRank |@| validAgeAndRank
@@ -67,10 +67,10 @@ object Data {
 }
 
 object Main extends App {
-  val okMail = "a@b.de"; val badEmail = "not valid"
+  val okMail  = "a@b.de"; val badEmail    = "not valid"
   val okPhone = "+49123456"; val badPhone = "not valid"
-  val okAge = 56; val badAge = 3
-  val okRank = 2; val badRank = -3; val bigRank = 57
+  val okAge   = 56; val badAge            = 3
+  val okRank  = 2; val badRank            = -3; val bigRank = 57
 
   import Data._
   println(validateData(Data(okMail, okPhone, okAge, okRank)))

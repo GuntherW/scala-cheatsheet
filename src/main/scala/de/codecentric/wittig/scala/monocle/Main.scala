@@ -47,7 +47,7 @@ object Main extends App {
   println(neu)
   println(neu2)
   println(Employee.capizalizeStreet(employee))
-  val s = Street("kkk", 22)
+  val s  = Street("kkk", 22)
   val sn = Street.number.set(44)(s)
   println(sn)
 
