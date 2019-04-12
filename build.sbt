@@ -68,7 +68,7 @@ libraryDependencies ++= Seq(
   "com.github.julien-truffaut" %% "monocle-law"     % monocleVersion % "test",
   "com.beachape"               %% "enumeratum"      % "1.5.13",
   "io.monix"                   %% "monix"           % "3.0.0-RC2",
-  "com.github.mpilquist"       %% "simulacrum"      % "0.15.0",
+  "com.github.mpilquist"       %% "simulacrum"      % "0.16.0",
 // Ammonite
   // "com.lihaoyi" % "ammonite" % "1.1.0" % "test" cross CrossVersion.full,
   // "com.lihaoyi" %% "ammonite-ops" % "1.1.0" % "test",
