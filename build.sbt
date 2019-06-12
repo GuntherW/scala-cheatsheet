@@ -36,8 +36,9 @@ scalacOptions ++= Seq(
 
 val monocleVersion = "1.5.0"
 val circeVersion   = "0.11.1"
-val akkaVersion    = "2.5.22"
-val catsVersion    = "1.6.0"
+val akkaVersion    = "2.5.23"
+val catsVersion    = "1.6.1"
+val fs2            = "1.0.5"
 
 // Change this to another test framework if you prefer
 libraryDependencies ++= Seq(
@@ -47,13 +48,19 @@ libraryDependencies ++= Seq(
   "com.typesafe.scala-logging" %% "scala-logging"  % "3.9.2",
   "ch.qos.logback"             % "logback-classic" % "1.2.3",
   "org.scala-lang"             % "scala-reflect"   % "2.12.8",
-  "org.scodec"                 %% "scodec-core"    % "1.11.3", //
+  "org.scodec"                 %% "scodec-core"    % "1.11.4", //
   "com.chuusai"                %% "shapeless"      % "2.3.3",
   "io.circe"                   %% "circe-core"     % circeVersion,
   "io.circe"                   %% "circe-generic"  % circeVersion,
   "io.circe"                   %% "circe-parser"   % circeVersion,
   "com.github.julien-truffaut" %% "monocle-core"   % "1.5.0",
-  "org.scalaz"                 %% "scalaz-zio"     % "0.19", // ZIO
+  "org.scalaz"                 %% "scalaz-zio"     % "1.0-RC5", // ZIO
+
+  // fs2
+  "co.fs2" %% "fs2-core"             % fs2,
+  "co.fs2" %% "fs2-io"               % fs2, // optional I/O library
+  "co.fs2" %% "fs2-reactive-streams" % fs2, // optional reactive streams interop
+  "co.fs2" %% "fs2-experimental"     % fs2, // optional experimental library
 
   // cats
   "org.typelevel" %% "cats-core" % catsVersion,
@@ -68,12 +75,12 @@ libraryDependencies ++= Seq(
   "com.github.julien-truffaut" %% "monocle-law"     % monocleVersion % "test",
   "com.beachape"               %% "enumeratum"      % "1.5.13",
   "io.monix"                   %% "monix"           % "3.0.0-RC2",
-  "com.github.mpilquist"       %% "simulacrum"      % "0.16.0",
+  "com.github.mpilquist"       %% "simulacrum"      % "0.19.0",
 // Ammonite
   // "com.lihaoyi" % "ammonite" % "1.1.0" % "test" cross CrossVersion.full,
   // "com.lihaoyi" %% "ammonite-ops" % "1.1.0" % "test",
   "org.mockito"             % "mockito-all"   % "1.10.19"  % "test",
-  "org.scalatest"           %% "scalatest"    % "3.0.7"    % "test",
+  "org.scalatest"           %% "scalatest"    % "3.0.8"    % "test",
   "org.seleniumhq.selenium" % "selenium-java" % "3.141.59" % "test",
   "org.scalacheck"          %% "scalacheck"   % "1.14.0"   % "test"
 )
@@ -103,3 +110,8 @@ initialCommands in (Test, console) := """ammonite.Main().run()"""
 addCompilerPlugin("org.scalamacros" %% "paradise" % "2.1.1" cross CrossVersion.full)
 
 updateConfiguration in updateSbtClassifiers := (updateConfiguration in updateSbtClassifiers).value.withMissingOk(true)
+
+resolvers ++= Seq(
+  "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
+  Resolver.bintrayRepo("hseeberger", "maven")
+)

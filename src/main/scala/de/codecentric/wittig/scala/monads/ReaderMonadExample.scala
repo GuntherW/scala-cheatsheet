@@ -14,5 +14,5 @@ object ReaderMonadExample extends App {
       h2 <- hallo2
     } yield (h1, h2)
 
-  println(program.run(Config("x", "y")))
+  println(program.run(Config("x-wert", "y-wert")))
 }

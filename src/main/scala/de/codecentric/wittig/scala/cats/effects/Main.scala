@@ -1,11 +1,13 @@
 package de.codecentric.wittig.scala.cats.effects
 
-import cats.effect.IO
+import java.time.Clock
+
+import cats.effect.{ContextShift, IO, Timer}
 import cats.implicits._
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.DurationDouble
+import scala.concurrent.{ExecutionContext, Future}
 
 object Main extends App {
 
@@ -14,7 +16,9 @@ object Main extends App {
 //  fromFuture()
 
 //  readPrint()
-  flatMapOperator()
+  //flatMapOperator()
+
+  parMapN
 
   def first() = {
     val ioa = IO { println("hey!") }
@@ -95,4 +99,37 @@ object Main extends App {
     IO.shift *> task
   }
 
+  def parMapN = {
+
+    implicit val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
+    implicit val timer: Timer[IO]     = IO.timer(ExecutionContext.global)
+
+    case class Person(name: String, age: Int)
+    val ioInt    = IO.sleep(2 seconds) *> IO(22)
+    val ioString = IO.sleep(2 seconds) *> IO("Peter")
+
+    val eins: IO[String] = ioInt *> ioString // IO("Peter") // flatMap
+    val zwei: IO[Int]    = ioInt <* ioString // IO(22) // flatMap
+    val drei: IO[String] = ioInt &> ioString // IO("Peter") // parallel
+    val vier: IO[Int]    = ioInt <& ioString // IO(22) // parallel
+
+    val sequenziell: IO[Person] = (ioString, ioInt).mapN(Person)
+    val parallel: IO[Person]    = (ioString, ioInt).parMapN { case (a, b) => Person(a, b) } // needs implicit ContextShift
+
+    val seq = for {
+      start <- IO(System.nanoTime())
+      a     <- sequenziell
+      end   <- IO(System.nanoTime())
+    } yield (a, end - start)
+
+    val par = for {
+      start <- IO(System.nanoTime())
+      a     <- parallel
+      end   <- IO(System.nanoTime())
+    } yield (a, end - start)
+
+    println(seq.unsafeRunSync()) // runs 4 seconds
+    println(par.unsafeRunSync()) // runs 2 seconds
+
+  }
 }
