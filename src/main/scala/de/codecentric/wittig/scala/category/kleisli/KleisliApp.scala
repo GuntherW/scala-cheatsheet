@@ -54,7 +54,7 @@ object KleisliApp extends App {
     val parts = (x: Make) => (x.id == 1).option(NonEmptyList(Part(1, s"Gear Box $x"), Part(2, "Clutch cable")))
 
     //A Kleisli arrow is simply a wrapper for a function of type A => F[B].
-    val a = kleisli(parts)
+    val a: ReaderT[Option, Make, NonEmptyList[Part]] = kleisli(parts)
     println(a)
 
     val f3 = kleisli(parts) <==< make
