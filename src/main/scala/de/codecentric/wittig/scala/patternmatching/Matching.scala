@@ -3,7 +3,7 @@ package de.codecentric.wittig.scala.patternmatching
 /**
   * @author gunther
   */
-object Matching extends App {
+object Matching extends App with Auth {
 
   trait User {
     def name: String
@@ -34,4 +34,17 @@ object Matching extends App {
   }
 
   println(result)
+
+  val premiumUser = new PremiumUser("Daniela", 3000)
+
+  // Infix pattern matching
+  premiumUser match {
+    case (name @ "Daniela") as score => println(s"Score inline: $score. $name")
+    case name as score               => println(s"Score: $score. $name")
+    //case as(name, score)             => println(s"Score: $score. $name")
+  }
+  premiumUser match {
+    case asScore(score) => println(s"Score ist $score")
+  }
+
 }
