@@ -2,7 +2,7 @@ name := """scalacheat"""
 
 version := "1.0"
 
-scalaVersion := "2.12.8"
+scalaVersion := scala
 
 organization := "de.wittig"
 
@@ -34,26 +34,26 @@ scalacOptions ++= Seq(
   "-Ypartial-unification"
 )
 
-val monocleVersion = "1.5.0"
+val monocleVersion = "1.6.0"
 val circeVersion   = "0.11.1"
 val akkaVersion    = "2.5.23"
 val catsVersion    = "1.6.1"
 val fs2            = "1.0.5"
+val scala          = "2.12.8"
 
 // Change this to another test framework if you prefer
 libraryDependencies ++= Seq(
   "com.typesafe.akka"          %% "akka-stream"    % akkaVersion,
   "io.reactivex"               %% "rxscala"        % "0.26.5",
-  "org.scalaz"                 %% "scalaz-core"    % "7.2.27",
+  "org.scalaz"                 %% "scalaz-core"    % "7.2.28",
   "com.typesafe.scala-logging" %% "scala-logging"  % "3.9.2",
   "ch.qos.logback"             % "logback-classic" % "1.2.3",
-  "org.scala-lang"             % "scala-reflect"   % "2.12.8",
+  "org.scala-lang"             % "scala-reflect"   % scala,
   "org.scodec"                 %% "scodec-core"    % "1.11.4", //
   "com.chuusai"                %% "shapeless"      % "2.3.3",
   "io.circe"                   %% "circe-core"     % circeVersion,
   "io.circe"                   %% "circe-generic"  % circeVersion,
   "io.circe"                   %% "circe-parser"   % circeVersion,
-  "com.github.julien-truffaut" %% "monocle-core"   % "1.5.0",
   "org.scalaz"                 %% "scalaz-zio"     % "1.0-RC5", // ZIO
 
   // fs2
@@ -74,7 +74,7 @@ libraryDependencies ++= Seq(
   "com.github.julien-truffaut" %% "monocle-refined" % monocleVersion,
   "com.github.julien-truffaut" %% "monocle-law"     % monocleVersion % "test",
   "com.beachape"               %% "enumeratum"      % "1.5.13",
-  "io.monix"                   %% "monix"           % "3.0.0-RC2",
+  "io.monix"                   %% "monix"           % "3.0.0-RC3",
   "com.github.mpilquist"       %% "simulacrum"      % "0.19.0",
 // Ammonite
   // "com.lihaoyi" % "ammonite" % "1.1.0" % "test" cross CrossVersion.full,
@@ -115,3 +115,5 @@ resolvers ++= Seq(
   "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
   Resolver.bintrayRepo("hseeberger", "maven")
 )
+
+turbo := true
