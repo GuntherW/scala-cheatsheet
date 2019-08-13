@@ -1,7 +1,5 @@
 package de.codecentric.wittig.scala.cats.effects
 
-import java.time.Clock
-
 import cats.effect.{ContextShift, IO, Timer}
 import cats.implicits._
 

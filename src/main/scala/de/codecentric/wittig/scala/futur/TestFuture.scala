@@ -1,7 +1,5 @@
 package de.codecentric.wittig.scala.futur
 
-import cats.syntax.option.catsSyntaxOptionId
-
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.Failure
@@ -13,20 +11,32 @@ import de.codecentric.wittig.scala.Implicits._
   */
 object TestFuture extends App {
 
-//  test1
+  val randomNumber = 42
 
-  def test1 = {
+  println("test1: " + test1.await == randomNumber)
+  println("test2: " + test2.await)
 
-    val f = Future { 5 }
-    f andThen {
-      case _ =>
-        println("gunther")
-        throw new IllegalArgumentException("dd")
-    } andThen {
-      case Failure(t) => println(t)
-      case Success(v) => println(v)
-    }
+  def test1: Future[Int] = {
+    val f = Future(randomNumber)
+    f.andThen {
+        case _ =>
+          println("andthen 1")
+          throw new IllegalArgumentException("dd")
+      }
+      .andThen {
+        case Failure(t) => println("andthen 2 failure" + t) // not called.
+        case Success(v) => println("andthen 2 success" + v)
+      }
+    f
+  }
 
-    Thread.sleep(1000)
+  def test2 = {
+    val f1 = Future(randomNumber)
+    val f2 = Future(new Exception("Boom"))
+
+    val u1: Unit = f1.failed.foreach(t => println(t))
+    val u2: Unit = f2.foreach(i => println(i))
+
+    Future.sequence(List(f1, f2))
   }
 }

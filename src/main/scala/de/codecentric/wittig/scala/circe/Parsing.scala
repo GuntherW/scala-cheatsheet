@@ -1,7 +1,7 @@
 package de.codecentric.wittig.scala.circe
 
-import io.circe.{Json, ParsingFailure}
 import io.circe.parser._
+import io.circe.{Json, ParsingFailure}
 
 object Parsing extends App {
 

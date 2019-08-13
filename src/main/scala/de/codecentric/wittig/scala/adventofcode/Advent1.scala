@@ -2,10 +2,8 @@ package de.codecentric.wittig.scala.adventofcode
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.{Flow, Sink, Source}
+import akka.stream.scaladsl.{Flow, Sink}
 
-import scala.util.Random._
-import scala.math.abs
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object Advent1 extends App {
