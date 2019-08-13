@@ -13,20 +13,9 @@ object Advent1 extends App {
 
   def l(): Iterator[Char] = scala.io.Source.fromFile("input.txt").getLines.flatMap(_.toArray)
 
-  val source = akka.stream.scaladsl.Source
-    .fromIterator(l)
-    .via(collectDouble)
-    .map(_.toLong)
-    .fold(0L)(_ + _)
-
-  val sink = Sink.foreach(println)
-  source
-    .runWith(sink)
-    .foreach(_ => system.terminate)
-
   val collectDouble = Flow[Char].statefulMapConcat { () =>
     var firstChar: Option[Char] = None
-    var lastChar: Option[Char]  = None
+    val lastChar: Option[Char]  = None
     var listOfRes               = List.empty[Char]
 
     currentChar =>
@@ -40,4 +29,15 @@ object Advent1 extends App {
 
   }
 
+  val source = akka.stream.scaladsl.Source
+    .fromIterator(l)
+    .via(collectDouble)
+    .map(_.toLong)
+    .fold(0L)(_ + _)
+
+  val sink = Sink.foreach(println)
+
+  source
+    .runWith(sink)
+    .foreach(_ => system.terminate)
 }

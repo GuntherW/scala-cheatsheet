@@ -1,7 +1,5 @@
 package de.codecentric.wittig.scala.cats
-import cats._
 import cats.implicits._
-import cats.Applicative.ops._
 import de.codecentric.wittig.scala.Implicits.RichFuture
 
 import scala.concurrent.Future
