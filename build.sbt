@@ -102,6 +102,6 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("hseeberger", "maven")
 )
 
-turbo := true
+//turbo := true
 
 scalafmtOnCompile := true

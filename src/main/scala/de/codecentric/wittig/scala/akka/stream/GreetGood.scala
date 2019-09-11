@@ -29,7 +29,7 @@ object GreetGood extends App {
           val i = " " * n
           f"$i$s%n"
       }
-      .throttle(42, 500 millis, 1, ThrottleMode.Shaping)
+      .throttle(42, 500.millis, 1, ThrottleMode.Shaping)
       .toMat(Sink.foreach(print))(Keep.right) // Keep Right für den materialized Value vom Sink.
       .run()
 
