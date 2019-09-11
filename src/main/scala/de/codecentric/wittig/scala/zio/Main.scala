@@ -1,6 +1,6 @@
 package de.codecentric.wittig.scala.zio
-import scalaz.zio.App
-import scalaz.zio.console._
+import zio.App
+import zio.console._
 
 object Main extends App {
 

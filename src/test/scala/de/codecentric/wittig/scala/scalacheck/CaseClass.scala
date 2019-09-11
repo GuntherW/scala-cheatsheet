@@ -26,4 +26,8 @@ object CaseClass extends Properties("Person") {
     person.birthday.age > person.age
   }
 
+  property("lkjlkj")= forAll { (person:Person) =>
+    person.age < person.birthday.age 
+  }
+
 }

@@ -22,8 +22,6 @@ scalacOptions ++= Seq(
   // Enable or disable specific warnings
   "-Xlint:_",
   //Do not adapt an argument list to match the receiver -> z.B. List(1,2,3).toSet()
-  "-Yno-adapted-args",
-  // Warn when dead code is identified
   "-Ywarn-dead-code",
   // Warn when local and private vals, vars, defs, and types are unused
 //  "-Ywarn-unused",
@@ -34,17 +32,19 @@ scalacOptions ++= Seq(
   "-Ypartial-unification"
 )
 
+val akkaVersion    = "2.5.25"
+val catsVersion    = "2.0.0"
+val circeVersion   = "0.12.1"
+val fs2            = "2.0.0"
+val kittensVersion = "2.0.0"
+val monixVersion   = "3.0.0"
 val monocleVersion = "1.6.0"
-val circeVersion   = "0.11.1"
-val akkaVersion    = "2.5.24"
-val catsVersion    = "1.6.1"
-val fs2            = "1.0.5"
 val scala          = "2.12.9"
+val zioVersion     = "1.0.0-RC12-1"
 
 // Change this to another test framework if you prefer
 libraryDependencies ++= Seq(
   "com.typesafe.akka"          %% "akka-stream"    % akkaVersion,
-  "io.reactivex"               %% "rxscala"        % "0.26.5",
   "org.scalaz"                 %% "scalaz-core"    % "7.2.28",
   "com.typesafe.scala-logging" %% "scala-logging"  % "3.9.2",
   "ch.qos.logback"             % "logback-classic" % "1.2.3",
@@ -54,8 +54,8 @@ libraryDependencies ++= Seq(
   "io.circe"                   %% "circe-core"     % circeVersion,
   "io.circe"                   %% "circe-generic"  % circeVersion,
   "io.circe"                   %% "circe-parser"   % circeVersion,
-  "org.scalaz"                 %% "scalaz-zio"     % "1.0-RC5", // ZIO
-
+  "dev.zio"                    %% "zio"            % zioVersion,
+  //"dev.zio"                    %% "zio-streams"    % zioVersionm,
   // fs2
   "co.fs2" %% "fs2-core"             % fs2,
   "co.fs2" %% "fs2-io"               % fs2, // optional I/O library
@@ -65,7 +65,7 @@ libraryDependencies ++= Seq(
   // cats
   "org.typelevel" %% "cats-core" % catsVersion,
   "org.typelevel" %% "cats-free" % catsVersion,
-  "org.typelevel" %% "kittens"   % "1.2.1",
+  "org.typelevel" %% "kittens"   % kittensVersion,
   //monocle
   "com.github.julien-truffaut" %% "monocle-core"    % monocleVersion,
   "com.github.julien-truffaut" %% "monocle-generic" % monocleVersion,
@@ -74,7 +74,7 @@ libraryDependencies ++= Seq(
   "com.github.julien-truffaut" %% "monocle-refined" % monocleVersion,
   "com.github.julien-truffaut" %% "monocle-law"     % monocleVersion % "test",
   "com.beachape"               %% "enumeratum"      % "1.5.13",
-  "io.monix"                   %% "monix"           % "3.0.0-RC3",
+  "io.monix"                   %% "monix"           % monixVersion,
   "com.github.mpilquist"       %% "simulacrum"      % "0.19.0",
 // Ammonite
   // "com.lihaoyi" % "ammonite" % "1.1.0" % "test" cross CrossVersion.full,
@@ -90,7 +90,7 @@ libraryDependencies ++= Seq(
 
 resolvers += Resolver.sonatypeRepo("snapshots")
 resolvers += Resolver.sonatypeRepo("pulblic")
-resolvers += "bintray/non" at "http://dl.bintray.com/non/maven"
+resolvers += "bintray/non" at "https://dl.bintray.com/non/maven"
 
 // Improved Incremental compilation
 //incOptions := incOptions.value.withNameHashing(true)

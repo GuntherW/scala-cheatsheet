@@ -15,7 +15,8 @@ object Main extends App {
 
 //  readPrint()
   //flatMapOperator()
-
+  implicit val cs: ContextShift[IO] = IO.contextShift(global)
+  implicit val timer: Timer[IO]     = IO.timer(global)
   parMapN
 
   def first() = {
@@ -57,6 +58,7 @@ object Main extends App {
   }
 
   def readPrint() = {
+
     def putStrlLn(value: String) = IO.fromFuture(IO(Future(println(value))))
 //    def putStrlLn(value: String) = IO(println(value))
     val readLn = IO(scala.io.StdIn.readLine)
@@ -87,20 +89,12 @@ object Main extends App {
   }
 
   def shift() = {
-    import scala.concurrent.ExecutionContext.Implicits.global
-
-    implicit val contextShift = IO.contextShift(global)
-    val task                  = IO(println("task"))
-
-    IO.shift(contextShift).flatMap(_ => task)
-
+    val task = IO(println("task"))
+    IO.shift(cs).flatMap(_ => task)
     IO.shift *> task
   }
 
   def parMapN = {
-
-    implicit val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
-    implicit val timer: Timer[IO]     = IO.timer(ExecutionContext.global)
 
     case class Person(name: String, age: Int)
     val ioInt    = IO.sleep(2 seconds) *> IO(22)
@@ -108,11 +102,11 @@ object Main extends App {
 
     val eins: IO[String] = ioInt *> ioString // IO("Peter") // flatMap
     val zwei: IO[Int]    = ioInt <* ioString // IO(22) // flatMap
-    val drei: IO[String] = ioInt &> ioString // IO("Peter") // parallel
-    val vier: IO[Int]    = ioInt <& ioString // IO(22) // parallel
+    val drei             = ioInt &> ioString // IO("Peter") // parallel
+    val vier             = ioInt <& ioString // IO(22) // parallel
 
     val sequenziell: IO[Person] = (ioString, ioInt).mapN(Person)
-    val parallel: IO[Person]    = (ioString, ioInt).parMapN { case (a, b) => Person(a, b) } // needs implicit ContextShift
+    val parallel                = (ioString, ioInt).parMapN { case (a, b) => Person(a, b) } // needs implicit ContextShift
 
     val seq = for {
       start <- IO(System.nanoTime())

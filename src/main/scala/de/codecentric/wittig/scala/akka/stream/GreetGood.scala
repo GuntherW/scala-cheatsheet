@@ -35,4 +35,5 @@ object GreetGood extends App {
 
   done.onComplete(_ => system.terminate)
   Await.ready(system.whenTerminated, Duration.Inf)
+
 }
