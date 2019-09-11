@@ -29,7 +29,7 @@ scalacOptions ++= Seq(
   // "-Ywarn-unused-import",
   // Warn when non-Unit expression results are unused
   "-Ywarn-value-discard",
-  "-Ypartial-unification"
+  "-Ymacro-annotations" // scala 2.13.0
 )
 
 val akkaVersion    = "2.5.25"
@@ -39,7 +39,7 @@ val fs2            = "2.0.0"
 val kittensVersion = "2.0.0"
 val monixVersion   = "3.0.0"
 val monocleVersion = "1.6.0"
-val scala          = "2.12.9"
+val scala          = "2.13.0"
 val zioVersion     = "1.0.0-RC12-1"
 
 // Change this to another test framework if you prefer
@@ -85,29 +85,15 @@ libraryDependencies ++= Seq(
   "org.scalacheck"          %% "scalacheck"   % "1.14.0"   % "test"
 )
 
-// Uncomment to use Akka
-//libraryDependencies += "com.typesafe.akka" % "akka-actor_2.11" % "2.3.9"
-
 resolvers += Resolver.sonatypeRepo("snapshots")
 resolvers += Resolver.sonatypeRepo("pulblic")
 resolvers += "bintray/non" at "https://dl.bintray.com/non/maven"
-
-// Improved Incremental compilation
-//incOptions := incOptions.value.withNameHashing(true)
 
 // addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.6.0" cross CrossVersion.binary)// Improved dependency management
 
 updateOptions := updateOptions.value.withCachedResolution(true)
 
-//EclipseKeys.preTasks := Seq(compile in Compile) // Compile the project before generating Eclipse files, so that .class files for views and routes are present
-//EclipseKeys.withBundledScalaContainers := false
-
-//tutSettings
-
 initialCommands in (Test, console) := """ammonite.Main().run()"""
-
-// for @Lenses macro support
-addCompilerPlugin("org.scalamacros" %% "paradise" % "2.1.1" cross CrossVersion.full)
 
 updateConfiguration in updateSbtClassifiers := (updateConfiguration in updateSbtClassifiers).value.withMissingOk(true)
 
@@ -117,3 +103,5 @@ resolvers ++= Seq(
 )
 
 turbo := true
+
+scalafmtOnCompile := true

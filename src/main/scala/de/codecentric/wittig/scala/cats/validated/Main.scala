@@ -46,7 +46,7 @@ object Data {
 
   def validateAgeAndRank(age: Int, rank: Int): Validation[Unit] =
     if (age > rank)
-      success(Unit)
+      success(())
     else
       failure(Error.InvalidAgeBiggerRank)
 

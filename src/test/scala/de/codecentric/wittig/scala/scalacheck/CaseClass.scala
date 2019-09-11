@@ -18,7 +18,7 @@ object CaseClass extends Properties("Person") {
   implicit val arbPerson: Arbitrary[Person] = Arbitrary {
     for {
       name <- arbitrary[String]
-      age <- Gen.choose(0, 300)
+      age  <- Gen.choose(0, 300)
     } yield Person(name, age)
   }
 
@@ -26,8 +26,8 @@ object CaseClass extends Properties("Person") {
     person.birthday.age > person.age
   }
 
-  property("lkjlkj")= forAll { (person:Person) =>
-    person.age < person.birthday.age 
+  property("lkjlkj") = forAll { (person: Person) =>
+    person.age < person.birthday.age
   }
 
 }

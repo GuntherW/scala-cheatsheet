@@ -38,8 +38,8 @@ object StringSpecification extends Properties("String") {
   }
 
   //Generieren von geraden Zahlen auf unterschiedliche Weise.
-  val evenInteger = Arbitrary.arbitrary[Int] suchThat (_ % 2 == 0)
-  val smallEvenInteger = Gen.choose(0, 200) suchThat (_ % 2 == 0)
+  val evenInteger      = Arbitrary.arbitrary[Int] suchThat (_ % 2 == 0)
+  val smallEvenInteger = Gen.choose(0, 200) suchThat (_       % 2 == 0)
   property("Gerade Ints") = forAll(smallEvenInteger, evenInteger) { (a: Int, b: Int) =>
     (a + b) % 2 == 0
   }
