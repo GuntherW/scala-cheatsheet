@@ -1,4 +1,4 @@
-package de.codecentric.wittig.scala.cats
+package de.codecentric.wittig.scala.catsRelated
 import cats.Show
 import cats.derived.{auto, semi}
 import cats.syntax.show.toShow

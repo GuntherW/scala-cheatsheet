@@ -34,18 +34,18 @@ scalacOptions ++= Seq(
 
 val akkaVersion    = "2.5.25"
 val catsVersion    = "2.0.0"
-val circeVersion   = "0.12.1"
-val fs2            = "2.0.0"
+val circeVersion   = "0.12.2"
+val fs2            = "2.0.1"
 val kittensVersion = "2.0.0"
 val monixVersion   = "3.0.0"
-val monocleVersion = "1.6.0"
-val scala          = "2.13.0"
-val zioVersion     = "1.0.0-RC12-1"
+val monocleVersion = "2.0.0"
+val scala          = "2.13.1"
+val zioVersion     = "1.0.0-RC14"
 
 // Change this to another test framework if you prefer
 libraryDependencies ++= Seq(
   "com.typesafe.akka"          %% "akka-stream"    % akkaVersion,
-  "org.scalaz"                 %% "scalaz-core"    % "7.2.28",
+  "org.scalaz"                 %% "scalaz-core"    % "7.2.29",
   "com.typesafe.scala-logging" %% "scala-logging"  % "3.9.2",
   "ch.qos.logback"             % "logback-classic" % "1.2.3",
   "org.scala-lang"             % "scala-reflect"   % scala,
@@ -76,24 +76,17 @@ libraryDependencies ++= Seq(
   "com.beachape"               %% "enumeratum"      % "1.5.13",
   "io.monix"                   %% "monix"           % monixVersion,
   "com.github.mpilquist"       %% "simulacrum"      % "0.19.0",
-// Ammonite
-  // "com.lihaoyi" % "ammonite" % "1.1.0" % "test" cross CrossVersion.full,
-  // "com.lihaoyi" %% "ammonite-ops" % "1.1.0" % "test",
-  "org.mockito"             % "mockito-all"   % "1.10.19"  % "test",
-  "org.scalatest"           %% "scalatest"    % "3.0.8"    % "test",
-  "org.seleniumhq.selenium" % "selenium-java" % "3.141.59" % "test",
-  "org.scalacheck"          %% "scalacheck"   % "1.14.0"   % "test"
+  "org.mockito"                % "mockito-all"      % "1.10.19" % "test",
+  "org.scalatest"              %% "scalatest"       % "3.0.8" % "test",
+  "org.seleniumhq.selenium"    % "selenium-java"    % "3.141.59" % "test",
+  "org.scalacheck"             %% "scalacheck"      % "1.14.2" % "test"
 )
 
 resolvers += Resolver.sonatypeRepo("snapshots")
 resolvers += Resolver.sonatypeRepo("pulblic")
 resolvers += "bintray/non" at "https://dl.bintray.com/non/maven"
 
-// addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.6.0" cross CrossVersion.binary)// Improved dependency management
-
 updateOptions := updateOptions.value.withCachedResolution(true)
-
-initialCommands in (Test, console) := """ammonite.Main().run()"""
 
 updateConfiguration in updateSbtClassifiers := (updateConfiguration in updateSbtClassifiers).value.withMissingOk(true)
 

@@ -1,4 +1,4 @@
-package de.codecentric.wittig.scala.cats.effects
+package de.codecentric.wittig.scala.catsRelated.effects
 
 import cats.FlatMap.ops.toAllFlatMapOps
 import cats.effect.{Fiber, IO, Timer}

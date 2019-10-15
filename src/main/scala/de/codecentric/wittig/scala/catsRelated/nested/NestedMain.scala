@@ -1,4 +1,4 @@
-package de.codecentric.wittig.scala.cats.nested
+package de.codecentric.wittig.scala.catsRelated.nested
 
 import cats.data.Nested
 import cats.implicits._

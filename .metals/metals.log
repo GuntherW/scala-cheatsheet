@@ -1,0 +1,144 @@
+INFO  time: initialize in 0.31s
+WARN  no build target: /home/gunther/projekte/scala/scala-cheatsheet/src/main/scala/de/codecentric/wittig/scala/akka/stream/GreetGood.scala
+INFO  running '/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Djline.terminal=jline.UnsupportedTerminal -Dsbt.log.noformat=true -Dfile.encoding=UTF-8 -jar /tmp/metals9056934161021582920/sbt-launch.jar metalsEnable bloopInstall'
+INFO  no build target: using presentation compiler with only scala-library
+INFO  [info] Loading settings for project global-plugins from plugins.sbt,metals.sbt,idea.sbt ...
+INFO  [info] Loading global plugins from /home/gunther/.sbt/1.0/plugins
+INFO  [info] Loading settings for project scala-cheatsheet-build from plugins.sbt ...
+INFO  [info] Loading project definition from /home/gunther/projekte/scala/scala-cheatsheet/project
+INFO  [success] Generated .bloop/scala-cheatsheet-build.json
+INFO  [success] Total time: 1 s, completed 11.09.2019 10:51:10
+INFO  [info] Loading settings for project scala-cheatsheet from build.sbt ...
+WARN  code navigation does not work for the file '/home/gunther/projekte/scala/scala-cheatsheet/src/main/scala/de/codecentric/wittig/scala/akka/stream/GreetGood.scala' because it doesn't belong to a build target.
+WARN  code navigation does not work for the file '/home/gunther/projekte/scala/scala-cheatsheet/src/main/scala/de/codecentric/wittig/scala/akka/stream/GreetGood.scala' because it doesn't belong to a build target.
+INFO  [info] Set current project to scalacheat (in build file:/home/gunther/projekte/scala/scala-cheatsheet/)
+WARN  code navigation does not work for the file '/home/gunther/projekte/scala/scala-cheatsheet/src/main/scala/de/codecentric/wittig/scala/akka/stream/GreetGood.scala' because it doesn't belong to a build target.
+WARN  code navigation does not work for the file '/home/gunther/projekte/scala/scala-cheatsheet/src/main/scala/de/codecentric/wittig/scala/akka/stream/GreetGood.scala' because it doesn't belong to a build target.
+INFO  [info] Set current project to scalacheat (in build file:/home/gunther/projekte/scala/scala-cheatsheet/)
+INFO  [info] semanticdb-scalac is enabled
+WARN  code navigation does not work for the file '/home/gunther/projekte/scala/scala-cheatsheet/src/main/scala/de/codecentric/wittig/scala/akka/stream/GreetGood.scala' because it doesn't belong to a build target.
+WARN  code navigation does not work for the file '/home/gunther/projekte/scala/scala-cheatsheet/src/main/scala/de/codecentric/wittig/scala/akka/stream/GreetGood.scala' because it doesn't belong to a build target.
+Sep 11, 2019 10:51:20 AM scala.meta.internal.pc.CompilerAccess handleError
+SCHWERWIEGEND: null
+java.lang.NullPointerException
+	at scala.meta.internal.pc.HoverProvider.seenFromType(HoverProvider.scala:106)
+	at scala.meta.internal.pc.HoverProvider.hover(HoverProvider.scala:42)
+
+WARN  no build target: /home/gunther/projekte/scala/scala-cheatsheet/src/test/scala/de/codecentric/wittig/scala/scalacheck/CaseClass.scala
+INFO  [success] Generated .bloop/scala-cheatsheet-test.json
+INFO  [success] Generated .bloop/scala-cheatsheet.json
+INFO  [success] Total time: 9 s, completed 11.09.2019 10:51:24
+INFO  build tool exit: 0
+INFO  time: ran 'sbt bloopInstall' in 26s
+INFO  running embedded 'bloop bsp --protocol local --socket /tmp/bsp400870511172110307/-1ri1qpy148oy8.socket'
+The server is listening for incoming connections at local:///tmp/bsp400870511172110307/-1ri1qpy148oy8.socket...
+Accepted incoming BSP client connection at local:///tmp/bsp400870511172110307/-1ri1qpy148oy8.socket
+INFO  tracing is disabled for protocol BSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /home/gunther/.cache/metals/bsp.trace.json
+request received: build/initialize
+INFO  time: connected to build server in 2.12s
+BSP initialization handshake complete.
+INFO  time: imported build in 0.21s
+WARN  Could not find java sources in Some(/usr/lib/jvm/java-8-openjdk-amd64). Java symbols will not be available.
+INFO  time: indexed workspace in 2.88s
+Downloading https://repo1.maven.org/maven2/org/scalameta/mtags_2.13.0/0.7.2/mtags_2.13.0-0.7.2.pom.sha1
+Downloading https://repo1.maven.org/maven2/org/scalameta/mtags_2.13.0/0.7.2/mtags_2.13.0-0.7.2.pom
+Downloaded https://repo1.maven.org/maven2/org/scalameta/mtags_2.13.0/0.7.2/mtags_2.13.0-0.7.2.pom
+Downloaded https://repo1.maven.org/maven2/org/scalameta/mtags_2.13.0/0.7.2/mtags_2.13.0-0.7.2.pom.sha1
+Downloading https://repo1.maven.org/maven2/org/scalameta/mtags_2.13.0/0.7.2/
+Downloaded https://repo1.maven.org/maven2/org/scalameta/mtags_2.13.0/0.7.2/
+INFO  compiling scala-cheatsheet (88 scala sources)
+WARN  no build target: /home/gunther/projekte/scala/scala-cheatsheet/build.sbt
+INFO  Non-compiled module 'compiler-bridge_2.13' for Scala 2.13.0. Compiling...
+INFO  shutting down Metals
+shutdown request received: build/shutdown
+[0m[31m[E][0m BSP server cancelled, closing socket...
+Client in /home/gunther/projekte/scala/scala-cheatsheet/.bloop triggered cancellation. Cancelling tasks...
+INFO  disconnected: build server
+ERROR Failed to connect with build server, no functionality will work.
+java.util.concurrent.ExecutionException: Boxed InterruptedException
+	at scala.concurrent.impl.Promise$.resolver(Promise.scala:86)
+	at scala.concurrent.impl.Promise$.scala$concurrent$impl$Promise$$resolveTry(Promise.scala:79)
+	at scala.concurrent.impl.Promise$DefaultPromise.tryComplete(Promise.scala:284)
+	at scala.concurrent.Promise.complete(Promise.scala:53)
+	at scala.concurrent.Promise.complete$(Promise.scala:52)
+	at scala.concurrent.impl.Promise$DefaultPromise.complete(Promise.scala:187)
+	at scala.concurrent.java8.FuturesConvertersImpl$P.accept(FutureConvertersImpl.scala:92)
+	at scala.concurrent.java8.FuturesConvertersImpl$P.accept(FutureConvertersImpl.scala:89)
+	at java.util.concurrent.CompletableFuture.uniWhenComplete(CompletableFuture.java:760)
+	at java.util.concurrent.CompletableFuture$UniWhenComplete.tryFire(CompletableFuture.java:736)
+	at java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:474)
+	at java.util.concurrent.CompletableFuture.completeExceptionally(CompletableFuture.java:1977)
+	at scala.meta.internal.metals.BuildServerConnection.$anonfun$register$2(BuildServerConnection.scala:64)
+	at scala.runtime.java8.JFunction0$mcZ$sp.apply(JFunction0$mcZ$sp.java:23)
+	at scala.util.Try$.apply(Try.scala:213)
+	at scala.meta.internal.metals.BuildServerConnection.$anonfun$register$1(BuildServerConnection.scala:64)
+	at scala.meta.internal.metals.Cancelable$$anon$1.cancel(Cancelable.scala:17)
+	at scala.meta.internal.metals.Cancelable$.$anonfun$cancelAll$1(Cancelable.scala:27)
+	at scala.collection.Iterator.foreach(Iterator.scala:941)
+	at scala.collection.Iterator.foreach$(Iterator.scala:941)
+	at scala.collection.AbstractIterator.foreach(Iterator.scala:1429)
+	at scala.collection.IterableLike.foreach(IterableLike.scala:74)
+	at scala.collection.IterableLike.foreach$(IterableLike.scala:73)
+	at scala.collection.AbstractIterable.foreach(Iterable.scala:56)
+	at scala.meta.internal.metals.Cancelable$.cancelAll(Cancelable.scala:26)
+	at scala.meta.internal.metals.MutableCancelable.cancel(MutableCancelable.scala:19)
+	at scala.meta.internal.metals.BuildServerConnection.cancel(BuildServerConnection.scala:86)
+	at scala.meta.internal.metals.BuildServerConnection.$anonfun$shutdown$1(BuildServerConnection.scala:46)
+	at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:23)
+	at scala.concurrent.Future$.$anonfun$apply$1(Future.scala:659)
+	at scala.util.Success.$anonfun$map$1(Try.scala:255)
+	at scala.util.Success.map(Try.scala:213)
+	at scala.concurrent.Future.$anonfun$map$1(Future.scala:292)
+	at scala.concurrent.impl.Promise.liftedTree1$1(Promise.scala:33)
+	at scala.concurrent.impl.Promise.$anonfun$transform$1(Promise.scala:33)
+	at scala.concurrent.impl.CallbackRunnable.run(Promise.scala:64)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.lang.InterruptedException
+	at scala.meta.internal.metals.BuildServerConnection.$anonfun$register$2(BuildServerConnection.scala:64)
+	at scala.runtime.java8.JFunction0$mcZ$sp.apply(JFunction0$mcZ$sp.java:23)
+	at scala.util.Try$.apply(Try.scala:213)
+	at scala.meta.internal.metals.BuildServerConnection.$anonfun$register$1(BuildServerConnection.scala:64)
+	at scala.meta.internal.metals.Cancelable$$anon$1.cancel(Cancelable.scala:17)
+	at scala.meta.internal.metals.Cancelable$.$anonfun$cancelAll$1(Cancelable.scala:27)
+	at scala.collection.Iterator.foreach(Iterator.scala:941)
+	at scala.collection.Iterator.foreach$(Iterator.scala:941)
+	at scala.collection.AbstractIterator.foreach(Iterator.scala:1429)
+	at scala.collection.IterableLike.foreach(IterableLike.scala:74)
+	at scala.collection.IterableLike.foreach$(IterableLike.scala:73)
+	at scala.collection.AbstractIterable.foreach(Iterable.scala:56)
+	at scala.meta.internal.metals.Cancelable$.cancelAll(Cancelable.scala:26)
+	at scala.meta.internal.metals.MutableCancelable.cancel(MutableCancelable.scala:19)
+	at scala.meta.internal.metals.BuildServerConnection.cancel(BuildServerConnection.scala:86)
+	at scala.meta.internal.metals.BuildServerConnection.$anonfun$shutdown$1(BuildServerConnection.scala:46)
+	at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:23)
+	at scala.concurrent.Future$.$anonfun$apply$1(Future.scala:659)
+	at scala.util.Success.$anonfun$map$1(Try.scala:255)
+	at scala.util.Success.map(Try.scala:213)
+	at scala.concurrent.Future.$anonfun$map$1(Future.scala:292)
+	at scala.concurrent.impl.Promise.liftedTree1$1(Promise.scala:33)
+	at scala.concurrent.impl.Promise.$anonfun$transform$1(Promise.scala:33)
+	at scala.concurrent.impl.CallbackRunnable.run(Promise.scala:64)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+
+INFO  time: initialize in 0.29s
+INFO  running embedded 'bloop bsp --protocol local --socket /tmp/bsp1124233595806753775/sdcwwnx9mtbf.socket'
+WARN  no build target: /home/gunther/projekte/scala/scala-cheatsheet/build.sbt
+The server is listening for incoming connections at local:///tmp/bsp1124233595806753775/sdcwwnx9mtbf.socket...
+Accepted incoming BSP client connection at local:///tmp/bsp1124233595806753775/sdcwwnx9mtbf.socket
+INFO  tracing is disabled for protocol BSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /home/gunther/.cache/metals/bsp.trace.json
+request received: build/initialize
+INFO  time: connected to build server in 3.07s
+BSP initialization handshake complete.
+INFO  time: imported build in 0.19s
+WARN  Could not find java sources in Some(/usr/lib/jvm/java-8-openjdk-amd64). Java symbols will not be available.
+INFO  time: indexed workspace in 0.79s
+WARN  no build target: /home/gunther/projekte/scala/scala-cheatsheet/build.sbt
+INFO  shutting down Metals
+shutdown request received: build/shutdown
+[0m[31m[E][0m BSP server cancelled, closing socket...
+Client in /home/gunther/projekte/scala/scala-cheatsheet/.bloop triggered cancellation. Cancelling tasks...
+INFO  bloop exit: 0

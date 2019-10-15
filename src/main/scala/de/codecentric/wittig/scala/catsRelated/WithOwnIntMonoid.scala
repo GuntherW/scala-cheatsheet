@@ -1,4 +1,4 @@
-package de.codecentric.wittig.scala.cats
+package de.codecentric.wittig.scala.catsRelated
 
 import cats._
 import cats.instances.list._

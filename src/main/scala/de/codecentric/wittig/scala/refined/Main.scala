@@ -3,7 +3,9 @@ package de.codecentric.wittig.scala.refined
 import eu.timepit.refined._
 import eu.timepit.refined.api.Refined
 import eu.timepit.refined.auto._
+import eu.timepit.refined.collection.NonEmpty
 import eu.timepit.refined.numeric._
+import eu.timepit.refined.string.MatchesRegex
 object Main extends App {
 
   /** Refined for Literals at CompileTime */
@@ -20,4 +22,5 @@ object Main extends App {
   val rt2 = refineV[Positive](-x) // Left("Predicate failed: (-5>0).")
   println(rt1)
   println(rt2)
+
 }

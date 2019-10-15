@@ -1,4 +1,4 @@
-package de.codecentric.wittig.scala.cats.validated
+package de.codecentric.wittig.scala.catsRelated.validated
 
 import enumeratum.values._
 

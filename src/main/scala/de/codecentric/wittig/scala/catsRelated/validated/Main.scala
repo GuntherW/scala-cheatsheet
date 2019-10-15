@@ -1,8 +1,8 @@
-package de.codecentric.wittig.scala.cats.validated
+package de.codecentric.wittig.scala.catsRelated.validated
 
 import cats.data._
 import cats.implicits._
-import de.codecentric.wittig.scala.cats.validated.Data.Validation._
+import de.codecentric.wittig.scala.catsRelated.validated.Data.Validation._
 
 case class Data(
     email: String,

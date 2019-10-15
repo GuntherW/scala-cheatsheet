@@ -1,4 +1,4 @@
-package de.codecentric.wittig.scala.cats.effects
+package de.codecentric.wittig.scala.catsRelated.effects
 
 import cats.effect.{ContextShift, IO, Timer}
 import cats.implicits._
