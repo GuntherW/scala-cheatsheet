@@ -40,7 +40,7 @@ val kittensVersion = "2.0.0"
 val monixVersion   = "3.0.0"
 val monocleVersion = "2.0.0"
 val scala          = "2.13.1"
-val zioVersion     = "1.0.0-RC14"
+val zioVersion     = "1.0.0-RC15"
 
 // Change this to another test framework if you prefer
 libraryDependencies ++= Seq(
