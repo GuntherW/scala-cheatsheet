@@ -1,5 +1,7 @@
 package de.codecentric.wittig.scala.zio
-import zio.App
+import java.io.IOException
+
+import zio.{App, ZIO}
 import zio.console._
 
 object Main extends App {
@@ -8,7 +10,7 @@ object Main extends App {
     myAppLogic.either
       .map(_.fold(_ => 1, _ => 0))
 
-  val myAppLogic =
+  private val myAppLogic: ZIO[Console, IOException, Unit] =
     for {
       _ <- putStrLn("Hello! What is your name?")
       n <- getStrLn

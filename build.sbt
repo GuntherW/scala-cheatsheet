@@ -32,7 +32,7 @@ scalacOptions ++= Seq(
   "-Ymacro-annotations" // scala 2.13.0
 )
 
-val akkaVersion    = "2.5.25"
+val akkaVersion    = "2.5.26"
 val catsVersion    = "2.0.0"
 val circeVersion   = "0.12.2"
 val fs2            = "2.0.1"
