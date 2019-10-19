@@ -4,7 +4,7 @@ import cats.implicits._
 import zio.clock.Clock
 import zio.duration._
 import zio.{App, IO, Task, UIO, ZIO}
-
+import zio.console._
 import scala.concurrent.Future
 import scala.io.StdIn
 import scala.util.Try
@@ -12,7 +12,7 @@ import scala.util.Try
 object MainEffects extends App {
 
   def run(args: List[String]) =
-    zoption
+    fib(100).fork
       .map(i => println(s"Hallo $i"))
       .fold(_ => 1, _ => 0)
 
@@ -28,9 +28,15 @@ object MainEffects extends App {
   }
 
   // either and absolve
-  val zeither1: ZIO[Any, String, Nothing]        = IO.fail("Uh oh!")
+  val zeither1: ZIO[Any, String, Int]            = IO.fail("Uh oh!")
   val z1: ZIO[Any, Nothing, Either[String, Int]] = zeither1.either
   val z2: ZIO[Any, String, Int]                  = z1.absolve
 
   val sleep: ZIO[Clock, Nothing, Unit] = ZIO.sleep(5.seconds)
+
+  def fib(n: Long): UIO[Long] =
+    UIO {
+      if (n <= 1) UIO.succeed(n)
+      else fib(n - 1).zipWith(fib(n - 2))(_ + _)
+    }.flatten
 }

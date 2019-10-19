@@ -1,4 +1,4 @@
-name := """scalacheat"""
+name := """scala-cheatsheet"""
 
 version := "1.0"
 
