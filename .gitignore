@@ -30,3 +30,4 @@ project/plugins/project/
 /bin/
 
 .bloop
+.metals

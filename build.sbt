@@ -5,7 +5,11 @@ version := "1.0"
 scalaVersion := scala
 
 organization := "de.wittig"
-
+lazy val root = (project in file("."))
+  .configs(IntegrationTest)
+  .settings(
+    Defaults.itSettings
+  )
 scalacOptions ++= Seq(
   "-language:_",
   "-target:jvm-1.8",
@@ -34,7 +38,7 @@ scalacOptions ++= Seq(
 
 val akkaVersion    = "2.5.26"
 val catsVersion    = "2.0.0"
-val circeVersion   = "0.12.2"
+val circeVersion   = "0.12.3"
 val fs2            = "2.0.1"
 val kittensVersion = "2.0.0"
 val monixVersion   = "3.0.0"
@@ -55,13 +59,13 @@ libraryDependencies ++= Seq(
   "io.circe"                   %% "circe-generic"  % circeVersion,
   "io.circe"                   %% "circe-parser"   % circeVersion,
   "dev.zio"                    %% "zio"            % zioVersion,
+  "dev.profunktor"             %% "console4cats"   % "0.8.0",
   //"dev.zio"                    %% "zio-streams"    % zioVersionm,
   // fs2
   "co.fs2" %% "fs2-core"             % fs2,
   "co.fs2" %% "fs2-io"               % fs2, // optional I/O library
   "co.fs2" %% "fs2-reactive-streams" % fs2, // optional reactive streams interop
   "co.fs2" %% "fs2-experimental"     % fs2, // optional experimental library
-
   // cats
   "org.typelevel" %% "cats-core" % catsVersion,
   "org.typelevel" %% "cats-free" % catsVersion,
@@ -77,7 +81,7 @@ libraryDependencies ++= Seq(
   "io.monix"                   %% "monix"           % monixVersion,
   "com.github.mpilquist"       %% "simulacrum"      % "0.19.0",
   "org.mockito"                % "mockito-all"      % "1.10.19" % "test",
-  "org.scalatest"              %% "scalatest"       % "3.0.8" % "test",
+  "org.scalatest"              %% "scalatest"       % "3.0.8" % "it,test",
   "org.seleniumhq.selenium"    % "selenium-java"    % "3.141.59" % "test",
   "org.scalacheck"             %% "scalacheck"      % "1.14.2" % "test"
 )
@@ -95,6 +99,6 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("hseeberger", "maven")
 )
 
-//turbo := true
+turbo := true
 
 scalafmtOnCompile := true
