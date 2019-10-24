@@ -3,9 +3,6 @@
 /project/project/
 /project/target/
 /target/
-activator
-activator.bat
-activator-launch-1.3.0.jar
 
 # sbt specific
 .cache*

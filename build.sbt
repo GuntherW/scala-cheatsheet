@@ -70,7 +70,7 @@ libraryDependencies ++= Seq(
   "org.typelevel" %% "cats-core" % catsVersion,
   "org.typelevel" %% "cats-free" % catsVersion,
   "org.typelevel" %% "kittens"   % kittensVersion,
-  //monocle
+  // monocle
   "com.github.julien-truffaut" %% "monocle-core"    % monocleVersion,
   "com.github.julien-truffaut" %% "monocle-generic" % monocleVersion,
   "com.github.julien-truffaut" %% "monocle-macro"   % monocleVersion,
@@ -80,14 +80,16 @@ libraryDependencies ++= Seq(
   "com.beachape"               %% "enumeratum"      % "1.5.13",
   "io.monix"                   %% "monix"           % monixVersion,
   "com.github.mpilquist"       %% "simulacrum"      % "0.19.0",
-  "org.mockito"                % "mockito-all"      % "1.10.19" % "test",
-  "org.scalatest"              %% "scalatest"       % "3.0.8" % "it,test",
-  "org.seleniumhq.selenium"    % "selenium-java"    % "3.141.59" % "test",
-  "org.scalacheck"             %% "scalacheck"      % "1.14.2" % "test"
+  // test
+  "org.mockito"                % "mockito-all"                % "1.10.19"  % "test",
+  "org.scalatest"              %% "scalatest"                 % "3.0.8"    % "it,test",
+  "org.seleniumhq.selenium"    % "selenium-java"              % "3.141.59" % "test",
+  "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % "1.2.3"    % "test",
+  "org.scalacheck"             %% "scalacheck"                % "1.14.2"   % "test"
 )
 
 resolvers += Resolver.sonatypeRepo("snapshots")
-resolvers += Resolver.sonatypeRepo("pulblic")
+resolvers += Resolver.sonatypeRepo("public")
 resolvers += "bintray/non" at "https://dl.bintray.com/non/maven"
 
 updateOptions := updateOptions.value.withCachedResolution(true)
@@ -99,6 +101,9 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("hseeberger", "maven")
 )
 
+Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-s", "4") // scalacheck should emit 4 examples only
+
 turbo := true
+Global / onChangedBuildSource := ReloadOnSourceChanges
 
 scalafmtOnCompile := true

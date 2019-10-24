@@ -1,10 +1,9 @@
 package de.codecentric.wittig.scala.scalacheck
 
-import org.scalacheck.Arbitrary._
 import org.scalacheck.Prop._
 import org.scalacheck._
 
-object IntTest extends Properties("Int") {
+object WithConstraintsTest extends Properties("Int") {
 
   /**
     * Würde ohne Constraint fehlschlagen bei Int.MinValue
