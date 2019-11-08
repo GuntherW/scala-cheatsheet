@@ -1,7 +1,7 @@
 import sbt._
 
 object Version {
-  final val akkaVersion    = "2.5.26"
+  final val akkaVersion    = "2.6.0"
   final val catsVersion    = "2.0.0"
   final val catsConsole    = "0.8.0"
   final val circeVersion   = "0.12.3"
