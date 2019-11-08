@@ -7,7 +7,6 @@ import akka.stream.scaladsl.{Flow, Sink}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object Advent1 extends App {
-
   implicit val system       = ActorSystem("Advent1")
   implicit val materializer = ActorMaterializer()
 
@@ -26,7 +25,6 @@ object Advent1 extends App {
         listOfRes = currentChar :: listOfRes
 
       listOfRes
-
   }
 
   val source = akka.stream.scaladsl.Source

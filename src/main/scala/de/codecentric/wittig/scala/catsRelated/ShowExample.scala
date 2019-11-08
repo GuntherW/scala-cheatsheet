@@ -8,7 +8,6 @@ import scala.concurrent.duration._
 case class Container(name: String, duration: FiniteDuration)
 
 object ShowExample extends App {
-
 //  implicit val showFin: Show[FiniteDuration] = Show.show(round)
   implicit val showPerson: Show[Container] = {
     import cats.implicits._

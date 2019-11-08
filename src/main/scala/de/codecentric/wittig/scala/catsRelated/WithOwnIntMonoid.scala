@@ -8,7 +8,6 @@ import cats.instances.tuple._
 import cats.syntax.monoid._
 
 object WithOwnIntMonoid extends App {
-
   implicit val m = new Monoid[Int] {
     override def empty: Int                   = 1
     override def combine(x: Int, y: Int): Int = x * y
@@ -29,5 +28,4 @@ object WithOwnIntMonoid extends App {
   val list1 = List(1, 2, 3)
   val list2 = List(3, 4, 5)
   println(list1 |+| list2)
-
 }

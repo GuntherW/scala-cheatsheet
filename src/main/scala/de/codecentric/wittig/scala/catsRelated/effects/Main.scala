@@ -8,7 +8,6 @@ import scala.concurrent.duration.DurationDouble
 import scala.concurrent.{ExecutionContext, Future}
 
 object Main extends App {
-
 //  first()
 //  fibStackSafe()
 //  fromFuture()
@@ -58,7 +57,6 @@ object Main extends App {
   }
 
   def readPrint() = {
-
     def putStrlLn(value: String) = IO.fromFuture(IO(Future(println(value))))
 //    def putStrlLn(value: String) = IO(println(value))
     val readLn = IO(scala.io.StdIn.readLine)
@@ -72,7 +70,6 @@ object Main extends App {
   }
 
   def flatMapOperator() = {
-
     // Needed for `sleep`
     implicit val timer = IO.timer(ExecutionContext.global)
 
@@ -95,7 +92,6 @@ object Main extends App {
   }
 
   def parMapN = {
-
     case class Person(name: String, age: Int)
     val ioInt    = IO.sleep(2 seconds) *> IO(22)
     val ioString = IO.sleep(2 seconds) *> IO("Peter")
@@ -122,6 +118,5 @@ object Main extends App {
 
     println(seq.unsafeRunSync()) // runs 4 seconds
     println(par.unsafeRunSync()) // runs 2 seconds
-
   }
 }

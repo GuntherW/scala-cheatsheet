@@ -9,7 +9,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
   *  This can be done exactly once.
   */
 object Main extends App {
-
   def getFoo(): Future[Foo] = {
     val p = Promise[Foo]
     Future {

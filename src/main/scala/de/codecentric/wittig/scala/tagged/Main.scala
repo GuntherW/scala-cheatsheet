@@ -19,7 +19,6 @@ package notypes {
       id: String,                         // unique player profile identifier
       bracketMapping: Map[String, String] // arena to bracket mapping
   ) {
-
     /**
       * Change current bracket of player in arena
       */
@@ -35,7 +34,6 @@ package object tags {
   type ArenaId   = String @@ ArenaIdTag
   type BracketId = String @@ BracketIdTag
   type ProfileId = String @@ ProfileIdTag
-
 }
 
 package tags {
@@ -71,5 +69,4 @@ object Main extends App {
 
   PlayerProfile(playerId, Map(arenaId -> bracketId))
   //  PlayerProfile(playerId, Map(bracketId -> arenaId)) // compile error
-
 }

@@ -5,7 +5,6 @@ import cats.implicits._
 import fs2._
 
 object Main extends IOApp {
-
   def run(args: List[String]): IO[ExitCode] =
     IO(println("Hallo Welt")) *> IO(ExitCode.Success)
 

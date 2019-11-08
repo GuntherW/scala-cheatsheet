@@ -1,7 +1,6 @@
 package com.example.copy
 
 object Main extends App {
-
   case class Person(name: String, alter: Int, adresse: Adresse)
   case class Adresse(strasse: String, plz: Int)
 

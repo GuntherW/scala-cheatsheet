@@ -4,10 +4,8 @@ import reflect.macros.whitebox.Context
 import scala.reflect.macros.whitebox
 
 object MeinMacro extends App {
-
   println("Hallo Welt")
   object DebugMacros {
-
     // Ohne Parameter
     def hello(): Unit = macro hello_impl
 
@@ -25,5 +23,4 @@ object MeinMacro extends App {
       reify { println(param.splice) }
     }
   }
-
 }

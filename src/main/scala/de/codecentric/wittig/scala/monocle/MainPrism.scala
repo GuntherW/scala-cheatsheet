@@ -4,7 +4,6 @@ package de.codecentric.wittig.scala.monocle
   *A Prism is an optic used to select part of a Sum type (also known as Coproduct), e.g. sealed trait or Enum.
   */
 object MainPrism extends App {
-
   sealed trait Json
   case object JNull                     extends Json
   case class JStr(v: String)            extends Json

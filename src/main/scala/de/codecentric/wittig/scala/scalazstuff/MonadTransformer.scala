@@ -11,7 +11,6 @@ import Scalaz._
   * @author gunther
   */
 object MonadTransformer extends App {
-
   val getX: Future[Option[Int]] = Future(Some(2))
   val getY: Future[Option[Int]] = Future(Some(3))
 

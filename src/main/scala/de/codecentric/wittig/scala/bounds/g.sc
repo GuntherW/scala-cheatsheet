@@ -1,7 +1,6 @@
 package de.codecentric.wittig.scala.bounds
 
 object g {
-
   import scala.language.higherKinds
 
   trait Container[M[_]] {

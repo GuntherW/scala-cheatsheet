@@ -4,7 +4,6 @@ package de.codecentric.wittig.scala.patternmatching
   * @author gunther
   */
 object Matching extends App with Auth {
-
   trait User {
     def name: String
     def score: Int
@@ -46,5 +45,4 @@ object Matching extends App with Auth {
   premiumUser match {
     case asScore(score) => println(s"Score ist $score")
   }
-
 }

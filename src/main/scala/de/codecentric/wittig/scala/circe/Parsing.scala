@@ -4,7 +4,6 @@ import io.circe.parser._
 import io.circe.{Json, ParsingFailure}
 
 object Parsing extends App {
-
   val rawJson: String =
     """
       {

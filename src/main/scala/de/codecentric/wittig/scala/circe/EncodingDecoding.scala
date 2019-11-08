@@ -5,7 +5,6 @@ import io.circe.parser.decode
 import io.circe.syntax._
 
 object EncodingDecoding extends App {
-
   simple()
   semiAutomatic()
   withAnnotation()

@@ -6,7 +6,6 @@ package de.codecentric.wittig.scala.option
   *
   */
 object UseOption extends App {
-
   val p: String => Boolean = _.isEmpty
   val f: String => String  = _.toUpperCase
 

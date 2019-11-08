@@ -18,7 +18,6 @@ object Person {
 final case class PersonDto(name: String, age: Long)
 
 object MappingGen {
-
   val personMapping = {
     // name = lastname + ", " + firstname
     // age = age.toLong
@@ -52,7 +51,6 @@ object Examples extends App {
 }
 
 object Mapping2 extends App {
-
   def convert(person: Person) = {
     val personGen = implicitly[LabelledGeneric[Person]]
 

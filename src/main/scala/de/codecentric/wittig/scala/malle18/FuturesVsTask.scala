@@ -7,7 +7,6 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 
 object FuturesVsTask extends App {
-
   val map1: Int => Int    = _ + 1
   val map2: Int => String = _.toString
   val map3: String => Int = _.toInt

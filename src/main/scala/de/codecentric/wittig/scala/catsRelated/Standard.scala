@@ -3,7 +3,6 @@ package de.codecentric.wittig.scala.catsRelated
 import cats.implicits._
 
 object Standard extends App {
-
   combineTwoInts()
   combineTwoMaps()
   combineTuples()

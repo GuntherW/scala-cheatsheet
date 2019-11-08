@@ -8,7 +8,6 @@ import shapeless.syntax.singleton.mkSingletonOps
 case class Model(name: String, alter: Int)
 
 object Main extends App {
-
   val gen = LabelledGeneric[Model]
 
   val m = Model("Hans", 22)
@@ -19,5 +18,4 @@ object Main extends App {
   println("m " + m)
   println("repr1 " + repr1)
   println("repr2 " + repr2)
-
 }

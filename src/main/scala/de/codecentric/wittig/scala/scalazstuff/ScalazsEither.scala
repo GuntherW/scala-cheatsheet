@@ -7,7 +7,6 @@ import Scalaz._
   * @author gunther
   */
 object ScalazsEither extends App {
-
   def age(s: String): String \/ Int = s match {
     case "Erik" => \/-(30)
     case other  => -\/(s"name of $other is unknown")
@@ -26,5 +25,4 @@ object ScalazsEither extends App {
   } yield x + y + z
   println(totalAge)
   // -\/(name of John is unknown)
-
 }

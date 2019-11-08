@@ -1,7 +1,6 @@
 package de.codecentric.wittig.scala.scala213
 
 object Main extends App {
-
   literalTypes()
   underScoresInNumerics()
   patternMatchingStrings()
@@ -39,5 +38,4 @@ object Main extends App {
     m.view.mapValues(_.capitalize).toMap // use .view.mapValues(A=>B).toMap instead
     println(m.view.filterKeys(_ < 2).mapValues(_.capitalize).toMap)
   }
-
 }

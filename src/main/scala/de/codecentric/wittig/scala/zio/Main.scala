@@ -5,7 +5,6 @@ import zio.{App, ZIO}
 import zio.console._
 
 object Main extends App {
-
   def run(args: List[String]) =
     myAppLogic.either
       .map(_.fold(_ => 1, _ => 0))

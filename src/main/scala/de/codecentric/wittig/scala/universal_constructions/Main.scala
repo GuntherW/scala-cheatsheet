@@ -1,7 +1,6 @@
 package de.codecentric.wittig.scala.universal_constructions
 
 object Main extends App {
-
   def left[A](a: A): Either[A, Nothing]  = Left(a)
   def right[A](a: A): Either[Nothing, A] = Right(a)
 

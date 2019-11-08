@@ -20,5 +20,4 @@ object Main extends App {
   val gen2 = Generic[IceCream].to(IceCream("Schoko", 22, true))
   println(gen1)
   println(gen2)
-
 }

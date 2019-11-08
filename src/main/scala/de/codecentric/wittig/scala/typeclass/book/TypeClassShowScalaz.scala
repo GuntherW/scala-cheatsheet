@@ -3,7 +3,6 @@ import scalaz.Show
 import scalaz.syntax.show._
 
 object ZweitesBeispiel extends App {
-
   // Könnte man so machen
   implicit val hundShow = new Show[Dog] {
     override def show(c: Dog) = s"${c.name} is a ${c.age} year-old ${c.color} dog"

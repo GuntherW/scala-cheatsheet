@@ -10,7 +10,6 @@ import scala.language.higherKinds
   * Zweitbester Weg: Ins Companionobjekt schieben.
   */
 object Main extends App {
-
   @Lenses case class Street(name: String, number: Int) // ... means it contains other fields
   @Lenses("_") case class Address(street: Street)
   @Lenses case class Company(address: Address)

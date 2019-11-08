@@ -3,7 +3,6 @@ import cats.Show
 import cats.syntax.show._
 
 object DrittesBeispiel extends App {
-
   // Könnte man so machen
   implicit val hundShow = new Show[Dog] {
     override def show(c: Dog) = s"${c.name} is a ${c.age} year-old ${c.color} dog"

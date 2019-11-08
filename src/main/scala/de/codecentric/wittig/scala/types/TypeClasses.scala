@@ -6,7 +6,6 @@ import scala.language.implicitConversions
   * (View Bounds) https://twitter.github.io/scala_school/advanced-types.html
   */
 object TypeClasses extends App {
-
   implicit def strToInt(s: String) = s.toInt
 
   viewBounds()
@@ -30,5 +29,4 @@ object TypeClasses extends App {
     //    println(new Container[String].addInt("1")) // Compilefehler
     println(new Container[Int].addInt(1))
   }
-
 }

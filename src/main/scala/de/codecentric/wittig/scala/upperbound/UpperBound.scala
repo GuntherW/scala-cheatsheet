@@ -1,7 +1,6 @@
 package com.example.upperbound
 
 object UpperBound extends App {
-
   class Person(val name: String) extends Ordered[Person] {
     def compare(that: Person): Int = {
       name.compareTo(that.name)
@@ -30,5 +29,4 @@ object UpperBound extends App {
       merge(orderedMergeSort(ys), orderedMergeSort(zs))
     }
   }
-
 }

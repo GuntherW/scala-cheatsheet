@@ -37,5 +37,4 @@ trait Tier extends Lebewesen {
 object Main extends App {
   val goldi = new Wesen("Goldi") with Tier
   println(goldi.faehigkeiten)
-
 }

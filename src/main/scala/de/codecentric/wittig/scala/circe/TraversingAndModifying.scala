@@ -4,7 +4,6 @@ import io.circe._
 import io.circe.parser._
 
 object TraversingAndModifying extends App {
-
   val json: String = """
   {
     "id": "c730433b-082c-4984-9d66-855c243266f0",

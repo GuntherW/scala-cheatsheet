@@ -4,7 +4,6 @@ import org.scalacheck.Prop._
 import org.scalacheck._
 
 object WithConstraintsTest extends Properties("Int") {
-
   /**
     * Würde ohne Constraint fehlschlagen bei Int.MinValue
     */
@@ -12,5 +11,4 @@ object WithConstraintsTest extends Properties("Int") {
     i > Int.MinValue ==> // Constraint
       Math.abs(i) >= 0
   }
-
 }

@@ -1,7 +1,6 @@
 package de.codecentric.wittig.scala.compose
 
 object Compose extends App {
-
   composeMethods()
   composeFunctions()
 
@@ -24,5 +23,4 @@ object Compose extends App {
 
     println(s"vall: ${vall(2)}")
   }
-
 }

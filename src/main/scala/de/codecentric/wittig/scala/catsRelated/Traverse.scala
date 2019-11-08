@@ -5,7 +5,6 @@ import cats.implicits._
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 object Traverse extends App {
-
   futureOptionSeq()
 
   def listOptions(): Unit = {

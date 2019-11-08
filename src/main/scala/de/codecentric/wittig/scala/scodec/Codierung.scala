@@ -29,5 +29,4 @@ object Codierung extends App {
   val compressed = zlib(Codec[Arrangement])
   println(compressed.encode(arr))
   println("---")
-
 }

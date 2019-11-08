@@ -4,7 +4,6 @@ import scalaz.Monoid
 import scalaz.syntax.monoid._
 
 object MonoidSkalaz extends App {
-
   private implicit val bitwiseXor = Monoid.instance[Int](_ ^ _, 0)
 
   println(5 |+| 4) // 1

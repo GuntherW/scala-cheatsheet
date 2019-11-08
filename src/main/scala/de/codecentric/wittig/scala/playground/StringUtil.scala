@@ -1,7 +1,6 @@
 package de.codecentric.wittig.scala.playground
 
 object StringUtil {
-
   def camelcase(s: String): String =
     (s.split("_").toList match {
       case head :: tail => head :: tail.map(_.capitalize)
@@ -16,5 +15,4 @@ object StringUtil {
           s.append(c)
       }
       .toString
-
 }

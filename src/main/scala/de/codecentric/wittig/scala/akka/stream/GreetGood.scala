@@ -14,7 +14,6 @@ import akka.stream.scaladsl.Keep
   * Example from Heiko Seeberger
   */
 object GreetGood extends App {
-
   implicit val system = ActorSystem()
   implicit val mat    = ActorMaterializer()
   import system.dispatcher
@@ -35,5 +34,4 @@ object GreetGood extends App {
 
   done.onComplete(_ => system.terminate)
   Await.ready(system.whenTerminated, Duration.Inf)
-
 }

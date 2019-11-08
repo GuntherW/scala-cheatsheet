@@ -6,7 +6,6 @@ import cats.data.OptionT
 import cats.implicits._
 
 object CatsOptionT extends App {
-
   def futureNone: Future[Option[String]] = Future.successful(None)
 
   def greetingFO: Future[Option[String]] = Future.successful(Some("Hello"))
@@ -23,5 +22,4 @@ object CatsOptionT extends App {
   } yield s"$g $f $l $m"
 
   val result: Future[Option[String]] = ot.value // Future(Some("Hello Jane Doe"))
-
 }

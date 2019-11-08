@@ -5,7 +5,6 @@ package de.codecentric.wittig.scala.monoid
   * @author gunther
   */
 object MonoidApp extends App {
-
   /**
     * Hat einen "Null"-Methode
     * Hat eine Verbindungsmethode, die assoziativ verbindet (a+(b+c)) == ((a+b)+c)

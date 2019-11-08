@@ -7,7 +7,6 @@ class PersonApply(name: String) {
 }
 
 object MainApply extends App {
-
   val personApply = new PersonApply("hannes")
   val person      = personApply(22)
   println(person)

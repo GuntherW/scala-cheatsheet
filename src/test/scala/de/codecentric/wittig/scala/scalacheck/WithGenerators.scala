@@ -5,7 +5,6 @@ import org.scalacheck.{Gen, Properties}
 import helper.Printer._
 
 object WithGenerators extends Properties("String") {
-
   private val gen1: Gen[String] = Gen.alphaNumStr.map(_.toLowerCase())
   private val gen2: Gen[String] = Gen.alphaStr
 

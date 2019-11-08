@@ -7,7 +7,6 @@ trait Serializable[T] {
 }
 
 object Serializable {
-
   implicit object PersonSerializer extends Serializable[Person] {
     def ser(t: Person) = {
       s"${t.name} : ${t.alter}"
@@ -22,7 +21,6 @@ object Serializable {
 }
 
 trait Serializer {
-
   def serialize[T](t: T)(implicit serializable: Serializable[T]) = {
     serializable.ser(t)
   }

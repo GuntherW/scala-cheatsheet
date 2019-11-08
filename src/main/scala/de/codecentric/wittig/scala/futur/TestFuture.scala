@@ -10,7 +10,6 @@ import de.codecentric.wittig.scala.Implicits._
   * @author gunther
   */
 object TestFuture extends App {
-
   val randomNumber = 42
 
   println("test1: " + test1.await == randomNumber)

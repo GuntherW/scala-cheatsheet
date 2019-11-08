@@ -11,7 +11,6 @@ object size extends Poly1 {
 }
 
 object Poli extends App {
-
   assert(size(23) == 1)
   assert(size((23, "foo")) == 4)
 }

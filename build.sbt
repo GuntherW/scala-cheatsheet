@@ -2,7 +2,7 @@ name := """scala-cheatsheet"""
 
 version := "1.0"
 
-scalaVersion := scala
+scalaVersion := Version.scala
 
 organization := "de.wittig"
 lazy val root = (project in file("."))
@@ -39,54 +39,15 @@ scalacOptions ++= Seq(
 val akkaVersion    = "2.5.26"
 val catsVersion    = "2.0.0"
 val circeVersion   = "0.12.3"
-val fs2            = "2.0.1"
+val fs2            = "2.1.0"
 val kittensVersion = "2.0.0"
 val monixVersion   = "3.0.0"
 val monocleVersion = "2.0.0"
 val scala          = "2.13.1"
-val zioVersion     = "1.0.0-RC15"
+val zioVersion     = "1.0.0-RC16"
 
 // Change this to another test framework if you prefer
-libraryDependencies ++= Seq(
-  "com.typesafe.akka"          %% "akka-stream"    % akkaVersion,
-  "org.scalaz"                 %% "scalaz-core"    % "7.2.29",
-  "com.typesafe.scala-logging" %% "scala-logging"  % "3.9.2",
-  "ch.qos.logback"             % "logback-classic" % "1.2.3",
-  "org.scala-lang"             % "scala-reflect"   % scala,
-  "org.scodec"                 %% "scodec-core"    % "1.11.4", //
-  "com.chuusai"                %% "shapeless"      % "2.3.3",
-  "io.circe"                   %% "circe-core"     % circeVersion,
-  "io.circe"                   %% "circe-generic"  % circeVersion,
-  "io.circe"                   %% "circe-parser"   % circeVersion,
-  "dev.zio"                    %% "zio"            % zioVersion,
-  "dev.profunktor"             %% "console4cats"   % "0.8.0",
-  //"dev.zio"                    %% "zio-streams"    % zioVersionm,
-  // fs2
-  "co.fs2" %% "fs2-core"             % fs2,
-  "co.fs2" %% "fs2-io"               % fs2, // optional I/O library
-  "co.fs2" %% "fs2-reactive-streams" % fs2, // optional reactive streams interop
-  "co.fs2" %% "fs2-experimental"     % fs2, // optional experimental library
-  // cats
-  "org.typelevel" %% "cats-core" % catsVersion,
-  "org.typelevel" %% "cats-free" % catsVersion,
-  "org.typelevel" %% "kittens"   % kittensVersion,
-  // monocle
-  "com.github.julien-truffaut" %% "monocle-core"    % monocleVersion,
-  "com.github.julien-truffaut" %% "monocle-generic" % monocleVersion,
-  "com.github.julien-truffaut" %% "monocle-macro"   % monocleVersion,
-  "com.github.julien-truffaut" %% "monocle-state"   % monocleVersion,
-  "com.github.julien-truffaut" %% "monocle-refined" % monocleVersion,
-  "com.github.julien-truffaut" %% "monocle-law"     % monocleVersion % "test",
-  "com.beachape"               %% "enumeratum"      % "1.5.13",
-  "io.monix"                   %% "monix"           % monixVersion,
-  "com.github.mpilquist"       %% "simulacrum"      % "0.19.0",
-  // test
-  "org.mockito"                % "mockito-all"                % "1.10.19"  % "test",
-  "org.scalatest"              %% "scalatest"                 % "3.0.8"    % "it,test",
-  "org.seleniumhq.selenium"    % "selenium-java"              % "3.141.59" % "test",
-  "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % "1.2.3"    % "test",
-  "org.scalacheck"             %% "scalacheck"                % "1.14.2"   % "test"
-)
+libraryDependencies ++= Dependencies.dependencies ++ Dependencies.testDependencies
 
 resolvers += Resolver.sonatypeRepo("snapshots")
 resolvers += Resolver.sonatypeRepo("public")

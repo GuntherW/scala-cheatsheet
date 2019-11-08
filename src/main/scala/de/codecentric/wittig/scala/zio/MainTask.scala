@@ -6,7 +6,6 @@ import zio.{App, Task}
 import scala.io.StdIn
 
 object MainTask extends App {
-
   def run(args: List[String]) =
     myAppLogic.either.map {
       _.fold(t => { println(t); 1 }, _ => 0)

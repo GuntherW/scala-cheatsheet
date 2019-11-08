@@ -7,7 +7,6 @@ import scala.language.dynamics
  * Doku im Javadoc im Trait Dynamic
  */
 object Dyn extends App {
-
   class A extends Dynamic {
     def method(i: Int): String = i.toString
 

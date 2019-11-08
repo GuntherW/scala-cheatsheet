@@ -3,7 +3,6 @@ import cats.Eq
 import cats.syntax.eq._
 
 object ViertesBeispiel extends App {
-
   implicit val d = Eq.instance[Dog]((a: Dog, b: Dog) => a == b)
 
   implicit val ec = new Eq[Cat] {

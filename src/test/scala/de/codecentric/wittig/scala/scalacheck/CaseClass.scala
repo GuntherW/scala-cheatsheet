@@ -10,7 +10,6 @@ import org.scalacheck.Prop.forAll
   * @author gunther
   */
 object CaseClass extends Properties("Person") {
-
   // Diese impliciter Arbitrary[Person] kann auch durch shapeless-scalacheck automatisch erzeugt werden. Jedoch nur mit Standardwerten für die einfachen Typen (String und Int)
   implicit val arbPerson: Arbitrary[Person] = Arbitrary {
     for {

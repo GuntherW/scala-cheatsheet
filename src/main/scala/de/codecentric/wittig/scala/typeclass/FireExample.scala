@@ -21,5 +21,4 @@ object FireExample {
 
   setFire(Alcohol(1.0)) // ok
   //setFire(Water(1.0)) // FAIL
-
 }

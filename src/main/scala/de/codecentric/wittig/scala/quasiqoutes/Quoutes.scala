@@ -26,5 +26,4 @@ object Quoutes extends App {
   //
   println(toolbox.eval(toolbox.parse("2*(2+4)")))
   println(toolbox.eval(q"2*(2+5)"))
-
 }

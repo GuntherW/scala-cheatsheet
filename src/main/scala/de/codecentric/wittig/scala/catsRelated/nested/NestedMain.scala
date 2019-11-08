@@ -6,7 +6,6 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object NestedMain extends App {
-
   val a: Future[Option[Int]] = Future(1.some)
 
   val res1 = a.map(_.map(_ + 1))

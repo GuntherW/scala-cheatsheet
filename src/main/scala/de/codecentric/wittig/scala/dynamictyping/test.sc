@@ -1,7 +1,6 @@
 package de.codecentric.wittig.scala.dynamictyping
 
 object test {
-
   import Dyn._
 
   val a = new A //> a  : de.codecentric.wittig.scala.dynamictyping.Dyn.A = de.codecentric.wittig.

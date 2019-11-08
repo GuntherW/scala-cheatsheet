@@ -10,7 +10,6 @@ import scala.io.StdIn
 import scala.util.Try
 
 object MainEffects extends App {
-
   def run(args: List[String]) =
     fib(100).fork
       .map(i => println(s"Hallo $i"))

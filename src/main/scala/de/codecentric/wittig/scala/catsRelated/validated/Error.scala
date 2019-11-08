@@ -9,7 +9,6 @@ sealed abstract class Error(
 ) extends IntEnumEntry
 
 object Error extends IntEnum[Error] {
-
   val values = findValues
 
   case object InvalidEmail         extends Error(1)

@@ -8,7 +8,6 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 
 object Tasks extends App {
-
   def future1 = Future {
     Thread.sleep(5000)
     println("future1")

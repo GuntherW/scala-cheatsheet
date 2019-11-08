@@ -7,7 +7,6 @@ import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
 object TaskSeqVsPar extends App {
-
   val timeInSeconds = 1000
 
   val t1: Task[Int] = createTask(1)

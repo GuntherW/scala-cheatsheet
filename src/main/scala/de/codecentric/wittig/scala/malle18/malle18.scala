@@ -1,7 +1,6 @@
 package de.codecentric.wittig.scala
 
 package object malle18 {
-
   def time[R](msg: String)(block: => R): R = {
     val t0     = System.nanoTime()
     val result = block // call-by-name

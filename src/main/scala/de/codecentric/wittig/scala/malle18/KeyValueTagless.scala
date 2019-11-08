@@ -27,7 +27,6 @@ object Tagless extends App {
         map = map.updated(key, value)
       }
     }
-
   }
 
   def inMemoryOpt(previous: String)(implicit keyValueTagless: KeyValueTagless): KeyValueTagless = new KeyValueTagless {

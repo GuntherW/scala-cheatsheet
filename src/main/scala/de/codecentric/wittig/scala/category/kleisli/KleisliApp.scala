@@ -22,7 +22,6 @@ object KleisliApp extends App {
   mitOptionKleisli
 
   def einfach() = {
-
     val make: Int => Make = (_) => Make(1, "Suzuki")
     val parts: Make => List[Part] = {
       case Make(1, _) => List(Part(1, "Gear Box"), Part(2, "cable"))

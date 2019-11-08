@@ -12,7 +12,6 @@ case class Data(
 )
 
 object Data {
-
   type Validation[A] = ValidatedNel[Error, A]
 
   object Validation {
@@ -51,7 +50,6 @@ object Data {
       failure(Error.InvalidAgeBiggerRank)
 
   def validateData(d: Data): Validation[Data] = {
-
     val validEmail      = validateEmail(d.email)
     val validPhone      = validatePhone(d.phone)
     val validAge        = validateAge(d.age)

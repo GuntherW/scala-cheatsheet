@@ -7,7 +7,6 @@ package de.codecentric.wittig.scala.typeerasure
   * <:< (subtype relation)
   */
 object Example extends App {
-
   println(processThing(Thing(1)))
   println(processThing(Thing("hello")))
   println(processThing(Thing(Seq(1))))
