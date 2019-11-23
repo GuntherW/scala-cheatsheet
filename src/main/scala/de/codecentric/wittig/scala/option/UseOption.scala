@@ -105,6 +105,22 @@ object UseOption extends App {
     _.exists(_.forall(_.isUpper))
   )
 
+  test(
+    {
+      case Some(x) => p(x)
+      case None    => false
+    },
+    _.exists(p)
+  )
+
+  test(
+    {
+      case Some(x) => p(x)
+      case None    => true
+    },
+    _.forall(p)
+  )
+
   println("All Tests passed")
 
   def test[A](g: Option[String] => A, h: Option[String] => A): Unit = {

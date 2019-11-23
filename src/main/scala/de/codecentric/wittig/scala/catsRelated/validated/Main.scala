@@ -56,19 +56,22 @@ object Data {
     val validRank       = validateRank(d.rank)
     val validAgeAndRank = validateAgeAndRank(d.age, d.rank)
 
-    val valid = validEmail |@| validPhone |@| validAge |@| validRank |@| validAgeAndRank
-
-    valid.map {
+    (validEmail, validPhone, validAge, validRank, validAgeAndRank).mapN {
       case (email, phone, age, rank, _) => Data(email, phone, age, rank)
     }
   }
 }
 
 object Main extends App {
-  val okMail  = "a@b.de"; val badEmail    = "not valid"
-  val okPhone = "+49123456"; val badPhone = "not valid"
-  val okAge   = 56; val badAge            = 3
-  val okRank  = 2; val badRank            = -3; val bigRank = 57
+  val okMail   = "a@b.de"
+  val badEmail = "not valid"
+  val okPhone  = "+49123456"
+  val badPhone = "not valid"
+  val okAge    = 56
+  val badAge   = 3
+  val okRank   = 2
+  val badRank  = -3
+  val bigRank  = 57
 
   import Data._
   println(validateData(Data(okMail, okPhone, okAge, okRank)))

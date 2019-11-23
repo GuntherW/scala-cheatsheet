@@ -13,7 +13,7 @@ object MainEffects extends App {
   def run(args: List[String]) =
     fib(100).fork
       .map(i => println(s"Hallo $i"))
-      .fold(_ => 1, _ => 0)
+      .map(_ => 1)
 
   val zoption: IO[Unit, Int]          = ZIO.fromOption(Some(2))
   val zoption2: ZIO[Any, String, Int] = zoption.mapError(_ => "It wasn't there!")

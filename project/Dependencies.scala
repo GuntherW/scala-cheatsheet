@@ -18,7 +18,7 @@ object Version {
   final val scodec         = "1.11.4"
   final val simulacrum     = "0.19.0"
   final val shapeless      = "2.3.3"
-  final val zioVersion     = "1.0.0-RC16"
+  final val zioVersion     = "1.0.0-RC17"
 
   // Test
   final val mockito             = "1.10.19"

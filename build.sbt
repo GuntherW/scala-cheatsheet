@@ -10,6 +10,17 @@ lazy val root = (project in file("."))
   .settings(
     Defaults.itSettings
   )
+
+lazy val docs = project           // new documentation project
+  .in(file("cheatsheet-docs"))    // important: it must not be docs/
+  .settings(
+    mdocVariables := Map(         // Update mdocVariables to include site variables like @VERSION@.
+      "VERSION" -> version.value
+    )
+  )
+//  .dependsOn(root)
+  .enablePlugins(MdocPlugin)
+
 scalacOptions ++= Seq(
   "-language:_",
   "-target:jvm-1.8",
