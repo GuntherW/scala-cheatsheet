@@ -22,7 +22,7 @@ object Version {
 
   // Test
   final val mockito             = "1.10.19"
-  final val scalaTest           = "3.0.8"
+  final val scalaTest           = "3.1.0"
   final val selenium            = "3.141.59"
   final val scalaCheck          = "1.14.2"
   final val shapelessScalaCheck = "1.2.3"
