@@ -40,7 +40,7 @@ object PrintSyntax {
   }
 }
 
-object ErstesBeispiel extends App {
+object TypeClassSelbstgemacht extends App {
   import PrintDefaults._
   import PrintSyntax._
 
