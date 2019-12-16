@@ -7,8 +7,9 @@ import akka.stream.scaladsl.{Flow, Sink}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object Advent1 extends App {
-  implicit val system       = ActorSystem("Advent1")
-  implicit val materializer = ActorMaterializer()
+
+  implicit val system: ActorSystem             = ActorSystem("Advent1")
+  implicit val materializer: ActorMaterializer = ActorMaterializer()
 
   def l(): Iterator[Char] = scala.io.Source.fromFile("input.txt").getLines.flatMap(_.toArray)
 

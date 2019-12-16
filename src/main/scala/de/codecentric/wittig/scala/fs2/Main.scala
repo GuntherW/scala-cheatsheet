@@ -13,12 +13,11 @@ object Main extends IOApp {
       in.scanChunksOpt(n) { n =>
         if (n <= 0) None
         else
-          Some(
-            c =>
-              c.size match {
-                case m if m < n => (n - m, c)
-                case m          => (0, c.take(n.toInt))
-              }
+          Some(c =>
+            c.size match {
+              case m if m < n => (n - m, c)
+              case m          => (0, c.take(n.toInt))
+            }
           )
       }
 

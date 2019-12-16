@@ -19,6 +19,7 @@ package notypes {
       id: String,                         // unique player profile identifier
       bracketMapping: Map[String, String] // arena to bracket mapping
   ) {
+
     /**
       * Change current bracket of player in arena
       */

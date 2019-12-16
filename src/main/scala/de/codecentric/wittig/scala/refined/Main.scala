@@ -7,6 +7,7 @@ import eu.timepit.refined.collection.NonEmpty
 import eu.timepit.refined.numeric._
 import eu.timepit.refined.string.MatchesRegex
 object Main extends App {
+
   /** Refined for Literals at CompileTime */
   val ct: Int Refined Positive = 5
 //  val ctFailing: Int Refined Positive = -5

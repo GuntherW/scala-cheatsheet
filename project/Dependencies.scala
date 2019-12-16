@@ -1,11 +1,11 @@
 import sbt._
 
 object Version {
-  final val akkaVersion    = "2.6.0"
+  final val akkaVersion    = "2.6.1"
   final val catsVersion    = "2.0.0"
   final val catsConsole    = "0.8.0"
   final val circeVersion   = "0.12.3"
-  final val enumeratum     = "1.5.13"
+  final val enumeratum     = "1.5.14"
   final val fs2            = "2.1.0"
   final val kittensVersion = "2.0.0"
   final val logback        = "1.2.3"
@@ -24,7 +24,7 @@ object Version {
   final val mockito             = "1.10.19"
   final val scalaTest           = "3.1.0"
   final val selenium            = "3.141.59"
-  final val scalaCheck          = "1.14.2"
+  final val scalaCheck          = "1.14.3"
   final val shapelessScalaCheck = "1.2.3"
 }
 
