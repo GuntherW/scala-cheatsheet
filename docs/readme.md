@@ -30,7 +30,6 @@ val s2 = s1.map(_.toString)
 ```
 
 
-
 ## How to create Documentation
 >1. create dir "docs"
 >2. create a docs/readme.md

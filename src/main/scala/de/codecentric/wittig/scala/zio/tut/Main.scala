@@ -1,6 +1,5 @@
 package de.codecentric.wittig.scala.zio.tut
 
-import de.codecentric.wittig.scala.zio.tut.X
 import zio._
 import zio.console.Console
 
