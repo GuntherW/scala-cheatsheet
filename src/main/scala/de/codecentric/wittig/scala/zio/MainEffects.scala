@@ -1,12 +1,9 @@
 package de.codecentric.wittig.scala.zio
 
-import cats.implicits._
 import zio.clock.Clock
 import zio.duration._
 import zio.{App, IO, Task, UIO, ZIO}
-import zio.console._
 import scala.concurrent.Future
-import scala.io.StdIn
 import scala.util.Try
 
 object MainEffects extends App {

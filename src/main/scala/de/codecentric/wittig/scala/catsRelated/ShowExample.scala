@@ -20,6 +20,5 @@ object ShowExample extends App {
   println(john.show)
   println(john)
 
-  def round(f: FiniteDuration): String =
-    BigDecimal(f.toUnit(HOURS)).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble + "h"
+  def round(f: FiniteDuration): String = s"${BigDecimal(f.toUnit(HOURS)).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble} h"
 }
