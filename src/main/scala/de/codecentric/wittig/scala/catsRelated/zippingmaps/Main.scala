@@ -44,8 +44,10 @@ object MapApplicative extends IOApp {
       inventory <- getInventory.map(_.groupByNel(_.productId).fmap(_.reduceMap(_.amount)))
     } yield (products, inventory).tupled
 
-    result.flatMap { map =>
-      map.toList.fmap(_.toString).traverse(putStrLn(_))
-    }
+    result.flatMap(
+      _.toList
+        .fmap(_.toString)
+        .traverse(putStrLn)
+    )
   }.as(ExitCode.Success)
 }

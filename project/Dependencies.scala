@@ -4,6 +4,7 @@ object Version {
   final val akkaVersion    = "2.6.3"
   final val catsVersion    = "2.1.0"
   final val catsConsole    = "0.8.1"
+  final val chimney        = "0.4.1"
   final val circeVersion   = "0.13.0"
   final val enumeratum     = "1.5.15"
   final val fs2            = "2.2.2"
@@ -22,7 +23,7 @@ object Version {
 
   // Test
   final val mockito             = "1.10.19"
-  final val scalaTest           = "3.1.0"
+  final val scalaTest           = "3.1.1"
   final val selenium            = "3.141.59"
   final val scalaCheck          = "1.14.3"
   final val shapelessScalaCheck = "1.2.4"
@@ -33,6 +34,7 @@ object Library {
   final val catsConsole        = "dev.profunktor"             %% "console4cats"         % Version.catsConsole
   final val catsCore           = "org.typelevel"              %% "cats-core"            % Version.catsVersion
   final val catsFree           = "org.typelevel"              %% "cats-free"            % Version.catsVersion
+  final val chimney            = "io.scalaland"               %% "chimney"              % Version.chimney
   final val circeCore          = "io.circe"                   %% "circe-core"           % Version.circeVersion
   final val circeGeneric       = "io.circe"                   %% "circe-generic"        % Version.circeVersion
   final val circeParser        = "io.circe"                   %% "circe-parser"         % Version.circeVersion
@@ -73,6 +75,7 @@ object Dependencies {
     Library.catsConsole,
     Library.catsCore,
     Library.catsFree,
+    Library.chimney,
     Library.circeCore,
     Library.circeGeneric,
     Library.circeParser,

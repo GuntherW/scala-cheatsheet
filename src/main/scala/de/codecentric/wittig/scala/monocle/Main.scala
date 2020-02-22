@@ -3,8 +3,6 @@ package de.codecentric.wittig.scala.monocle
 import monocle.Lens
 import monocle.macros.{GenLens, Lenses}
 
-import scala.language.higherKinds
-
 /**
   * Bester Weg: Mit Annotations. Am wenigsten Boilerplate, aber: Man muß Zugriff auf die Caseklassen haben.
   * Zweitbester Weg: Ins Companionobjekt schieben.
@@ -52,4 +50,7 @@ object Main extends App {
 
   // Oder ohne Annotation
   println(GenLens[Employee](_.company.address.street.number).set(11)(employee))
+
+  import monocle.macros.syntax.lens._
+  println(employee.lens(_.company.address.street.number).set(11))
 }

@@ -1,16 +1,16 @@
 package de.codecentric.wittig.scala.monocle
+import monocle.Prism
 
 /**
   *A Prism is an optic used to select part of a Sum type (also known as Coproduct), e.g. sealed trait or Enum.
   */
 object MainPrism extends App {
+
   sealed trait Json
   case object JNull                     extends Json
   case class JStr(v: String)            extends Json
   case class JNum(v: Double)            extends Json
   case class JObj(v: Map[String, Json]) extends Json
-
-  import monocle.Prism
 
   val jStr = Prism[Json, String] {
     case JStr(v) => Some(v)
@@ -24,5 +24,5 @@ object MainPrism extends App {
   import monocle.macros.GenPrism
 
   val rawJNum: Prism[Json, JNum] = GenPrism[Json, JNum]
-  assert(rawJNum.getOption(JNum(4.5)) == Some(JNum(4.5)))
+  assert(rawJNum.getOption(JNum(4.5)).contains(JNum(4.5)))
 }
