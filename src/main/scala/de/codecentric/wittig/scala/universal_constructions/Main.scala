@@ -1,5 +1,8 @@
 package de.codecentric.wittig.scala.universal_constructions
 
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+
 object Main extends App {
   def left[A](a: A): Either[A, Nothing]  = Left(a)
   def right[A](a: A): Either[Nothing, A] = Right(a)
@@ -22,6 +25,8 @@ object Main extends App {
     case Left(a)  => f(a)
     case Right(b) => g(b)
   }
+
+  val f = Future(1)
 
   //def choice[A, A1, B, B1](f: A => A1, g: B => B1): Either[A,B] =>
 }

@@ -2,7 +2,7 @@ import sbt._
 
 object Version {
   final val akkaVersion    = "2.6.3"
-  final val catsVersion    = "2.1.0"
+  final val catsVersion    = "2.1.1"
   final val catsConsole    = "0.8.1"
   final val chimney        = "0.4.1"
   final val circeVersion   = "0.13.0"
@@ -11,7 +11,7 @@ object Version {
   final val kittensVersion = "2.0.0"
   final val logback        = "1.2.3"
   final val monix          = "3.1.0"
-  final val monocleVersion = "2.0.1"
+  final val monocleVersion = "2.0.2"
   final val pureConfig     = "0.12.2"
   final val scala          = "2.13.1"
   final val scalaLogging   = "3.9.2"

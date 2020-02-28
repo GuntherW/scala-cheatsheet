@@ -48,5 +48,4 @@ object MyIso {
     println(s"Owner: $owner1")
     println(s"Owner: $owner2")
   }
-
 }
