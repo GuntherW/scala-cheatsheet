@@ -4,19 +4,20 @@ object Version {
   final val akkaVersion    = "2.6.3"
   final val catsVersion    = "2.1.1"
   final val catsConsole    = "0.8.1"
-  final val chimney        = "0.4.1"
+  final val chimney        = "0.4.2"
   final val circeVersion   = "0.13.0"
   final val enumeratum     = "1.5.15"
   final val fs2            = "2.2.2"
   final val kittensVersion = "2.0.0"
   final val logback        = "1.2.3"
   final val monix          = "3.1.0"
-  final val monocleVersion = "2.0.2"
-  final val pureConfig     = "0.12.2"
+  final val monocleVersion = "2.0.4"
+  final val pureConfig     = "0.12.3"
   final val scala          = "2.13.1"
   final val scalaLogging   = "3.9.2"
+  final val scalaMeta      = "4.3.0"
   final val scalaz         = "7.2.29"
-  final val scodec         = "1.11.4"
+  final val scodec         = "1.11.7"
   final val simulacrum     = "0.19.0"
   final val shapeless      = "2.3.3"
   final val zioVersion     = "1.0.0-RC17"
@@ -26,7 +27,7 @@ object Version {
   final val scalaTest           = "3.1.1"
   final val selenium            = "3.141.59"
   final val scalaCheck          = "1.14.3"
-  final val shapelessScalaCheck = "1.2.4"
+  final val scalaCheckShapeless = "1.2.5"
 }
 
 object Library {
@@ -53,6 +54,7 @@ object Library {
   final val monocleState       = "com.github.julien-truffaut" %% "monocle-state"        % Version.monocleVersion
   final val pureConfig         = "com.github.pureconfig"      %% "pureconfig"           % Version.pureConfig
   final val scalaLogging       = "com.typesafe.scala-logging" %% "scala-logging"        % Version.scalaLogging
+  final val scalaMeta          = "org.scalameta"              %% "scalameta"            % Version.scalaMeta
   final val scalaReflect       = "org.scala-lang"             % "scala-reflect"         % Version.scala
   final val shapeless          = "com.chuusai"                %% "shapeless"            % Version.shapeless
   final val simulacrum         = "com.github.mpilquist"       %% "simulacrum"           % Version.simulacrum
@@ -66,7 +68,7 @@ object Library {
   final val scalatest           = "org.scalatest"              %% "scalatest"                 % Version.scalaTest           % "it,test"
   final val selenium            = "org.seleniumhq.selenium"    % "selenium-java"              % Version.selenium            % Test
   final val scalaCheck          = "org.scalacheck"             %% "scalacheck"                % Version.scalaCheck          % Test
-  final val shapelessScalaCheck = "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % Version.shapelessScalaCheck % Test
+  final val shapelessScalaCheck = "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % Version.scalaCheckShapeless % Test
 }
 
 object Dependencies {
@@ -95,6 +97,7 @@ object Dependencies {
     Library.monocleLaw,
     Library.pureConfig,
     Library.scalaLogging,
+    Library.scalaMeta,
     Library.scalaReflect,
     Library.scodec,
     Library.shapeless,
