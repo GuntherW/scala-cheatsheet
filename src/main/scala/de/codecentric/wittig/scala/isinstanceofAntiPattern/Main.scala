@@ -2,8 +2,8 @@ package de.codecentric.wittig.scala.isinstanceofAntiPattern
 
 import de.codecentric.wittig.scala.Implicits.RichFuture
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 /**
   * https://alexn.org/blog/2019/08/11/isinstanceof-anti-pattern.html

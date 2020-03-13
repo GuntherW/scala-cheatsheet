@@ -15,7 +15,7 @@ object MyLens {
   private val p2 = p.lens(_.address.city.zipCode).set(11111)
   private val p3 = p.lens(_.address.city.zipCode).modify(_ + 1)
 
-  def run: Unit = {
+  def run(): Unit = {
     println("-" * 40 + "Lenses" + "-" * 40)
     println(p1)
     println(p2)

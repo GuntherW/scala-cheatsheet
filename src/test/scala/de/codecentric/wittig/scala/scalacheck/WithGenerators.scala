@@ -1,8 +1,8 @@
 package de.codecentric.wittig.scala.scalacheck
 
+import de.codecentric.wittig.scala.scalacheck.helper.Printer._
 import org.scalacheck.Prop.forAll
 import org.scalacheck.{Gen, Properties}
-import helper.Printer._
 
 object WithGenerators extends Properties("String") {
   private val gen1: Gen[String] = Gen.alphaNumStr.map(_.toLowerCase())

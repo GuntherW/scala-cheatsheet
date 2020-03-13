@@ -39,7 +39,7 @@ object MyPrism {
     GenPrism[Ampel, Ampel.Gruen]
       .composeIso(GenIso[Ampel.Gruen, Double])
 
-  def run: Unit = {
+  def run(): Unit = {
     println("-" * 40 + "Prisms" + "-" * 40)
     val rot   = Ampel.Rot(0.6)
     val gelb  = Ampel.Gelb(0.6)

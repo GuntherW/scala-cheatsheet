@@ -31,7 +31,7 @@ object MyIso {
 
   val fields: Iso[Owner, (String, Dog)] = GenIso.fields[Owner]
 
-  def run: Unit = {
+  def run(): Unit = {
     println("-" * 40 + "Isos" + "-" * 40)
 
     val a: A = (27, "bob", Dog("Hasso"))

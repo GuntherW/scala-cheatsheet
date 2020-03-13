@@ -13,6 +13,7 @@ object Version {
   final val monix          = "3.1.0"
   final val monocleVersion = "2.0.4"
   final val pureConfig     = "0.12.3"
+  final val refined        = "0.9.13"
   final val scala          = "2.13.1"
   final val scalaLogging   = "3.9.2"
   final val scalaMeta      = "4.3.0"
@@ -20,7 +21,7 @@ object Version {
   final val scodec         = "1.11.7"
   final val simulacrum     = "0.19.0"
   final val shapeless      = "2.3.3"
-  final val zioVersion     = "1.0.0-RC17"
+  final val zioVersion     = "1.0.0-RC18-2"
 
   // Test
   final val mockito             = "1.10.19"
@@ -53,6 +54,7 @@ object Library {
   final val monocleRefined     = "com.github.julien-truffaut" %% "monocle-refined"      % Version.monocleVersion
   final val monocleState       = "com.github.julien-truffaut" %% "monocle-state"        % Version.monocleVersion
   final val pureConfig         = "com.github.pureconfig"      %% "pureconfig"           % Version.pureConfig
+  final val refined            = "eu.timepit"                 %% "refined"              % Version.refined
   final val scalaLogging       = "com.typesafe.scala-logging" %% "scala-logging"        % Version.scalaLogging
   final val scalaMeta          = "org.scalameta"              %% "scalameta"            % Version.scalaMeta
   final val scalaReflect       = "org.scala-lang"             % "scala-reflect"         % Version.scala
@@ -96,6 +98,7 @@ object Dependencies {
     Library.monocleRefined,
     Library.monocleLaw,
     Library.pureConfig,
+    Library.refined,
     Library.scalaLogging,
     Library.scalaMeta,
     Library.scalaReflect,

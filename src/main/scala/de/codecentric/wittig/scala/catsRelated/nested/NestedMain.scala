@@ -2,8 +2,9 @@ package de.codecentric.wittig.scala.catsRelated.nested
 
 import cats.data.Nested
 import cats.implicits._
-import scala.concurrent.Future
+
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 object NestedMain extends App {
   val a: Future[Option[Int]] = Future(1.some)

@@ -1,15 +1,12 @@
 package de.codecentric.wittig.scala.adventofcode
 
 import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{Flow, Sink}
-
-import scala.concurrent.ExecutionContext.Implicits.global
 
 object Advent1 extends App {
 
-  implicit val system: ActorSystem             = ActorSystem("Advent1")
-  implicit val materializer: ActorMaterializer = ActorMaterializer()
+  implicit val system: ActorSystem = ActorSystem("Advent1")
+  import system.dispatcher
 
   def l(): Iterator[Char] = scala.io.Source.fromFile("input.txt").getLines.flatMap(_.toArray)
 

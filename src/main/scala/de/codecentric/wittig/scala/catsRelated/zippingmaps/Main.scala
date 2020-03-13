@@ -1,10 +1,9 @@
 package de.codecentric.wittig.scala.catsRelated.zippingmaps
+import cats.effect.Console.io._
+import cats.effect.{ExitCode, IO, IOApp}
 import cats.implicits._
 import cats.kernel.Order
-import cats.effect.Console.io._
-import cats.effect.IO
-import cats.effect.IOApp
-import cats.effect.ExitCode
+
 import scala.collection.immutable.SortedMap
 
 final case class ProductId(value: String) extends AnyVal

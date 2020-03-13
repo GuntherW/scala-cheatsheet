@@ -2,8 +2,8 @@ package de.codecentric.wittig.scala.catsRelated
 
 import cats.implicits._
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 object Traverse extends App {
   futureOptionSeq()
 

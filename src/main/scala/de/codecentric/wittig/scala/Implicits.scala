@@ -1,7 +1,6 @@
 package de.codecentric.wittig.scala
+import scala.concurrent.duration.{Duration, _}
 import scala.concurrent.{Await, Future}
-import scala.concurrent.duration.Duration
-import scala.concurrent.duration._
 
 object Implicits {
   implicit class RichFuture[T](future: Future[T]) {

@@ -10,8 +10,9 @@ object Main extends App {
   println(summe)
 
   // how to use a method with Currying, when it was not originally written for:
-  private val c: Int => Int => Int => Int = (sum _).curried
-  private val c1: Int => Int => Int       = (sum _).curried(1)
-  private val c2: Int => Int              = (sum _).curried(1)(2)
-  private val c3: Int                     = (sum _).curried(1)(2)(3)
+  val c: Int => Int => Int => Int = (sum _).curried
+  val c1: Int => Int => Int       = (sum _).curried(1)
+  val c2: Int => Int              = (sum _).curried(1)(2)
+  val c3: Int                     = (sum _).curried(1)(2)(3)
+
 }

@@ -1,19 +1,16 @@
 package de.codecentric.wittig.scala.futur
 
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.util.Failure
-import scala.util.Success
 import de.codecentric.wittig.scala.Implicits._
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 /**
   * @author gunther
   */
 object TestFuture extends App {
   val randomNumber = 42
-
-  println("test1: " + test1.await == randomNumber)
-  println("test2: " + test2.await)
 
   def test1: Future[Int] = {
     val f = Future(randomNumber)
@@ -29,13 +26,15 @@ object TestFuture extends App {
     f
   }
 
-  def test2 = {
-    val f1 = Future(randomNumber)
-    val f2 = Future(new Exception("Boom"))
+  private val f1 = Future(randomNumber)
+  private val f2 = Future(new Exception("Boom"))
 
-    val u1: Unit = f1.failed.foreach(t => println(t))
-    val u2: Unit = f2.foreach(i => println(i))
+  val u1: Unit = f1.failed.foreach(t => println(t))
+  val u2: Unit = f2.foreach(i => println(i))
 
-    Future.sequence(List(f1, f2))
-  }
+  val test2 = Future.sequence(List(f1, f2))
+
+  println(test1.await == randomNumber)
+  println(test2.await)
+
 }

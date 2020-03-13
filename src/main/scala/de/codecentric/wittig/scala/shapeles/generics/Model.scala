@@ -1,8 +1,7 @@
 package de.codecentric.wittig.scala.shapeles.generics
 
 import shapeless.LabelledGeneric
-import shapeless._
-import record._
+import shapeless.record._
 import shapeless.syntax.singleton.mkSingletonOps
 
 case class Model(name: String, alter: Int)

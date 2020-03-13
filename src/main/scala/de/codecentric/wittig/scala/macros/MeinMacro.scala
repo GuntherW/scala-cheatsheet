@@ -1,7 +1,6 @@
 package de.codecentric.wittig.scala.macros
-import language.experimental.macros
-import reflect.macros.whitebox.Context
 import scala.reflect.macros.whitebox
+import scala.reflect.macros.whitebox.Context
 
 object MeinMacro extends App {
   println("Hallo Welt")

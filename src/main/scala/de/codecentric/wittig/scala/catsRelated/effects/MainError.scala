@@ -3,9 +3,6 @@ package de.codecentric.wittig.scala.catsRelated.effects
 import cats.effect._
 import cats.implicits._
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.DurationDouble
-import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NoStackTrace
 
 sealed trait BusinessError extends NoStackTrace

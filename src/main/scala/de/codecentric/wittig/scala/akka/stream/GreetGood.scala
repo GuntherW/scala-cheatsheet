@@ -1,21 +1,17 @@
 package de.codecentric.wittig.scala.akka.stream
 
 import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
-import scala.concurrent.Await
-import scala.concurrent.duration.Duration
-import akka.stream.scaladsl.Source
-import akka.stream.scaladsl.Sink
 import akka.stream.ThrottleMode
-import scala.concurrent.duration._
-import akka.stream.scaladsl.Keep
+import akka.stream.scaladsl.{Keep, Sink, Source}
+
+import scala.concurrent.Await
+import scala.concurrent.duration.{Duration, _}
 
 /**
   * Example from Heiko Seeberger
   */
 object GreetGood extends App {
-  implicit val system = ActorSystem()
-  implicit val mat    = ActorMaterializer()
+  implicit val system: ActorSystem = ActorSystem()
   import system.dispatcher
 
   val done =

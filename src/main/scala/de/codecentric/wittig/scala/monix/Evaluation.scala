@@ -20,7 +20,7 @@ object Evaluation extends App {
   val e = Task.defer { Task.now { println("effect e"); "always" } }
 
   // Guarantees asynchronous execution
-  val f = Task.fork(Task.eval { println("effect f"); "hallo" })
+  val f = Task.eval { println("effect f"); "hallo" }.executeAsync
 
   b.runToFuture.await
   c.runToFuture.await

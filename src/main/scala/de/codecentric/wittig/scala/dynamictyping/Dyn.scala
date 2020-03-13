@@ -1,7 +1,5 @@
 package de.codecentric.wittig.scala.dynamictyping
 
-import scala.language.dynamics
-
 /*
  *
  * Doku im Javadoc im Trait Dynamic

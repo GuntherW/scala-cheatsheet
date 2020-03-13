@@ -1,7 +1,7 @@
 package de.codecentric.wittig.scala.free
-import Orders._
 import cats.free.Free
 import cats.free.Free._
+import de.codecentric.wittig.scala.free.Orders._
 
 object Orders {
   type Symbol   = String

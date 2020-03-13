@@ -1,6 +1,7 @@
 package de.codecentric.wittig.scala.chimney
 
 import java.util.UUID
+
 import io.scalaland.chimney._
 import io.scalaland.chimney.dsl._
 
@@ -14,7 +15,7 @@ object Main extends App {
 
   // Patching
   val patch         = Patch("Gunther", 42)
-  val patchedPerson = person.patchWith(patch)
+  val patchedPerson = person.patchUsing(patch)
 
   // Transformation
   val transformerPersonToCustomer: Transformer[Person, Customer] = person =>
@@ -30,8 +31,8 @@ object Main extends App {
     .withFieldConst(_.id, UUID.randomUUID)
     .transform
   val customer2 = person.transformInto[Customer](transformerPersonToCustomer)
-  val customer3 = customer2.patchWith(123)
-  val customer4 = customer2.patchWith(patch)
+  val customer3 = customer2.patchUsing(123)
+  val customer4 = customer2.patchUsing(patch)
 
   // printing
   println("-" * 100)

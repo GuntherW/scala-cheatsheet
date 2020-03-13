@@ -1,9 +1,10 @@
 package de.codecentric.wittig.scala.shapeles
 
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
 import cats.data.OptionT
 import cats.implicits._
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 object CatsOptionT extends App {
   def futureNone: Future[Option[String]] = Future.successful(None)

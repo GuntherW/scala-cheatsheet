@@ -1,5 +1,4 @@
 package de.codecentric.wittig.scala.types
-import scala.language.implicitConversions
 
 /**
   * @author gunther

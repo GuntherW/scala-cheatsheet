@@ -2,7 +2,8 @@ package de.codecentric.wittig.scala.zio
 
 import zio.clock.Clock
 import zio.duration._
-import zio.{App, IO, Task, UIO, ZIO}
+import zio._
+
 import scala.concurrent.Future
 import scala.util.Try
 

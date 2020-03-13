@@ -1,7 +1,7 @@
 package de.codecentric.wittig.scala.universal_constructions
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 object Main extends App {
   def left[A](a: A): Either[A, Nothing]  = Left(a)

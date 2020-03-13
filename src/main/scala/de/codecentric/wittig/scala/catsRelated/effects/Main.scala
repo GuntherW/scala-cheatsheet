@@ -16,9 +16,9 @@ object Main extends App {
   //flatMapOperator()
   implicit val cs: ContextShift[IO] = IO.contextShift(global)
   implicit val timer: Timer[IO]     = IO.timer(global)
-  parMapN
+  parMapN()
 
-  def first() = {
+  def first(): Unit = {
     val ioa = IO { println("hey!") }
     val program: IO[Unit] =
       for {
@@ -28,7 +28,7 @@ object Main extends App {
     program.unsafeRunSync()
   }
 
-  def fibStackSafe() = {
+  def fibStackSafe(): Unit = {
     def fib(n: Int, a: Long = 0, b: Long = 1): IO[Long] =
       IO(a + b).flatMap { b2 =>
         if (n > 0)
@@ -40,7 +40,7 @@ object Main extends App {
     program.unsafeRunAsync(a => println(s"fib $a"))
   }
 
-  def fromFuture() = {
+  def fromFuture(): Unit = {
     def inc(i: Int) = i + 1
 
     val f1: IO[Int] = IO.fromFuture(IO(Future(1)))
@@ -56,7 +56,7 @@ object Main extends App {
     }
   }
 
-  def readPrint() = {
+  def readPrint(): Unit = {
     def putStrlLn(value: String) = IO.fromFuture(IO(Future(println(value))))
 //    def putStrlLn(value: String) = IO(println(value))
     val readLn = IO(scala.io.StdIn.readLine)
@@ -69,15 +69,15 @@ object Main extends App {
     programm.unsafeRunSync()
   }
 
-  def flatMapOperator() = {
+  def flatMapOperator(): Unit = {
     // Needed for `sleep`
-    implicit val timer = IO.timer(ExecutionContext.global)
+    implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
 
     // Delayed println
-    val io1: IO[Unit] = IO.sleep(5 seconds) *> IO(println("Hello!"))
+    val io1: IO[Unit] = IO.sleep(5.seconds) *> IO(println("Hello!"))
     val io2: IO[Unit] =
       for {
-        _ <- IO.sleep(5 seconds)
+        _ <- IO.sleep(5.seconds)
         e <- IO(println("Hello!"))
       } yield e
 
@@ -91,15 +91,22 @@ object Main extends App {
     IO.shift *> task
   }
 
-  def parMapN = {
+  def parMapN(): Unit = {
     case class Person(name: String, age: Int)
-    val ioInt    = IO.sleep(2 seconds) *> IO(22)
-    val ioString = IO.sleep(2 seconds) *> IO("Peter")
+    val ioInt    = IO.sleep(2.seconds) *> IO(22)
+    val ioString = IO.sleep(2.seconds) *> IO("Peter")
 
     val eins: IO[String] = ioInt *> ioString // IO("Peter") // flatMap
     val zwei: IO[Int]    = ioInt <* ioString // IO(22) // flatMap
     val drei             = ioInt &> ioString // IO("Peter") // parallel
     val vier             = ioInt <& ioString // IO(22) // parallel
+
+    val differentOperators = for {
+      a <- eins
+      b <- zwei
+      c <- drei
+      d <- vier
+    } yield (a, b, c, d)
 
     val sequenziell: IO[Person] = (ioString, ioInt).mapN(Person)
     val parallel                = (ioString, ioInt).parMapN { case (a, b) => Person(a, b) } // needs implicit ContextShift
@@ -116,6 +123,7 @@ object Main extends App {
       end   <- IO(System.nanoTime())
     } yield (a, end - start)
 
+    println(differentOperators.unsafeRunSync())
     println(seq.unsafeRunSync()) // runs 4 seconds
     println(par.unsafeRunSync()) // runs 2 seconds
   }

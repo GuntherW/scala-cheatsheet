@@ -1,6 +1,6 @@
 package de.codecentric.wittig.scala.catsRelated
 import cats.Show
-import cats.derived.{auto, semi}
+import cats.derived.semi
 import cats.implicits._
 
 object ShowExample1 extends App {
@@ -15,7 +15,6 @@ object ShowExample1 extends App {
   }
 
   implicit val peopleShow: Show[People] = {
-    import auto.show._
     semi.show
   } //auto derive Show for People
 

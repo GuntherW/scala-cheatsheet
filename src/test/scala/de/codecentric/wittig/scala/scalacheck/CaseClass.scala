@@ -1,10 +1,9 @@
 package de.codecentric.wittig.scala.scalacheck
 
-import org.scalacheck._
-import Gen._
-import Arbitrary._
 import de.codecentric.wittig.scala.scalacheck.helper.{Person, Season}
+import org.scalacheck.Arbitrary._
 import org.scalacheck.Prop.forAll
+import org.scalacheck._
 
 /**
   * @author gunther

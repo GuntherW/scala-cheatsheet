@@ -1,7 +1,5 @@
 package de.codecentric.wittig.scala.ducktyping
 
-import language.reflectiveCalls
-
 object Duck extends App {
   def quaken(duck: { def quak(s: String): String }): Unit = {
     println(duck.quak("Quak"))

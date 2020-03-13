@@ -1,6 +1,5 @@
 package de.codecentric.wittig.scala.shapeles
-import shapeless._
-import shapeless.LabelledGeneric
+import shapeless.{LabelledGeneric, _}
 
 case class Person(name: String, alter: Int, beruf: Option[String])
 object Person {

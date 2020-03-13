@@ -1,8 +1,9 @@
 package de.codecentric.wittig.scala.zio
 
-import zio.{App, Task, UIO}
 import java.io.{File, FileInputStream}
 import java.nio.charset.StandardCharsets
+
+import zio.{App, Task, UIO}
 
 object MainBracket extends App {
   // run my bracket
