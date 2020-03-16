@@ -26,7 +26,7 @@ object Advent1 extends App {
   }
 
   val source = akka.stream.scaladsl.Source
-    .fromIterator(l)
+    .fromIterator(() => l())
     .via(collectDouble)
     .map(_.toLong)
     .fold(0L)(_ + _)

@@ -13,7 +13,7 @@ object TypeClasses extends App {
   // View bounds, like type bounds demand such a function exists for the given type.
   // You specify a view bound with <% e.g.,
   def viewBounds() = {
-    class Container[A <% Int] {
+    class Container[A](implicit toInt: A => Int) { // class Container[A <% Int]
       def addInt(x: A) = 123 + x
     }
     println(new Container[String].addInt("1"))

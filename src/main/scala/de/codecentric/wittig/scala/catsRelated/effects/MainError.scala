@@ -34,5 +34,15 @@ object MainError extends IOApp {
         println(i)
         ExitCode.Success
       }
+    erg2
+      .handleError { t =>
+        println(t)
+        println("+" * 50)
+        123
+      }
+      .map { i =>
+        println(i)
+        ExitCode.Success
+      }
   }
 }

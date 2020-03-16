@@ -8,6 +8,7 @@ import scala.concurrent.Future
 import scala.util.Try
 
 object MainEffects extends App {
+  val ZERO = 0
   def run(args: List[String]) =
     fib(100).fork
       .map(i => println(s"Hallo $i"))
@@ -16,7 +17,7 @@ object MainEffects extends App {
   val zoption: IO[Unit, Int]          = ZIO.fromOption(Some(2))
   val zoption2: ZIO[Any, String, Int] = zoption.mapError(_ => "It wasn't there!")
   val zeither: IO[Nothing, String]    = ZIO.fromEither(Right("Success!"))
-  val ztry: Task[Int]                 = ZIO.fromTry(Try(42 / 0))
+  val ztry: Task[Int]                 = ZIO.fromTry(Try(42 / ZERO))
   val zfun: ZIO[Int, Nothing, Int]    = ZIO.fromFunction((i: Int) => i * i)
 
   lazy val future = Future.successful("Hello!")

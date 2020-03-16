@@ -12,7 +12,7 @@ object Main extends App {
   val m = Model("Hans", 22)
 
   val repr1 = gen.to(m)
-  val repr2 = repr1 + ('name ->> "Heinz")
+  val repr2 = repr1 + (Symbol("name") ->> "Heinz")
 
   println("m " + m)
   println("repr1 " + repr1)
