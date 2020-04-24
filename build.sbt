@@ -1,27 +1,7 @@
-name := """scala-cheatsheet"""
-
-version := "1.0"
-
-scalaVersion := Version.scala
-
-organization := "de.wittig"
-lazy val root = (project in file("."))
-  .configs(IntegrationTest)
-  .settings(
-    Defaults.itSettings
-  )
-
-lazy val docs = project // new documentation project
-  .in(file("cheatsheet-docs")) // important: it must not be docs/
-  .settings(
-    mdocVariables := Map( // Update mdocVariables to include site variables like @VERSION@.
-      "VERSION" -> version.value
-    )
-  )
-  //  .dependsOn(root)
-  .enablePlugins(MdocPlugin)
-
-scalacOptions ++= Seq(
+ThisBuild / version := "1.0"
+ThisBuild / scalaVersion := Version.scala
+ThisBuild / organization := "de.wittig"
+ThisBuild / scalacOptions ++= Seq(
   "-language:_",
   "-target:jvm-1.8",
   "-encoding",
@@ -48,23 +28,56 @@ scalacOptions ++= Seq(
 )
 
 // Change this to another test framework if you prefer
-libraryDependencies ++= Dependencies.dependencies ++ Dependencies.testDependencies
-
-resolvers += Resolver.sonatypeRepo("snapshots")
-resolvers += Resolver.sonatypeRepo("public")
-resolvers += "bintray/non" at "https://dl.bintray.com/non/maven"
-
-updateOptions := updateOptions.value.withCachedResolution(true)
-
-updateConfiguration in updateSbtClassifiers := (updateConfiguration in updateSbtClassifiers).value.withMissingOk(true)
-
-resolvers ++= Seq(
+ThisBuild / resolvers += Resolver.sonatypeRepo("snapshots")
+ThisBuild / resolvers += Resolver.sonatypeRepo("public")
+ThisBuild / resolvers += "bintray/non" at "https://dl.bintray.com/non/maven"
+ThisBuild / resolvers ++= Seq(
   "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
   Resolver.bintrayRepo("hseeberger", "maven")
 )
 
-Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-s", "4") // scalacheck should emit 4 examples only
+//ThisBuild / updateOptions := updateOptions.value.withCachedResolution(true)
+//ThisBuild / updateConfiguration in updateSbtClassifiers := (updateConfiguration in updateSbtClassifiers).value.withMissingOk(true)
 
-turbo := true
-Global / onChangedBuildSource := ReloadOnSourceChanges
-scalafmtOnCompile := true
+ThisBuild / turbo := true
+ThisBuild / onChangedBuildSource := ReloadOnSourceChanges
+
+lazy val `scala-cheatcheet` = (project in file("."))
+  .aggregate(
+    core,
+    munit,
+    subproject1,
+    subproject2
+  )
+
+lazy val core = project
+  .configs(IntegrationTest)
+  .settings(
+    libraryDependencies ++= Dependencies.dependencies ++ Dependencies.testDependencies,
+    Defaults.itSettings,
+    Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-s", "4") // scalacheck should emit 4 examples only
+  )
+
+lazy val docs = project // new documentation project
+  .in(file("cheatsheet-docs")) // important: it must not be docs/
+  .settings(
+    mdocVariables := Map( // Update mdocVariables to include site variables like @VERSION@.
+      "VERSION" -> version.value
+    )
+  )
+  .enablePlugins(MdocPlugin)
+
+lazy val subproject1 = project
+  .dependsOn(subproject2)
+  .settings(
+    libraryDependencies ++= Seq(
+      Library.scalatest % Test
+    )
+  )
+lazy val subproject2 = project
+
+lazy val munit = project
+  .settings(
+    libraryDependencies += Library.munit % Test,
+    testFrameworks += new TestFramework("munit.Framework")
+  )

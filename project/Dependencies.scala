@@ -8,15 +8,16 @@ object Version {
   final val circeVersion   = "0.13.0"
   final val enumeratum     = "1.5.15"
   final val fs2            = "2.3.0"
-  final val kittensVersion = "2.0.0"
+  final val kittensVersion = "2.1.0"
   final val logback        = "1.2.3"
   final val monix          = "3.1.0"
   final val monocleVersion = "2.0.4"
+  final val munit          = "0.7.3"
   final val pureConfig     = "0.12.3"
-  final val refined        = "0.9.13"
-  final val scala          = "2.13.1"
+  final val refined        = "0.9.14"
+  final val scala          = "2.13.2"
   final val scalaLogging   = "3.9.2"
-  final val scalaMeta      = "4.3.7"
+  final val scalaMeta      = "4.3.9"
   final val scalaz         = "7.2.29"
   final val scodec         = "1.11.7"
   final val simulacrum     = "0.19.0"
@@ -53,6 +54,7 @@ object Library {
   final val monocleMacro       = "com.github.julien-truffaut" %% "monocle-macro"        % Version.monocleVersion
   final val monocleRefined     = "com.github.julien-truffaut" %% "monocle-refined"      % Version.monocleVersion
   final val monocleState       = "com.github.julien-truffaut" %% "monocle-state"        % Version.monocleVersion
+  final val munit              = "org.scalameta"              %% "munit"                % Version.munit
   final val pureConfig         = "com.github.pureconfig"      %% "pureconfig"           % Version.pureConfig
   final val refined            = "eu.timepit"                 %% "refined"              % Version.refined
   final val scalaLogging       = "com.typesafe.scala-logging" %% "scala-logging"        % Version.scalaLogging
@@ -65,12 +67,12 @@ object Library {
   //"dev.zio"                    %% "zio-streams"    % zioVersionm,
 
   // test
-  final val mockito             = "org.mockito"                % "mockito-all"                % Version.mockito             % Test
-  final val monocleLaw          = "com.github.julien-truffaut" %% "monocle-law"               % Version.monocleVersion      % Test
-  final val scalatest           = "org.scalatest"              %% "scalatest"                 % Version.scalaTest           % "it,test"
-  final val selenium            = "org.seleniumhq.selenium"    % "selenium-java"              % Version.selenium            % Test
-  final val scalaCheck          = "org.scalacheck"             %% "scalacheck"                % Version.scalaCheck          % Test
-  final val shapelessScalaCheck = "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % Version.scalaCheckShapeless % Test
+  final val mockito             = "org.mockito"                % "mockito-all"                % Version.mockito
+  final val monocleLaw          = "com.github.julien-truffaut" %% "monocle-law"               % Version.monocleVersion
+  final val scalatest           = "org.scalatest"              %% "scalatest"                 % Version.scalaTest
+  final val selenium            = "org.seleniumhq.selenium"    % "selenium-java"              % Version.selenium
+  final val scalaCheck          = "org.scalacheck"             %% "scalacheck"                % Version.scalaCheck
+  final val shapelessScalaCheck = "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % Version.scalaCheckShapeless
 }
 
 object Dependencies {
@@ -109,10 +111,11 @@ object Dependencies {
   )
 
   val testDependencies = Seq(
-    Library.mockito,
-    Library.scalatest,
-    Library.selenium,
-    Library.scalaCheck,
-    Library.shapelessScalaCheck
+    Library.mockito             % Test,
+    Library.munit               % Test,
+    Library.selenium            % Test,
+    Library.scalatest           % "it,test",
+    Library.scalaCheck          % Test,
+    Library.shapelessScalaCheck % Test
   )
 }
