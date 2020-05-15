@@ -39,7 +39,9 @@ object Library {
   final val chimney            = "io.scalaland"               %% "chimney"              % Version.chimney
   final val circeCore          = "io.circe"                   %% "circe-core"           % Version.circeVersion
   final val circeGeneric       = "io.circe"                   %% "circe-generic"        % Version.circeVersion
+  final val circeGenericExtras = "io.circe"                   %% "circe-generic-extras" % Version.circeVersion
   final val circeParser        = "io.circe"                   %% "circe-parser"         % Version.circeVersion
+  final val circeLiteral       = "io.circe"                   %% "circe-literal"        % Version.circeVersion
   final val enumeratum         = "com.beachape"               %% "enumeratum"           % Version.enumeratum
   final val fs2Core            = "co.fs2"                     %% "fs2-core"             % Version.fs2
   final val fs2IO              = "co.fs2"                     %% "fs2-io"               % Version.fs2 // optional I/O library
@@ -83,6 +85,8 @@ object Dependencies {
     Library.chimney,
     Library.circeCore,
     Library.circeGeneric,
+    Library.circeGenericExtras,
+    Library.circeLiteral,
     Library.circeParser,
     Library.enumeratum,
     Library.fs2Core,
