@@ -23,4 +23,10 @@ class SubProject1Test extends AnyFunSuite with BeforeAndAfterAll with BeforeAndA
   test("test2") {
     assert(true)
   }
+
+  test("test3") {
+    println("subprojekt1 sleeping for 5 seconds")
+    Thread.sleep(5000)
+    assert(true)
+  }
 }

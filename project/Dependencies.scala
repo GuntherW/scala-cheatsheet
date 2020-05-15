@@ -1,16 +1,16 @@
 import sbt._
 
 object Version {
-  final val akkaVersion    = "2.6.4"
+  final val akkaVersion    = "2.6.5"
   final val catsVersion    = "2.1.1"
   final val catsConsole    = "0.8.1"
-  final val chimney        = "0.5.1"
+  final val chimney        = "0.5.2"
   final val circeVersion   = "0.13.0"
-  final val enumeratum     = "1.5.15"
+  final val enumeratum     = "1.6.0"
   final val fs2            = "2.3.0"
   final val kittensVersion = "2.1.0"
   final val logback        = "1.2.3"
-  final val monix          = "3.2.0"
+  final val monix          = "3.2.1"
   final val monocleVersion = "2.0.4"
   final val pureConfig     = "0.12.3"
   final val refined        = "0.9.14"
@@ -24,8 +24,8 @@ object Version {
   final val zioVersion     = "1.0.0-RC18-2"
   // Test
   final val mockito             = "1.10.19"
-  final val munit               = "0.7.4"
-  final val scalaTest           = "3.1.1"
+  final val munit               = "0.7.7"
+  final val scalaTest           = "3.1.2"
   final val selenium            = "3.141.59"
   final val scalaCheck          = "1.14.3"
   final val scalaCheckShapeless = "1.2.5"

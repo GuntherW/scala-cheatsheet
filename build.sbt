@@ -35,7 +35,7 @@ ThisBuild / resolvers ++= Seq(
   "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
   Resolver.bintrayRepo("hseeberger", "maven")
 )
-
+ThisBuild / Test / fork := true // subprojects won't run in parallel then
 //ThisBuild / updateOptions := updateOptions.value.withCachedResolution(true)
 //ThisBuild / updateConfiguration in updateSbtClassifiers := (updateConfiguration in updateSbtClassifiers).value.withMissingOk(true)
 
@@ -72,9 +72,16 @@ lazy val subproject1 = project
   .settings(
     libraryDependencies ++= Seq(
       Library.scalatest % Test
-    )
+    ),
+    Test / fork := false // subprojects will run in parallel
   )
 lazy val subproject2 = project
+  .settings(
+    libraryDependencies ++= Seq(
+      Library.scalatest % Test
+    ),
+    Test / fork := false // subprojects will run in parallel
+  )
 
 lazy val munit = project
   .settings(
