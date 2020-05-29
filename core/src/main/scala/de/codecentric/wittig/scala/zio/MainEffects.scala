@@ -12,7 +12,7 @@ object MainEffects extends App {
   def run(args: List[String]) =
     fib(100).fork
       .map(i => println(s"Hallo $i"))
-      .map(_ => 1)
+      .exitCode
 
   val zoption: IO[Unit, Int]          = ZIO.fromOption(Some(2))
   val zoption2: ZIO[Any, String, Int] = zoption.mapError(_ => "It wasn't there!")

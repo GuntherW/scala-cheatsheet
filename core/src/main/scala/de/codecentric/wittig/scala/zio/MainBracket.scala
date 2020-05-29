@@ -8,7 +8,7 @@ import zio.{App, Task, UIO}
 object MainBracket extends App {
   // run my bracket
   def run(args: List[String]) =
-    mybracket.orDie.as(0)
+    mybracket.exitCode
 
   def closeStream(is: FileInputStream) = UIO(is.close())
 

@@ -9,7 +9,7 @@ object MainTask extends App {
   def run(args: List[String]) =
     myAppLogic.either.map {
       _.fold(t => { println(t); 1 }, _ => 0)
-    }
+    }.exitCode
 
   private val myAppLogic =
     for {
