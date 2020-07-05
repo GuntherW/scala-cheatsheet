@@ -4,23 +4,23 @@ import scodec.codecs.implicits._
 import scodec._
 import scodec.bits._
 import codecs._
-import de.codecentric.wittig.scala.Printer.log
+import de.codecentric.wittig.scala.Printer.printlnYellow
 
 /**
   * @author gunther
   */
 object Codierung extends App {
 
-  log("encodeDecode")
+  printlnYellow("encodeDecode")
   encodeDecode
 
-  log("combinator")
+  printlnYellow("combinator")
   combinator
 
-  log("caseClassBinding")
+  printlnYellow("caseClassBinding")
   caseClassBinding
 
-  log("scodecDoku")
+  printlnYellow("scodecDoku")
   scodecDoku
 
   def encodeDecode(): Unit = {
