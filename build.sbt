@@ -52,7 +52,8 @@ lazy val `scala-cheatcheet` = (project in file("."))
     core,
     munit,
     subprojectTestInParallel1,
-    subprojectTestInParallel2
+    subprojectTestInParallel2,
+    sttp
   )
 
 lazy val core = project
@@ -92,4 +93,14 @@ lazy val munit = project
     libraryDependencies += Library.munit % Test,
     testFrameworks += new TestFramework("munit.Framework"),
     Test / fork := false //  subprojects tests will run parallel with other subprojects
+  )
+
+lazy val sttp = project
+  .settings(
+    libraryDependencies ++= Seq(
+      Library.sttpCore,
+      Library.sttpAsyncBE,
+      Library.sttpCirce,
+      Library.circeGeneric
+    )
   )

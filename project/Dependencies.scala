@@ -21,6 +21,7 @@ object Version {
   final val scodec         = "1.11.7"
   final val simulacrum     = "0.19.0"
   final val shapeless      = "2.3.3"
+  final val sttp           = "2.2.1"
   final val zioVersion     = "1.0.0-RC21-2"
   // Testre
   final val mockito             = "1.10.19"
@@ -32,39 +33,42 @@ object Version {
 }
 
 object Library {
-  final val akkaStream         = "com.typesafe.akka"          %% "akka-stream"          % Version.akkaVersion
-  final val catsConsole        = "dev.profunktor"             %% "console4cats"         % Version.catsConsole
-  final val catsCore           = "org.typelevel"              %% "cats-core"            % Version.catsVersion
-  final val catsFree           = "org.typelevel"              %% "cats-free"            % Version.catsVersion
-  final val chimney            = "io.scalaland"               %% "chimney"              % Version.chimney
-  final val circeCore          = "io.circe"                   %% "circe-core"           % Version.circeVersion
-  final val circeGeneric       = "io.circe"                   %% "circe-generic"        % Version.circeVersion
-  final val circeGenericExtras = "io.circe"                   %% "circe-generic-extras" % Version.circeVersion
-  final val circeParser        = "io.circe"                   %% "circe-parser"         % Version.circeVersion
-  final val circeLiteral       = "io.circe"                   %% "circe-literal"        % Version.circeVersion
-  final val enumeratum         = "com.beachape"               %% "enumeratum"           % Version.enumeratum
-  final val fs2Core            = "co.fs2"                     %% "fs2-core"             % Version.fs2
-  final val fs2IO              = "co.fs2"                     %% "fs2-io"               % Version.fs2 // optional I/O library
-  final val fs2Experimental    = "co.fs2"                     %% "fs2-experimental"     % Version.fs2 // optional experimental library
-  final val fs2ReactiveStreams = "co.fs2"                     %% "fs2-reactive-streams" % Version.fs2 // optional reactive streams interop
-  final val kittens            = "org.typelevel"              %% "kittens"              % Version.kittensVersion
-  final val logback            = "ch.qos.logback"             % "logback-classic"       % Version.logback
-  final val monocleCore        = "com.github.julien-truffaut" %% "monocle-core"         % Version.monocleVersion
-  final val monocleGeneric     = "com.github.julien-truffaut" %% "monocle-generic"      % Version.monocleVersion
-  final val monix              = "io.monix"                   %% "monix"                % Version.monix
-  final val monocleMacro       = "com.github.julien-truffaut" %% "monocle-macro"        % Version.monocleVersion
-  final val monocleRefined     = "com.github.julien-truffaut" %% "monocle-refined"      % Version.monocleVersion
-  final val monocleState       = "com.github.julien-truffaut" %% "monocle-state"        % Version.monocleVersion
-  final val munit              = "org.scalameta"              %% "munit"                % Version.munit
-  final val pureConfig         = "com.github.pureconfig"      %% "pureconfig"           % Version.pureConfig
-  final val refined            = "eu.timepit"                 %% "refined"              % Version.refined
-  final val scalaLogging       = "com.typesafe.scala-logging" %% "scala-logging"        % Version.scalaLogging
-  final val scalaMeta          = "org.scalameta"              %% "scalameta"            % Version.scalaMeta
-  final val scalaReflect       = "org.scala-lang"             % "scala-reflect"         % Version.scala
-  final val shapeless          = "com.chuusai"                %% "shapeless"            % Version.shapeless
-  final val simulacrum         = "com.github.mpilquist"       %% "simulacrum"           % Version.simulacrum
-  final val scodec             = "org.scodec"                 %% "scodec-core"          % Version.scodec
-  final val zio                = "dev.zio"                    %% "zio"                  % Version.zioVersion
+  final val akkaStream         = "com.typesafe.akka"            %% "akka-stream"                      % Version.akkaVersion
+  final val catsConsole        = "dev.profunktor"               %% "console4cats"                     % Version.catsConsole
+  final val catsCore           = "org.typelevel"                %% "cats-core"                        % Version.catsVersion
+  final val catsFree           = "org.typelevel"                %% "cats-free"                        % Version.catsVersion
+  final val chimney            = "io.scalaland"                 %% "chimney"                          % Version.chimney
+  final val circeCore          = "io.circe"                     %% "circe-core"                       % Version.circeVersion
+  final val circeGeneric       = "io.circe"                     %% "circe-generic"                    % Version.circeVersion
+  final val circeGenericExtras = "io.circe"                     %% "circe-generic-extras"             % Version.circeVersion
+  final val circeParser        = "io.circe"                     %% "circe-parser"                     % Version.circeVersion
+  final val circeLiteral       = "io.circe"                     %% "circe-literal"                    % Version.circeVersion
+  final val enumeratum         = "com.beachape"                 %% "enumeratum"                       % Version.enumeratum
+  final val fs2Core            = "co.fs2"                       %% "fs2-core"                         % Version.fs2
+  final val fs2IO              = "co.fs2"                       %% "fs2-io"                           % Version.fs2 // optional I/O library
+  final val fs2Experimental    = "co.fs2"                       %% "fs2-experimental"                 % Version.fs2 // optional experimental library
+  final val fs2ReactiveStreams = "co.fs2"                       %% "fs2-reactive-streams"             % Version.fs2 // optional reactive streams interop
+  final val kittens            = "org.typelevel"                %% "kittens"                          % Version.kittensVersion
+  final val logback            = "ch.qos.logback"               % "logback-classic"                   % Version.logback
+  final val monocleCore        = "com.github.julien-truffaut"   %% "monocle-core"                     % Version.monocleVersion
+  final val monocleGeneric     = "com.github.julien-truffaut"   %% "monocle-generic"                  % Version.monocleVersion
+  final val monix              = "io.monix"                     %% "monix"                            % Version.monix
+  final val monocleMacro       = "com.github.julien-truffaut"   %% "monocle-macro"                    % Version.monocleVersion
+  final val monocleRefined     = "com.github.julien-truffaut"   %% "monocle-refined"                  % Version.monocleVersion
+  final val monocleState       = "com.github.julien-truffaut"   %% "monocle-state"                    % Version.monocleVersion
+  final val munit              = "org.scalameta"                %% "munit"                            % Version.munit
+  final val pureConfig         = "com.github.pureconfig"        %% "pureconfig"                       % Version.pureConfig
+  final val refined            = "eu.timepit"                   %% "refined"                          % Version.refined
+  final val scalaLogging       = "com.typesafe.scala-logging"   %% "scala-logging"                    % Version.scalaLogging
+  final val scalaMeta          = "org.scalameta"                %% "scalameta"                        % Version.scalaMeta
+  final val scalaReflect       = "org.scala-lang"               % "scala-reflect"                     % Version.scala
+  final val shapeless          = "com.chuusai"                  %% "shapeless"                        % Version.shapeless
+  final val simulacrum         = "com.github.mpilquist"         %% "simulacrum"                       % Version.simulacrum
+  final val scodec             = "org.scodec"                   %% "scodec-core"                      % Version.scodec
+  final val sttpCore           = "com.softwaremill.sttp.client" %% "core"                             % Version.sttp
+  final val sttpCirce          = "com.softwaremill.sttp.client" %% "circe"                            % Version.sttp
+  final val sttpAsyncBE        = "com.softwaremill.sttp.client" %% "async-http-client-backend-future" % Version.sttp
+  final val zio                = "dev.zio"                      %% "zio"                              % Version.zioVersion
   //"dev.zio"                    %% "zio-streams"    % zioVersionm,
 
   // test
