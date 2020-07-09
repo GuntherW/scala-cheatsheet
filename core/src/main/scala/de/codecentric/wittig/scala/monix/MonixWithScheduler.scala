@@ -1,5 +1,6 @@
 package de.codecentric.wittig.scala.monix
 import cats.effect.ExitCode
+import cats.effect.concurrent.Ref
 import monix.eval.{Task, TaskApp}
 import cats.implicits._
 import de.codecentric.wittig.scala.Implicits._
@@ -20,7 +21,7 @@ object MonixWithScheduler extends TaskApp {
   private val task2 = parallel(printlnCyan)
 
   private def programm = (task1, task2).parMapN {
-    case (list1, list2) => list1.sum + list2.sum
+    case (list1, list2) => list1.sum + list2.sum // Addition ohne Bedeutung.
   }
 
   override def run(args: List[String]): Task[ExitCode] =

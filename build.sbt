@@ -1,3 +1,5 @@
+import sbt.Test
+
 ThisBuild / version := "1.0"
 ThisBuild / scalaVersion := Version.scala
 ThisBuild / organization := "de.wittig"
@@ -42,12 +44,15 @@ ThisBuild / Test / fork := true // subprojects won't run in parallel then
 ThisBuild / turbo := true
 ThisBuild / onChangedBuildSource := ReloadOnSourceChanges
 
+// Showing full stack trace
+ThisBuild / Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oF")
+
 lazy val `scala-cheatcheet` = (project in file("."))
   .aggregate(
     core,
     munit,
-    subproject1,
-    subproject2
+    subprojectTestInParallel1,
+    subprojectTestInParallel2
   )
 
 lazy val core = project
@@ -67,24 +72,24 @@ lazy val docs = project // new documentation project
   )
   .enablePlugins(MdocPlugin)
 
-lazy val subproject1 = project
-  .dependsOn(subproject2)
+lazy val subprojectTestInParallel1 = project
   .settings(
     libraryDependencies ++= Seq(
       Library.scalatest % Test
     ),
-    Test / fork := false // subprojects will run in parallel
+    Test / fork := false // subprojects tests will run parallel with other subprojects
   )
-lazy val subproject2 = project
+lazy val subprojectTestInParallel2 = project
   .settings(
     libraryDependencies ++= Seq(
       Library.scalatest % Test
     ),
-    Test / fork := false // subprojects will run in parallel
+    Test / fork := false //  subprojects tests will run parallel with other subprojects
   )
 
 lazy val munit = project
   .settings(
     libraryDependencies += Library.munit % Test,
-    testFrameworks += new TestFramework("munit.Framework")
+    testFrameworks += new TestFramework("munit.Framework"),
+    Test / fork := false //  subprojects tests will run parallel with other subprojects
   )
