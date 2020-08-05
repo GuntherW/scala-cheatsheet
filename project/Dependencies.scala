@@ -22,7 +22,7 @@ object Version {
   final val simulacrum     = "0.19.0"
   final val shapeless      = "2.3.3"
   final val sttp           = "2.2.3"
-  final val zioVersion     = "1.0.0-RC21-2"
+  final val zioVersion     = "1.0.0"
   // Testre
   final val mockito             = "1.10.19"
   final val munit               = "0.7.10"
