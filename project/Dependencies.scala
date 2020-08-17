@@ -22,6 +22,8 @@ object Version {
   final val simulacrum     = "0.19.0"
   final val shapeless      = "2.3.3"
   final val sttp           = "2.2.4"
+  final val xstream        = "1.4.12"
+  final val xml            = "2.0.0-M1"
   final val zioVersion     = "1.0.0"
   // Testre
   final val mockito             = "1.10.19"
@@ -68,6 +70,8 @@ object Library {
   final val sttpCore           = "com.softwaremill.sttp.client" %% "core"                             % Version.sttp
   final val sttpCirce          = "com.softwaremill.sttp.client" %% "circe"                            % Version.sttp
   final val sttpAsyncBE        = "com.softwaremill.sttp.client" %% "async-http-client-backend-future" % Version.sttp
+  final val xstream            = "com.thoughtworks.xstream"     % "xstream"                           % Version.xstream
+  final val xml                = "org.scala-lang.modules"       %% "scala-xml"                        % Version.xml
   final val zio                = "dev.zio"                      %% "zio"                              % Version.zioVersion
   //"dev.zio"                    %% "zio-streams"    % zioVersionm,
 
@@ -114,6 +118,8 @@ object Dependencies {
     Library.scodec,
     Library.shapeless,
     Library.simulacrum,
+    Library.xstream,
+    Library.xml,
     Library.zio
   )
 
