@@ -7,7 +7,7 @@ object Version {
   final val chimney        = "0.5.3"
   final val circeVersion   = "0.13.0"
   final val enumeratum     = "1.6.1"
-  final val fs2            = "2.4.2"
+  final val fs2            = "2.4.4"
   final val kittensVersion = "2.1.0"
   final val logback        = "1.2.3"
   final val monix          = "3.2.2"
@@ -16,20 +16,21 @@ object Version {
   final val refined        = "0.9.15"
   final val scala          = "2.13.3"
   final val scalaLogging   = "3.9.2"
-  final val scalaMeta      = "4.3.20"
+  final val scalaMeta      = "4.3.21"
   final val scalaz         = "7.2.29"
   final val scodec         = "1.11.7"
   final val simulacrum     = "0.19.0"
   final val shapeless      = "2.3.3"
-  final val sttp           = "2.2.4"
+  final val sttp           = "2.2.6"
   final val xstream        = "1.4.12"
   final val xml            = "2.0.0-M1"
-  final val zioVersion     = "1.0.0"
+  final val zio            = "1.0.1"
   // Testre
   final val mockito             = "1.10.19"
   final val munit               = "0.7.11"
-  final val scalaTest           = "3.2.1"
+  final val scalaTest           = "3.2.2"
   final val selenium            = "3.141.59"
+  final val seleniumPlus        = "3.2.2.0"
   final val scalaCheck          = "1.14.3"
   final val scalaCheckShapeless = "1.2.5"
 }
@@ -72,7 +73,7 @@ object Library {
   final val sttpAsyncBE        = "com.softwaremill.sttp.client" %% "async-http-client-backend-future" % Version.sttp
   final val xstream            = "com.thoughtworks.xstream"     % "xstream"                           % Version.xstream
   final val xml                = "org.scala-lang.modules"       %% "scala-xml"                        % Version.xml
-  final val zio                = "dev.zio"                      %% "zio"                              % Version.zioVersion
+  final val zio                = "dev.zio"                      %% "zio"                              % Version.zio
   //"dev.zio"                    %% "zio-streams"    % zioVersionm,
 
   // test
@@ -80,6 +81,7 @@ object Library {
   final val monocleLaw          = "com.github.julien-truffaut" %% "monocle-law"               % Version.monocleVersion
   final val scalatest           = "org.scalatest"              %% "scalatest"                 % Version.scalaTest
   final val selenium            = "org.seleniumhq.selenium"    % "selenium-java"              % Version.selenium
+  final val seleniumPlus        = "org.scalatestplus"          %% "selenium-3-141"            % Version.seleniumPlus
   final val scalaCheck          = "org.scalacheck"             %% "scalacheck"                % Version.scalaCheck
   final val shapelessScalaCheck = "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % Version.scalaCheckShapeless
 }
@@ -126,8 +128,9 @@ object Dependencies {
   val testDependencies = Seq(
     Library.mockito             % Test,
     Library.munit               % Test,
-    Library.selenium            % Test,
     Library.scalatest           % "it,test",
+    Library.seleniumPlus        % "it",
+    Library.selenium            % "it",
     Library.scalaCheck          % Test,
     Library.shapelessScalaCheck % Test
   )
