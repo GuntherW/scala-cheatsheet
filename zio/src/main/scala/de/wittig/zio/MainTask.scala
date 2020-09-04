@@ -1,6 +1,6 @@
-package de.codecentric.wittig.scala.zio
+package de.wittig.zio
 
-import cats.implicits._
+import cats.implicits.none
 import zio.{App, Task}
 
 import scala.io.StdIn

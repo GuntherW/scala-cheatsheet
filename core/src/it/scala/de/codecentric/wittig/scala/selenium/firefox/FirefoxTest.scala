@@ -14,3 +14,11 @@ class FirefoxTest extends AnyFunSuite with Matchers with WebBrowser {
     assert(pageTitle.contains("KDE"))
   }
 }
+
+class FirefoxTest2 extends AnyFunSuite with Matchers with Firefox {
+
+  test("The blog app home page should have the correct title") {
+    go to "https://kde.org"
+    assert(pageTitle.contains("KDE"))
+  }
+}

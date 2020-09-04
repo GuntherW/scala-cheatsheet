@@ -28,7 +28,7 @@ ThisBuild / scalacOptions ++= Seq(
   "-Ywarn-value-discard",
   "-Ymacro-annotations" // scala 2.13.0
 )
-
+parallelExecution in Test := true
 // Change this to another test framework if you prefer
 ThisBuild / resolvers += Resolver.sonatypeRepo("snapshots")
 ThisBuild / resolvers += Resolver.sonatypeRepo("public")
@@ -53,7 +53,8 @@ lazy val `scala-cheatcheet` = (project in file("."))
     munit,
     subprojectTestInParallel1,
     subprojectTestInParallel2,
-    sttp
+    sttp,
+    zio
   )
 
 lazy val core = project
@@ -99,8 +100,17 @@ lazy val sttp = project
   .settings(
     libraryDependencies ++= Seq(
       Library.sttpCore,
-      Library.sttpAsyncBE,
+      Library.sttpBEAsync,
+      Library.sttpBEAkkaHttp,
+      Library.sttpBEMonix,
+      Library.sttpBEZio,
       Library.sttpCirce,
+      Library.akkaStream,
       Library.circeGeneric
     )
+  )
+
+lazy val zio = project
+  .settings(
+    libraryDependencies ++= Dependencies.dependencies ++ Dependencies.zioDependencies
   )

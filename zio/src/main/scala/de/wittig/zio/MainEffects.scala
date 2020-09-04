@@ -1,12 +1,10 @@
-package de.codecentric.wittig.scala.zio
-
-import zio.clock.Clock
-import zio.duration._
+package de.wittig.zio
 import zio._
+import zio.clock.Clock
+import zio.duration.durationInt
 
 import scala.concurrent.Future
 import scala.util.Try
-
 object MainEffects extends App {
   val ZERO = 0
   def run(args: List[String]) =

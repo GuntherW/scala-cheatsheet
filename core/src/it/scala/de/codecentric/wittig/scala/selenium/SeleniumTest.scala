@@ -6,7 +6,7 @@ import org.scalatestplus.selenium.HtmlUnit
 
 class SeleniumTest extends AnyFunSuite with Matchers with HtmlUnit {
 
-  ignore("The blog app home page should have the correct title") {
+  test("The blog app home page should have the correct title") {
     go to "https://kde.org"
     assert(pageTitle.contains("KDE"))
   }

@@ -1,4 +1,4 @@
-package de.codecentric.wittig.scala.zio
+package de.wittig.zio
 
 import java.io.{File, FileInputStream}
 import java.nio.charset.StandardCharsets

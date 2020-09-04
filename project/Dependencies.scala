@@ -2,7 +2,7 @@ import sbt._
 
 object Version {
   final val akkaVersion    = "2.6.8"
-  final val catsVersion    = "2.1.1"
+  final val catsVersion    = "2.2.0"
   final val catsConsole    = "0.8.1"
   final val chimney        = "0.5.3"
   final val circeVersion   = "0.13.0"
@@ -21,13 +21,13 @@ object Version {
   final val scodec         = "1.11.7"
   final val simulacrum     = "0.19.0"
   final val shapeless      = "2.3.3"
-  final val sttp           = "2.2.6"
+  final val sttp           = "3.0.0-RC1"
   final val xstream        = "1.4.12"
   final val xml            = "2.0.0-M1"
   final val zio            = "1.0.1"
   // Testre
   final val mockito             = "1.10.19"
-  final val munit               = "0.7.11"
+  final val munit               = "0.7.12"
   final val scalaTest           = "3.2.2"
   final val selenium            = "3.141.59"
   final val seleniumPlus        = "3.2.2.0"
@@ -70,10 +70,14 @@ object Library {
   final val scodec             = "org.scodec"                   %% "scodec-core"                      % Version.scodec
   final val sttpCore           = "com.softwaremill.sttp.client" %% "core"                             % Version.sttp
   final val sttpCirce          = "com.softwaremill.sttp.client" %% "circe"                            % Version.sttp
-  final val sttpAsyncBE        = "com.softwaremill.sttp.client" %% "async-http-client-backend-future" % Version.sttp
-  final val xstream            = "com.thoughtworks.xstream"     % "xstream"                           % Version.xstream
-  final val xml                = "org.scala-lang.modules"       %% "scala-xml"                        % Version.xml
-  final val zio                = "dev.zio"                      %% "zio"                              % Version.zio
+  final val sttpBEAsync        = "com.softwaremill.sttp.client" %% "async-http-client-backend-future" % Version.sttp
+  final val sttpBEZio          = "com.softwaremill.sttp.client" %% "async-http-client-backend-zio"    % Version.sttp
+  final val sttpBEAkkaHttp     = "com.softwaremill.sttp.client" %% "akka-http-backend"                % Version.sttp
+  final val sttpBEMonix        = "com.softwaremill.sttp.client" %% "async-http-client-backend-monix"  % Version.sttp
+
+  final val xstream = "com.thoughtworks.xstream" % "xstream"    % Version.xstream
+  final val xml     = "org.scala-lang.modules"   %% "scala-xml" % Version.xml
+  final val zio     = "dev.zio"                  %% "zio"       % Version.zio
   //"dev.zio"                    %% "zio-streams"    % zioVersionm,
 
   // test
@@ -123,6 +127,12 @@ object Dependencies {
     Library.xstream,
     Library.xml,
     Library.zio
+  )
+
+  val zioDependencies = Seq(
+    Library.zio,
+    "dev.zio" %% "zio-streams" % "1.0.1",
+    "dev.zio" %% "zio-kafka"   % "0.12.0"
   )
 
   val testDependencies = Seq(

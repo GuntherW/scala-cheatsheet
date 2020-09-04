@@ -1,7 +1,7 @@
-package de.codecentric.wittig.scala.zio
-import zio.App
-import zio.console._
+package de.wittig.zio
 
+import zio.console.{getStrLn, putStrLn}
+import zio.App
 object Main extends App {
 
   def run(args: List[String]) =
