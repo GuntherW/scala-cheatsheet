@@ -3,7 +3,6 @@ package de.codecentric.wittig.scala.option
 /**
   * Thanks to Marconi Lanna!
   * https://skillsmatter.com/skillscasts/7040-lightning-talks-4
-  *
   */
 object UseOption extends App {
   val p: String => Boolean = _.isEmpty

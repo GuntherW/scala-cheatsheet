@@ -2,7 +2,7 @@ package de.codecentric.wittig.scala.monocle
 import monocle.Prism
 
 /**
-  *A Prism is an optic used to select part of a Sum type (also known as Coproduct), e.g. sealed trait or Enum.
+  * A Prism is an optic used to select part of a Sum type (also known as Coproduct), e.g. sealed trait or Enum.
   */
 object MainPrism extends App {
 

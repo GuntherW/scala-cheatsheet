@@ -7,10 +7,10 @@ object MyPrism {
 
   sealed abstract class Ampel extends Product with Serializable
   object Ampel {
-    case class Rot(wert: Double) extends Ampel {
+    case class Rot(wert: Double)   extends Ampel {
       override def toString: String = Console.RED + "Rot: " + wert + Console.RESET
     }
-    case class Gelb(wert: Double) extends Ampel {
+    case class Gelb(wert: Double)  extends Ampel {
       override def toString: String = Console.YELLOW + "Gelb: " + wert + Console.RESET
     }
     case class Gruen(wert: Double) extends Ampel {
@@ -31,7 +31,7 @@ object MyPrism {
   // Gleiches Prism wie "prism"
   val prism3 = GenPrism[Ampel, Ampel.Gruen]
 
-  val typicalPrism: Prism[Ampel, Double] =
+  val typicalPrism: Prism[Ampel, Double]  =
     Prism.partial[Ampel, Double] {
       case Ampel.Gruen(d) => d
     }(Ampel.Gruen)

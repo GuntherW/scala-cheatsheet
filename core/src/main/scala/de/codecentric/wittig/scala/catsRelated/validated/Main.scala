@@ -23,25 +23,29 @@ object Data {
     """^[a-zA-Z0-9\.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$""".r
   private val phoneRegex = """^\+(?:[0-9] ?){6,14}[0-9]$""".r
 
-  def validateEmail(email: String): Validation[String] = email match {
-    case e if emailRegex.findFirstMatchIn(e).isDefined => success(e)
-    case _                                             => failure(Error.InvalidEmail)
-  }
+  def validateEmail(email: String): Validation[String] =
+    email match {
+      case e if emailRegex.findFirstMatchIn(e).isDefined => success(e)
+      case _                                             => failure(Error.InvalidEmail)
+    }
 
-  def validatePhone(phone: String): Validation[String] = phone match {
-    case p if phoneRegex.findFirstMatchIn(p).isDefined => success(p)
-    case _                                             => failure(Error.InvalidPhone)
-  }
+  def validatePhone(phone: String): Validation[String] =
+    phone match {
+      case p if phoneRegex.findFirstMatchIn(p).isDefined => success(p)
+      case _                                             => failure(Error.InvalidPhone)
+    }
 
-  def validateAge(age: Int): Validation[Int] = age match {
-    case i: Int if i > 18 => success(i)
-    case _                => failure(Error.InvalidAge)
-  }
+  def validateAge(age: Int): Validation[Int] =
+    age match {
+      case i: Int if i > 18 => success(i)
+      case _                => failure(Error.InvalidAge)
+    }
 
-  def validateRank(rank: Int): Validation[Int] = rank match {
-    case i: Int if i > 0 => success(i)
-    case _               => failure(Error.InvalidRank)
-  }
+  def validateRank(rank: Int): Validation[Int] =
+    rank match {
+      case i: Int if i > 0 => success(i)
+      case _               => failure(Error.InvalidRank)
+    }
 
   def validateAgeAndRank(age: Int, rank: Int): Validation[Unit] =
     if (age > rank)

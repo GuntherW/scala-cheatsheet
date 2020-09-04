@@ -1,12 +1,13 @@
 package de.codecentric.wittig.scala.memoize
 
 object Memo extends App {
-  def memoize[A, B](f: A => B) = new (A => B) {
-    val cache = scala.collection.mutable.Map[A, B]()
-    def apply(x: A) = {
-      cache.getOrElseUpdate(x, f(x))
+  def memoize[A, B](f: A => B) =
+    new (A => B) {
+      val cache = scala.collection.mutable.Map[A, B]()
+      def apply(x: A) = {
+        cache.getOrElseUpdate(x, f(x))
+      }
     }
-  }
 
   def normalize(c: Char): Char = {
     val x  = c.toInt - 65
@@ -21,7 +22,7 @@ object Memo extends App {
     }
     normalize(ro(c))
   }
-  val rot13 = rot(13)(_)
+  val rot13                    = rot(13)(_)
 
   println(rot13('a'))
 }

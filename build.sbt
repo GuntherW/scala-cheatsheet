@@ -26,7 +26,7 @@ ThisBuild / scalacOptions ++= Seq(
   // "-Ywarn-unused-import",
   // Warn when non-Unit expression results are unused
   "-Ywarn-value-discard",
-  "-Ymacro-annotations" // scala 2.13.0
+  "-Ymacro-annotations"         // scala 2.13.0
 )
 parallelExecution in Test := true
 // Change this to another test framework if you prefer

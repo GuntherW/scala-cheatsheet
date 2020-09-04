@@ -19,7 +19,7 @@ object Main extends App {
   parMapN()
 
   def first(): Unit = {
-    val ioa = IO { println("hey!") }
+    val ioa               = IO { println("hey!") }
     val program: IO[Unit] =
       for {
         _ <- ioa
@@ -36,6 +36,7 @@ object Main extends App {
         else
           IO.pure(b2)
       }
+
     val program = fib(6)
     program.unsafeRunAsync(a => println(s"fib $a"))
   }
@@ -59,8 +60,8 @@ object Main extends App {
   def readPrint(): Unit = {
     def putStrlLn(value: String) = IO.fromFuture(IO(Future(println(value))))
 //    def putStrlLn(value: String) = IO(println(value))
-    val readLn = IO(scala.io.StdIn.readLine)
-    val programm = for {
+    val readLn                   = IO(scala.io.StdIn.readLine)
+    val programm                 = for {
       _ <- putStrlLn("What's your name?")
       n <- readLn
       _ <- putStrlLn(s"Hello, $n!")

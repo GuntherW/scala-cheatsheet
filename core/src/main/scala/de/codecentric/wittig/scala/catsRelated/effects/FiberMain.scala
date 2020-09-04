@@ -25,25 +25,25 @@ object FiberMain extends App {
   val runToBunker: IO[Unit]       = IO(println("To the bunker!!!"))
 
   val end = for {
-    fiber <- launchMissiles.start
-    _ <- runToBunker.handleErrorWith { error =>
-          // Retreat failed, cancel launch (maybe we should
-          // have retreated to our bunker before the launch?)
-          fiber.cancel *> IO.raiseError(error)
-        }
+    fiber     <- launchMissiles.start
+    _         <- runToBunker.handleErrorWith { error =>
+                   // Retreat failed, cancel launch (maybe we should
+                   // have retreated to our bunker before the launch?)
+                   fiber.cancel *> IO.raiseError(error)
+                 }
     aftermath <- fiber.join
   } yield aftermath
 
   val end2 = for {
     _ <- launchMissiles.handleErrorWith { error =>
-          println("i1")
-          IO.raiseError(error)
+           println("i1")
+           IO.raiseError(error)
 //          IO.pure(1)
-        }
+         }
     _ <- runToBunker.handleErrorWith { _ =>
-          println("inside") // wont be executed
-          IO.raiseError(new Exception("Boom Inside"))
-        }
+           println("inside") // wont be executed
+           IO.raiseError(new Exception("Boom Inside"))
+         }
   } yield ()
 
   end.unsafeRunSync()

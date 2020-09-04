@@ -11,13 +11,13 @@ trait Printable[A] {
   * 2. Ein Objekt mit Instanzen für alle gewünschten Typen
   */
 object PrintDefaults {
-  implicit val printableInt = new Printable[Int] {
+  implicit val printableInt    = new Printable[Int] {
     def format(i: Int) = i.toString
   }
   implicit val printableString = new Printable[String] {
     def format(i: String) = i
   }
-  implicit val printableCat = new Printable[Cat] {
+  implicit val printableCat    = new Printable[Cat] {
     def format(i: Cat) = s"${i.name} is a ${i.age} year-old ${i.color} cat"
   }
 }

@@ -19,9 +19,9 @@ object Status extends App {
       id          <- nextLong
       sentient    <- nextBoolean
       isCatherine <- nextBoolean
-      name        = if (isCatherine) "Catherine" else "Carlos"
+      name         = if (isCatherine) "Catherine" else "Carlos"
       isReplicant <- nextBoolean
-      model       = if (isReplicant) "replicant" else "borg"
+      model        = if (isReplicant) "replicant" else "borg"
     } yield Robot(id, sentient, name, model)
 
   val initialSeed = Seed(13L)

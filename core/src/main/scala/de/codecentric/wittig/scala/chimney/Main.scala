@@ -25,14 +25,14 @@ object Main extends App {
       person.age,
       person.email
     )
-  implicit val customerPatcher: Patcher[Customer, Int] = (customer, newAge) => customer.copy(age = newAge)
-  val customer1 = person
+  implicit val customerPatcher: Patcher[Customer, Int]           = (customer, newAge) => customer.copy(age = newAge)
+  val customer1                                                  = person
     .into[Customer]
     .withFieldConst(_.id, UUID.randomUUID)
     .transform
-  val customer2 = person.transformInto[Customer](transformerPersonToCustomer)
-  val customer3 = customer2.patchUsing(123)
-  val customer4 = customer2.patchUsing(patch)
+  val customer2                                                  = person.transformInto[Customer](transformerPersonToCustomer)
+  val customer3                                                  = customer2.patchUsing(123)
+  val customer4                                                  = customer2.patchUsing(patch)
 
   // printing
   println("-" * 100)

@@ -26,11 +26,12 @@ object Matching extends App with Auth {
 
   val user: User = new FreeUser("Daniela", 3000, 0.7d)
 
-  def result = user match {
-    case candidate @ PremiumCandidate() => s"${candidate.name}, Du bist auf einem guten Weg zum Premiumnutzer"
-    case FreeUser(name, _, p)           => s"$name, was kann ich für Dich tun?"
-    case PremiumUser(name, _)           => s"Herzlich Willkommen, $name"
-  }
+  def result =
+    user match {
+      case candidate @ PremiumCandidate() => s"${candidate.name}, Du bist auf einem guten Weg zum Premiumnutzer"
+      case FreeUser(name, _, p)           => s"$name, was kann ich für Dich tun?"
+      case PremiumUser(name, _)           => s"Herzlich Willkommen, $name"
+    }
 
   println(result)
 

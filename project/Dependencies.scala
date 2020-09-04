@@ -1,30 +1,30 @@
 import sbt._
 
 object Version {
-  final val akkaVersion    = "2.6.8"
-  final val catsVersion    = "2.2.0"
-  final val catsConsole    = "0.8.1"
-  final val chimney        = "0.5.3"
-  final val circeVersion   = "0.13.0"
-  final val enumeratum     = "1.6.1"
-  final val fs2            = "2.4.4"
-  final val kittensVersion = "2.1.0"
-  final val logback        = "1.2.3"
-  final val monix          = "3.2.2"
-  final val monocleVersion = "2.1.0"
-  final val pureConfig     = "0.13.0"
-  final val refined        = "0.9.15"
-  final val scala          = "2.13.3"
-  final val scalaLogging   = "3.9.2"
-  final val scalaMeta      = "4.3.21"
-  final val scalaz         = "7.2.29"
-  final val scodec         = "1.11.7"
-  final val simulacrum     = "0.19.0"
-  final val shapeless      = "2.3.3"
-  final val sttp           = "3.0.0-RC1"
-  final val xstream        = "1.4.12"
-  final val xml            = "2.0.0-M1"
-  final val zio            = "1.0.1"
+  final val akkaVersion         = "2.6.8"
+  final val catsVersion         = "2.2.0"
+  final val catsConsole         = "0.8.1"
+  final val chimney             = "0.5.3"
+  final val circeVersion        = "0.13.0"
+  final val enumeratum          = "1.6.1"
+  final val fs2                 = "2.4.4"
+  final val kittensVersion      = "2.1.0"
+  final val logback             = "1.2.3"
+  final val monix               = "3.2.2"
+  final val monocleVersion      = "2.1.0"
+  final val pureConfig          = "0.13.0"
+  final val refined             = "0.9.15"
+  final val scala               = "2.13.3"
+  final val scalaLogging        = "3.9.2"
+  final val scalaMeta           = "4.3.21"
+  final val scalaz              = "7.2.29"
+  final val scodec              = "1.11.7"
+  final val simulacrum          = "0.19.0"
+  final val shapeless           = "2.3.3"
+  final val sttp                = "3.0.0-RC1"
+  final val xstream             = "1.4.12"
+  final val xml                 = "2.0.0-M1"
+  final val zio                 = "1.0.1"
   // Testre
   final val mockito             = "1.10.19"
   final val munit               = "0.7.12"
@@ -52,7 +52,7 @@ object Library {
   final val fs2Experimental    = "co.fs2"                       %% "fs2-experimental"                 % Version.fs2 // optional experimental library
   final val fs2ReactiveStreams = "co.fs2"                       %% "fs2-reactive-streams"             % Version.fs2 // optional reactive streams interop
   final val kittens            = "org.typelevel"                %% "kittens"                          % Version.kittensVersion
-  final val logback            = "ch.qos.logback"               % "logback-classic"                   % Version.logback
+  final val logback            = "ch.qos.logback"                % "logback-classic"                  % Version.logback
   final val monocleCore        = "com.github.julien-truffaut"   %% "monocle-core"                     % Version.monocleVersion
   final val monocleGeneric     = "com.github.julien-truffaut"   %% "monocle-generic"                  % Version.monocleVersion
   final val monix              = "io.monix"                     %% "monix"                            % Version.monix
@@ -64,7 +64,7 @@ object Library {
   final val refined            = "eu.timepit"                   %% "refined"                          % Version.refined
   final val scalaLogging       = "com.typesafe.scala-logging"   %% "scala-logging"                    % Version.scalaLogging
   final val scalaMeta          = "org.scalameta"                %% "scalameta"                        % Version.scalaMeta
-  final val scalaReflect       = "org.scala-lang"               % "scala-reflect"                     % Version.scala
+  final val scalaReflect       = "org.scala-lang"                % "scala-reflect"                    % Version.scala
   final val shapeless          = "com.chuusai"                  %% "shapeless"                        % Version.shapeless
   final val simulacrum         = "com.github.mpilquist"         %% "simulacrum"                       % Version.simulacrum
   final val scodec             = "org.scodec"                   %% "scodec-core"                      % Version.scodec
@@ -75,16 +75,16 @@ object Library {
   final val sttpBEAkkaHttp     = "com.softwaremill.sttp.client" %% "akka-http-backend"                % Version.sttp
   final val sttpBEMonix        = "com.softwaremill.sttp.client" %% "async-http-client-backend-monix"  % Version.sttp
 
-  final val xstream = "com.thoughtworks.xstream" % "xstream"    % Version.xstream
-  final val xml     = "org.scala-lang.modules"   %% "scala-xml" % Version.xml
-  final val zio     = "dev.zio"                  %% "zio"       % Version.zio
+  final val xstream = "com.thoughtworks.xstream" % "xstream"   % Version.xstream
+  final val xml     = "org.scala-lang.modules"  %% "scala-xml" % Version.xml
+  final val zio     = "dev.zio"                 %% "zio"       % Version.zio
   //"dev.zio"                    %% "zio-streams"    % zioVersionm,
 
   // test
-  final val mockito             = "org.mockito"                % "mockito-all"                % Version.mockito
+  final val mockito             = "org.mockito"                 % "mockito-all"               % Version.mockito
   final val monocleLaw          = "com.github.julien-truffaut" %% "monocle-law"               % Version.monocleVersion
   final val scalatest           = "org.scalatest"              %% "scalatest"                 % Version.scalaTest
-  final val selenium            = "org.seleniumhq.selenium"    % "selenium-java"              % Version.selenium
+  final val selenium            = "org.seleniumhq.selenium"     % "selenium-java"             % Version.selenium
   final val seleniumPlus        = "org.scalatestplus"          %% "selenium-3-141"            % Version.seleniumPlus
   final val scalaCheck          = "org.scalacheck"             %% "scalacheck"                % Version.scalaCheck
   final val shapelessScalaCheck = "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % Version.scalaCheckShapeless

@@ -6,7 +6,7 @@ import zio.duration.durationInt
 import scala.concurrent.Future
 import scala.util.Try
 object MainEffects extends App {
-  val ZERO = 0
+  val ZERO                    = 0
   def run(args: List[String]) =
     fib(100).fork
       .map(i => println(s"Hallo $i"))
@@ -18,7 +18,7 @@ object MainEffects extends App {
   val ztry: Task[Int]                   = ZIO.fromTry(Try(42 / ZERO))
   val zfun: ZIO[Int, Nothing, Int]      = ZIO.fromFunction((i: Int) => i * i)
 
-  lazy val future = Future.successful("Hello!")
+  lazy val future           = Future.successful("Hello!")
   val zfuture: Task[String] = ZIO.fromFuture { implicit ec =>
     future.map(_ => "Goodbye!")
   }

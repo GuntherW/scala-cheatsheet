@@ -13,13 +13,13 @@ object Main extends App {
   @Lenses case class Company(address: Address)
   @Lenses case class Employee(company: Company)
 
-  object Street {
+  object Street   {
     //    val name: Lens[Street, String] = GenLens[Street](_.name)
   }
-  object Address {
+  object Address  {
     val street: Lens[Address, Street] = GenLens[Address](_.street)
   }
-  object Company {
+  object Company  {
     //  val address: Lens[Company, Address] = GenLens[Company](_.address)
   }
   object Employee {
@@ -34,7 +34,7 @@ object Main extends App {
 
   val employee: Employee = Employee(Company(Address(Street("hallo", 33))))
 
-  val neu =
+  val neu  =
     (Employee.company composeLens Company.address composeLens Address._street composeLens Street.name)
       .modify(_.capitalize)(employee)
   val neu2 =

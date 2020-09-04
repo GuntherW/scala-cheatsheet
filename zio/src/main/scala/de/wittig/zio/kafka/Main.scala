@@ -20,9 +20,9 @@ object Main extends App {
     .subscribeAnd(Subscription.topics("quickstart-events"))
     .plainStream(Serde.int, Serde.long)
     .map { record =>
-      val key: Int         = record.record.key()
-      val value: Long      = record.record.value()
-      val newValue: String = value.toString
+      val key: Int                                    = record.record.key()
+      val value: Long                                 = record.record.value()
+      val newValue: String                            = value.toString
       println("++++")
       println(newValue)
       val producerRecord: ProducerRecord[Int, String] = new ProducerRecord("my-output-topic", key, newValue)

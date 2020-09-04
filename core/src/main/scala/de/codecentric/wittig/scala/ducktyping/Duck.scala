@@ -5,12 +5,12 @@ object Duck extends App {
     println(duck.quak("Quak"))
   }
 
-  object BigDuck {
+  object BigDuck          {
     def quak(s: String): String = {
       s.toUpperCase
     }
   }
-  object SmallDuck {
+  object SmallDuck        {
     def quak(s: String): String = {
       s.toLowerCase
     }

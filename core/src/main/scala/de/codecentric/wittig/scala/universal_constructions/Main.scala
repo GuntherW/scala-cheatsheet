@@ -5,7 +5,7 @@ import scala.concurrent.Future
 
 object Main extends App {
 
-  val l = List(
+  val l                                  = List(
     1,
     3,
     3

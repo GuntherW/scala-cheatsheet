@@ -66,10 +66,11 @@ object EncodingDecoding extends App {
     case class Thing(foo: String, bar: Int)
 
     implicit val encodeThing: Encoder[Thing] = new Encoder[Thing] {
-      final def apply(a: Thing): Json = Json.obj(
-        ("fu", Json.fromString(a.foo)),
-        ("bah", Json.fromInt(a.bar))
-      )
+      final def apply(a: Thing): Json =
+        Json.obj(
+          ("fu", Json.fromString(a.foo)),
+          ("bah", Json.fromInt(a.bar))
+        )
     }
 
     implicit val decodeThing: Decoder[Thing] = new Decoder[Thing] {
@@ -79,7 +80,7 @@ object EncodingDecoding extends App {
           bar <- c.downField("bah").as[Int]
         } yield Thing(foo, bar)
     }
-    val thing = Thing("foo/fu", 4)
+    val thing                                = Thing("foo/fu", 4)
     println(thing.asJson)
     println(decode[Thing](thing.asJson.toString))
   }

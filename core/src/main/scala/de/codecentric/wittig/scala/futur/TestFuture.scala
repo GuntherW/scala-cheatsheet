@@ -15,14 +15,13 @@ object TestFuture extends App {
   def test1: Future[Int] = {
     val f = Future(randomNumber)
     f.andThen {
-        case _ =>
-          println("andthen 1")
-          throw new IllegalArgumentException("dd")
-      }
-      .andThen {
-        case Failure(t) => println("andthen 2 failure" + t) // not called.
-        case Success(v) => println("andthen 2 success" + v)
-      }
+      case _ =>
+        println("andthen 1")
+        throw new IllegalArgumentException("dd")
+    }.andThen {
+      case Failure(t) => println("andthen 2 failure" + t) // not called.
+      case Success(v) => println("andthen 2 success" + v)
+    }
     f
   }
 

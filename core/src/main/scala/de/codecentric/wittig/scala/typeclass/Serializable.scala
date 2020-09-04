@@ -24,9 +24,10 @@ trait Serializer {
   }
 
   // Hier noch ein zusätzliches Bonbon, um zusätzlich zu serialize(p) ein p.serialisiere zuzulassen.
-  implicit def addSerializable[T](t: T)(implicit serializable: Serializable[T]) = new {
-    def serialisiere = serializable.ser(t)
-  }
+  implicit def addSerializable[T](t: T)(implicit serializable: Serializable[T]) =
+    new {
+      def serialisiere = serializable.ser(t)
+    }
 }
 
 object Main extends App with Serializer {

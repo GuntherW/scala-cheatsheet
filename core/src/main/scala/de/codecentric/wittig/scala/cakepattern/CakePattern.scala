@@ -7,7 +7,6 @@ package de.codecentric.wittig.scala.cakepattern
   * http://jonasboner.com/2008/10/06/real-world-scala-dependency-injection-di/
   *
   * Offene Frage für mich: Was ist da jetzt der tolle Vorteil gegenüber dem Weg, daß man die Dependency als Konstruktorparameter übergibt?
-  *
   */
 class Wesen(name: String) {
   /**

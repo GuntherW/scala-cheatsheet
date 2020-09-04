@@ -27,7 +27,7 @@ object MainBracket extends App {
   // mybracket is just a value. Won't execute anything here until interpreted
   val mybracket: Task[Unit] = for {
     file   <- Task(new File("input.txt"))
-    len    = file.length
+    len     = file.length
     string <- Task(new FileInputStream(file)).bracket(closeStream)(convertBytes(_, len))
   } yield string
 }

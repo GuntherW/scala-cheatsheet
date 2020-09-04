@@ -22,11 +22,11 @@ object WebSocketZio extends App {
   // the SttpClient, and the Console
   val sendAndPrint: ZIO[Console with SttpClient, Throwable, Unit] = for {
     response <- SttpClient.send(
-                 basicRequest
-                   .get(uri"wss://echo.websocket.org")
-                   .response(asWebSocketAlwaysUnsafe[Task])
-               )
-    _ <- useWebSocket(response.body)
+                  basicRequest
+                    .get(uri"wss://echo.websocket.org")
+                    .response(asWebSocketAlwaysUnsafe[Task])
+                )
+    _        <- useWebSocket(response.body)
   } yield ()
 
   override def run(args: List[String]): ZIO[ZEnv, Nothing, ExitCode] = {

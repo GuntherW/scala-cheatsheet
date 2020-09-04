@@ -58,8 +58,8 @@ object ControllFlow extends App {
 object Transforming extends App {
   case class StockQoute(symbol: String, openPrice: Double, closePrice: Double)
 
-  val streamStocks  = ZStream(StockQoute("DDOG", 37.123, 34.123), StockQoute("NET", 35.123, 37.123))
-  val streamSymbols = streamStocks.map(_.symbol)
+  val streamStocks       = ZStream(StockQoute("DDOG", 37.123, 34.123), StockQoute("NET", 35.123, 37.123))
+  val streamSymbols      = streamStocks.map(_.symbol)
   val streamOpenAndClose = streamStocks.flatMap {
     case StockQoute(symbol, open, close) =>
       ZStream(
