@@ -1,22 +1,9 @@
 package de.wittig.zio.stream
 
-import shapeless.ops.hlist.ZipOne
 import zio._
 import zio.console.putStrLn
-import zio.random.Random
 import zio.stream.ZStream
 
-object Types {
-
-  val oneValue: ZIO[Any, Nothing, Int]          = ZIO.succeed(1)
-  val oneFailure: ZIO[Any, Throwable, Nothing]  = ZIO.fail(new RuntimeException)
-  val requiresRandom: ZIO[Random, Nothing, Int] = random.nextInt
-
-  val threeValues: ZStream[Any, Nothing, Int]        = ZStream(1, 2, 3)
-  val empty: ZStream[Any, Nothing, Nothing]          = ZStream.empty
-  val valueThenFailure: ZStream[Any, Throwable, Int] = ZStream(1, 2) ++ ZStream.fail(new RuntimeException)
-
-}
 object HelloWorld extends App {
   def run(args: List[String]): ZIO[ZEnv, Nothing, ExitCode] =
     for {
@@ -58,9 +45,8 @@ object ControllFlow extends App {
 object Transforming extends App {
   case class StockQoute(symbol: String, openPrice: Double, closePrice: Double)
 
-  val streamStocks       = ZStream(StockQoute("DDOG", 37.123, 34.123), StockQoute("NET", 35.123, 37.123))
-  val streamSymbols      = streamStocks.map(_.symbol)
-  val streamOpenAndClose = streamStocks.flatMap {
+  private val streamStocks       = ZStream(StockQoute("DDOG", 37.123, 34.123), StockQoute("NET", 35.123, 37.123))
+  private val streamOpenAndClose = streamStocks.flatMap {
     case StockQoute(symbol, open, close) =>
       ZStream(
         symbol -> open,
@@ -68,14 +54,6 @@ object Transforming extends App {
       )
   }
 
-  def run(args: List[String]): ZIO[ZEnv, Nothing, ExitCode] = {
+  def run(args: List[String]): ZIO[ZEnv, Nothing, ExitCode] =
     streamOpenAndClose.runCollect.exitCode
-  }
-}
-
-object Transducing extends App {
-  val stockQuotePath = ""
-  def run(args: List[String]): ZIO[ZEnv, Nothing, ExitCode] = {
-    ???
-  }
 }

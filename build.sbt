@@ -28,7 +28,6 @@ ThisBuild / scalacOptions ++= Seq(
   "-Ywarn-value-discard",
   "-Ymacro-annotations"         // scala 2.13.0
 )
-parallelExecution in Test := true
 // Change this to another test framework if you prefer
 ThisBuild / resolvers += Resolver.sonatypeRepo("snapshots")
 ThisBuild / resolvers += Resolver.sonatypeRepo("public")

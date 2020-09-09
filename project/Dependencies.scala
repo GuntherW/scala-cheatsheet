@@ -22,7 +22,7 @@ object Version {
   final val simulacrum          = "0.19.0"
   final val shapeless           = "2.3.3"
   final val sttp                = "3.0.0-RC1"
-  final val xstream             = "1.4.12"
+  final val xstream             = "1.4.13"
   final val xml                 = "2.0.0-M1"
   final val zio                 = "1.0.1"
   // Testre
