@@ -1,7 +1,7 @@
 import sbt._
 
 object Version {
-  final val akkaVersion         = "2.6.8"
+  final val akkaVersion         = "2.6.9"
   final val catsVersion         = "2.2.0"
   final val catsConsole         = "0.8.1"
   final val chimney             = "0.5.3"
@@ -16,12 +16,12 @@ object Version {
   final val refined             = "0.9.15"
   final val scala               = "2.13.3"
   final val scalaLogging        = "3.9.2"
-  final val scalaMeta           = "4.3.21"
+  final val scalaMeta           = "4.3.22"
   final val scalaz              = "7.2.29"
   final val scodec              = "1.11.7"
   final val simulacrum          = "0.19.0"
   final val shapeless           = "2.3.3"
-  final val sttp                = "3.0.0-RC1"
+  final val sttp                = "3.0.0-RC2"
   final val xstream             = "1.4.13"
   final val xml                 = "2.0.0-M1"
   final val zio                 = "1.0.1"

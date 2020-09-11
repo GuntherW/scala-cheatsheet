@@ -4,7 +4,6 @@ import sttp.capabilities
 import sttp.capabilities.akka.AkkaStreams
 import sttp.client._
 import sttp.client.akkahttp.AkkaHttpBackend
-import sttp.client.asynchttpclient.future.AsyncHttpClientFutureBackend
 import sttp.ws.WebSocket
 
 import scala.concurrent.ExecutionContext.Implicits.global
