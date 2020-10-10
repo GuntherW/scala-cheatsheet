@@ -41,7 +41,7 @@ ThisBuild / Test / fork := true // subprojects won't run in parallel then
 //ThisBuild / updateConfiguration in updateSbtClassifiers := (updateConfiguration in updateSbtClassifiers).value.withMissingOk(true)
 
 ThisBuild / turbo := true
-ThisBuild / onChangedBuildSource := ReloadOnSourceChanges
+Global / onChangedBuildSource := ReloadOnSourceChanges
 
 // Showing full stack trace
 ThisBuild / Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oF")

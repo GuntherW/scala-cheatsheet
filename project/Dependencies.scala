@@ -1,7 +1,7 @@
 import sbt._
 
 object Version {
-  final val akkaVersion         = "2.6.9"
+  final val akkaVersion         = "2.6.10"
   final val catsVersion         = "2.2.0"
   final val catsConsole         = "0.8.1"
   final val chimney             = "0.5.3"
@@ -12,11 +12,11 @@ object Version {
   final val logback             = "1.2.3"
   final val monix               = "3.2.2"
   final val monocleVersion      = "2.1.0"
-  final val pureConfig          = "0.13.0"
-  final val refined             = "0.9.15"
+  final val pureConfig          = "0.14.0"
+  final val refined             = "0.9.17"
   final val scala               = "2.13.3"
   final val scalaLogging        = "3.9.2"
-  final val scalaMeta           = "4.3.22"
+  final val scalaMeta           = "4.3.24"
   final val scalaz              = "7.2.29"
   final val scodec              = "1.11.7"
   final val simulacrum          = "0.19.0"
@@ -24,10 +24,10 @@ object Version {
   final val sttp                = "3.0.0-RC3"
   final val xstream             = "1.4.13"
   final val xml                 = "2.0.0-M2"
-  final val zio                 = "1.0.1"
+  final val zio                 = "1.0.3"
   // Testre
   final val mockito             = "1.10.19"
-  final val munit               = "0.7.12"
+  final val munit               = "0.7.14"
   final val scalaTest           = "3.2.2"
   final val selenium            = "3.141.59"
   final val seleniumPlus        = "3.2.2.0"
@@ -131,8 +131,8 @@ object Dependencies {
 
   val zioDependencies = Seq(
     Library.zio,
-    "dev.zio" %% "zio-streams" % "1.0.1",
-    "dev.zio" %% "zio-kafka"   % "0.12.0"
+    "dev.zio" %% "zio-streams" % Version.zio,
+    "dev.zio" %% "zio-kafka"   % "0.12.1"
   )
 
   val testDependencies = Seq(
