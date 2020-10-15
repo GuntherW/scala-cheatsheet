@@ -1,4 +1,4 @@
-import sbt.Test
+import Tests._
 
 ThisBuild / version := "1.0"
 ThisBuild / scalaVersion := Version.scala
@@ -52,6 +52,7 @@ lazy val `scala-cheatcheet` = (project in file("."))
     munit,
     subprojectTestInParallel1,
     subprojectTestInParallel2,
+    subprojectTestInParallelForkGroup,
     sttp,
     zio
   )
@@ -73,19 +74,38 @@ lazy val docs = project // new documentation project
   )
   .enablePlugins(MdocPlugin)
 
-lazy val subprojectTestInParallel1 = project
+lazy val subprojectTestInParallel1         = project
   .settings(
     libraryDependencies ++= Seq(
       Library.scalatest % Test
     ),
     Test / fork := false // subprojects tests will run parallel with other subprojects
   )
-lazy val subprojectTestInParallel2 = project
+lazy val subprojectTestInParallel2         = project
   .settings(
     libraryDependencies ++= Seq(
       Library.scalatest % Test
     ),
     Test / fork := false //  subprojects tests will run parallel with other subprojects
+  )
+
+ThisBuild / concurrentRestrictions := Seq(Tags.limit(Tags.ForkedTestGroup, 2))
+Global / concurrentRestrictions += Tags.limit(Tags.Test, 1)
+lazy val subprojectTestInParallelForkGroup = project
+  .settings(
+    libraryDependencies ++= Seq(
+      Library.scalatest % Test
+    ),
+    Test / testForkedParallel := false, // Hier kann man auch noch innerhalb der Gruppe parallelisieren. Sollte False sein.
+    Test / fork := false,
+    Test / testGrouping := (definedTests in Test).value
+      .groupBy(_.name.split('.')(1)(0)) // Gruppierung hier nach erstem Buchstabe der Testklasse
+      .map { case (letter, tests) =>
+        println(s"--------> Testgruppe $letter mit ${tests.length} Tests")
+        val options = ForkOptions().withRunJVMOptions(Vector("-Dfirst.letter" + letter))
+        Group(letter.toString, tests, SubProcess(options))
+      }
+      .toSeq
   )
 
 lazy val munit = project
@@ -113,3 +133,6 @@ lazy val zio = project
   .settings(
     libraryDependencies ++= Dependencies.dependencies ++ Dependencies.zioDependencies
   )
+
+addCommandAlias("ls", "projects")
+addCommandAlias("cd", "project")

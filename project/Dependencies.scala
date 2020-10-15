@@ -25,6 +25,7 @@ object Version {
   final val xstream             = "1.4.13"
   final val xml                 = "2.0.0-M2"
   final val zio                 = "1.0.3"
+  final val zioKafka                 = "0.13.0"
   // Testre
   final val mockito             = "1.10.19"
   final val munit               = "0.7.14"
@@ -132,7 +133,7 @@ object Dependencies {
   val zioDependencies = Seq(
     Library.zio,
     "dev.zio" %% "zio-streams" % Version.zio,
-    "dev.zio" %% "zio-kafka"   % "0.12.1"
+    "dev.zio" %% "zio-kafka"   % Version.zioKafka
   )
 
   val testDependencies = Seq(
