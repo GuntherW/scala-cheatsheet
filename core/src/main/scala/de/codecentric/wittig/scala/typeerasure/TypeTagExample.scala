@@ -6,7 +6,7 @@ package de.codecentric.wittig.scala.typeerasure
   * =:= (type equality)
   * <:< (subtype relation)
   */
-object Example extends App {
+object TypeTagExample extends App {
   println(processThing(Thing(1)))
   println(processThing(Thing("hello")))
   println(processThing(Thing(Seq(1))))

@@ -96,6 +96,7 @@ lazy val subprojectTestInParallelForkGroup = project
     libraryDependencies ++= Seq(
       Library.scalatest % Test
     ),
+    Test / parallelExecution := true,
     Test / testForkedParallel := false, // Hier kann man auch noch innerhalb der Gruppe parallelisieren. Sollte False sein.
     Test / fork := false,
     Test / testGrouping := (definedTests in Test).value
