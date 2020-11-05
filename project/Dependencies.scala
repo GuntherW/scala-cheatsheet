@@ -4,7 +4,7 @@ object Version {
   final val akkaVersion         = "2.6.10"
   final val catsVersion         = "2.2.0"
   final val catsConsole         = "0.8.1"
-  final val chimney             = "0.6.0"
+  final val chimney             = "0.6.1"
   final val circeVersion        = "0.13.0"
   final val enumeratum          = "1.6.1"
   final val fs2                 = "2.4.4"
@@ -25,14 +25,14 @@ object Version {
   final val xstream             = "1.4.13"
   final val xml                 = "2.0.0-M2"
   final val zio                 = "1.0.3"
-  final val zioKafka                 = "0.13.0"
+  final val zioKafka            = "0.13.0"
   // Testre
   final val mockito             = "1.10.19"
-  final val munit               = "0.7.14"
+  final val munit               = "0.7.16"
   final val scalaTest           = "3.2.2"
   final val selenium            = "3.141.59"
   final val seleniumPlus        = "3.2.2.0"
-  final val scalaCheck          = "1.14.3"
+  final val scalaCheck          = "1.15.0"
   final val scalaCheckShapeless = "1.2.5"
 }
 

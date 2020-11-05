@@ -1,6 +1,5 @@
 package de.wittig.zio.kafka
 
-import de.wittig.zio.Main.myAppLogic
 import org.apache.kafka.clients.producer.ProducerRecord
 import zio.kafka.consumer.{Consumer, ConsumerSettings, OffsetBatch, Subscription}
 import zio.kafka.producer.{Producer, ProducerSettings}
