@@ -5,11 +5,8 @@ import scala.concurrent.Future
 
 object Main extends App {
 
-  val l                                  = List(
-    1,
-    3,
-    3
-  )
+  val l = List(1, 3, 3)
+
   def left[A](a: A): Either[A, Nothing]  = Left(a)
   def right[A](a: A): Either[Nothing, A] = Right(a)
 

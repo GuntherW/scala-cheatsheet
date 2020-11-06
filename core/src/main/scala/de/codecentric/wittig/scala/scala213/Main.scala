@@ -20,12 +20,11 @@ object Main extends App {
     assert(a == b)
   }
 
-  def patternMatchingStrings(): Unit = {
+  def patternMatchingStrings(): Unit =
     "Hallo Welt" match {
       case s"hallo $v" => println("klein")
       case s"Hallo $v" => println("groß")
     }
-  }
 
   def collectionZeugs(): Unit = {
     val l = List(1, 2, 3)

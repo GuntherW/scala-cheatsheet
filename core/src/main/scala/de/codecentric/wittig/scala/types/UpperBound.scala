@@ -1,10 +1,9 @@
-package com.example.upperbound
+package de.codecentric.wittig.scala.types
 
 object UpperBound extends App {
   class Person(val name: String) extends Ordered[Person] {
-    def compare(that: Person): Int = {
+    def compare(that: Person): Int =
       name.compareTo(that.name)
-    }
   }
   val l = List(new Person("Henning"), new Person("Wolfram"))
 
@@ -22,8 +21,10 @@ object UpperBound extends App {
           if (x < y) x :: merge(xs1, ys)
           else y :: merge(xs, ys1)
       }
-    val n                                        = xs.length / 2
-    if (n == 0) xs
+
+    val n = xs.length / 2
+    if (n == 0)
+      xs
     else {
       val (ys, zs) = xs splitAt n
       merge(orderedMergeSort(ys), orderedMergeSort(zs))

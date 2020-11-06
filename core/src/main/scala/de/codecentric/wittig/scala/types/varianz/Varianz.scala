@@ -1,4 +1,4 @@
-package de.codecentric.wittig.scala.varianz
+package de.codecentric.wittig.scala.types.varianz
 
 /**
   * @author gunther
@@ -6,7 +6,7 @@ package de.codecentric.wittig.scala.varianz
 object Varianz extends App {
   class Covariant[+A]
   val cov: Covariant[AnyRef] = new Covariant[String]
-  //val cv: Covariant[String] = new Covariant[AnyRef]
+  //val fail: Covariant[String] = new Covariant[AnyRef]
 
   class Contravariant[-A]
   val con: Contravariant[String] = new Contravariant[AnyRef]
