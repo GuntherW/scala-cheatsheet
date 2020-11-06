@@ -60,7 +60,7 @@ object Main extends App {
   def readPrint(): Unit = {
     def putStrlLn(value: String) = IO.fromFuture(IO(Future(println(value))))
 //    def putStrlLn(value: String) = IO(println(value))
-    val readLn                   = IO(scala.io.StdIn.readLine)
+    val readLn                   = IO(scala.io.StdIn.readLine())
     val programm                 = for {
       _ <- putStrlLn("What's your name?")
       n <- readLn

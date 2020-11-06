@@ -12,16 +12,16 @@ import de.codecentric.wittig.scala.Printer.printlnYellow
 object Codierung extends App {
 
   printlnYellow("encodeDecode")
-  encodeDecode
+  encodeDecode()
 
   printlnYellow("combinator")
-  combinator
+  combinator()
 
   printlnYellow("caseClassBinding")
-  caseClassBinding
+  caseClassBinding()
 
   printlnYellow("scodecDoku")
-  scodecDoku
+  scodecDoku()
 
   def encodeDecode(): Unit = {
 
@@ -85,6 +85,6 @@ object Codierung extends App {
     case class Point(x: Int, y: Int)
 
     val tupleCodec: Codec[(Int, Int)] = uint8 ~ uint8
-    val pointCodec: Codec[Point]      = tupleCodec.widenOpt(Point.apply, Point.unapply)
+//    val pointCodec: Codec[Point]      = tupleCodec.widenOpt(Point.apply, Point.unapply)
   }
 }

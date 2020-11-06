@@ -5,7 +5,7 @@ package de.codecentric.wittig.scala.types
   * (View Bounds) https://twitter.github.io/scala_school/advanced-types.html
   */
 object ViewBound extends App {
-  implicit def strToInt(s: String): Int = s.toInt
+  implicit def strToInt(s: String) = s.toInt
 
   viewBounds()
   view()

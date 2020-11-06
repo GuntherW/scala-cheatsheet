@@ -1,7 +1,7 @@
 package de.wittig.zio
 
+import zio.Runtime
 import zio.console.putStrLn
-import zio.{Runtime, Task}
 
 // using scala.App
 object MainPlain extends App {

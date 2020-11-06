@@ -1,6 +1,5 @@
 package de.codecentric.wittig.scala.catsRelated.effects
 
-import cats.FlatMap.ops.toAllFlatMapOps
 import cats.effect.{ContextShift, Fiber, IO, Timer}
 import cats.syntax.flatMap.catsSyntaxFlatMapOps
 

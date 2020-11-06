@@ -19,15 +19,14 @@ object GreetGood extends App {
       .repeat("Learn you Akka Streams for great Good!")
       .zip(Source.fromIterator(() => Iterator.from(0)))
       .take(7)
-      .mapConcat {
-        case (s, n) =>
-          val i = " " * n
-          f"$i$s%n"
+      .mapConcat { case (s, n) =>
+        val i = " " * n
+        f"$i$s%n"
       }
       .throttle(42, 500.millis, 1, ThrottleMode.Shaping)
       .toMat(Sink.foreach(print))(Keep.right) // Keep Right für den materialized Value vom Sink.
       .run()
 
-  done.onComplete(_ => system.terminate)
+  done.onComplete(_ => system.terminate())
   Await.ready(system.whenTerminated, Duration.Inf)
 }

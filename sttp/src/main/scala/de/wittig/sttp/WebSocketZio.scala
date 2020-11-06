@@ -1,11 +1,11 @@
 package de.wittig.sttp
 
-import sttp.client._
-import sttp.client.asynchttpclient.zio._
-import sttp.ws.WebSocket
-import zio._
-import zio.console.Console
-
+//import sttp.client._
+//import sttp.client.asynchttpclient.zio._
+//import sttp.ws.WebSocket
+//import zio._
+//import zio.console.Console
+//
 //object WebSocketZio extends App {
 //
 //  def useWebSocket(ws: WebSocket[RIO[Console, *]]): RIO[Console, Unit] = {

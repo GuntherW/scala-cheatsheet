@@ -1,7 +1,5 @@
 package de.wittig.sttp
 
-import sttp.capabilities
-import sttp.capabilities.akka.AkkaStreams
 import sttp.client._
 import sttp.client.akkahttp.AkkaHttpBackend
 import sttp.ws.WebSocket

@@ -135,5 +135,14 @@ lazy val zio = project
     libraryDependencies ++= Dependencies.dependencies ++ Dependencies.zioDependencies
   )
 
+lazy val scalajs = project
+  .enablePlugins(ScalaJSPlugin)
+  .settings(
+    scalaJSUseMainModuleInitializer := true,
+    libraryDependencies ++= Seq(
+      "org.scala-js" %%% "scalajs-dom" % "1.1.0"
+    )
+  )
+
 addCommandAlias("ls", "projects")
 addCommandAlias("cd", "project")

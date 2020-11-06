@@ -10,7 +10,7 @@ import scala.concurrent.{Future, Promise}
   */
 object Main extends App {
   def getFoo(): Future[Foo] = {
-    val p = Promise[Foo]
+    val p = Promise[Foo]()
     Future {
       Thread.sleep(2000)
       p.success(Foo("hallo")) // Promise may not be completed in caller thread, but in some other "runnable"
