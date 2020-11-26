@@ -2,7 +2,7 @@ import sbt._
 
 object Version {
   final val akkaVersion         = "2.6.10"
-  final val catsVersion         = "2.2.0"
+  final val catsVersion         = "2.3.0"
   final val catsConsole         = "0.8.1"
   final val chimney             = "0.6.1"
   final val circeVersion        = "0.13.0"
@@ -24,12 +24,12 @@ object Version {
   final val shapeless           = "2.3.3"
   final val sttp                = "3.0.0-RC3"
   final val xstream             = "1.4.14"
-  final val xml                 = "2.0.0-M2"
+  final val xml                 = "2.0.0-M3"
   final val zio                 = "1.0.3"
   final val zioKafka            = "0.13.0"
   // Testre
   final val mockito             = "1.10.19"
-  final val munit               = "0.7.18"
+  final val munit               = "0.7.19"
   final val scalaTest           = "3.2.3"
   final val selenium            = "3.141.59"
   final val seleniumPlus        = "3.2.2.0"
