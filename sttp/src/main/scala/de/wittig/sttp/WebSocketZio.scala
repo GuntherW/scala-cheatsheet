@@ -1,5 +1,5 @@
-package de.wittig.sttp
-
+//package de.wittig.sttp
+//
 //import sttp.client._
 //import sttp.client.asynchttpclient.zio._
 //import sttp.ws.WebSocket
@@ -8,10 +8,13 @@ package de.wittig.sttp
 //
 //object WebSocketZio extends App {
 //
-//  def useWebSocket(ws: WebSocket[RIO[Console, *]]): RIO[Console, Unit] = {
+//  def useWebSocket(ws: WebSocket[RIO[Console, *]]) = {
 //    def send(i: Int) = ws.sendText(s"Hello $i!")
 //    val receive      = ws.receiveText().flatMap(t => console.putStrLn(s"RECEIVED: $t"))
-//    send(1) *> send(2) *> receive *> receive
+//    send(1) *>
+//      send(2) *>
+//      receive *>
+//      receive
 //  }
 //
 //  // create a description of a program, which requires two dependencies in the environment:

@@ -10,7 +10,7 @@ import scala.concurrent.Future
 object WebSocketAsync extends App {
   def useWebSocket(ws: WebSocket[Future]): Future[Unit] = {
     def send(i: Int) = ws.sendText(s"Hello $i!")
-    def receive()    = ws.receiveText().map(t => println(s"RECEIVED: $t"))
+    def receive()    = ws.receiveText().map(t => println(s"Received: $t"))
     for {
       _ <- send(1)
       _ <- send(2)
