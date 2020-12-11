@@ -1,8 +1,10 @@
 import Tests._
+import sbt.Test
 
 ThisBuild / version := "1.0"
 ThisBuild / scalaVersion := Version.scala
 ThisBuild / organization := "de.wittig"
+
 ThisBuild / scalacOptions ++= Seq(
   "-language:_",
   "-target:jvm-1.8",
@@ -49,6 +51,7 @@ ThisBuild / Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oF"
 lazy val `scala-cheatcheet` = (project in file("."))
   .aggregate(
     core,
+    magnolia,
     munit,
     subprojectTestInParallel1,
     subprojectTestInParallel2,
@@ -113,7 +116,9 @@ lazy val munit = project
   .settings(
     libraryDependencies += Library.munit % Test,
     testFrameworks += new TestFramework("munit.Framework"),
-    Test / fork := false //  subprojects tests will run parallel with other subprojects
+    Test / fork := true, //  subprojects tests will run parallel with other subprojects
+    Test / testOptions += Tests.Cleanup(() => println("+++++++++++++cleaned++++++++++++++++")) // Einfacher Hook
+//    Test / testOptions += Tests.Cleanup(loader => loader.loadClass("munit.Cleaner").newInstance) // Laden einer Klasse // Funktioniert nur mit fork := false
   )
 
 lazy val sttp = project
@@ -133,6 +138,14 @@ lazy val sttp = project
 lazy val zio = project
   .settings(
     libraryDependencies ++= Dependencies.dependencies ++ Dependencies.zioDependencies
+  )
+
+lazy val magnolia = project
+  .settings(
+    libraryDependencies ++= Seq(
+      Library.magnolia,
+      Library.reflect
+    )
   )
 
 lazy val scalajs = project

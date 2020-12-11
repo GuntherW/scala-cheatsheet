@@ -24,6 +24,7 @@ object Main extends App {
     "Hallo Welt" match {
       case s"hallo $v" => println("klein")
       case s"Hallo $v" => println("groß")
+      case _           => println("keines")
     }
 
   def collectionZeugs(): Unit = {

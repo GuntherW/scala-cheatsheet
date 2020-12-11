@@ -1,7 +1,6 @@
 package de.codecentric.wittig.scala.patternmatching
 
-/**
-  * @author gunther
+/** @author gunther
   */
 object Matching extends App with Auth {
   trait User {
@@ -31,6 +30,7 @@ object Matching extends App with Auth {
       case candidate @ PremiumCandidate() => s"${candidate.name}, Du bist auf einem guten Weg zum Premiumnutzer"
       case FreeUser(name, _, p)           => s"$name, was kann ich für Dich tun?"
       case PremiumUser(name, _)           => s"Herzlich Willkommen, $name"
+      case _                              => "no match"
     }
 
   println(result)
@@ -42,8 +42,10 @@ object Matching extends App with Auth {
     case (name @ "Daniela") as score => println(s"Score inline: $score. $name")
     case name as score               => println(s"Score: $score. $name")
     //case as(name, score)             => println(s"Score: $score. $name")
+    case _                           => println("no match")
   }
   premiumUser match {
     case asScore(score) => println(s"Score ist $score")
+    case _              => println(s"no match")
   }
 }

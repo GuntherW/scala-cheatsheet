@@ -8,16 +8,18 @@ object Version {
   final val circeVersion        = "0.13.0"
   final val enumeratum          = "1.6.1"
   final val fs2                 = "2.4.6"
-  final val kittensVersion      = "2.2.0"
+  final val kittensVersion      = "2.2.1"
   final val logback             = "1.2.3"
+  final val magnolia            = "0.17.0"
   final val monix               = "3.3.0"
   final val monocleVersion      = "2.1.0"
   final val pureConfig          = "0.14.0"
-  final val refined             = "0.9.18"
+  final val reflect             = scala
+  final val refined             = "0.9.19"
   final val scala               = "2.13.4"
   final val scala3              = "3.0.0-M2"
   final val scalaLogging        = "3.9.2"
-  final val scalaMeta           = "4.4.0"
+  final val scalaMeta           = "4.4.1"
   final val scalaz              = "7.2.29"
   final val scodec              = "1.11.7"
   final val simulacrum          = "0.19.0"
@@ -55,6 +57,7 @@ object Library {
   final val fs2ReactiveStreams = "co.fs2"                       %% "fs2-reactive-streams"             % Version.fs2 // optional reactive streams interop
   final val kittens            = "org.typelevel"                %% "kittens"                          % Version.kittensVersion
   final val logback            = "ch.qos.logback"                % "logback-classic"                  % Version.logback
+  final val magnolia           = "com.propensive"               %% "magnolia"                         % Version.magnolia
   final val monocleCore        = "com.github.julien-truffaut"   %% "monocle-core"                     % Version.monocleVersion
   final val monocleGeneric     = "com.github.julien-truffaut"   %% "monocle-generic"                  % Version.monocleVersion
   final val monix              = "io.monix"                     %% "monix"                            % Version.monix
@@ -64,6 +67,7 @@ object Library {
   final val munit              = "org.scalameta"                %% "munit"                            % Version.munit
   final val pureConfig         = "com.github.pureconfig"        %% "pureconfig"                       % Version.pureConfig
   final val refined            = "eu.timepit"                   %% "refined"                          % Version.refined
+  final val reflect            = "org.scala-lang"                % "scala-reflect"                    % Version.reflect
   final val scalaLogging       = "com.typesafe.scala-logging"   %% "scala-logging"                    % Version.scalaLogging
   final val scalaMeta          = "org.scalameta"                %% "scalameta"                        % Version.scalaMeta
   final val scalaReflect       = "org.scala-lang"                % "scala-reflect"                    % Version.scala
