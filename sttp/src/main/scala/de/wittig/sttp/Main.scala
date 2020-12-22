@@ -1,13 +1,12 @@
 package de.wittig.sttp
-import akka.http.impl.util.AddFutureAwaitResult
-import sttp.client._
-import sttp.client.circe._
 import io.circe.generic.auto._
-import sttp.client.asynchttpclient.future.AsyncHttpClientFutureBackend
+import sttp.client3._
+import sttp.client3.asynchttpclient.future.AsyncHttpClientFutureBackend
+import sttp.client3.circe._
 
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.{Duration, DurationInt}
+import scala.concurrent.duration.DurationInt
 
 case class GitHubResponse(total_count: Int, items: List[GitHubItem])
 case class GitHubItem(name: String, stargazers_count: Int, html_url: String)

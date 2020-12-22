@@ -2,8 +2,8 @@ package de.wittig.sttp
 
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
-import sttp.client._
-import sttp.client.asynchttpclient.monix.AsyncHttpClientMonixBackend
+import sttp.client3._
+import sttp.client3.asynchttpclient.monix.AsyncHttpClientMonixBackend
 import sttp.ws.WebSocket
 
 object WebSocketMonix extends App {

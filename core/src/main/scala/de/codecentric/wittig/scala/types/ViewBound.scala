@@ -1,7 +1,6 @@
 package de.codecentric.wittig.scala.types
 
-/**
-  * @author gunther
+/** @author gunther
   * (View Bounds) https://twitter.github.io/scala_school/advanced-types.html
   */
 object ViewBound extends App {

@@ -1,7 +1,7 @@
 package de.wittig.sttp
 
-import sttp.client._
-import sttp.client.akkahttp.AkkaHttpBackend
+import sttp.client3._
+import sttp.client3.akkahttp.AkkaHttpBackend
 import sttp.ws.WebSocket
 
 import scala.concurrent.ExecutionContext.Implicits.global

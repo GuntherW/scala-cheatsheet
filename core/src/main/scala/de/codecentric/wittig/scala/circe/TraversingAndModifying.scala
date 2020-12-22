@@ -1,5 +1,4 @@
 package de.codecentric.wittig.scala.circe
-package de.codecentric.wittig.scala.circe
 import io.circe._
 import io.circe.parser._
 
