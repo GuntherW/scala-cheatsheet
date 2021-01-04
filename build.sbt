@@ -137,7 +137,8 @@ lazy val sttp = project
 
 lazy val zio = project
   .settings(
-    libraryDependencies ++= Dependencies.dependencies ++ Dependencies.zioDependencies
+    libraryDependencies ++= Dependencies.dependencies ++ Dependencies.zioDependencies,
+    libraryDependencies += "com.github.wi101" %% "embroidery" % "0.1.1"
   )
 
 lazy val magnolia = project

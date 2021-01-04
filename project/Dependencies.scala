@@ -19,7 +19,7 @@ object Version {
   final val scala               = "2.13.4"
   final val scala3              = "3.0.0-M2"
   final val scalaLogging        = "3.9.2"
-  final val scalaMeta           = "4.4.3"
+  final val scalaMeta           = "4.4.4"
   final val scalaz              = "7.2.29"
   final val scodec              = "1.11.7"
   final val simulacrum          = "0.19.0"
