@@ -15,7 +15,7 @@ object Version {
   final val monocleVersion      = "2.1.0"
   final val pureConfig          = "0.14.0"
   final val reflect             = scala
-  final val refined             = "0.9.19"
+  final val refined             = "0.9.20"
   final val scala               = "2.13.4"
   final val scala3              = "3.0.0-M2"
   final val scalaLogging        = "3.9.2"
@@ -24,7 +24,7 @@ object Version {
   final val scodec              = "1.11.7"
   final val simulacrum          = "0.19.0"
   final val shapeless           = "2.3.3"
-  final val sttp                = "3.0.0-RC13"
+  final val sttp                = "3.0.0-RC14"
   final val xstream             = "1.4.15"
   final val xml                 = "2.0.0-M3"
   final val zio                 = "1.0.3"

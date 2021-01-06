@@ -22,7 +22,8 @@ object Memo extends App {
     }
     normalize(ro(c))
   }
-  val rot13                    = rot(13)(_)
+
+  val rot13 = rot(13)(_)
 
   println(rot13('a'))
 }
