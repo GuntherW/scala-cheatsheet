@@ -31,7 +31,7 @@ object Version {
   final val zioKafka            = "0.13.0"
   // Testre
   final val mockito             = "1.10.19"
-  final val munit               = "0.7.20"
+  final val munit               = "0.7.21"
   final val scalaTest           = "3.2.3"
   final val selenium            = "3.141.59"
   final val seleniumPlus        = "3.2.2.0"
