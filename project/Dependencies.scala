@@ -1,7 +1,7 @@
 import sbt._
 
 object Version {
-  final val akkaVersion         = "2.6.11"
+  final val akkaVersion         = "2.6.12"
   final val catsVersion         = "2.3.1"
   final val catsConsole         = "0.8.1"
   final val chimney             = "0.6.1"
