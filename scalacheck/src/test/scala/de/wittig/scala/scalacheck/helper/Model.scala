@@ -1,4 +1,4 @@
-package de.codecentric.wittig.scala.scalacheck.helper
+package de.wittig.scala.scalacheck.helper
 
 case class Person(
     firstName: String,

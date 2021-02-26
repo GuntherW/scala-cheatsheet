@@ -53,6 +53,7 @@ lazy val `scala-cheatcheet` = (project in file("."))
     core,
     magnolia,
     munit,
+    scalacheck,
     subprojectTestInParallel1,
     subprojectTestInParallel2,
     subprojectTestInParallelForkGroup,
@@ -72,8 +73,7 @@ lazy val docs = project // new documentation project
   .in(file("cheatsheet-docs")) // important: it must not be docs/
   .settings(
     mdocVariables := Map( // Update mdocVariables to include site variables like @VERSION@.
-      "VERSION" -> version.value
-    )
+      "VERSION" -> version.value)
   )
   .enablePlugins(MdocPlugin)
 
@@ -119,6 +119,13 @@ lazy val munit = project
     Test / fork := true, //  subprojects tests will run parallel with other subprojects
     Test / testOptions += Tests.Cleanup(() => println("+++++++++++++cleaned++++++++++++++++")) // Einfacher Hook
 //    Test / testOptions += Tests.Cleanup(loader => loader.loadClass("munit.Cleaner").newInstance) // Laden einer Klasse // Funktioniert nur mit fork := false
+  )
+
+lazy val scalacheck = project
+  .settings(
+    libraryDependencies += Library.scalaCheck          % Test,
+    libraryDependencies += Library.shapelessScalaCheck % Test,
+    Test / fork := true, //  subprojects tests will run parallel with other subprojects
   )
 
 lazy val sttp = project

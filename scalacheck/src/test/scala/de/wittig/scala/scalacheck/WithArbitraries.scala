@@ -1,6 +1,6 @@
-package de.codecentric.wittig.scala.scalacheck
+package de.wittig.scala.scalacheck
 
-import de.codecentric.wittig.scala.scalacheck.helper.Printer._
+import de.wittig.scala.scalacheck.helper.Printer._
 import org.scalacheck.Prop.forAll
 import org.scalacheck.{Arbitrary, Gen, Properties}
 

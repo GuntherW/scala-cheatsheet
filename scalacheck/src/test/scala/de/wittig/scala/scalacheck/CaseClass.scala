@@ -1,12 +1,11 @@
-package de.codecentric.wittig.scala.scalacheck
+package de.wittig.scala.scalacheck
 
-import de.codecentric.wittig.scala.scalacheck.helper.{Person, Season}
+import de.wittig.scala.scalacheck.helper.{Person, Season}
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Prop.forAll
 import org.scalacheck._
 
-/**
-  * @author gunther
+/** @author gunther
   */
 object CaseClass extends Properties("Person") {
   // Diese impliciter Arbitrary[Person] kann auch durch shapeless-scalacheck automatisch erzeugt werden. Jedoch nur mit Standardwerten für die einfachen Typen (String und Int)

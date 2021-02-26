@@ -1,4 +1,4 @@
-package de.codecentric.wittig.scala.scalacheck.helper
+package de.wittig.scala.scalacheck.helper
 
 object Printer {
   def printn(a: String, b: String): Unit = {
