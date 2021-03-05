@@ -1,4 +1,4 @@
-package de.codecentric.wittig.scala.scalacheck.munit
+package munit
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
