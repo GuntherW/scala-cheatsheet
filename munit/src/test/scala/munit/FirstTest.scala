@@ -6,27 +6,27 @@ import scala.util.Properties
 
 //@munit.IgnoreSuite
 class FirstTest extends munit.FunSuite {
-  final case class Person(name: String, color: String)
+  case class Person(name: String, color: String)
 
-  test("true") {
+  test("should run on windows only") {
     assume(Properties.isWin, "this test runs only on Linux") // ignore test, if running on windoof
     assert(true)
   }
 
-  test("Actionable errors".ignore) {
+  test("Actionable errors -- bad way".ignore) {
     val realPerson   = Person("Hans", "red")
     val wronglPerson = Person("Hans", "black")
     assert(realPerson == wronglPerson)
   }
 
-  test("Actionable errors2".ignore) {
+  test("Actionable errors -- good way".ignore) {
     val realPerson   = Person("Hans", "red")
     val wronglPerson = Person("Hans", "black")
     assertEquals(realPerson, wronglPerson)
   }
 
-  test("future") {
+  test("Futures should be ") {
     val f1 = Future(1)
-    f1.map(f => assert(f == 1))
+    f1.map(f => assertEquals(f, 1))
   }
 }
