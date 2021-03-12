@@ -102,7 +102,7 @@ lazy val subprojectTestInParallelForkGroup = project
     Test / parallelExecution := true,
     Test / testForkedParallel := false, // Hier kann man auch noch innerhalb der Gruppe parallelisieren. Sollte False sein.
     Test / fork := false,
-    Test / testGrouping := (definedTests in Test).value
+    Test / testGrouping := (Test / definedTests).value
       .groupBy(_.name.split('.')(1)(0)) // Gruppierung hier nach erstem Buchstabe der Testklasse
       .map { case (letter, tests) =>
         println(s"--------> Testgruppe $letter mit ${tests.length} Tests")
