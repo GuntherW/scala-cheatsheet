@@ -161,8 +161,14 @@ lazy val scalajs = project
   .settings(
     scalaJSUseMainModuleInitializer := true,
     libraryDependencies ++= Seq(
-      "org.scala-js" %%% "scalajs-dom" % "1.1.0"
-    )
+      "org.scala-js" %%% "scalajs-dom" % "1.1.0",
+      "com.lihaoyi"  %%% "utest"       % "0.7.7" % "test"
+    ),
+    jsEnv := new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv(),
+    testFrameworks += new TestFramework("utest.runner.Framework"),
+    test / fork := false,
+    fork := false,
+    parallelExecution := false
   )
 
 addCommandAlias("ls", "projects")
