@@ -2,7 +2,7 @@ import sbt._
 
 object Version {
   final val akkaVersion             = "2.6.13"
-  final val catsVersion             = "2.4.2"
+  final val catsVersion             = "2.5.0"
   final val catsConsole             = "0.8.1"
   final val chimney                 = "0.6.1"
   final val circeVersion            = "0.13.0"
@@ -15,12 +15,12 @@ object Version {
   final val monocleVersion          = "2.1.0"
   final val pureConfig              = "0.14.1"
   final val reflect                 = scala
-  final val refined                 = "0.9.21"
+  final val refined                 = "0.9.22"
   final val scala                   = "2.13.5"
   final val scala3                  = "3.0.0-M2"
   final val scalaLogging            = "3.9.3"
   final val scalaMeta               = "4.4.10"
-  final val scalaParallelCollection = "1.0.1"
+  final val scalaParallelCollection = "1.0.2"
   final val scalaz                  = "7.2.29"
   final val scodec                  = "1.11.7"
   final val simulacrum              = "0.19.0"
@@ -32,7 +32,7 @@ object Version {
   final val zioKafka                = "0.14.0"
   // Testre
   final val mockito                 = "1.10.19"
-  final val munit                   = "0.7.22"
+  final val munit                   = "0.7.23"
   final val scalaTest               = "3.2.6"
   final val selenium                = "3.141.59"
   final val seleniumPlus            = "3.2.6.0"
@@ -54,7 +54,6 @@ object Library {
   final val enumeratum              = "com.beachape"                  %% "enumeratum"                       % Version.enumeratum
   final val fs2Core                 = "co.fs2"                        %% "fs2-core"                         % Version.fs2
   final val fs2IO                   = "co.fs2"                        %% "fs2-io"                           % Version.fs2 // optional I/O library
-  final val fs2Experimental         = "co.fs2"                        %% "fs2-experimental"                 % Version.fs2 // optional experimental library
   final val fs2ReactiveStreams      = "co.fs2"                        %% "fs2-reactive-streams"             % Version.fs2 // optional reactive streams interop
   final val kittens                 = "org.typelevel"                 %% "kittens"                          % Version.kittensVersion
   final val logback                 = "ch.qos.logback"                 % "logback-classic"                  % Version.logback
@@ -114,7 +113,6 @@ object Dependencies {
     Library.fs2Core,
     Library.fs2IO,
     Library.fs2ReactiveStreams,
-    Library.fs2Experimental,
     Library.kittens,
     Library.logback,
     Library.monix,
