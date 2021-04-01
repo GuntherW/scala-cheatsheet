@@ -33,9 +33,9 @@ object Version {
   // Testre
   final val mockito                 = "1.10.19"
   final val munit                   = "0.7.23"
-  final val scalaTest               = "3.2.6"
+  final val scalaTest               = "3.2.7"
   final val selenium                = "3.141.59"
-  final val seleniumPlus            = "3.2.6.0"
+  final val seleniumPlus            = "3.2.7.0"
   final val scalaCheck              = "1.15.3"
   final val scalaCheckShapeless     = "1.2.5"
 }
