@@ -64,7 +64,6 @@ object Library {
   final val monocleMacro            = "com.github.julien-truffaut"    %% "monocle-macro"                    % Version.monocleVersion
   final val monocleRefined          = "com.github.julien-truffaut"    %% "monocle-refined"                  % Version.monocleVersion
   final val monocleState            = "com.github.julien-truffaut"    %% "monocle-state"                    % Version.monocleVersion
-  final val munit                   = "org.scalameta"                 %% "munit"                            % Version.munit
   final val pureConfig              = "com.github.pureconfig"         %% "pureconfig"                       % Version.pureConfig
   final val refined                 = "eu.timepit"                    %% "refined"                          % Version.refined
   final val reflect                 = "org.scala-lang"                 % "scala-reflect"                    % Version.reflect
@@ -90,6 +89,8 @@ object Library {
   // test
   final val mockito             = "org.mockito"                 % "mockito-all"               % Version.mockito
   final val monocleLaw          = "com.github.julien-truffaut" %% "monocle-law"               % Version.monocleVersion
+  final val munit               = "org.scalameta"              %% "munit"                     % Version.munit
+  final val munitScalaCheck     = "org.scalameta"              %% "munit-scalacheck"          % Version.munit
   final val scalatest           = "org.scalatest"              %% "scalatest"                 % Version.scalaTest
   final val selenium            = "org.seleniumhq.selenium"     % "selenium-java"             % Version.selenium
   final val seleniumPlus        = "org.scalatestplus"          %% "selenium-3-141"            % Version.seleniumPlus
@@ -144,7 +145,6 @@ object Dependencies {
 
   val testDependencies = Seq(
     Library.mockito             % Test,
-    Library.munit               % Test,
     Library.scalatest           % "it,test",
     Library.seleniumPlus        % "it",
     Library.selenium            % "it",

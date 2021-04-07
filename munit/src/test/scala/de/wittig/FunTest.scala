@@ -1,12 +1,13 @@
-package munit
+package de.wittig
 
 import java.nio.file.{Files, Path}
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.Properties
+import munit._
 
-//@munit.IgnoreSuite
-class FirstTest extends munit.FunSuite {
+//@IgnoreSuite
+class FunTest extends FunSuite {
   case class Person(name: String, color: String)
 
   test("should run on windows only") {
@@ -26,7 +27,7 @@ class FirstTest extends munit.FunSuite {
     assertEquals(realPerson, wronglPerson)
   }
 
-  test("Futures should be ") {
+  test("Futures should be 1") {
     val f1 = Future(1)
     f1.map(f => assertEquals(f, 1))
   }
@@ -41,9 +42,17 @@ class FirstTest extends munit.FunSuite {
     assertEquals(1, 2)
   }
 
+  test("with clues".ignore) {
+    val a = 3
+    val b = 4
+    if (a == 3) // Test direkt fehlschlagen lassen mit Hinweis
+      fail("nicht gut", clues(a + b))
+    assertEquals(a + b, 7)
+  }
+
   test("exception") {
     intercept[java.lang.IllegalArgumentException] {
-      throw new IllegalArgumentException
+      throw new IllegalArgumentException("Mit Message")
     }
   }
 

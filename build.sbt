@@ -114,7 +114,10 @@ lazy val subprojectTestInParallelForkGroup = project
 
 lazy val munit = project
   .settings(
-    libraryDependencies += Library.munit % Test,
+    libraryDependencies ++= Seq(
+      Library.munit           % Test,
+      Library.munitScalaCheck % Test,
+    ),
     testFrameworks += new TestFramework("munit.Framework"),
     Test / fork := true, //  subprojects tests will run parallel with other subprojects
     Test / testOptions += Tests.Cleanup(() => println("+++++++++++++cleaned++++++++++++++++")) // Einfacher Hook
