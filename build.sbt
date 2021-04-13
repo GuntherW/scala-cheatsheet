@@ -116,6 +116,7 @@ lazy val munit = project
   .settings(
     libraryDependencies ++= Seq(
       Library.munit           % Test,
+      Library.monix           % Test,
       Library.munitScalaCheck % Test,
     ),
     testFrameworks += new TestFramework("munit.Framework"),

@@ -1,5 +1,7 @@
 package de.wittig
 
+import monix.eval.Task
+
 import java.nio.file.{Files, Path}
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -59,6 +61,18 @@ class FunTest extends FunSuite {
   test("exception mit message") {
     interceptMessage[java.lang.IllegalArgumentException]("Mit Message") {
       throw new IllegalArgumentException("Mit Message")
+    }
+  }
+
+  // Mit Transformers für z.B. Monix.Task
+  import monix.execution.Scheduler.Implicits.global
+  override def munitValueTransforms: List[ValueTransform] =
+    super.munitValueTransforms :+ new ValueTransform("IO", { case task: Task[_] => task.runToFuture }) // transform in Future
+
+  test("task") {
+    val task = Task(1)
+    task.map { t1 =>
+      assertEquals(t1, 1)
     }
   }
 
