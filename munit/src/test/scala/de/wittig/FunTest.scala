@@ -64,7 +64,7 @@ class FunTest extends FunSuite {
     }
   }
 
-  // Mit Transformers für z.B. Monix.Task
+  // Mit ValueTransformers für z.B. Monix.Task
   import monix.execution.Scheduler.Implicits.global
   override def munitValueTransforms: List[ValueTransform] =
     super.munitValueTransforms :+ new ValueTransform("IO", { case task: Task[_] => task.runToFuture }) // transform in Future
@@ -75,6 +75,14 @@ class FunTest extends FunSuite {
       assertEquals(t1, 1)
     }
   }
+
+  // Mit TestTransformers, um die Tests selbst anzupassen
+  // Hier: Überschreiben aller Testnamen mit der Scalaversion als Suffix
+  override def munitTestTransforms: List[TestTransform] =
+    super.munitTestTransforms :+ new TestTransform(
+      "scala-version",
+      test => test.withName(s"${test.name}-${Properties.versionNumberString}")
+    )
 
   // Deklarieren einer Fixture
   private val files = FunFixture[Path](
