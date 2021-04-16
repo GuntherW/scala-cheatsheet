@@ -4,8 +4,8 @@ import cats.data.Reader
 object ReaderMonadExample extends App {
   case class Config(x: String, y: String)
 
-  def hallo1: Reader[Config, String] = Reader(f => s"hallo1 ${f.x}")
-  def hallo2: Reader[Config, String] = Reader(f => s"hallo2 ${f.y}")
+  def hallo1: Reader[Config, String] = Reader(config => s"hallo1 ${config.x}")
+  def hallo2: Reader[Config, String] = Reader(config => s"hallo2 ${config.y}")
 
   def program: Reader[Config, (String, String)] =
     for {
