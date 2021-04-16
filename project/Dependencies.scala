@@ -8,7 +8,7 @@ object Version {
   final val circeVersion            = "0.13.0"
   final val enumeratum              = "1.6.1"
   final val fs2                     = "2.5.4"
-  final val kittensVersion          = "2.2.1"
+  final val kittensVersion          = "2.2.2"
   final val logback                 = "1.2.3"
   final val magnolia                = "0.17.0"
   final val monix                   = "3.3.0"
