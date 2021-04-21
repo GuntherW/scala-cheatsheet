@@ -2,7 +2,7 @@ import sbt._
 
 object Version {
   final val akkaVersion             = "2.6.14"
-  final val catsVersion             = "2.5.0"
+  final val catsVersion             = "2.6.0"
   final val catsConsole             = "0.8.1"
   final val chimney                 = "0.6.1"
   final val circeVersion            = "0.13.0"
@@ -13,11 +13,11 @@ object Version {
   final val magnolia                = "0.17.0"
   final val monix                   = "3.3.0"
   final val monocleVersion          = "2.1.0"
-  final val pureConfig              = "0.14.1"
+  final val pureConfig              = "0.15.0"
   final val reflect                 = scala
   final val refined                 = "0.9.23"
   final val scala                   = "2.13.5"
-  final val scala3                  = "3.0.0-M2"
+  final val scala3                  = "3.0.0-M3"
   final val scalaLogging            = "3.9.3"
   final val scalaMeta               = "4.4.13"
   final val scalaParallelCollection = "1.0.2"
@@ -32,8 +32,8 @@ object Version {
   final val zioKafka                = "0.14.0"
   // Testre
   final val mockito                 = "1.10.19"
-  final val munit                   = "0.7.23"
-  final val scalaTest               = "3.2.7"
+  final val munit                   = "0.7.25"
+  final val scalaTest               = "3.2.8"
   final val selenium                = "3.141.59"
   final val seleniumPlus            = "3.2.7.0"
   final val scalaCheck              = "1.15.3"
