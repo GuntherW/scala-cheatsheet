@@ -4,9 +4,9 @@ import monix.eval.Task
 
 import java.nio.file.{Files, Path}
 import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.Properties
 import munit._
+import monix.execution.Scheduler.Implicits.global
 
 //@IgnoreSuite
 class FunTest extends FunSuite {
@@ -31,7 +31,9 @@ class FunTest extends FunSuite {
 
   test("Futures should be 1") {
     val f1 = Future(1)
-    f1.map(f => assertEquals(f, 1))
+    f1.map { f =>
+      assertEquals(f, 1)
+    }
   }
 
   test("async") {
@@ -41,6 +43,7 @@ class FunTest extends FunSuite {
   }
 
   test("failing test".fail) {
+    println("failing")
     assertEquals(1, 2)
   }
 
@@ -65,9 +68,11 @@ class FunTest extends FunSuite {
   }
 
   // Mit ValueTransformers für z.B. Monix.Task
-  import monix.execution.Scheduler.Implicits.global
   override def munitValueTransforms: List[ValueTransform] =
-    super.munitValueTransforms :+ new ValueTransform("IO", { case task: Task[_] => task.runToFuture }) // transform in Future
+    super.munitValueTransforms :+ new ValueTransform(
+      "IO",
+      { case task: Task[_] => task.runToFuture } // transform in Future
+    )
 
   test("task") {
     val task = Task(1)
@@ -85,18 +90,22 @@ class FunTest extends FunSuite {
     )
 
   // Deklarieren einer Fixture
-  private val files = FunFixture[Path](
-    setup = { test =>
-      Files.createTempFile("tmp", test.name)
-    },
-    teardown = { file =>
-      // Always gets called, even if test failed.
-      Files.deleteIfExists(file)
-    }
+  private def file(path: String = "tmp") = FunFixture[Path](
+    setup = test => Files.createTempFile(path, test.name),
+    teardown = file => Files.deleteIfExists(file) // Always gets called, even if test failed.
   )
 
   // Benutzung einer Fixture
-  files.test("basic") { file =>
+  file().test("with one fixture") { file =>
     assert(Files.isRegularFile(file), s"Files.isRegularFile($file)")
   }
+
+  // Kombinieren von Fixture
+  private val twoFiles = FunFixture.map2(file("tmp1"), file("tmp2"))
+
+  twoFiles.test("with two fixtures") { case (file1, file2) =>
+    assert(Files.isRegularFile(file1), s"Files.isRegularFile($file1)")
+    assert(Files.isRegularFile(file2), s"Files.isRegularFile($file2)")
+  }
+
 }

@@ -15,11 +15,11 @@ object Version {
   final val monocleVersion          = "2.1.0"
   final val pureConfig              = "0.15.0"
   final val reflect                 = scala
-  final val refined                 = "0.9.23"
+  final val refined                 = "0.9.24"
   final val scala                   = "2.13.5"
   final val scala3                  = "3.0.0-M3"
   final val scalaLogging            = "3.9.3"
-  final val scalaMeta               = "4.4.13"
+  final val scalaMeta               = "4.4.14"
   final val scalaParallelCollection = "1.0.2"
   final val scalaz                  = "7.2.29"
   final val scodec                  = "1.11.7"
@@ -35,7 +35,7 @@ object Version {
   final val munit                   = "0.7.25"
   final val scalaTest               = "3.2.8"
   final val selenium                = "3.141.59"
-  final val seleniumPlus            = "3.2.7.0"
+  final val seleniumPlus            = "3.2.8.0"
   final val scalaCheck              = "1.15.3"
   final val scalaCheckShapeless     = "1.2.5"
 }
