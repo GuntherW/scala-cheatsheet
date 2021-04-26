@@ -28,7 +28,7 @@ object Version {
   final val sttp                    = "3.2.3"
   final val xstream                 = "1.4.16"
   final val xml                     = "2.0.0-M5"
-  final val zio                     = "1.0.6"
+  final val zio                     = "1.0.7"
   final val zioKafka                = "0.14.0"
   // Testre
   final val mockito                 = "1.10.19"
