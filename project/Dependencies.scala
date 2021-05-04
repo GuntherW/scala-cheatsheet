@@ -35,7 +35,7 @@ object Version {
   final val scalaTest               = "3.2.8"
   final val selenium                = "3.141.59"
   final val seleniumPlus            = "3.2.8.0"
-  final val scalaCheck              = "1.15.3"
+  final val scalaCheck              = "1.15.4"
   final val scalaCheckShapeless     = "1.2.5"
 }
 
