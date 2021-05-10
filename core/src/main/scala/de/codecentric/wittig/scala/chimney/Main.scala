@@ -37,7 +37,8 @@ object Main extends App {
       person.age,
       person.email
     )
-  val customer2                                                  = person.transformInto[Customer](transformerPersonToCustomer)
+
+  val customer2 = person.transformInto[Customer](transformerPersonToCustomer)
   println(customer2)
 
   implicit val customerPatcher: Patcher[Customer, Int] =
