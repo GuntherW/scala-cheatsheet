@@ -2,36 +2,36 @@ import sbt._
 
 object Version {
   final val akkaVersion             = "2.6.14"
-  final val catsVersion             = "2.6.0"
+  final val catsVersion             = "2.6.1"
   final val catsConsole             = "0.8.1"
   final val chimney                 = "0.6.1"
   final val circeVersion            = "0.13.0"
   final val enumeratum              = "1.6.1"
-  final val fs2                     = "2.5.5"
-  final val kittensVersion          = "2.3.0"
+  final val fs2                     = "2.5.6"
+  final val kittensVersion          = "2.3.1"
   final val logback                 = "1.2.3"
   final val magnolia                = "0.17.0"
-  final val monix                   = "3.3.0"
+  final val monix                   = "3.4.0"
   final val monocleVersion          = "2.1.0"
   final val pureConfig              = "0.15.0"
   final val reflect                 = scala
   final val refined                 = "0.9.24"
   final val scala                   = "2.13.5"
   final val scalaLogging            = "3.9.3"
-  final val scalaMeta               = "4.4.16"
-  final val scalaParallelCollection = "1.0.2"
+  final val scalaMeta               = "4.4.17"
+  final val scalaParallelCollection = "1.0.3"
   final val scalaz                  = "7.2.29"
   final val scodec                  = "1.11.7"
   final val simulacrum              = "0.19.0"
   final val shapeless               = "2.3.6"
-  final val sttp                    = "3.3.1"
+  final val sttp                    = "3.3.2"
   final val xstream                 = "1.4.16"
   final val xml                     = "2.0.0-M5"
   final val zio                     = "1.0.7"
   final val zioKafka                = "0.14.0"
   // Testre
   final val mockito                 = "1.10.19"
-  final val munit                   = "0.7.25"
+  final val munit                   = "0.7.26"
   final val scalaTest               = "3.2.8"
   final val selenium                = "3.141.59"
   final val seleniumPlus            = "3.2.8.0"
@@ -41,7 +41,6 @@ object Version {
 
 object Library {
   final val akkaStream              = "com.typesafe.akka"             %% "akka-stream"                      % Version.akkaVersion
-  final val catsConsole             = "dev.profunktor"                %% "console4cats"                     % Version.catsConsole
   final val catsCore                = "org.typelevel"                 %% "cats-core"                        % Version.catsVersion
   final val catsFree                = "org.typelevel"                 %% "cats-free"                        % Version.catsVersion
   final val chimney                 = "io.scalaland"                  %% "chimney"                          % Version.chimney
@@ -100,7 +99,6 @@ object Library {
 object Dependencies {
   val dependencies = Seq(
     Library.akkaStream,
-    Library.catsConsole,
     Library.catsCore,
     Library.catsFree,
     Library.chimney,
