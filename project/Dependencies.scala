@@ -17,13 +17,13 @@ object Version {
   final val reflect                 = scala
   final val refined                 = "0.9.25"
   final val scala                   = "2.13.5"
-  final val scalaLogging            = "3.9.3"
+//  final val scala                   = "3.0.0"
   final val scalaMeta               = "4.4.17"
   final val scalaParallelCollection = "1.0.3"
   final val scalaz                  = "7.2.29"
   final val scodec                  = "1.11.7"
   final val simulacrum              = "0.19.0"
-  final val shapeless               = "2.3.6"
+  final val shapeless               = "2.3.7"
   final val sttp                    = "3.3.3"
   final val xstream                 = "1.4.17"
   final val xml                     = "2.0.0-M5"
@@ -65,7 +65,6 @@ object Library {
   final val pureConfig              = "com.github.pureconfig"         %% "pureconfig"                       % Version.pureConfig
   final val refined                 = "eu.timepit"                    %% "refined"                          % Version.refined
   final val reflect                 = "org.scala-lang"                 % "scala-reflect"                    % Version.reflect
-  final val scalaLogging            = "com.typesafe.scala-logging"    %% "scala-logging"                    % Version.scalaLogging
   final val scalaMeta               = "org.scalameta"                 %% "scalameta"                        % Version.scalaMeta
   final val scalaParallelCollection = "org.scala-lang.modules"        %% "scala-parallel-collections"       % Version.scalaParallelCollection
   final val scalaReflect            = "org.scala-lang"                 % "scala-reflect"                    % Version.scala
@@ -122,7 +121,6 @@ object Dependencies {
     Library.monocleLaw,
     Library.pureConfig,
     Library.refined,
-    Library.scalaLogging,
     Library.scalaMeta,
     Library.scalaParallelCollection,
     Library.scalaReflect,
