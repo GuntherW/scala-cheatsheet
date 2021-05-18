@@ -18,7 +18,7 @@ object Version {
   final val refined                 = "0.9.25"
   final val scala                   = "2.13.6"
 //  final val scala                   = "3.0.0"
-  final val scalaMeta               = "4.4.17"
+  final val scalaMeta               = "4.4.18"
   final val scalaParallelCollection = "1.0.3"
   final val scalaz                  = "7.2.29"
   final val scodec                  = "1.11.7"
