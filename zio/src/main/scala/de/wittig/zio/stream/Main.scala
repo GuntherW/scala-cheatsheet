@@ -1,15 +1,16 @@
 package de.wittig.zio.stream
 
 import zio._
-import zio.console.putStrLn
+import zio.console.{Console, getStrLn, putStrLn}
 import zio.stream.ZStream
 
 object HelloWorld extends App {
-  def run(args: List[String]): ZIO[ZEnv, Nothing, ExitCode] =
-    for {
-      elements <- ZStream("Hello", "World").runCollect
-      _        <- putStrLn(elements.toString)
-    } yield ExitCode.success
+  def run(args: List[String]): URIO[Console, ExitCode] = programm.exitCode
+
+  private val programm = for {
+    elements <- ZStream("Hello", "World").runCollect
+    _        <- putStrLn(elements.toString)
+  } yield ()
 }
 
 object InfiniteStream extends App {
