@@ -1,7 +1,7 @@
 package de.codecentric.wittig.scala.interpreter
 
-/**
-  * @author gunther
+/** @author
+  *   gunther
   */
 object Interpreter extends App {
   import scala.reflect.runtime.currentMirror

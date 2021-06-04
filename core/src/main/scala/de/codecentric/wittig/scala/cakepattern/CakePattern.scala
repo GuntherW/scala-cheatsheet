@@ -1,17 +1,13 @@
 package de.codecentric.wittig.scala.cakepattern
 
-/**
-  * Das Cake Pattern ist eine Art der Dependency Injection mit Scala
-  * Die Dependency muß bei Erzeugung des Objectes passieren.
+/** Das Cake Pattern ist eine Art der Dependency Injection mit Scala Die Dependency muß bei Erzeugung des Objectes passieren.
   *
   * http://jonasboner.com/2008/10/06/real-world-scala-dependency-injection-di/
   *
   * Offene Frage für mich: Was ist da jetzt der tolle Vorteil gegenüber dem Weg, daß man die Dependency als Konstruktorparameter übergibt?
   */
 class Wesen(name: String) {
-  /**
-    * Selftype: Zwingt bei Benutzung der Klasse ein Lebewesen reinzumixen (mit with) <br />
-    * Hier kann anstatt "this" auch ein Alias stehen, der dann innerhalb der Klasse benutzt werden kann.
+  /** Selftype: Zwingt bei Benutzung der Klasse ein Lebewesen reinzumixen (mit with) <br /> Hier kann anstatt "this" auch ein Alias stehen, der dann innerhalb der Klasse benutzt werden kann.
     */
   this: Lebewesen =>
 
@@ -30,8 +26,7 @@ trait Tier extends Lebewesen {
   override def essen = "Schmatzen, reißen, schlingen!"
 }
 
-/**
-  * Testaufruf
+/** Testaufruf
   */
 object Main extends App {
   val goldi = new Wesen("Goldi") with Tier

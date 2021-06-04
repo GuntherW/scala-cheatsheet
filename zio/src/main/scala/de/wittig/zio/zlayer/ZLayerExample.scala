@@ -5,7 +5,8 @@ import de.wittig.zio.zlayer.ZLayerExample.UserSubscription.UserSubscriptionEnv
 import zio._
 
 /** Example from Rock the JVM
-  * @see https://www.youtube.com/watch?v=PaogLRrYo64&list=PLmtsMNDRU0Bzu7NfhTiGK7iCYjcFAYlal
+  * @see
+  *   https://www.youtube.com/watch?v=PaogLRrYo64&list=PLmtsMNDRU0Bzu7NfhTiGK7iCYjcFAYlal
   */
 object ZLayerExample extends zio.App {
 

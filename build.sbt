@@ -132,7 +132,7 @@ lazy val sttp = project
   .settings(
     commonSettings,
     scalaVersion := Version.scala3,
-    scalacOptions ++= Seq("-indent", "-rewrite"),
+    scalacOptions ++= Seq("-noindent", "-rewrite"),
 //    scalacOptions ++= Seq("--new-syntax", "-rewrite"),
     libraryDependencies ++= Seq(
       Library.sttpCore,
@@ -166,7 +166,7 @@ lazy val magnoliaScala2 = project
 lazy val magnoliaScala3 = project
   .settings(
     commonSettings,
-    scalacOptions ++= Seq("-indent", "-rewrite"),
+    scalacOptions ++= Seq("-noindent", "-rewrite"),
     scalaVersion := Version.scala3,
 //    libraryDependencies += Library.magnolia2
   )

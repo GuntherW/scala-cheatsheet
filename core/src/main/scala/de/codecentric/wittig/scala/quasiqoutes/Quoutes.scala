@@ -1,7 +1,7 @@
 package de.codecentric.wittig.scala.quasiqoutes
 
-/**
-  * @author gunther
+/** @author
+  *   gunther
   */
 object Quoutes extends App {
   val universe: scala.reflect.runtime.universe.type =

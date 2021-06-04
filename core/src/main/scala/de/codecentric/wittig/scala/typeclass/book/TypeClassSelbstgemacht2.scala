@@ -1,7 +1,7 @@
 package de.codecentric.wittig.scala.typeclass.book
 
-/**
-  * @see https://scalac.io/typeclasses-in-scala/
+/** @see
+  *   https://scalac.io/typeclasses-in-scala/
   */
 trait Show[A] {
   def show(a: A): String

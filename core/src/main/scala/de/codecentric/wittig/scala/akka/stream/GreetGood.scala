@@ -7,8 +7,7 @@ import akka.stream.scaladsl.{Keep, Sink, Source}
 import scala.concurrent.Await
 import scala.concurrent.duration.{Duration, _}
 
-/**
-  * Example from Heiko Seeberger
+/** Example from Heiko Seeberger
   */
 object GreetGood extends App {
   implicit val system: ActorSystem = ActorSystem()

@@ -1,6 +1,7 @@
 package de.codecentric.wittig.scala.patternmatching
 
-/** @author gunther
+/** @author
+  *   gunther
   */
 object Matching extends App with Auth {
   trait User {

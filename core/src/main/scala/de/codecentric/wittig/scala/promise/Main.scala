@@ -4,9 +4,7 @@ import de.codecentric.wittig.scala.Implicits.RichFuture
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 
-/**
-  *  Where Future provides an interface exclusively for querying, Promise is a companion type that allows you to complete a Future by putting a value into it.
-  *  This can be done exactly once.
+/** Where Future provides an interface exclusively for querying, Promise is a companion type that allows you to complete a Future by putting a value into it. This can be done exactly once.
   */
 object Main extends App {
   def getFoo(): Future[Foo] = {

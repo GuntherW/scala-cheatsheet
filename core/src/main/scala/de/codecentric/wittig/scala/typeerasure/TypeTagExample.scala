@@ -1,10 +1,8 @@
 package de.codecentric.wittig.scala.typeerasure
 
-/**
-  * http://squidarth.com/scala/types/2019/01/11/type-erasure-scala.html
+/** http://squidarth.com/scala/types/2019/01/11/type-erasure-scala.html
   *
-  * =:= (type equality)
-  * <:< (subtype relation)
+  * =:= (type equality) <:< (subtype relation)
   */
 object TypeTagExample extends App {
   println(processThing(Thing(1)))

@@ -11,9 +11,7 @@ import eu.timepit.refined.types.numeric.PosInt
 //final case class Person(age: Int Refined Positive)
 final case class Person(age: PosInt)
 
-/**
-  * refineV for Runtime (V steht für Value)
-  * refineMV for Compiletime (MV steht für MacroValue)
+/** refineV for Runtime (V steht für Value) refineMV for Compiletime (MV steht für MacroValue)
   */
 object Main extends App {
 

@@ -1,8 +1,7 @@
 package de.codecentric.wittig.scala.simulacrum
 import simulacrum._
 
-/**
-  * Type class definition
+/** Type class definition
   *
   * @tparam A
   */

@@ -2,8 +2,7 @@ package de.codecentric.wittig.scala.typelevel
 
 import scala.reflect.runtime.universe._
 
-/**
-  * https://www.youtube.com/watch?v=qwUYqv6lKtQ&list=PLmtsMNDRU0ByOQoz6lnihh6CtMrErNax7
+/** https://www.youtube.com/watch?v=qwUYqv6lKtQ&list=PLmtsMNDRU0ByOQoz6lnihh6CtMrErNax7
   */
 object TypelevelProgramming extends App {
 

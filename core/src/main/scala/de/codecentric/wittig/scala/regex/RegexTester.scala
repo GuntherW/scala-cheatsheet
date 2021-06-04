@@ -2,7 +2,8 @@ package de.codecentric.wittig.scala.regex
 
 import scala.util.matching.Regex
 
-/** @author gunther
+/** @author
+  *   gunther
   */
 object RegexTester extends App {
   val date        = """(\d\d\d\d)-(\d\d)-(\d\d)""".r
@@ -10,7 +11,7 @@ object RegexTester extends App {
 
   val s1 = "2004-01-20" match {
     case date(year, _, _) => s"$year was a good year for PLs."
-    case _                      => "no match found"
+    case _                => "no match found"
   }
   println(s"s1: $s1")
 

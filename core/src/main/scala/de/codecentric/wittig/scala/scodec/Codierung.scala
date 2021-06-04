@@ -6,7 +6,8 @@ import scodec.bits._
 import codecs._
 import de.codecentric.wittig.scala.Printer.printlnYellow
 
-/** @author gunther
+/** @author
+  *   gunther
   */
 object Codierung extends App {
 

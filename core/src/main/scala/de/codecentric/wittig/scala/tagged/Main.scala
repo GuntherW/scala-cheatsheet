@@ -1,8 +1,6 @@
 package de.codecentric.wittig.scala.tagged
 
-/**
-  * Tagged Types. Example from
-  * http://www.vlachjosef.com/tagged-types-introduction/
+/** Tagged Types. Example from http://www.vlachjosef.com/tagged-types-introduction/
   */
 package notypes {
   case class Arena(
@@ -20,8 +18,7 @@ package notypes {
       bracketMapping: Map[String, String] // arena to bracket mapping
   ) {
 
-    /**
-      * Change current bracket of player in arena
+    /** Change current bracket of player in arena
       */
     def changeBracket(arena: Arena, bracket: Bracket): PlayerProfile = {
       this.copy(bracketMapping = this.bracketMapping + (arena.id -> bracket.id))

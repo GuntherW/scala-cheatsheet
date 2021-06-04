@@ -9,8 +9,7 @@ object UpperBound extends App {
 
   orderedMergeSort(l)
 
-  /**
-    * T muss vom Trait Ordered ableiten
+  /** T muss vom Trait Ordered ableiten
     */
   def orderedMergeSort[T <: Ordered[T]](xs: List[T]): List[T] = {
     def merge(xs: List[T], ys: List[T]): List[T] =

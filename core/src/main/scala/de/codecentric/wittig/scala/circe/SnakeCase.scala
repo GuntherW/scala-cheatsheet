@@ -4,8 +4,7 @@ import io.circe.generic.extras.{Configuration, ConfiguredJsonCodec}
 import io.circe.parser._
 import JsonConfiguration._
 
-/**
-  * Beispiel, wie von einem snake_case Json zu einer Case Class in CamelCase gemappt/geparst werden kann.
+/** Beispiel, wie von einem snake_case Json zu einer Case Class in CamelCase gemappt/geparst werden kann.
   */
 object JsonConfiguration {
   implicit val config: Configuration = Configuration.default.withSnakeCaseMemberNames

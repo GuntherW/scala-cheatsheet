@@ -1,7 +1,7 @@
 package de.codecentric.wittig.scala.algebraicdatatype.patternmatching
 
-/**
-  * @author gunther
+/** @author
+  *   gunther
   *
   * Einem algebraic data type kann man über Patternmatching oder über Polymorphismus benutzen
   */

@@ -6,8 +6,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-/**
-  * @author gunther
+/** @author
+  *   gunther
   */
 object TestFuture extends App {
   val randomNumber = 42

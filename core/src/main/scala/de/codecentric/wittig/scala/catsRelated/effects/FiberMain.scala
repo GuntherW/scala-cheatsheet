@@ -6,9 +6,8 @@ import cats.syntax.flatMap.catsSyntaxFlatMapOps
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 
-/**
-  *  A Fiber represents the (pure) result of an Async data type (e.g. IO) being started concurrently and that can be either joined or canceled.
-  *  * You can think of fibers as being lightweight threads, a fiber being a concurrency primitive for doing cooperative multi-tasking.
+/** A Fiber represents the (pure) result of an Async data type (e.g. IO) being started concurrently and that can be either joined or canceled. * You can think of fibers as being lightweight threads, a
+  * fiber being a concurrency primitive for doing cooperative multi-tasking.
   */
 object FiberMain extends App {
   // Needed for `start`

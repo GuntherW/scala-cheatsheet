@@ -3,10 +3,10 @@ package de.codecentric.wittig.scala.monads
 import cats.data.Kleisli
 import cats.implicits._
 
-/**
-  * Kleisli enables composition of functions that return a monadic value
+/** Kleisli enables composition of functions that return a monadic value
   *
-  * @see https://typelevel.org/cats/datatypes/kleisli.html
+  * @see
+  *   https://typelevel.org/cats/datatypes/kleisli.html
   */
 object KleisliExample extends App {
 

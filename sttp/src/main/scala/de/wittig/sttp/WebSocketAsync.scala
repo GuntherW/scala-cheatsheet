@@ -7,11 +7,11 @@ import sttp.ws.WebSocket
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-object WebSocketAsync extends App:
+object WebSocketAsync extends App {
 
   private val backend = AkkaHttpBackend()
 
-  def useWebSocket(ws: WebSocket[Future]): Future[Unit] =
+  def useWebSocket(ws: WebSocket[Future]): Future[Unit] = {
     def send(i: Int) = ws.sendText(s"Hello $i!")
     def receive()    = ws.receiveText().map(t => println(s"Received: $t"))
     for {
@@ -20,9 +20,11 @@ object WebSocketAsync extends App:
       _ <- receive()
       _ <- receive()
     } yield ()
+  }
 
   basicRequest
     .response(asWebSocket(useWebSocket))
     .get(uri"wss://echo.websocket.org")
     .send(backend)
     .onComplete(_ => backend.close())
+}

@@ -1,7 +1,7 @@
 package de.codecentric.wittig.scala.parallelcollection
 import scala.collection.parallel.CollectionConverters._
 
-/** You need to include "org.scala-lang.modules"        %% "scala-parallel-collections"
+/** You need to include "org.scala-lang.modules" %% "scala-parallel-collections"
   */
 object Main extends App {
 

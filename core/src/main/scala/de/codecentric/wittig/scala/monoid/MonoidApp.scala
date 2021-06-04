@@ -1,13 +1,11 @@
 package de.codecentric.wittig.scala.monoid
 
-/**
-  * @author gunther
+/** @author
+  *   gunther
   */
 object MonoidApp extends App {
 
-  /**
-    * Hat einen "Null"-Methode
-    * Hat eine Verbindungsmethode, die assoziativ verbindet (a+(b+c)) == ((a+b)+c)
+  /** Hat einen "Null"-Methode Hat eine Verbindungsmethode, die assoziativ verbindet (a+(b+c)) == ((a+b)+c)
     */
   trait Monoid[A] {
     def zero: A
