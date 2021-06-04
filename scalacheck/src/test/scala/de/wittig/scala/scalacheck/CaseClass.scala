@@ -18,7 +18,7 @@ object CaseClass extends Properties("Person") {
     } yield Person(firstName, lastName, age, season)
   }
 
-  property("birthday makes people older") = forAll { person: Person =>
+  property("birthday makes people older") = forAll { (person: Person) =>
     person.birthday.age > person.age
   }
 }

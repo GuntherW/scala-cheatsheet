@@ -6,7 +6,7 @@ import org.scalacheck.Properties
 import org.scalacheck.ScalacheckShapeless._ // This is the "magic" import
 
 object CaseClassViaShapeless extends Properties("WithShapeless") {
-  property("person") = forAll { p: Person =>
+  property("person") = forAll { (p: Person) =>
     println(s"Person: $p")
     true
   }

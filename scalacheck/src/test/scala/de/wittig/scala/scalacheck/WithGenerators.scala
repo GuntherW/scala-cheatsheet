@@ -14,11 +14,11 @@ object WithGenerators extends Properties("String") {
   }
 
   private val genConst = Gen.const("hallo")
-  property("const") = forAll(genConst) { a: String =>
+  property("const") = forAll(genConst) { (a: String) =>
     a == "hallo"
   }
   private val genOneOf = Gen.oneOf("hallo", "hello")
-  property("oneOf") = forAll(genOneOf) { a: String =>
+  property("oneOf") = forAll(genOneOf) { (a: String) =>
     a == "hallo" || a == "hello"
   }
 }

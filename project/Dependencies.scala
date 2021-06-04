@@ -40,7 +40,7 @@ object Version {
   final val selenium            = "3.141.59"
   final val seleniumPlus        = "3.2.9.0"
   final val scalaCheck          = "1.15.4"
-  final val scalaCheckShapeless = "1.2.5"
+  final val scalaCheckShapeless = "1.3.0"
 }
 
 object Library {
@@ -97,7 +97,7 @@ object Library {
   final val selenium            = "org.seleniumhq.selenium"     % "selenium-java"             % Version.selenium
   final val seleniumPlus        = "org.scalatestplus"          %% "selenium-3-141"            % Version.seleniumPlus
   final val scalaCheck          = "org.scalacheck"             %% "scalacheck"                % Version.scalaCheck
-  final val shapelessScalaCheck = "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % Version.scalaCheckShapeless cross CrossVersion.for3Use2_13
+  final val shapelessScalaCheck = "com.github.alexarchambault" %% "scalacheck-shapeless_1.15" % Version.scalaCheckShapeless cross CrossVersion.for3Use2_13
 }
 
 object Dependencies {

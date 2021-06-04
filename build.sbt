@@ -120,7 +120,6 @@ lazy val munit = project
 lazy val scalacheck = project
   .settings(
     commonSettings,
-//    scalaVersion := Version.scala3,
     libraryDependencies += Library.scalaCheck          % Test,
     libraryDependencies += Library.shapelessScalaCheck % Test,
     Test / fork := true, //  subprojects tests will run parallel with other subprojects
