@@ -1,7 +1,7 @@
 package de.wittig.zio.stream
 
 import zio._
-import zio.console.{Console, getStrLn, putStrLn}
+import zio.console.{Console, putStrLn}
 import zio.stream.ZStream
 
 object HelloWorld extends App {

@@ -4,7 +4,6 @@ import cats.effect.{ContextShift, IO}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import cats.effect.concurrent._
-import de.codecentric.wittig.scala.catsRelated.mVar2.Main.{list, sum}
 
 /** Usage as Synchronized Mutable Variable */
 object Main extends App {

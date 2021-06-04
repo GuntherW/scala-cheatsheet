@@ -2,7 +2,6 @@ package de.codecentric.wittig.scala.circe
 
 import io.circe.Decoder.decodeLocalDateTimeWithFormatter
 import io.circe.parser.decode
-import io.circe.parser.decode
 import io.circe.syntax._
 
 import java.time.format.DateTimeFormatter

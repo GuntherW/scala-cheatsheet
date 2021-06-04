@@ -8,8 +8,8 @@ package de.codecentric.wittig.scala.algebraicdatatype.patternmatching
 sealed trait Visitor {
   def sagHallo: String = {
     this match {
-      case Anonymous(i) => "Hallo"
-      case User(i, n)   => s"Hallo $n"
+      case Anonymous(_) => "Hallo"
+      case User(_, n)   => s"Hallo $n"
     }
   }
 }

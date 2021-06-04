@@ -17,7 +17,7 @@ object Version {
   final val reflect                 = scala
   final val refined                 = "0.9.26"
   final val scala                   = "2.13.6"
-//  final val scala                   = "3.0.0"
+  final val scala3                  = "3.0.0"
   final val scalaMeta               = "4.4.20"
   final val scalaParallelCollection = "1.0.3"
   final val scalaz                  = "7.2.29"

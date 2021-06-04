@@ -22,8 +22,8 @@ object Main extends App {
 
   def patternMatchingStrings(): Unit =
     "Hallo Welt" match {
-      case s"hallo $v" => println("klein")
-      case s"Hallo $v" => println("groß")
+      case s"hallo $_" => println("klein")
+      case s"Hallo $_" => println("groß")
       case _           => println("keines")
     }
 

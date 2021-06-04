@@ -84,7 +84,7 @@ object Codierung extends App {
 
     case class Point(x: Int, y: Int)
 
-    val tupleCodec: Codec[(Int, Int)] = uint8 ~ uint8
+    uint8 ~ uint8
 //    val pointCodec: Codec[Point]      = tupleCodec.widenOpt(Point.apply, Point.unapply)
   }
 }

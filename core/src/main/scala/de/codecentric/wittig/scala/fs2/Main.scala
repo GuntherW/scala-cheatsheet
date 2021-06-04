@@ -16,7 +16,7 @@ object Main extends IOApp {
           Some(c =>
             c.size match {
               case m if m < n => (n - m, c)
-              case m          => (0, c.take(n.toInt))
+              case _          => (0, c.take(n.toInt))
             }
           )
       }

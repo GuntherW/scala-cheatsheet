@@ -9,7 +9,7 @@ object RegexTester extends App {
   val datePattern = new Regex("""(\d\d\d\d)-(\d\d)-(\d\d)""", "year", "month", "day")
 
   val s1 = "2004-01-20" match {
-    case date(year, month, day) => s"$year was a good year for PLs."
+    case date(year, _, _) => s"$year was a good year for PLs."
     case _                      => "no match found"
   }
   println(s"s1: $s1")

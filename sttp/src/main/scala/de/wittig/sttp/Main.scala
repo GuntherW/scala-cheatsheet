@@ -12,9 +12,10 @@ case class GitHubResponse(total_count: Int, items: List[GitHubItem])
 case class GitHubItem(name: String, stargazers_count: Int, html_url: String)
 
 object Main extends App {
-  private val backend              = AsyncHttpClientFutureBackend()
-  private val query                = "language:scala"
-  private val sort: Option[String] = Some("stars")
+
+  private val backend = AsyncHttpClientFutureBackend()
+  private val query   = "language:scala"
+  private val sort    = Some("stars")
 
   // `sort` will be unwrapped if `Some(_)`, and removed if `None`.
   private val request = basicRequest

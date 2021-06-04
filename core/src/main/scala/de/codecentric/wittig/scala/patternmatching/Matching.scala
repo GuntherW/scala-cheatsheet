@@ -28,7 +28,7 @@ object Matching extends App with Auth {
   def result =
     user match {
       case candidate @ PremiumCandidate() => s"${candidate.name}, Du bist auf einem guten Weg zum Premiumnutzer"
-      case FreeUser(name, _, p)           => s"$name, was kann ich für Dich tun?"
+      case FreeUser(name, _, _)           => s"$name, was kann ich für Dich tun?"
       case PremiumUser(name, _)           => s"Herzlich Willkommen, $name"
       case _                              => "no match"
     }
