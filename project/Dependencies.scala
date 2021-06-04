@@ -24,7 +24,7 @@ object Version {
   final val scodec                  = "1.11.8"
   final val simulacrum              = "0.19.0"
   final val shapeless               = "2.3.7"
-  final val sttp                    = "3.3.5"
+  final val sttp                    = "3.3.6"
   final val xstream                 = "1.4.17"
   final val xml                     = "2.0.0-M5"
   final val zio                     = "1.0.9"
