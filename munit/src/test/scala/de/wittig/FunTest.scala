@@ -10,6 +10,7 @@ import monix.execution.Scheduler.Implicits.global
 
 //@IgnoreSuite
 class FunTest extends FunSuite {
+
   case class Person(name: String, color: String)
 
   test("should run on windows only") {
@@ -107,5 +108,4 @@ class FunTest extends FunSuite {
     assert(Files.isRegularFile(file1), s"Files.isRegularFile($file1)")
     assert(Files.isRegularFile(file2), s"Files.isRegularFile($file2)")
   }
-
 }

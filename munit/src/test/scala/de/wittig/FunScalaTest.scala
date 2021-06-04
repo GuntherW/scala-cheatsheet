@@ -5,6 +5,7 @@ import org.scalatest.funsuite.AnyFunSuite
 import scala.util.Properties
 
 class FunScalaTest extends AnyFunSuite {
+
   case class Person(name: String, color: String)
 
   test("should run on windows only") {
@@ -17,5 +18,4 @@ class FunScalaTest extends AnyFunSuite {
     val wronglPerson = Person("Hans", "black")
     assert(realPerson == wronglPerson)
   }
-
 }

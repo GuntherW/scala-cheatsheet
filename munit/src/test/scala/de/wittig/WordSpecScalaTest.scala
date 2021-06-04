@@ -4,6 +4,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 
 class WordSpecScalaTest extends AnyWordSpecLike with Matchers {
+
   case class Person(name: String, color: String)
 
   "Person" when {

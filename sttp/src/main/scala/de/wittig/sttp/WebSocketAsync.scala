@@ -8,6 +8,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object WebSocketAsync extends App:
+
+  private val backend = AkkaHttpBackend()
+
   def useWebSocket(ws: WebSocket[Future]): Future[Unit] =
     def send(i: Int) = ws.sendText(s"Hello $i!")
     def receive()    = ws.receiveText().map(t => println(s"Received: $t"))
@@ -17,8 +20,6 @@ object WebSocketAsync extends App:
       _ <- receive()
       _ <- receive()
     } yield ()
-
-  val backend = AkkaHttpBackend()
 
   basicRequest
     .response(asWebSocket(useWebSocket))

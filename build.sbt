@@ -1,9 +1,9 @@
 import Tests._
+import sbt.Keys.scalaVersion
 import sbt._
 
 lazy val commonSettings = Seq(
   version := "1.0",
-  scalaVersion := "2.13.5",
   organization := "de.wittig",
   semanticdbEnabled := true,
   scalacOptions ++= Seq(
@@ -30,7 +30,8 @@ lazy val commonSettings = Seq(
 lazy val `scala-cheatcheet` = (project in file("."))
   .aggregate(
     core,
-    magnolia,
+    magnoliaScala2,
+    magnoliaScala3,
     munit,
     scalacheck,
     subprojectTestInParallel1,
@@ -44,6 +45,7 @@ lazy val core = project
   .configs(IntegrationTest)
   .settings(
     commonSettings,
+    scalaVersion := Version.scala,
     libraryDependencies ++= Dependencies.dependencies ++ Dependencies.testDependencies,
     Defaults.itSettings,
     Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-s", "4") // scalacheck should emit 4 examples only
@@ -120,6 +122,7 @@ lazy val munit = project
 lazy val scalacheck = project
   .settings(
     commonSettings,
+    scalaVersion := Version.scala,
     libraryDependencies += Library.scalaCheck          % Test,
     libraryDependencies += Library.shapelessScalaCheck % Test,
     Test / fork := true, //  subprojects tests will run parallel with other subprojects
@@ -150,19 +153,29 @@ lazy val zio = project
     libraryDependencies ++= Dependencies.zioDependencies
   )
 
-lazy val magnolia = project
+lazy val magnoliaScala2 = project
   .settings(
     commonSettings,
+    scalaVersion := Version.scala,
     libraryDependencies ++= Seq(
       Library.magnolia,
       Library.reflect
     )
   )
 
+lazy val magnoliaScala3 = project
+  .settings(
+    commonSettings,
+    scalacOptions ++= Seq("-indent", "-rewrite"),
+    scalaVersion := Version.scala3,
+//    libraryDependencies += Library.magnolia2
+  )
+
 lazy val scalajs = project
   .enablePlugins(ScalaJSPlugin)
   .settings(
     commonSettings,
+    scalaVersion := Version.scala,
     scalaJSUseMainModuleInitializer := true,
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % Version.scalaJsDom,
