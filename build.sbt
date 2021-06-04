@@ -1,34 +1,21 @@
 import Tests._
-import sbt.Test
+import sbt._
 
 lazy val commonSettings = Seq(
   version := "1.0",
-  scalaVersion := "2.13.6",
+  scalaVersion := "2.13.5",
   organization := "de.wittig",
   semanticdbEnabled := true,
   scalacOptions ++= Seq(
     "-language:_",
-    "-target:jvm-1.8",
     "-encoding",
     "UTF-8",
-// Emit warning for usages of features that should be impoirted explicitly
+    // Emit warning for usages of features that should be imported explicitly
     "-feature",
-// Emit warning for usages of deprecated APIs
+    // Emit warning for usages of deprecated APIs
     "-deprecation",
-// Enable additional warnings where generated code depends on assumptions
+    // Enable additional warnings where generated code depends on assumptions
     "-unchecked",
-// Fail the compilation if there are any warnings
-//"-Xfatal-warnings",
-// Enable or disable specific warnings
-    "-Xlint:_",
-//Do not adapt an argument list to match the receiver -> z.B. List(1,2,3).toSet()
-    "-Ywarn-dead-code",
-    "-Ywarn-unused",
-// Warn when local and private vals, vars, defs, and types are unused
-//  "-Ywarn-unused",
-// Warn when imports are unused
-// "-Ywarn-unused-import",
-// Warn when non-Unit expression results are unused
     "-Ywarn-value-discard",
     "-Ymacro-annotations" // scala 2.13.0
   ),
@@ -112,6 +99,7 @@ lazy val subprojectTestInParallelForkGroup = project
 lazy val munit = project
   .settings(
     commonSettings,
+    scalaVersion := Version.scala3,
     libraryDependencies ++= Seq(
       Library.munit           % Test,
       Library.scalatest       % Test,

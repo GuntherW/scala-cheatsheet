@@ -6,8 +6,7 @@ import scodec.bits._
 import codecs._
 import de.codecentric.wittig.scala.Printer.printlnYellow
 
-/**
-  * @author gunther
+/** @author gunther
   */
 object Codierung extends App {
 
@@ -85,6 +84,7 @@ object Codierung extends App {
     case class Point(x: Int, y: Int)
 
     uint8 ~ uint8
+    ()
 //    val pointCodec: Codec[Point]      = tupleCodec.widenOpt(Point.apply, Point.unapply)
   }
 }
