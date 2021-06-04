@@ -129,6 +129,8 @@ lazy val sttp = project
   .settings(
     commonSettings,
     scalaVersion := Version.scala3,
+    scalacOptions ++= Seq("-indent", "-rewrite"),
+//    scalacOptions ++= Seq("--new-syntax", "-rewrite"),
     libraryDependencies ++= Seq(
       Library.sttpCore,
       Library.sttpBEAsync,
