@@ -123,6 +123,7 @@ lazy val scalacheck = project
 lazy val sttp = project
   .settings(
     commonSettings,
+    scalaVersion := Version.scala3,
     libraryDependencies ++= Seq(
       Library.sttpCore,
       Library.sttpBEAsync,

@@ -40,7 +40,7 @@ object Version {
 }
 
 object Library {
-  final val akkaStream              = "com.typesafe.akka"             %% "akka-stream"                      % Version.akkaVersion
+  final val akkaStream              = "com.typesafe.akka"             %% "akka-stream"                      % Version.akkaVersion cross CrossVersion.for3Use2_13
   final val catsCore                = "org.typelevel"                 %% "cats-core"                        % Version.catsVersion
   final val catsFree                = "org.typelevel"                 %% "cats-free"                        % Version.catsVersion
   final val chimney                 = "io.scalaland"                  %% "chimney"                          % Version.chimney
@@ -73,10 +73,10 @@ object Library {
   final val scodec                  = "org.scodec"                    %% "scodec-core"                      % Version.scodec
   final val sttpCore                = "com.softwaremill.sttp.client3" %% "core"                             % Version.sttp
   final val sttpCirce               = "com.softwaremill.sttp.client3" %% "circe"                            % Version.sttp
-  final val sttpBEAsync             = "com.softwaremill.sttp.client3" %% "async-http-client-backend-future" % Version.sttp
+  final val sttpBEAsync             = "com.softwaremill.sttp.client3" %% "async-http-client-backend-future" % Version.sttp cross CrossVersion.for3Use2_13
   final val sttpBEZio               = "com.softwaremill.sttp.client3" %% "httpclient-backend-zio"           % Version.sttp
-  final val sttpBEAkkaHttp          = "com.softwaremill.sttp.client3" %% "akka-http-backend"                % Version.sttp
-  final val sttpBEMonix             = "com.softwaremill.sttp.client3" %% "async-http-client-backend-monix"  % Version.sttp
+  final val sttpBEAkkaHttp          = "com.softwaremill.sttp.client3" %% "akka-http-backend"                % Version.sttp cross CrossVersion.for3Use2_13
+  final val sttpBEMonix             = "com.softwaremill.sttp.client3" %% "async-http-client-backend-monix"  % Version.sttp cross CrossVersion.for3Use2_13
 
   final val xstream = "com.thoughtworks.xstream" % "xstream"   % Version.xstream
   final val xml     = "org.scala-lang.modules"  %% "scala-xml" % Version.xml
