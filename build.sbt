@@ -53,22 +53,26 @@ lazy val docs = project // new documentation project
   .in(file("cheatsheet-docs")) // important: it must not be docs/
   .settings(
     commonSettings,
+    scalaVersion := Version.scala3,
     mdocVariables := Map( // Update mdocVariables to include site variables like @VERSION@.
       "VERSION" -> version.value)
   )
   .enablePlugins(MdocPlugin)
 
-lazy val subprojectTestInParallel1         = project
+lazy val subprojectTestInParallel1 = project
   .settings(
     commonSettings,
+    scalaVersion := Version.scala3,
     libraryDependencies ++= Seq(
       Library.scalatest % Test
     ),
     Test / fork := false // subprojects tests will run parallel with other subprojects
   )
+
 lazy val subprojectTestInParallel2         = project
   .settings(
     commonSettings,
+    scalaVersion := Version.scala3,
     libraryDependencies ++= Seq(
       Library.scalatest % Test
     ),
@@ -80,6 +84,7 @@ Global / concurrentRestrictions += Tags.limit(Tags.Test, 1)
 lazy val subprojectTestInParallelForkGroup = project
   .settings(
     commonSettings,
+    scalaVersion := Version.scala3,
     libraryDependencies ++= Seq(
       Library.scalatest % Test
     ),
@@ -115,6 +120,7 @@ lazy val munit = project
 lazy val scalacheck = project
   .settings(
     commonSettings,
+//    scalaVersion := Version.scala3,
     libraryDependencies += Library.scalaCheck          % Test,
     libraryDependencies += Library.shapelessScalaCheck % Test,
     Test / fork := true, //  subprojects tests will run parallel with other subprojects
@@ -139,8 +145,8 @@ lazy val sttp = project
 lazy val zio = project
   .settings(
     commonSettings,
-    libraryDependencies ++= Dependencies.dependencies ++ Dependencies.zioDependencies,
-    libraryDependencies += "com.github.wi101" %% "embroidery" % "0.1.1"
+    scalaVersion := Version.scala3,
+    libraryDependencies ++= Dependencies.zioDependencies
   )
 
 lazy val magnolia = project
@@ -158,8 +164,8 @@ lazy val scalajs = project
     commonSettings,
     scalaJSUseMainModuleInitializer := true,
     libraryDependencies ++= Seq(
-      "org.scala-js" %%% "scalajs-dom" % "1.1.0",
-      "com.lihaoyi"  %%% "utest"       % "0.7.7" % "test"
+      "org.scala-js" %%% "scalajs-dom" % Version.scalaJsDom,
+      "com.lihaoyi"  %%% "utest"       % Version.uTest % Test
     ),
     jsEnv := new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv(),
     testFrameworks += new TestFramework("utest.runner.Framework"),

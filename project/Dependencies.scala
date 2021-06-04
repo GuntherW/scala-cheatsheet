@@ -28,15 +28,19 @@ object Version {
   final val xstream                 = "1.4.17"
   final val xml                     = "2.0.0-M5"
   final val zio                     = "1.0.9"
-  final val zioKafka                = "0.14.0"
-  // Testre
-  final val mockito                 = "1.10.19"
-  final val munit                   = "0.7.26"
-  final val scalaTest               = "3.2.9"
-  final val selenium                = "3.141.59"
-  final val seleniumPlus            = "3.2.9.0"
-  final val scalaCheck              = "1.15.4"
-  final val scalaCheckShapeless     = "1.2.5"
+
+  // ScalaJS
+  final val scalaJsDom = "1.1.0"
+  final val uTest      = "0.7.7"
+
+  // Test
+  final val mockito             = "1.10.19"
+  final val munit               = "0.7.26"
+  final val scalaTest           = "3.2.9"
+  final val selenium            = "3.141.59"
+  final val seleniumPlus        = "3.2.9.0"
+  final val scalaCheck          = "1.15.4"
+  final val scalaCheckShapeless = "1.2.5"
 }
 
 object Library {
@@ -56,6 +60,7 @@ object Library {
   final val kittens                 = "org.typelevel"                 %% "kittens"                          % Version.kittensVersion
   final val logback                 = "ch.qos.logback"                 % "logback-classic"                  % Version.logback
   final val magnolia                = "com.propensive"                %% "magnolia"                         % Version.magnolia
+  final val magnolia2               = "com.softwaremill.magnolia"     %% "magnolia-core"                    % "2.0.0-M5"
   final val monocleCore             = "com.github.julien-truffaut"    %% "monocle-core"                     % Version.monocleVersion
   final val monocleGeneric          = "com.github.julien-truffaut"    %% "monocle-generic"                  % Version.monocleVersion
   final val monix                   = "io.monix"                      %% "monix"                            % Version.monix
@@ -92,7 +97,7 @@ object Library {
   final val selenium            = "org.seleniumhq.selenium"     % "selenium-java"             % Version.selenium
   final val seleniumPlus        = "org.scalatestplus"          %% "selenium-3-141"            % Version.seleniumPlus
   final val scalaCheck          = "org.scalacheck"             %% "scalacheck"                % Version.scalaCheck
-  final val shapelessScalaCheck = "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % Version.scalaCheckShapeless
+  final val shapelessScalaCheck = "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % Version.scalaCheckShapeless cross CrossVersion.for3Use2_13
 }
 
 object Dependencies {
@@ -134,8 +139,7 @@ object Dependencies {
 
   val zioDependencies = Seq(
     Library.zio,
-    "dev.zio" %% "zio-streams" % Version.zio,
-    "dev.zio" %% "zio-kafka"   % Version.zioKafka
+    "dev.zio" %% "zio-streams" % Version.zio
   )
 
   val testDependencies = Seq(
