@@ -2,31 +2,6 @@ import Tests._
 import sbt.Keys.scalaVersion
 import sbt._
 
-lazy val commonSettings = Seq(
-  version := "1.0",
-  organization := "de.wittig",
-  semanticdbEnabled := true,
-  scalacOptions ++= Seq(
-    "-language:_",
-    "-encoding",
-    "UTF-8",
-    // Emit warning for usages of features that should be imported explicitly
-    "-feature",
-    // Emit warning for usages of deprecated APIs
-    "-deprecation",
-    // Enable additional warnings where generated code depends on assumptions
-    "-unchecked",
-    "-Ywarn-value-discard",
-    "-Ymacro-annotations" // scala 2.13.0
-  ),
-  Test / fork := true, // subprojects won't run in parallel then
-  // Showing full stack trace
-  Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oF"),
-  //updateOptions := updateOptions.value.withCachedResolution(true),
-  //updateConfiguration in updateSbtClassifiers := (updateConfiguration in updateSbtClassifiers).value.withMissingOk(true),
-  turbo := true
-)
-
 lazy val `scala-cheatcheet` = (project in file("."))
   .aggregate(
     core,
@@ -168,7 +143,7 @@ lazy val magnoliaScala3 = project
     commonSettings,
     scalacOptions ++= Seq("-noindent", "-rewrite"),
     scalaVersion := Version.scala3,
-//    libraryDependencies += Library.magnolia2
+    libraryDependencies += Library.magnolia2
   )
 
 lazy val scalajs = project
@@ -186,6 +161,31 @@ lazy val scalajs = project
     fork := false,
     parallelExecution := false
   )
+
+lazy val commonSettings = Seq(
+  version := "1.0",
+  organization := "de.wittig",
+  semanticdbEnabled := true,
+  scalacOptions ++= Seq(
+    "-language:_",
+    "-encoding",
+    "UTF-8",
+    // Emit warning for usages of features that should be imported explicitly
+    "-feature",
+    // Emit warning for usages of deprecated APIs
+    "-deprecation",
+    // Enable additional warnings where generated code depends on assumptions
+    "-unchecked",
+    "-Ywarn-value-discard",
+    "-Ymacro-annotations" // scala 2.13.0
+  ),
+  Test / fork := true, // subprojects won't run in parallel then
+  // Showing full stack trace
+  Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oF"),
+  //updateOptions := updateOptions.value.withCachedResolution(true),
+  //updateConfiguration in updateSbtClassifiers := (updateConfiguration in updateSbtClassifiers).value.withMissingOk(true),
+  turbo := true
+)
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 

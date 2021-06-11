@@ -1,3 +1,5 @@
+import magnolia.*
+
 sealed trait Person
 case class Employee(name: String, alter: Int) extends Person
 case class Employer(name: String, alter: Int) extends Person

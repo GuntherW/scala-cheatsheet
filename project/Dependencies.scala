@@ -1,7 +1,7 @@
 import sbt._
 
 object Version {
-  final val akkaVersion             = "2.6.14"
+  final val akkaVersion             = "2.6.15"
   final val catsVersion             = "2.6.1"
   final val catsConsole             = "0.8.1"
   final val chimney                 = "0.6.1"
@@ -13,12 +13,12 @@ object Version {
   final val magnolia                = "0.17.0"
   final val monix                   = "3.4.0"
   final val monocleVersion          = "2.1.0"
-  final val pureConfig              = "0.15.0"
+  final val pureConfig              = "0.16.0"
   final val reflect                 = scala
   final val refined                 = "0.9.26"
   final val scala                   = "2.13.5"
   final val scala3                  = "3.0.0"
-  final val scalaMeta               = "4.4.20"
+  final val scalaMeta               = "4.4.21"
   final val scalaParallelCollection = "1.0.3"
   final val scalaz                  = "7.2.29"
   final val scodec                  = "1.11.8"
@@ -60,7 +60,7 @@ object Library {
   final val kittens                 = "org.typelevel"                 %% "kittens"                          % Version.kittensVersion
   final val logback                 = "ch.qos.logback"                 % "logback-classic"                  % Version.logback
   final val magnolia                = "com.propensive"                %% "magnolia"                         % Version.magnolia
-  final val magnolia2               = "com.softwaremill.magnolia"     %% "magnolia-core"                    % "2.0.0-M5"
+  final val magnolia2               = "com.softwaremill.magnolia"     %% "magnolia-core"                    % "2.0.0-M6"
   final val monocleCore             = "com.github.julien-truffaut"    %% "monocle-core"                     % Version.monocleVersion
   final val monocleGeneric          = "com.github.julien-truffaut"    %% "monocle-generic"                  % Version.monocleVersion
   final val monix                   = "io.monix"                      %% "monix"                            % Version.monix
