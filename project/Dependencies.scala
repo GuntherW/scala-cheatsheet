@@ -31,7 +31,7 @@ object Version {
 
   // ScalaJS
   final val scalaJsDom = "1.1.0"
-  final val uTest      = "0.7.7"
+  final val uTest      = "0.7.10"
 
   // Test
   final val mockito             = "1.10.19"

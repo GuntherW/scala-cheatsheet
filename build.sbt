@@ -9,6 +9,7 @@ lazy val `scala-cheatcheet` = (project in file("."))
     magnoliaScala3,
     munit,
     scalacheck,
+    scalajs,
     subprojectTestInParallel1,
     subprojectTestInParallel2,
     subprojectTestInParallelForkGroup,
@@ -158,8 +159,8 @@ lazy val scalajs = project
     ),
     jsEnv := new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv(),
     testFrameworks += new TestFramework("utest.runner.Framework"),
-    fork := false,
-    parallelExecution := false
+    Test / fork := false,
+    fork := false
   )
 
 lazy val commonSettings = Seq(
