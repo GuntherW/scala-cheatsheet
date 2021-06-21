@@ -1,14 +1,12 @@
-import Tests._
-import sbt.Keys.scalaVersion
 import sbt._
 
-lazy val `scala-cheatcheet` = (project in file("."))
+lazy val `scala-cheatsheet` = (project in file("."))
   .aggregate(
     core,
     magnoliaScala2,
+    scalacheck,
     magnoliaScala3,
     munit,
-    scalacheck,
     scalajs,
     subprojectTestInParallel1,
     subprojectTestInParallel2,
@@ -68,7 +66,7 @@ lazy val subprojectTestInParallelForkGroup = project
       .map { case (letter, tests) =>
         println(s"--------> Testgruppe $letter mit ${tests.length} Tests")
         val options = ForkOptions().withRunJVMOptions(Vector("-Dfirst.letter" + letter))
-        Group(letter.toString, tests, SubProcess(options))
+        Tests.Group(letter.toString, tests, Tests.SubProcess(options))
       }
       .toSeq
   )
@@ -117,7 +115,10 @@ lazy val sttp = project
 lazy val zio = project
   .settings(
     commonSettings,
-    libraryDependencies ++= Dependencies.zioDependencies
+    libraryDependencies ++= Seq(
+      Library.zio,
+      Library.zioStreams
+    )
   )
 
 lazy val magnoliaScala2 = project

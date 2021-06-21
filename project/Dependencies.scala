@@ -6,7 +6,7 @@ object Version {
   final val catsConsole             = "0.8.1"
   final val chimney                 = "0.6.1"
   final val circeVersion            = "0.14.1"
-  final val enumeratum              = "1.6.1"
+  final val enumeratum              = "1.7.0"
   final val fs2                     = "2.5.6"
   final val kittensVersion          = "2.3.2"
   final val logback                 = "1.2.3"
@@ -14,9 +14,8 @@ object Version {
   final val magnolia3               = "2.0.0-M8"
   final val monix                   = "3.4.0"
   final val monocleVersion          = "2.1.0"
-  final val pureConfig              = "0.16.0"
   final val refined                 = "0.9.26"
-  final val scala2                  = "2.13.5"
+  final val scala2                  = "2.13.6"
   final val scala                   = "3.0.0"
   final val scalaMeta               = "4.4.21"
   final val scalaParallelCollection = "1.0.3"
@@ -24,7 +23,7 @@ object Version {
   final val scodec                  = "1.11.8"
   final val simulacrum              = "0.19.0"
   final val shapeless               = "2.3.7"
-  final val sttp                    = "3.3.6"
+  final val sttp                    = "3.3.7"
   final val xstream                 = "1.4.17"
   final val xml                     = "2.0.0-M5"
   final val zio                     = "1.0.9"
@@ -61,13 +60,8 @@ object Library {
   final val logback                 = "ch.qos.logback"                 % "logback-classic"                  % Version.logback
   final val magnolia                = "com.propensive"                %% "magnolia"                         % Version.magnolia
   final val magnolia3               = "com.softwaremill.magnolia"     %% "magnolia-core"                    % Version.magnolia3
-  final val monocleCore             = "com.github.julien-truffaut"    %% "monocle-core"                     % Version.monocleVersion cross CrossVersion.for3Use2_13
-  final val monocleGeneric          = "com.github.julien-truffaut"    %% "monocle-generic"                  % Version.monocleVersion cross CrossVersion.for3Use2_13
   final val monix                   = "io.monix"                      %% "monix"                            % Version.monix
-  final val monocleMacro            = "com.github.julien-truffaut"    %% "monocle-macro"                    % Version.monocleVersion cross CrossVersion.for3Use2_13
-  final val monocleRefined          = "com.github.julien-truffaut"    %% "monocle-refined"                  % Version.monocleVersion cross CrossVersion.for3Use2_13
-  final val monocleState            = "com.github.julien-truffaut"    %% "monocle-state"                    % Version.monocleVersion cross CrossVersion.for3Use2_13
-  final val pureConfig              = "com.github.pureconfig"         %% "pureconfig"                       % Version.pureConfig
+  final val monocle                 = "com.github.julien-truffaut"    %% "monocle-state"                    % Version.monocleVersion cross CrossVersion.for3Use2_13
   final val refined                 = "eu.timepit"                    %% "refined"                          % Version.refined
   final val scalaMeta               = "org.scalameta"                 %% "scalameta"                        % Version.scalaMeta cross CrossVersion.for3Use2_13
   final val scalaParallelCollection = "org.scala-lang.modules"        %% "scala-parallel-collections"       % Version.scalaParallelCollection
@@ -81,15 +75,14 @@ object Library {
   final val sttpBEZio               = "com.softwaremill.sttp.client3" %% "httpclient-backend-zio"           % Version.sttp
   final val sttpBEAkkaHttp          = "com.softwaremill.sttp.client3" %% "akka-http-backend"                % Version.sttp cross CrossVersion.for3Use2_13
   final val sttpBEMonix             = "com.softwaremill.sttp.client3" %% "async-http-client-backend-monix"  % Version.sttp cross CrossVersion.for3Use2_13
-
-  final val xstream = "com.thoughtworks.xstream" % "xstream"   % Version.xstream
-  final val xml     = "org.scala-lang.modules"  %% "scala-xml" % Version.xml
-  final val zio     = "dev.zio"                 %% "zio"       % Version.zio
+  final val xstream                 = "com.thoughtworks.xstream"       % "xstream"                          % Version.xstream
+  final val xml                     = "org.scala-lang.modules"        %% "scala-xml"                        % Version.xml
+  final val zio                     = "dev.zio"                       %% "zio"                              % Version.zio
+  final val zioStreams              = "dev.zio"                       %% "zio-streams"                      % Version.zio
   //"dev.zio"                    %% "zio-streams"    % zioVersionm,
 
   // test
   final val mockito             = "org.mockito"                 % "mockito-all"               % Version.mockito
-  final val monocleLaw          = "com.github.julien-truffaut" %% "monocle-law"               % Version.monocleVersion cross CrossVersion.for3Use2_13
   final val munit               = "org.scalameta"              %% "munit"                     % Version.munit
   final val munitScalaCheck     = "org.scalameta"              %% "munit-scalacheck"          % Version.munit
   final val scalatest           = "org.scalatest"              %% "scalatest"                 % Version.scalaTest
@@ -100,53 +93,42 @@ object Library {
 }
 
 object Dependencies {
+  import Library._
   val dependencies = Seq(
-    Library.akkaStream,
-    Library.catsCore,
-    Library.catsFree,
-    Library.chimney,
-    Library.circeCore,
-    Library.circeGeneric,
-    Library.circeGenericExtras,
-    Library.circeLiteral,
-    Library.circeParser,
-    Library.enumeratum,
-    Library.fs2Core,
-    Library.fs2IO,
-    Library.fs2ReactiveStreams,
-    Library.kittens,
-    Library.logback,
-    Library.monix,
-    Library.monocleCore,
-    Library.monocleGeneric,
-    Library.monocleMacro,
-    Library.monocleState,
-    Library.monocleRefined,
-    Library.monocleLaw,
-    Library.pureConfig,
-    Library.refined,
-    Library.scalaMeta,
-    Library.scalaParallelCollection,
-    Library.scalaReflect,
-    Library.scodec,
-    Library.shapeless,
-    Library.simulacrum,
-    Library.xstream,
-    Library.xml,
-    Library.zio
-  )
-
-  val zioDependencies = Seq(
-    Library.zio,
-    "dev.zio" %% "zio-streams" % Version.zio
+    akkaStream,
+    catsCore,
+    catsFree,
+    chimney,
+    circeCore,
+    circeGeneric,
+    circeGenericExtras,
+    circeLiteral,
+    circeParser,
+    enumeratum,
+    fs2Core,
+    fs2IO,
+    fs2ReactiveStreams,
+    kittens,
+    logback,
+    monix,
+    refined,
+    scalaMeta,
+    scalaParallelCollection,
+    scalaReflect,
+    scodec,
+    shapeless,
+    simulacrum,
+    xstream,
+    xml,
+    zio
   )
 
   val testDependencies = Seq(
-    Library.mockito             % Test,
-    Library.scalatest           % "it,test",
-    Library.seleniumPlus        % "it",
-    Library.selenium            % "it",
-    Library.scalaCheck          % Test,
-    Library.shapelessScalaCheck % Test
+    mockito             % Test,
+    scalatest           % "it,test",
+    seleniumPlus        % "it",
+    selenium            % "it",
+    scalaCheck          % Test,
+    shapelessScalaCheck % Test
   )
 }

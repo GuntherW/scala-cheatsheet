@@ -8,7 +8,10 @@ object Print extends AutoDerivation[Print] {
 
   def join[T](ctx: CaseClass[Typeclass, T]): Print[T] = value =>
     ctx.params.map { param =>
-      param.typeclass.print(param.deref(value))
+      val label = param.label
+      val wert = param.typeclass.print(param.deref(value))
+      val index = param.index
+      s"$label[$index]=$wert"
     }.mkString(s"${ctx.typeInfo.short}(", ",", ")")
 
   override def split[T](ctx: SealedTrait[Print, T]): Print[T] = {
@@ -18,6 +21,6 @@ object Print extends AutoDerivation[Print] {
       }
   }
 
-  //   given Print[Int] = _.toString
-  implicit val intPrint: Print[Int] = _.toString
+//     given Print[Int] = _.toString
+  implicit val intPrint: Print[Int] = i => s"!$i!"
 }
