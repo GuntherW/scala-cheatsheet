@@ -98,8 +98,6 @@ lazy val scalacheck = project
 lazy val sttp = project
   .settings(
     commonSettings,
-    scalacOptions ++= Seq("-noindent", "-rewrite"),
-//    scalacOptions ++= Seq("--new-syntax", "-rewrite"),
     libraryDependencies ++= Seq(
       Library.sttpCore,
       Library.sttpBEAsync,
