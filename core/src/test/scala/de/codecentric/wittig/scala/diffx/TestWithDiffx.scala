@@ -11,7 +11,7 @@ class TestWithDiffx extends AnyFunSuite {
   case class Manager(name: String, age: Int)                                           extends Person
   case class Employee(manager: Manager, favNumbers: List[Int], friend: Option[Person]) extends Person
 
-  test("fail with good diff") {
+  ignore("fail with good diff") {
 
     val ist  = Employee(Manager("Hans", 6), List(1234), Some(Employee(Manager("Hans", 6), List(1234), None)))
     val soll = Employee(Manager("Hans", 5), List(123, 1234), Some(Manager("Peter", 5)))

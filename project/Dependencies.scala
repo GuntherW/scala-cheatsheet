@@ -33,6 +33,7 @@ object Version {
   final val uTest      = "0.7.10"
 
   // Test
+  final val diffx               = "0.5.2"
   final val mockito             = "1.10.19"
   final val munit               = "0.7.26"
   final val scalaTest           = "3.2.9"
@@ -82,6 +83,7 @@ object Library {
   //"dev.zio"                    %% "zio-streams"    % zioVersionm,
 
   // test
+  final val diffx               = "com.softwaremill.diffx"     %% "diffx-scalatest"           % Version.diffx
   final val mockito             = "org.mockito"                 % "mockito-all"               % Version.mockito
   final val munit               = "org.scalameta"              %% "munit"                     % Version.munit
   final val munitScalaCheck     = "org.scalameta"              %% "munit-scalacheck"          % Version.munit
@@ -124,6 +126,7 @@ object Dependencies {
   )
 
   val testDependencies = Seq(
+    diffx               % Test,
     mockito             % Test,
     scalatest           % "it,test",
     seleniumPlus        % "it",

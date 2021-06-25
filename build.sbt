@@ -21,7 +21,6 @@ lazy val core = project
     commonSettings,
     scalaVersion := Version.scala2,
     libraryDependencies ++= Dependencies.dependencies ++ Dependencies.testDependencies,
-    libraryDependencies += "com.softwaremill.diffx" %% "diffx-scalatest" % "0.5.2" % Test,
     Defaults.itSettings,
     Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-s", "4") // scalacheck should emit 4 examples only
   )
