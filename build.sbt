@@ -1,5 +1,7 @@
 import sbt._
 
+scalaVersion := Version.scala
+
 lazy val `scala-cheatsheet` = (project in file("."))
   .aggregate(
     core,
@@ -178,8 +180,6 @@ lazy val commonSettings = Seq(
             "UTF-8",
             // Emit warning for usages of features that should be imported explicitly
             "-feature",
-            // Emit warning for usages of deprecated APIs
-            "-deprecation",
             // Enable additional warnings where generated code depends on assumptions
             "-unchecked",
             "-Ywarn-value-discard",
