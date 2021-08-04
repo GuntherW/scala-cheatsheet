@@ -9,31 +9,32 @@ object Version {
   final val enumeratum              = "1.7.0"
   final val fs2                     = "2.5.9"
   final val kittensVersion          = "2.3.2"
-  final val logback                 = "1.2.3"
+  final val logback                 = "1.2.5"
   final val magnolia                = "0.17.0"
   final val magnolia3               = "2.0.0-M9"
   final val monix                   = "3.4.0"
   final val monocleVersion          = "2.1.0"
-  final val refined                 = "0.9.26"
+  final val refined                 = "0.9.27"
   final val scala2                  = "2.13.6"
   final val scala                   = "3.0.1"
-  final val scalaMeta               = "4.4.24"
+  final val scalaMeta               = "4.4.25"
   final val scalaParallelCollection = "1.0.3"
   final val scalaz                  = "7.2.29"
   final val scodec                  = "1.11.8"
   final val simulacrum              = "0.19.0"
   final val shapeless               = "2.3.7"
-  final val sttp                    = "3.3.11"
+  final val sttp                    = "3.3.13"
   final val xstream                 = "1.4.17"
   final val xml                     = "2.0.0-M5"
-  final val zio                     = "1.0.9"
+  final val zio                     = "1.0.10"
+  final val zioPrelude              = "1.0.0-RC5"
 
   // ScalaJS
   final val scalaJsDom = "1.1.0"
   final val uTest      = "0.7.10"
 
   // Test
-  final val diffx               = "0.5.3"
+  final val diffx               = "0.5.5"
   final val mockito             = "1.10.19"
   final val munit               = "0.7.27"
   final val scalaTest           = "3.2.9"
@@ -80,6 +81,7 @@ object Library {
   final val xml                     = "org.scala-lang.modules"        %% "scala-xml"                        % Version.xml
   final val zio                     = "dev.zio"                       %% "zio"                              % Version.zio
   final val zioStreams              = "dev.zio"                       %% "zio-streams"                      % Version.zio
+  final val zioPrelude              = "dev.zio"                       %% "zio-prelude"                      % Version.zioPrelude
   //"dev.zio"                    %% "zio-streams"    % zioVersionm,
 
   // test

@@ -117,7 +117,8 @@ lazy val zio = project
     commonSettings,
     libraryDependencies ++= Seq(
       Library.zio,
-      Library.zioStreams
+      Library.zioStreams,
+      Library.zioPrelude
     )
   )
 
