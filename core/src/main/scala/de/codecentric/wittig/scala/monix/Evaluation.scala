@@ -4,6 +4,7 @@ import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 
 object Evaluation extends App {
+  
   // Strict evaluation
   val a = Task.now { println("effect a"); "immediate" }
 

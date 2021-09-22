@@ -60,10 +60,10 @@ lazy val subprojectTestInParallelForkGroup = project
     libraryDependencies ++= Seq(
       Library.scalatest % Test
     ),
-    Test / parallelExecution := true,
+    Test / parallelExecution  := true,
     Test / testForkedParallel := false, // Hier kann man auch noch innerhalb der Gruppe parallelisieren. Sollte False sein.
-    Test / fork := false,
-    Test / testGrouping := (Test / definedTests).value
+    Test / fork               := false,
+    Test / testGrouping       := (Test / definedTests).value
       .groupBy(_.name.split('.')(1)(0)) // Gruppierung hier nach erstem Buchstabe der Testklasse
       .map { case (letter, tests) =>
         println(s"--------> Testgruppe $letter mit ${tests.length} Tests")
@@ -91,10 +91,10 @@ lazy val munit = project
 lazy val scalacheck = project
   .settings(
     commonSettings,
-    scalaVersion := Version.scala2,
+    scalaVersion                                      := Version.scala2,
     libraryDependencies += Library.scalaCheck          % Test,
     libraryDependencies += Library.shapelessScalaCheck % Test,
-    Test / fork := true, //  subprojects tests will run parallel with other subprojects
+    Test / fork                                       := true, //  subprojects tests will run parallel with other subprojects
   )
 
 lazy val sttp = project
@@ -148,17 +148,17 @@ lazy val scalajs = project
       "org.scala-js" %%% "scalajs-dom" % Version.scalaJsDom cross CrossVersion.for3Use2_13,
       "com.lihaoyi"  %%% "utest"       % Version.uTest % Test
     ),
-    jsEnv := new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv(),
+    jsEnv                           := new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv(),
     testFrameworks += new TestFramework("utest.runner.Framework"),
-    Test / fork := false,
-    fork := false
+    Test / fork                     := false,
+    fork                            := false
   )
 
 lazy val commonSettings = Seq(
-  version := "1.0",
-  organization := "de.wittig",
+  version           := "1.0",
+  organization      := "de.wittig",
   semanticdbEnabled := true,
-  scalaVersion := Version.scala,
+  scalaVersion      := Version.scala,
   scalacOptions ++=
     Seq(
       "-feature",
@@ -190,7 +190,7 @@ lazy val commonSettings = Seq(
           )
       }
     },
-  Test / fork := true, // subprojects won't run in parallel then
+  Test / fork       := true, // subprojects won't run in parallel then
   Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oF"), // Showing full stack trace
   turbo := true
 )

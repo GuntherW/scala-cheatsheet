@@ -1,7 +1,7 @@
 import sbt._
 
 object Version {
-  final val akkaVersion             = "2.6.15"
+  final val akkaVersion             = "2.6.16"
   final val catsVersion             = "2.6.1"
   final val catsConsole             = "0.8.1"
   final val chimney                 = "0.6.1"
@@ -9,39 +9,40 @@ object Version {
   final val enumeratum              = "1.7.0"
   final val fs2                     = "2.5.9"
   final val kittensVersion          = "2.3.2"
-  final val logback                 = "1.2.5"
+  final val logback                 = "1.2.6"
   final val magnolia                = "0.17.0"
   final val magnolia3               = "2.0.0-M9"
   final val monix                   = "3.4.0"
   final val monocleVersion          = "2.1.0"
   final val refined                 = "0.9.27"
   final val scala2                  = "2.13.6"
-  final val scala                   = "3.0.1"
-  final val scalaMeta               = "4.4.25"
+  final val scala                   = "3.0.2"
+  final val scalaMeta               = "4.4.28"
   final val scalaParallelCollection = "1.0.3"
   final val scalaz                  = "7.2.29"
   final val scodec                  = "1.11.8"
   final val simulacrum              = "0.19.0"
   final val shapeless               = "2.3.7"
-  final val sttp                    = "3.3.13"
-  final val xstream                 = "1.4.17"
+  final val sttp                    = "3.3.14"
+  final val xstream                 = "1.4.18"
   final val xml                     = "2.0.0-M5"
-  final val zio                     = "1.0.10"
-  final val zioPrelude              = "1.0.0-RC5"
+  final val zio                     = "1.0.12"
+  final val zioPrelude              = "1.0.0-RC6"
 
   // ScalaJS
-  final val scalaJsDom = "1.1.0"
+  final val scalaJsDom = "1.2.0"
   final val uTest      = "0.7.10"
 
   // Test
-  final val diffx               = "0.5.5"
+  final val diffx               = "0.5.6"
   final val mockito             = "1.10.19"
-  final val munit               = "0.7.27"
-  final val scalaTest           = "3.2.9"
+  final val munit               = "0.7.29"
+  final val scalaTest           = "3.2.10"
   final val selenium            = "3.141.59"
-  final val seleniumPlus        = "3.2.9.0"
+  final val seleniumPlus        = "3.2.10.0"
   final val scalaCheck          = "1.15.4"
   final val scalaCheckShapeless = "1.3.0"
+  final val testContainer       = "0.39.8"
 }
 
 object Library {
@@ -85,15 +86,16 @@ object Library {
   //"dev.zio"                    %% "zio-streams"    % zioVersionm,
 
   // test
-  final val diffx               = "com.softwaremill.diffx"     %% "diffx-scalatest"           % Version.diffx
-  final val mockito             = "org.mockito"                 % "mockito-all"               % Version.mockito
-  final val munit               = "org.scalameta"              %% "munit"                     % Version.munit
-  final val munitScalaCheck     = "org.scalameta"              %% "munit-scalacheck"          % Version.munit
-  final val scalatest           = "org.scalatest"              %% "scalatest"                 % Version.scalaTest
-  final val selenium            = "org.seleniumhq.selenium"     % "selenium-java"             % Version.selenium
-  final val seleniumPlus        = "org.scalatestplus"          %% "selenium-3-141"            % Version.seleniumPlus
-  final val scalaCheck          = "org.scalacheck"             %% "scalacheck"                % Version.scalaCheck
-  final val shapelessScalaCheck = "com.github.alexarchambault" %% "scalacheck-shapeless_1.15" % Version.scalaCheckShapeless cross CrossVersion.for3Use2_13
+  final val diffx               = "com.softwaremill.diffx"     %% "diffx-scalatest"                % Version.diffx
+  final val mockito             = "org.mockito"                 % "mockito-all"                    % Version.mockito
+  final val munit               = "org.scalameta"              %% "munit"                          % Version.munit
+  final val munitScalaCheck     = "org.scalameta"              %% "munit-scalacheck"               % Version.munit
+  final val scalatest           = "org.scalatest"              %% "scalatest"                      % Version.scalaTest
+  final val selenium            = "org.seleniumhq.selenium"     % "selenium-java"                  % Version.selenium
+  final val seleniumPlus        = "org.scalatestplus"          %% "selenium-3-141"                 % Version.seleniumPlus
+  final val scalaCheck          = "org.scalacheck"             %% "scalacheck"                     % Version.scalaCheck
+  final val shapelessScalaCheck = "com.github.alexarchambault" %% "scalacheck-shapeless_1.15"      % Version.scalaCheckShapeless cross CrossVersion.for3Use2_13
+  final val testContainer       = "com.dimafeng"               %% "testcontainers-scala-scalatest" % Version.testContainer
 }
 
 object Dependencies {
@@ -134,6 +136,7 @@ object Dependencies {
     seleniumPlus        % "it",
     selenium            % "it",
     scalaCheck          % Test,
-    shapelessScalaCheck % Test
+    shapelessScalaCheck % Test,
+    testContainer       % Test,
   )
 }

@@ -3,6 +3,7 @@ package de.wittig.zio.stream
 import zio._
 import zio.console.{Console, putStrLn}
 import zio.stream.ZStream
+import zio.duration._
 
 object HelloWorld extends App {
   def run(args: List[String]): URIO[Console, ExitCode] = programm.exitCode

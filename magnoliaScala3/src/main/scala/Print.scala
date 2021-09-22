@@ -21,6 +21,6 @@ object Print extends AutoDerivation[Print] {
       }
   }
 
-//     given Print[Int] = _.toString
+//  given Print[Int] = _.toString
   implicit val intPrint: Print[Int] = i => s"!$i!"
 }

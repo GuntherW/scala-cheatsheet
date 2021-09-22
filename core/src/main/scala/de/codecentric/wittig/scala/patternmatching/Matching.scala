@@ -3,7 +3,7 @@ package de.codecentric.wittig.scala.patternmatching
 /** @author
   *   gunther
   */
-object Matching extends App with Auth {
+object Matching extends App {
   trait User {
     def name: String
     def score: Int
@@ -33,20 +33,37 @@ object Matching extends App with Auth {
       case PremiumUser(name, _)           => s"Herzlich Willkommen, $name"
       case _                              => "no match"
     }
-
   println(result)
 
   val premiumUser = new PremiumUser("Daniela", 3000)
 
+  object as {
+    def unapply(ar: PremiumUser): Option[(String, Int)] = Some((ar.name, ar.score))
+  }
+
+  object asScore {
+    def unapply(ar: PremiumUser): Option[Int] = Some(ar.score)
+  }
+
   // Infix pattern matching
-  premiumUser match {
-    case (name @ "Daniela") as score => println(s"Score inline: $score. $name")
-    case name as score               => println(s"Score: $score. $name")
-    //case as(name, score)             => println(s"Score: $score. $name")
-    case _                           => println("no match")
+  val p1 = premiumUser match {
+    case (name @ "Daniela") as score => s"Score inline: $score. $name"
+    case name as score               => s"Score: $score. $name"
+    case as(name, score)             => s"Score: $score. $name"
+    case _                           => "no match"
   }
-  premiumUser match {
-    case asScore(score) => println(s"Score ist $score")
-    case _              => println(s"no match")
+  println(p1)
+
+  val p2 = premiumUser match {
+    case asScore(score) => s"Score ist $score"
+    case _              => s"no match"
   }
+  println(p2)
+
+  val list1           = List(1, 2, 3, 4)
+  val listDescription = list1 match {
+    case List(1, 2, _)  => "list with 1,2 and a third element"
+    case List(1, 2, _*) => "list with 1,2 and something else"
+  }
+  println(listDescription)
 }
