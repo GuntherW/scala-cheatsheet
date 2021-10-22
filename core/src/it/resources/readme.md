@@ -10,8 +10,9 @@
          )
     ```
 3. Bereitstellen der Bibliotheken für `it` in der `build.sbt`:
->    `libraryDependencies += scalatest % "it,test"`
 
+> `libraryDependencies += scalatest % "it,test"`
 
 ### Links
+
 https://iamninad.com/organizing-scala-tests-for-faster-feedback/

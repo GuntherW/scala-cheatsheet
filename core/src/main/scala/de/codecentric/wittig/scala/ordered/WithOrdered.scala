@@ -9,4 +9,3 @@ object WithOrdered extends App {
   val b = CurrencyAmount(124, "EUR")
   println("a<b: " + (a < b))
 }
-

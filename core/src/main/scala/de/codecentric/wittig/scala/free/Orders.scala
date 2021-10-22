@@ -12,5 +12,5 @@ object Orders {
 }
 
 sealed trait Orders[A]
-case class Buy(stock: Symbol, amount: Int)  extends Orders[Response]
+case class Buy(stock: Symbol, amount: Int) extends Orders[Response]
 case class Sell(stock: Symbol, amount: Int) extends Orders[Response]

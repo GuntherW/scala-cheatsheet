@@ -2,15 +2,13 @@ package de.codecentric.wittig.scala.selenium.firefox
 
 import org.openqa.selenium.firefox.{FirefoxBinary, FirefoxDriver, FirefoxOptions, FirefoxProfile}
 
-/**
-  * Convenience object that builds a new FirefoxDriver on request
+/** Convenience object that builds a new FirefoxDriver on request
   */
 object FirefoxWebDriverBuilder {
 
-  /**
-    * Configures a new FirefoxDriver that is headless, is linked to the geckodriver in resources
-    * and uses a direct connection (no proxy)
-    * @return Pre-configured FirefoxDriver
+  /** Configures a new FirefoxDriver that is headless, is linked to the geckodriver in resources and uses a direct connection (no proxy)
+    * @return
+    *   Pre-configured FirefoxDriver
     */
   def build(): FirefoxDriver = {
     // Tell Selenium to use Geckodriver

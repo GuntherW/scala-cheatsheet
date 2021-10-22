@@ -5,9 +5,8 @@ scalaVersion := Version.scala
 lazy val `scala-cheatsheet` = (project in file("."))
   .aggregate(
     core,
-    magnoliaScala2,
     scalacheck,
-    magnoliaScala3,
+    magnolia,
     munit,
     scalajs,
     subprojectTestInParallel1,
@@ -21,7 +20,6 @@ lazy val core = project
   .configs(IntegrationTest)
   .settings(
     commonSettings,
-    scalaVersion := Version.scala2,
     libraryDependencies ++= Dependencies.dependencies ++ Dependencies.testDependencies,
     Defaults.itSettings,
     Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-s", "4") // scalacheck should emit 4 examples only
@@ -79,7 +77,6 @@ lazy val munit = project
     libraryDependencies ++= Seq(
       Library.munit           % Test,
       Library.scalatest       % Test,
-      Library.monix           % Test,
       Library.munitScalaCheck % Test,
     ),
     testFrameworks += new TestFramework("munit.Framework"),
@@ -91,10 +88,8 @@ lazy val munit = project
 lazy val scalacheck = project
   .settings(
     commonSettings,
-    scalaVersion                                      := Version.scala2,
-    libraryDependencies += Library.scalaCheck          % Test,
-    libraryDependencies += Library.shapelessScalaCheck % Test,
-    Test / fork                                       := true, //  subprojects tests will run parallel with other subprojects
+    libraryDependencies += Library.scalaCheck % Test,
+    Test / fork                              := true, //  subprojects tests will run parallel with other subprojects
   )
 
 lazy val sttp = project
@@ -103,12 +98,14 @@ lazy val sttp = project
     libraryDependencies ++= Seq(
       Library.sttpCore,
       Library.sttpBEAsync,
-      Library.sttpBEAkkaHttp,
-      Library.sttpBEMonix,
       Library.sttpBEZio,
       Library.sttpCirce,
       Library.akkaStream,
-      Library.circeGeneric
+      Library.circeGeneric,
+      Library.log4jApi,
+      Library.log4jCore,
+      Library.log4jSlf4jImpl,
+      "com.softwaremill.sttp.client3" %% "slf4j-backend" % "3.3.15"
     )
   )
 
@@ -122,21 +119,11 @@ lazy val zio = project
     )
   )
 
-lazy val magnoliaScala2 = project
-  .settings(
-    commonSettings,
-    scalaVersion := Version.scala2,
-    libraryDependencies ++= Seq(
-      Library.magnolia,
-      Library.scalaReflect
-    )
-  )
-
-lazy val magnoliaScala3 = project
+lazy val magnolia = project
   .settings(
     commonSettings,
 //    scalacOptions ++= Seq("-noindent", "-rewrite"),
-    libraryDependencies += Library.magnolia3
+    libraryDependencies += Library.magnolia
   )
 
 lazy val scalajs = project
@@ -159,37 +146,14 @@ lazy val commonSettings = Seq(
   organization      := "de.wittig",
   semanticdbEnabled := true,
   scalaVersion      := Version.scala,
-  scalacOptions ++=
-    Seq(
-      "-feature",
-      "-language:higherKinds",
-      "-deprecation"
-    ) ++ {
-      CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((3, _)) =>
-          Seq(
-            "-source:future",               // für better-monadic-for, das es für Scala3 nicht mehr gibt
-            "-Ykind-projector:underscores", // für KindProjector
-            "-Ykind-projector"
-          )
-        case _            =>
-          Seq(
-            "-Wvalue-discard",
-            "-Wunused:imports,privates,locals,explicits,implicits,params",
-            "-language:_",
-            "-encoding",
-            "UTF-8",
-            // Emit warning for usages of features that should be imported explicitly
-            "-feature",
-            // Enable additional warnings where generated code depends on assumptions
-            "-unchecked",
-            "-Ywarn-value-discard",
-            "-Ymacro-annotations" // scala 2.13.0
-            //          "-Xsource:3",
-            //          "-P:kind-projector:underscore-placeholders"
-          )
-      }
-    },
+  scalacOptions ++= Seq(
+    "-feature",
+    "-language:higherKinds",
+    "-deprecation",
+    "-source:future",               // für better-monadic-for, das es für Scala3 nicht mehr gibt
+    "-Ykind-projector:underscores", // für KindProjector
+    "-Ykind-projector"
+  ),
   Test / fork       := true, // subprojects won't run in parallel then
   Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oF"), // Showing full stack trace
   turbo := true

@@ -1,4 +1,5 @@
 package de.codecentric.wittig.scala.ducktyping
+import reflect.Selectable.reflectiveSelectable
 
 object Duck extends App {
   def quaken(duck: { def quak(s: String): String }): Unit = {
@@ -17,7 +18,7 @@ object Duck extends App {
   }
   object AnythingButADuck {
     def quak(s: String): String = {
-      "I am different"
+      s"I am different: $s"
     }
   }
 

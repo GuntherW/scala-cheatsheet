@@ -49,7 +49,7 @@ object Matching extends App {
   val p1 = premiumUser match {
     case (name @ "Daniela") as score => s"Score inline: $score. $name"
     case name as score               => s"Score: $score. $name"
-    case as(name, score)             => s"Score: $score. $name"
+//    case as(name, score)             => s"Score: $score. $name" the same
     case _                           => "no match"
   }
   println(p1)
@@ -64,6 +64,7 @@ object Matching extends App {
   val listDescription = list1 match {
     case List(1, 2, _)  => "list with 1,2 and a third element"
     case List(1, 2, _*) => "list with 1,2 and something else"
+    case _              => "empty listq"
   }
   println(listDescription)
 }

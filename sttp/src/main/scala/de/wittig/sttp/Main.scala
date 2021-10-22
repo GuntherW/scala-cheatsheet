@@ -8,23 +8,16 @@ import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.DurationInt
 
-case class GitHubResponse(total_count: Int, items: List[GitHubItem])
-case class GitHubItem(name: String, stargazers_count: Int, html_url: String)
-
 object Main extends App {
 
   private val backend = AsyncHttpClientFutureBackend()
   private val query   = "language:scala"
   private val sort    = Some("stars")
 
-  // `sort` will be unwrapped if `Some(_)`, and removed if `None`.
   private val request = basicRequest
     .get(uri"https://api.github.com/search/repositories?q=$query&sort=$sort")
     .response(asJson[GitHubResponse])
 
-//  request.send().map { response =>
-  // The body will be a `Left(_)` in case of a non-2xx response, or a json
-  // deserialization error. It will be `Right(_)` otherwise.
   val res = request.send(backend).map { response =>
     response.body match {
       case Left(error) => println(s"Error when executing request: $error")
@@ -37,6 +30,6 @@ object Main extends App {
     }
   }
 
-  Await.result(res, 2.seconds)
+  Await.result(res, 3.seconds)
   backend.close()
 }

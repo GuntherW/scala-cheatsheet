@@ -3,7 +3,7 @@ package de.codecentric.wittig.scala.memoize
 object Memo extends App {
   def memoize[A, B](f: A => B) =
     new (A => B) {
-      val cache = scala.collection.mutable.Map[A, B]()
+      val cache       = scala.collection.mutable.Map[A, B]()
       def apply(x: A) = {
         cache.getOrElseUpdate(x, f(x))
       }

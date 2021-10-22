@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Configuration>
+  <Appenders>
+    <Console name="STDOUT">
+      <PatternLayout>
+        <pattern>%date{dd.MM.yy HH:mm:ss} %-5level %logger{0} - %msg%n</pattern>
+        <!--pattern>%d %-5level [%t] %c{1} - %msg %X %n</pattern-->
+      </PatternLayout>
+    </Console>
+  </Appenders>
+
+  <Loggers>
+    <Root level="DEBUG">
+      <AppenderRef ref="STDOUT"/>
+    </Root>
+  </Loggers>
+</Configuration>
