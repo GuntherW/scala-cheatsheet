@@ -186,9 +186,7 @@ lazy val commonSettings = Seq(
     "-feature",
     "-language:higherKinds",
     "-deprecation",
-    "-source:future",               // für better-monadic-for, das es für Scala3 nicht mehr gibt
-    "-Ykind-projector:underscores", // für KindProjector
-    "-Ykind-projector"
+    "-source:future", // für better-monadic-for, das es für Scala3 nicht mehr gibt
   ),
   Test / fork       := true, // subprojects won't run in parallel then
   Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oF"), // Showing full stack trace

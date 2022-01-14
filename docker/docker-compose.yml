@@ -40,9 +40,9 @@ services:
         limits:
           memory: 4096M
     ports:
-      - "54321:5432"
+      - "5432:5432"
     expose:
-      - "54321"
+      - "5432"
     env_file:
       - ./.env
     environment:
@@ -53,8 +53,18 @@ services:
 
     volumes:
       - data:/var/lib/postgres/dottydb/data
+      - "./sql:/docker-entrypoint-initdb.d"
 
     #command: ["postgres", "-c", "log_statement=all", "-c", "log_destination=stderr"]
+
+  # Für Postgres
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: always
+    ports:
+      - 8083:8080
+
 
 volumes:
   data:
