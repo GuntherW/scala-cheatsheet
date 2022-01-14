@@ -19,4 +19,8 @@ class FunScalaTest extends AnyFunSuite {
     val wronglPerson = Person("Hans", "black")
     assert(realPerson == wronglPerson)
   }
+
+  test("fail") {
+    fail("Testing Github Actions")
+  }
 }
