@@ -1,6 +1,6 @@
 package de.codecentric.wittig.scala.pipetap
 
-import scala.util.chaining._
+import scala.util.chaining.*
 
 object Main extends App {
 

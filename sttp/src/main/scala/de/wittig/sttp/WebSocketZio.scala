@@ -1,9 +1,9 @@
 //package de.wittig.sttp
 //
-//import sttp.client._
-//import sttp.client.asynchttpclient.zio._
+//import sttp.client.*
+//import sttp.client.asynchttpclient.zio.*
 //import sttp.ws.WebSocket
-//import zio._
+//import zio.*
 //import zio.console.Console
 //
 //object WebSocketZio extends App {

@@ -1,6 +1,6 @@
 package de.codecentric.wittig.scala.xml
 
-import scala.xml._
+import scala.xml.*
 import scala.xml.transform.{RewriteRule, RuleTransformer}
 
 object ScalaXml extends App {

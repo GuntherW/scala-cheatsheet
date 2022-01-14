@@ -1,7 +1,8 @@
 package de.wittig.zio
-import zio._
-import zio.clock.Clock
-import zio.duration.durationInt
+import zio.*
+import zio.Clock
+import zio.Clock.*
+import zio.Duration.*
 
 import scala.concurrent.Future
 import scala.util.Try
@@ -16,7 +17,6 @@ object MainEffects extends App {
   val zoption2: ZIO[Any, String, Int]   = zoption.mapError(_ => "It wasn't there!")
   val zeither: IO[Nothing, String]      = ZIO.fromEither(Right("Success!"))
   val ztry: Task[Int]                   = ZIO.fromTry(Try(42 / ZERO))
-  val zfun: ZIO[Int, Nothing, Int]      = ZIO.fromFunction((i: Int) => i * i)
 
   lazy val future           = Future.successful("Hello!")
   val zfuture: Task[String] = ZIO.fromFuture { implicit ec =>

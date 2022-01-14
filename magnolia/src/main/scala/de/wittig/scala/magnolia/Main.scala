@@ -18,4 +18,7 @@ object Hallo extends App {
   println("Hallo Welt!")
   println(1.print)
   println(b.print)
+
+  val t = Tree.Branch(Tree.Branch(Tree.Leaf(1), Tree.Leaf(2)), Tree.Leaf(3)).print
+  println(t)
 }

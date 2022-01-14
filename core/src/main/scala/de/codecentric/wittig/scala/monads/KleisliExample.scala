@@ -1,7 +1,7 @@
 package de.codecentric.wittig.scala.monads
 
 import cats.data.Kleisli
-import cats.implicits._
+import cats.implicits.*
 
 /** Kleisli enables composition of functions that return a monadic value
   *

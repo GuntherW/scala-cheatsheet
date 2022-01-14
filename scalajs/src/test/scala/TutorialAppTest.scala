@@ -1,7 +1,7 @@
-import utest._
+import utest.*
 
 import org.scalajs.dom.document
-import org.scalajs.dom.ext._
+import org.scalajs.dom.ext.*
 
 object TutorialAppTest extends TestSuite {
 

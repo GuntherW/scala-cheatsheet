@@ -38,7 +38,7 @@ object Matching extends App {
   val premiumUser = new PremiumUser("Daniela", 3000)
 
   object as {
-    def unapply(ar: PremiumUser): Option[(String, Int)] = Some((ar.name, ar.score))
+    infix def unapply(ar: PremiumUser): Option[(String, Int)] = Some((ar.name, ar.score))
   }
 
   object asScore {

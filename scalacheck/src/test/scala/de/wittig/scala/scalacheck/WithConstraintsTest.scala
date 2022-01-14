@@ -1,7 +1,8 @@
 package de.wittig.scala.scalacheck
 
-import org.scalacheck.Prop._
-import org.scalacheck._
+import org.scalacheck.Prop.*
+import org.scalacheck.*
+import scala.language.adhocExtensions
 
 object WithConstraintsTest extends Properties("Int") {
 

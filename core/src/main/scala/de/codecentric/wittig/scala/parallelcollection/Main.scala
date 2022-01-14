@@ -1,5 +1,5 @@
 package de.codecentric.wittig.scala.parallelcollection
-import scala.collection.parallel.CollectionConverters._
+import scala.collection.parallel.CollectionConverters.*
 
 /** You need to include "org.scala-lang.modules" %% "scala-parallel-collections"
   */

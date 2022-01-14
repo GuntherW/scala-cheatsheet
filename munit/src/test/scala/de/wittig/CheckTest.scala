@@ -1,7 +1,7 @@
 package de.wittig
 
 import munit.ScalaCheckSuite
-import org.scalacheck.Prop._
+import org.scalacheck.Prop.*
 
 class CheckTest extends ScalaCheckSuite {
 

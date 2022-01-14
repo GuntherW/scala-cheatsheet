@@ -9,7 +9,7 @@ object Compose extends App {
     def add100(x: Int)    = x + 100
     def stringify(x: Int) = x.toString + "hallo"
     def upp(s: String)    = s.toUpperCase
-    val all               = upp _ compose stringify compose add100 compose add1
+    val all               = upp compose stringify compose add100 compose add1
 
     println(s"all: ${all(2)}")
   }

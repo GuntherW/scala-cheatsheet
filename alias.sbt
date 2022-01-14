@@ -1,0 +1,8 @@
+addCommandAlias("ls", "projects")
+addCommandAlias("cd", "project")
+addCommandAlias("l", "projects")
+addCommandAlias("ll", "projects")
+addCommandAlias("root", "cd root")
+addCommandAlias("c", "compile")
+addCommandAlias("t", "test")
+addCommandAlias("up2date", "reload plugins; dependencyUpdates; reload return; dependencyUpdates")

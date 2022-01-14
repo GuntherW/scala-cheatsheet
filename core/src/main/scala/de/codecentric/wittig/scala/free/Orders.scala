@@ -1,7 +1,7 @@
 package de.codecentric.wittig.scala.free
 import cats.free.Free
-import cats.free.Free._
-import de.codecentric.wittig.scala.free.Orders._
+import cats.free.Free.*
+import de.codecentric.wittig.scala.free.Orders.*
 
 object Orders {
   type Symbol   = String
@@ -12,5 +12,5 @@ object Orders {
 }
 
 sealed trait Orders[A]
-case class Buy(stock: Symbol, amount: Int) extends Orders[Response]
+case class Buy(stock: Symbol, amount: Int)  extends Orders[Response]
 case class Sell(stock: Symbol, amount: Int) extends Orders[Response]

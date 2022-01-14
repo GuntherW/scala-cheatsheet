@@ -2,6 +2,8 @@ package sub2
 
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatest.funsuite.AnyFunSuite
+import scala.language.adhocExtensions
+import scala.language.adhocExtensions
 
 class A2SubProject3ForkedGroupTest extends AnyFunSuite with BeforeAndAfterAll with BeforeAndAfterEach {
 

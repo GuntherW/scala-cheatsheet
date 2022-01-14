@@ -1,6 +1,6 @@
 package de.codecentric.wittig.scala.futur
 
-import de.codecentric.wittig.scala.Implicits._
+import de.codecentric.wittig.scala.Implicits.*
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -25,8 +25,8 @@ object TestFuture extends App {
     f
   }
 
-  private val f1         = Future(randomNumber)
-  private val f2         = Future(new Exception("Boom"))
+  private val f1 = Future(randomNumber)
+  private val f2 = Future(new Exception("Boom"))
 
   val u1: Unit = f1.failed.foreach(t => println(t))
   val u2: Unit = f2.foreach(i => println(i))

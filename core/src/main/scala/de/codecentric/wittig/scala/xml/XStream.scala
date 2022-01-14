@@ -1,6 +1,6 @@
 package de.codecentric.wittig.scala.xml
 
-import com.thoughtworks.xstream._
+import com.thoughtworks.xstream.*
 import com.thoughtworks.xstream.io.xml.DomDriver
 
 object XStream extends App {

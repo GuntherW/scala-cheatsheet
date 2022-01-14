@@ -5,15 +5,18 @@ scalaVersion := Version.scala
 lazy val `scala-cheatsheet` = (project in file("."))
   .aggregate(
     core,
+    doobie,
+    kafka,
     scalacheck,
     magnolia,
     munit,
-    scalajs,
+//    scalajs,
     subprojectTestInParallel1,
     subprojectTestInParallel2,
     subprojectTestInParallelForkGroup,
     sttp,
-    zio
+    zio,
+    zioHttp
   )
 
 lazy val core = project
@@ -100,12 +103,11 @@ lazy val sttp = project
       Library.sttpBEAsync,
       Library.sttpBEZio,
       Library.sttpCirce,
-      Library.akkaStream,
+      Library.sttpsSlf4j,
       Library.circeGeneric,
       Library.log4jApi,
       Library.log4jCore,
       Library.log4jSlf4jImpl,
-      "com.softwaremill.sttp.client3" %% "slf4j-backend" % "3.3.15"
     )
   )
 
@@ -132,13 +134,47 @@ lazy val scalajs = project
     commonSettings,
     scalaJSUseMainModuleInitializer := true,
     libraryDependencies ++= Seq(
-      "org.scala-js" %%% "scalajs-dom" % Version.scalaJsDom cross CrossVersion.for3Use2_13,
+      "org.scala-js" %%% "scalajs-dom" % Version.scalaJsDom,
       "com.lihaoyi"  %%% "utest"       % Version.uTest % Test
     ),
     jsEnv                           := new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv(),
     testFrameworks += new TestFramework("utest.runner.Framework"),
     Test / fork                     := false,
     fork                            := false
+  )
+
+lazy val kafka = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.kafkaClients,
+      Library.kafkaStreams,
+      Library.kafkaStreamsScala,
+      Library.circeCore,
+      Library.circeParser,
+      Library.circeGeneric,
+    )
+  )
+
+lazy val zioHttp = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.zio,
+      Library.zioStreams,
+      Library.zioHttp,
+      Library.zioHttpTest % Test
+    )
+  )
+
+lazy val doobie = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.doobieCore,
+      Library.doobiePostgres,
+      Library.doobieHirari
+    )
   )
 
 lazy val commonSettings = Seq(
@@ -162,6 +198,3 @@ lazy val commonSettings = Seq(
 ThisBuild / concurrentRestrictions := Seq(Tags.limit(Tags.ForkedTestGroup, 2))
 Global / concurrentRestrictions += Tags.limit(Tags.Test, 1)
 Global / onChangedBuildSource := ReloadOnSourceChanges
-
-addCommandAlias("ls", "projects")
-addCommandAlias("cd", "project")

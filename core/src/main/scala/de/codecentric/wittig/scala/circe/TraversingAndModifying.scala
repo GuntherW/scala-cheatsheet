@@ -1,6 +1,6 @@
 package de.codecentric.wittig.scala.circe
-import io.circe._
-import io.circe.parser._
+import io.circe.*
+import io.circe.parser.*
 
 object TraversingAndModifying extends App {
   val json: String = """

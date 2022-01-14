@@ -1,11 +1,11 @@
 package de.wittig.zio.zlayer
 
-import zio.{Has, Ref, Runtime, ULayer, ZIO, ZLayer}
+import zio.{Ref, Runtime, ULayer, ZIO, ZLayer}
 
 /** https://www.youtube.com/watch?v=u5IrfkAo6nk&list=WL&index=38&t=64s */
 object ZIOLayers extends App {
 
-  def show(message: String): ZIO[Has[Show], Nothing, Unit] = {
+  def show(message: String): ZIO[Show, Nothing, Unit] = {
     Show.display(message)
 //    ZIO.accessM[Has[Show]](_.get.display(message))
 //    ZIO.service[Show].flatMap(_.display(message))
@@ -16,12 +16,12 @@ object ZIOLayers extends App {
   }
 
   object Show {
-    def display(message: String): ZIO[Has[Show], Nothing, Unit] = ZIO.accessM[Has[Show]](_.get.display(message))
+    def display(message: String): ZIO[Show, Nothing, Unit] = ZIO.environmentWithZIO[Show](_.get.display(message))
   }
 
   // Implementation 1
-  val layer1: ZLayer[Any, Nothing, Has[Show]] = ZLayer.succeed(new Show {
-    override def display(message: String): ZIO[Any, Nothing, Unit] = ZIO.effectTotal(println(message))
+  val layer1: ZLayer[Any, Nothing, Show] = ZLayer.succeed(new Show {
+    override def display(message: String): ZIO[Any, Nothing, Unit] = ZIO.succeed(println(message))
   })
 
   // Implementation 2
@@ -29,7 +29,7 @@ object ZIOLayers extends App {
     override def display(message: String): ZIO[Any, Nothing, Unit] =
       lines.update(_ :+ message)
   }
-  def layer2(ref: Ref[List[String]]): ULayer[Has[Show]] = ZLayer.succeed(ShowTest(ref))
+  def layer2(ref: Ref[List[String]]): ULayer[Show] = ZLayer.succeed(ShowTest(ref))
 
   // Using Layers
   val showUsingLayer1: ZIO[Any, Nothing, Unit]    = show("Hallo Welt").provideLayer(layer1)

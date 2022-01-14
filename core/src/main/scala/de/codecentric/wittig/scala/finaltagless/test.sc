@@ -1,7 +1,7 @@
 import de.codecentric.wittig.scala.finaltagless.Expr
 
 def program[A](expr: Expr[A]): A = {
-  import expr._
+  import expr.*
   add(
     add(
       zero,

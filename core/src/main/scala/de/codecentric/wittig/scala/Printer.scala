@@ -1,6 +1,6 @@
 package de.codecentric.wittig.scala
 
-import scala.Console._
+import scala.Console.*
 
 object Printer {
 

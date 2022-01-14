@@ -3,6 +3,7 @@ package de.wittig
 import org.scalatest.funsuite.AnyFunSuite
 
 import scala.util.Properties
+import scala.language.adhocExtensions
 
 class FunScalaTest extends AnyFunSuite {
 

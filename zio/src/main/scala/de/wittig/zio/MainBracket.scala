@@ -21,13 +21,13 @@ object MainBracket extends App {
   }
 
   def convertBytes(is: FileInputStream, len: Long) =
-    Task.effect(println(new String(readAll(is, len), StandardCharsets.UTF_8))) // Java 8
-  //Task.effect(println(new String(is.readAllBytes(), StandardCharsets.UTF_8))) // Java 11+
+    Task.attempt(println(new String(readAll(is, len), StandardCharsets.UTF_8))) // Java 8
+  // Task.effect(println(new String(is.readAllBytes(), StandardCharsets.UTF_8))) // Java 11+
 
   // mybracket is just a value. Won't execute anything here until interpreted
   val mybracket: Task[Unit] = for {
     file   <- Task(new File("input.txt"))
     len     = file.length
-    string <- Task(new FileInputStream(file)).bracket(closeStream)(convertBytes(_, len))
+    string <- Task(new FileInputStream(file)).acquireReleaseWith(closeStream)(convertBytes(_, len))
   } yield string
 }

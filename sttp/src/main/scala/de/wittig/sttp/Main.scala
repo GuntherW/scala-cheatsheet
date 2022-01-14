@@ -1,8 +1,8 @@
 package de.wittig.sttp
-import io.circe.generic.auto._
-import sttp.client3._
+import io.circe.generic.auto.*
+import sttp.client3.*
 import sttp.client3.asynchttpclient.future.AsyncHttpClientFutureBackend
-import sttp.client3.circe._
+import sttp.client3.circe.*
 
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global

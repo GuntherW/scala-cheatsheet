@@ -1,6 +1,6 @@
 package de.wittig.zio.prelude
 
-import zio.prelude._
+import zio.prelude.*
 
 object Main extends App {
 

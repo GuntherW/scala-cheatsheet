@@ -1,8 +1,9 @@
 package de.wittig.scala.scalacheck
 
-import de.wittig.scala.scalacheck.helper.Printer._
+import de.wittig.scala.scalacheck.helper.Printer.*
 import org.scalacheck.Prop.forAll
 import org.scalacheck.{Arbitrary, Gen, Properties}
+import scala.language.adhocExtensions
 
 object WithArbitraries extends Properties("String") {
   private val gen: Gen[String]                = Gen.alphaUpperStr

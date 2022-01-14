@@ -2,6 +2,7 @@ package de.codecentric.wittig.scala.parallel
 
 import org.scalatest.ParallelTestExecution
 import org.scalatest.funsuite.AnyFunSuite
+import scala.language.adhocExtensions
 
 /** Um Tests parallel laufen zu lasssen, einfach vom Trait [[ParallelTestExecution]] extenden.
   */

@@ -1,4 +1,5 @@
 import org.scalatest.funsuite.AnyFunSuite
+import scala.language.adhocExtensions
 
 /** Just for showing, how to run Integrationtests. (configuration done in sbt.built). Run it with
   * {{{

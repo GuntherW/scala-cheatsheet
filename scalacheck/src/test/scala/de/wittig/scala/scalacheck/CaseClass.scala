@@ -1,9 +1,10 @@
 package de.wittig.scala.scalacheck
 
 import de.wittig.scala.scalacheck.helper.{Person, Season}
-import org.scalacheck.Arbitrary._
+import org.scalacheck.Arbitrary.*
 import org.scalacheck.Prop.forAll
-import org.scalacheck._
+import org.scalacheck.*
+import scala.language.adhocExtensions
 
 /** @author
   *   gunther
@@ -14,7 +15,7 @@ object CaseClass extends Properties("Person") {
 
     for {
       firstName <- Gen.alphaStr
-      lastName  <- Arbitrary.arbitrary[String] // We can get the "default" Gen via Arbitrary.arbitrary[T].
+      lastName <- Arbitrary.arbitrary[String] // We can get the "default" Gen via Arbitrary.arbitrary[T].
       age       <- Gen.chooseNum(0, 123)
       season    <- Gen.oneOf(Season.Spring, Season.Summer, Season.Autumn, Season.Winter)
     } yield Person(firstName, lastName, age, season)

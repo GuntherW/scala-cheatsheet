@@ -1,8 +1,9 @@
 package de.wittig.scala.scalacheck
 
-import de.wittig.scala.scalacheck.helper.Printer._
+import de.wittig.scala.scalacheck.helper.Printer.*
 import org.scalacheck.Prop.forAll
 import org.scalacheck.{Gen, Properties}
+import scala.language.adhocExtensions
 
 object WithGenerators extends Properties("String") {
 

@@ -1,8 +1,8 @@
 package de.wittig.sttp
 
-import io.circe.generic.auto._
-import sttp.client3._
-import sttp.client3.circe._
+import io.circe.generic.auto.*
+import sttp.client3.*
+import sttp.client3.circe.*
 
 case class GitHubResponse(total_count: Int, items: List[GitHubItem])
 case class GitHubItem(name: String, stargazers_count: Int, html_url: String)

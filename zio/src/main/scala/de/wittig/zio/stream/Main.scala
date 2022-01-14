@@ -1,16 +1,16 @@
 package de.wittig.zio.stream
 
-import zio._
-import zio.console.{Console, putStrLn}
+import zio.*
+import zio.Console.*
 import zio.stream.ZStream
-import zio.duration._
+import zio.Duration.*
 
 object HelloWorld extends App {
   def run(args: List[String]): URIO[Console, ExitCode] = programm.exitCode
 
   private val programm = for {
     elements <- ZStream("Hello", "World").runCollect
-    _        <- putStrLn(elements.toString)
+    _        <- printLine(elements.toString)
   } yield ()
 }
 
@@ -21,15 +21,15 @@ object InfiniteStream extends App {
       .take(20)
       .runCollect
       .flatMap { chunk =>
-        putStrLn(chunk.toString)
+        printLine(chunk.toString)
       }
       .exitCode
 }
 
 object Effect extends App {
   def run(args: List[String]): ZIO[ZEnv, Nothing, ExitCode] = {
-    val pr = ZStream.fromEffect(putStrLn("Hello World")).drain
-    val em = ZStream.iterate(0)(_ + 1).tap(i => putStrLn((i * 2).toString)).take(20)
+    val pr = ZStream.fromZIO(printLine("Hello World")).drain
+    val em = ZStream.iterate(0)(_ + 1).tap(i => printLine((i * 2).toString)).take(20)
     (pr ++ em).runCollect.exitCode
   }
 }
@@ -37,9 +37,9 @@ object Effect extends App {
 object ControllFlow extends App {
   def run(args: List[String]): ZIO[ZEnv, Nothing, ExitCode] =
     ZStream
-      .repeatEffect(console.getStrLn)
+      .repeatZIO(readLine)
       .take(5)
-      .tap(line => putStrLn(line) *> putStrLn(line))
+      .tap(line => printLine(line) *> printLine(line))
       .runCollect
       .exitCode
 }

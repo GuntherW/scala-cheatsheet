@@ -7,6 +7,7 @@ import scala.io.Source
 import com.dimafeng.testcontainers.{ForAllTestContainer, GenericContainer}
 import org.scalatest.funsuite.AnyFunSuite
 import org.testcontainers.containers.wait.strategy.Wait
+import scala.language.adhocExtensions
 
 /** @see
   *   https://github.com/testcontainers/testcontainers-scala

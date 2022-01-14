@@ -2,6 +2,7 @@ package de.codecentric.wittig.scala.monads
 
 import cats.data.Writer
 import cats.implicits.{catsSyntaxApplicativeId, catsSyntaxWriterId}
+import cats.catsInstancesForId
 
 object WriterMonadExample extends App {
   type Logged[A] = Writer[Vector[String], A]

@@ -11,7 +11,7 @@ class WordSpecScalaTest extends AnyWordSpecLike with Matchers {
     "retrieving name" should {
       "return name" in {
         val p = Person("Hans", "red")
-        p.name shouldBe "Hans"
+        p.name.shouldBe("Hans")
       }
     }
   }
