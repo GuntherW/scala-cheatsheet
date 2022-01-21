@@ -8,7 +8,7 @@ import zio.*
   * @see
   *   https://www.youtube.com/watch?v=PaogLRrYo64&list=PLmtsMNDRU0Bzu7NfhTiGK7iCYjcFAYlal
   */
-object ZLayerExample extends zio.App {
+object ZLayerExample extends ZIOAppDefault {
 
   private val gunther = User("gunther", "gunther@gunther.de")
   case class User(name: String, email: String)
@@ -30,7 +30,7 @@ object ZLayerExample extends zio.App {
 
     // front-facing API
     def notify(user: User, message: String): ZIO[UserEmailerEnv, Throwable, Unit] =
-      ZIO.accessM(_.get.notify(user, message))
+      ZIO.environmentWithZIO(_.get.notify(user, message))
   }
 
   object UserDb {
@@ -53,11 +53,10 @@ object ZLayerExample extends zio.App {
   // Horizontal composition
   val userBackendLayer: ZLayer[Any, Nothing, UserDbEnv & UserEmailerEnv] = UserDb.live ++ UserEmailer.live
 
-//  override def run(args: List[String]): URIO[zio.ZEnv, ExitCode] =
+//  override def run =
 //    UserEmailer
 //      .notify(gunther, "Willkommen")
 //      .provideLayer(userBackendLayer)
-//      .exitCode
 
   // Vertical composition
   object UserSubscription {
@@ -65,15 +64,13 @@ object ZLayerExample extends zio.App {
     class Service(notifier: UserEmailer.Service, userDb: UserDb.Service) {
       def subscribe(user: User): Task[User] =
         for {
-          _ <- notifier.notify(gunther, s"Wilkommen ${user.name}")
+          _ <- notifier.notify(gunther, s"Willkommen ${user.name}")
           _ <- userDb.insert(user)
         } yield user
     }
 
     val live: ZLayer[UserEmailerEnv & UserDbEnv, Nothing, UserSubscriptionEnv] =
-      ZLayer.fromServices[UserEmailer.Service, UserDb.Service, UserSubscription.Service] { (userEmailer, userDb) =>
-        new Service(userEmailer, userDb)
-      }
+      (new Service(_, _)).toLayer
 
     // front facing API
     def subscribe(user: User): ZIO[UserSubscriptionEnv, Throwable, User] =
@@ -82,9 +79,8 @@ object ZLayerExample extends zio.App {
 
   val userSubscriptionLayer: ZLayer[Any, Nothing, UserSubscriptionEnv] = userBackendLayer >>> UserSubscription.live
 
-  override def run(args: List[String]): URIO[zio.ZEnv, ExitCode] =
+  override def run: ZIO[Any, Throwable, User] =
     UserSubscription
       .subscribe(gunther)
       .provideLayer(userSubscriptionLayer)
-      .exitCode
 }

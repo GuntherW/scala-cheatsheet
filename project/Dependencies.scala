@@ -11,7 +11,7 @@ object Version {
   final val log4j                   = "2.17.1"
   final val magnolia                = "1.0.0"
   final val monocle                 = "3.1.0"
-  final val scala                   = "3.1.0"
+  final val scala                   = "3.1.1"
   final val scalaParallelCollection = "1.0.4"
   final val scalaz                  = "7.2.29"
   final val scodec                  = "2.1.0"
@@ -19,7 +19,7 @@ object Version {
   final val xstream                 = "1.4.18"
   final val xml                     = "2.0.1"
   final val zio                     = "1.0.13"
-  final val zioHttp                 = "2.0.0-RC1"
+  final val zioHttp                 = "2.0.0-RC2"
   final val zioPrelude              = "1.0.0-RC9"
 
   // ScalaJS
