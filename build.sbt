@@ -124,7 +124,6 @@ lazy val zio = project
 lazy val magnolia = project
   .settings(
     commonSettings,
-//    scalacOptions ++= Seq("-noindent", "-rewrite"),
     libraryDependencies += Library.magnolia
   )
 

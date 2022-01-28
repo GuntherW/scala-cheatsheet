@@ -15,7 +15,7 @@ object Version {
   final val scalaParallelCollection = "1.0.4"
   final val scalaz                  = "7.2.29"
   final val scodec                  = "2.1.0"
-  final val sttp                    = "3.3.18"
+  final val sttp                    = "3.4.1"
   final val xstream                 = "1.4.18"
   final val xml                     = "2.0.1"
   final val zio                     = "1.0.13"
@@ -29,11 +29,11 @@ object Version {
   // Test
   final val mockito       = "1.10.19"
   final val munit         = "0.7.29"
-  final val scalaTest     = "3.2.10"
+  final val scalaTest     = "3.2.11"
   final val selenium      = "4.1.1"
   final val seleniumPlus  = "3.2.10.0"
   final val scalaCheck    = "1.15.4"
-  final val testContainer = "0.39.12"
+  final val testContainer = "0.40.0"
 }
 
 object Library {
