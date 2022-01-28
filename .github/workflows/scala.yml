@@ -25,4 +25,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: olafurpg/setup-scala@v13
-        run: sbt test
+      - run: sbt test
