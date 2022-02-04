@@ -20,7 +20,7 @@ object Version {
   final val xml                     = "2.0.1"
   final val zio                     = "1.0.13"
   final val zioHttp                 = "2.0.0-RC2"
-  final val zioPrelude              = "1.0.0-RC9"
+  final val zioPrelude              = "1.0.0-RC10"
 
   // ScalaJS
   final val scalaJsDom = "2.0.0"
