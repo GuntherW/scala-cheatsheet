@@ -3,7 +3,7 @@ import zhttp.service.Server
 import zio.stream.ZStream
 import zio.{ExitCode, URIO, ZIO, App}
 
-object HelloWorld extends App {
+object HelloWorld extends zio.ZIOAppDefault {
 
   private val collect = Http.collect[Request] {
     case Method.GET -> !!                  => Response.text(s"Hallo Welt")
@@ -22,6 +22,5 @@ object HelloWorld extends App {
 
   private val app = collect2 <> collect <> collectM
 
-  override def run(args: List[String]): URIO[zio.ZEnv, ExitCode] =
-    Server.start(8090, app).exitCode
+  override def run: ZIO[Any, Throwable, Nothing] = Server.start(8090, app)
 }
