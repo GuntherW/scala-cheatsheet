@@ -15,7 +15,7 @@ object Version {
   final val scalaParallelCollection = "1.0.4"
   final val scalaz                  = "7.2.29"
   final val scodec                  = "2.1.0"
-  final val sttp                    = "3.4.1"
+  final val sttp                    = "3.5.0"
   final val xstream                 = "1.4.19"
   final val xml                     = "2.0.1"
   final val zio                     = "1.0.13"
@@ -23,8 +23,8 @@ object Version {
   final val zioPrelude              = "1.0.0-RC10"
 
   // ScalaJS
-  final val scalaJsDom = "2.0.0"
-  final val uTest      = "0.7.10"
+  final val scalaJsDom = "2.1.0"
+  final val uTest      = "0.7.11"
 
   // Test
   final val mockito       = "1.10.19"

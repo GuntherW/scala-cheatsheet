@@ -3,7 +3,7 @@ import utest.*
 import org.scalajs.dom.document
 import org.scalajs.dom.ext.*
 
-object TutorialAppTest extends TestSuite {
+object TutorialAppTest extends TestSuite:
 
   // Initialize App
   TutorialApp.appendPar(document.body, "Hallo Welt")
@@ -13,4 +13,3 @@ object TutorialAppTest extends TestSuite {
       assert(document.querySelectorAll("p").count(_.textContent == "Hallo Welt") == 1)
     }
   }
-}

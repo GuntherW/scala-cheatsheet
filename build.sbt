@@ -10,7 +10,7 @@ lazy val `scala-cheatsheet` = (project in file("."))
     scalacheck,
     magnolia,
     munit,
-//    scalajs,
+    scalajs,
     subprojectTestInParallel1,
     subprojectTestInParallel2,
     subprojectTestInParallelForkGroup,

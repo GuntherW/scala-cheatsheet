@@ -8,7 +8,7 @@ import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.DurationInt
 
-object Main extends App {
+object Main extends App:
 
   private val backend = AsyncHttpClientFutureBackend()
   private val query   = "language:scala"
@@ -19,7 +19,7 @@ object Main extends App {
     .response(asJson[GitHubResponse])
 
   val res = request.send(backend).map { response =>
-    response.body match {
+    response.body match
       case Left(error) => println(s"Error when executing request: $error")
       case Right(data) =>
         println(s"Found ${data.total_count} Scala projects.")
@@ -27,9 +27,7 @@ object Main extends App {
         data.items.foreach { item =>
           println(s"  ${item.name} (${item.stargazers_count}) ${item.html_url}")
         }
-    }
   }
 
   Await.result(res, 3.seconds)
   backend.close()
-}

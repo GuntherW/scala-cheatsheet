@@ -2,7 +2,7 @@ package de.codecentric.wittig.scala.option
 
 /** Thanks to Marconi Lanna! https://skillsmatter.com/skillscasts/7040-lightning-talks-4
   */
-object UseOption extends App {
+object UseOption extends App:
   val p: String => Boolean = _.isEmpty
   val f: String => String  = _.toUpperCase
 
@@ -120,7 +120,7 @@ object UseOption extends App {
 
   println("All Tests passed")
 
-  def test[A](g: Option[String] => A, h: Option[String] => A): Unit = {
+  def test[A](g: Option[String] => A, h: Option[String] => A): Unit =
     val someString      = Some("a")
     val someEmptyString = Some("")
     List(someString, someEmptyString, None)
@@ -129,5 +129,3 @@ object UseOption extends App {
         val bb = h(opt)
         assert(aa == bb)
       }
-  }
-}

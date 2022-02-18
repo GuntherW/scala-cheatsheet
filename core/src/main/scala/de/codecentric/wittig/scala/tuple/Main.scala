@@ -1,6 +1,6 @@
 package de.codecentric.wittig.scala.tuple
 
-object Main extends App {
+object Main extends App:
   private val input: (Int, Int, Int)           = (1, 2, 3)
   private def sum(a: Int, b: Int, c: Int): Int = a + b + c
 
@@ -14,5 +14,3 @@ object Main extends App {
   val c1: Int => Int => Int       = sum.curried(1)
   val c2: Int => Int              = sum.curried(1)(2)
   val c3: Int                     = sum.curried(1)(2)(3)
-
-}
