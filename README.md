@@ -1,7 +1,6 @@
 # scala-cheatsheet
 
-[![Build Status](https://travis-ci.org/GuntherW/scala-cheatsheet.svg)](https://travis-ci.org/GuntherW/scala-cheatsheet)
-
+[![Actions Status](https://github.com/GuntherW/scala-cheatsheet/workflows/Scala%20Ci/badge.svg)](https://github.com/GuntherW/scala-cheatsheet/actions)
 + Just a collection of some interesting scala stuff.
 + Playground.
 
