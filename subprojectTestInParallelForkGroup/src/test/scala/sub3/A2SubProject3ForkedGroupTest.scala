@@ -1,11 +1,11 @@
-package sub2
+package sub3
 
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatest.funsuite.AnyFunSuite
 import scala.language.adhocExtensions
 import scala.language.adhocExtensions
 
-class A2SubProject3ForkedGroupTest extends AnyFunSuite with BeforeAndAfterAll with BeforeAndAfterEach {
+class A2SubProject3ForkedGroupTest extends AnyFunSuite with BeforeAndAfterAll with BeforeAndAfterEach:
 
   test("testForkedGroup A") {
     val sleepTime = 3000
@@ -14,4 +14,3 @@ class A2SubProject3ForkedGroupTest extends AnyFunSuite with BeforeAndAfterAll wi
     println(Console.BLUE + s"testForkedGroup A2 slept for $sleepTime ms" + Console.RESET)
     assert(true)
   }
-}

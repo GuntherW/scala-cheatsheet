@@ -4,7 +4,7 @@ import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatest.funsuite.AnyFunSuite
 import scala.language.adhocExtensions
 
-class SubProject2Test extends AnyFunSuite with BeforeAndAfterAll with BeforeAndAfterEach {
+class SubProject2Test extends AnyFunSuite with BeforeAndAfterAll with BeforeAndAfterEach:
 
   test("test1") {
     val sleepTime = 3000
@@ -13,4 +13,3 @@ class SubProject2Test extends AnyFunSuite with BeforeAndAfterAll with BeforeAndA
     println(Console.BLUE + s"subprojekt2 slept for $sleepTime ms" + Console.RESET)
     assert(true)
   }
-}
