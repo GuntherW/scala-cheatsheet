@@ -30,6 +30,7 @@ project/plugins/project/
 .metals
 .vscode
 .bsp
+.scala-build
 
 package-lock.json
 node_modules

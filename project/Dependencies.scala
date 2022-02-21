@@ -5,7 +5,7 @@ object Version {
   final val catsConsole             = "0.8.1"
   final val circeVersion            = "0.14.1"
   final val doobie                  = "1.0.0-RC2"
-  final val fs2                     = "3.2.4"
+  final val fs2                     = "3.2.5"
   final val kafka                   = "2.8.1"
   final val logback                 = "1.2.10"
   final val log4j                   = "2.17.1"
@@ -33,7 +33,7 @@ object Version {
   final val selenium      = "4.1.2"
   final val seleniumPlus  = "3.2.10.0"
   final val scalaCheck    = "1.15.4"
-  final val testContainer = "0.40.1"
+  final val testContainer = "0.40.2"
 }
 
 object Library {
