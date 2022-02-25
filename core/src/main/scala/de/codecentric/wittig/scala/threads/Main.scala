@@ -16,8 +16,7 @@ object Main extends App:
     println("b")
 
   def task(id: Int): Runnable = () => {
-    println(s"${Thread.currentThread().getName()} start-$id")
+    println(s"${Thread.currentThread().getName} start-$id")
     Thread.sleep(10000)
-    println(s"${Thread.currentThread().getName()} end-$id")
+    println(s"${Thread.currentThread().getName} end-$id")
   }
-

@@ -4,9 +4,8 @@ import scala.util.chaining.*
 
 object Main extends App:
 
-  println("Hallo Welt")
-
   val anna = User("Anna", 40, Address(12, "high street"))
+
   anna
     .focus(_.name)
     .replace("Bob")

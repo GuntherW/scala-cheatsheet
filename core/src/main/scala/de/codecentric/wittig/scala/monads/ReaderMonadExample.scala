@@ -3,6 +3,7 @@ import cats.data.Reader
 import cats.*
 
 object ReaderMonadExample extends App:
+
   case class Config(x: String, y: String)
 
   def hallo1: Reader[Config, String] = Reader(config => s"hallo1 ${config.x}")

@@ -22,6 +22,7 @@ object UpperBound extends App:
           else y :: merge(xs, ys1)
 
     val n = xs.length / 2
+
     if n == 0 then
       xs
     else

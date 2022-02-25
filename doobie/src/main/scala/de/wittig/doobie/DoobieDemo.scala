@@ -164,17 +164,17 @@ object CustomSupport:
     override def toString: String = value
 
   object ActorName:
-    implicit val actorNameGet: Get[ActorName] = Get[String].map(new ActorName(_))
-    implicit val actorNamePut: Put[ActorName] = Put[String].contramap(_.value)
+    given Get[ActorName] = Get[String].map(new ActorName(_))
+    given Put[ActorName] = Put[String].contramap(_.value)
 
   case class DirectorId(id: Int)
   case class DirectorName(name: String)
   case class DirectorLastName(lastName: String)
   case class Director(id: DirectorId, name: DirectorName, lastName: DirectorLastName)
   object Director:
-    implicit val directorRead: Read[Director]   = Read[(Int, String, String)].map {
+    given Read[Director]  = Read[(Int, String, String)].map {
       case (id, name, lastName) => Director(DirectorId(id), DirectorName(name), DirectorLastName(lastName))
     }
-    implicit val directorWrite: Write[Director] = Write[(Int, String, String)].contramap {
+    given Write[Director] = Write[(Int, String, String)].contramap {
       case Director(id, name, lastName) => (id.id, name.name, lastName.lastName)
     }

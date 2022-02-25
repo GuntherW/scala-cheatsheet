@@ -1,6 +1,7 @@
 package de.codecentric.wittig.scala.compose
 
 object Compose extends App:
+
   composeMethods()
   composeFunctions()
 
@@ -10,7 +11,6 @@ object Compose extends App:
     def stringify(x: Int) = x.toString + "hallo"
     def upp(s: String)    = s.toUpperCase
     val all               = upp compose stringify compose add100 compose add1
-
     println(s"all: ${all(2)}")
 
   def composeFunctions() =
@@ -19,5 +19,4 @@ object Compose extends App:
     val vstringify = (x: Int) => x.toString + "hallo"
     val vupp       = (s: String) => s.toUpperCase
     val vall       = vupp compose vstringify compose vadd100 compose vadd1
-
     println(s"vall: ${vall(2)}")

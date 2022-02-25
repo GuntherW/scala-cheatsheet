@@ -6,12 +6,13 @@ import zio.Duration.*
 
 import scala.concurrent.Future
 import scala.util.Try
+
 object MainEffects extends App:
   val ZERO                    = 0
-  def run(args: List[String]) =
-    fib(100).fork
-      .map(i => println(s"Hallo $i"))
-      .exitCode
+  def run(args: List[String]) = fib(100)
+    .fork
+    .map(i => println(s"Hallo $i"))
+    .exitCode
 
   val zoption: IO[Option[Nothing], Int] = ZIO.fromOption(Some(2))
   val zoption2: ZIO[Any, String, Int]   = zoption.mapError(_ => "It wasn't there!")
@@ -30,8 +31,7 @@ object MainEffects extends App:
 
   val sleep: ZIO[Clock, Nothing, Unit] = ZIO.sleep(5.seconds)
 
-  def fib(n: Long): UIO[Long] =
-    UIO {
-      if n <= 1 then UIO.succeed(n)
-      else fib(n - 1).zipWith(fib(n - 2))(_ + _)
-    }.flatten
+  def fib(n: Long): UIO[Long] = UIO {
+    if n <= 1 then UIO.succeed(n)
+    else fib(n - 1).zipWith(fib(n - 2))(_ + _)
+  }.flatten

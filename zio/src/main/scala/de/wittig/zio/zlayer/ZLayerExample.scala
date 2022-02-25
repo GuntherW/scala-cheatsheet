@@ -9,9 +9,9 @@ import zio.*
   *   https://www.youtube.com/watch?v=PaogLRrYo64&list=PLmtsMNDRU0Bzu7NfhTiGK7iCYjcFAYlal
   */
 object ZLayerExample extends ZIOAppDefault:
+  case class User(name: String, email: String)
 
   private val gunther = User("gunther", "gunther@gunther.de")
-  case class User(name: String, email: String)
 
   object UserEmailer:
     type UserEmailerEnv = UserEmailer.Service

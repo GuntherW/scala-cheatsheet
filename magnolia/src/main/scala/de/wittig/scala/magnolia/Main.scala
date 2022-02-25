@@ -1,11 +1,10 @@
 package de.wittig.scala.magnolia
 
-import de.wittig.scala.magnolia.Print.*
+import de.wittig.scala.magnolia.Print.{given, *}
 import magnolia1.*
 
-sealed trait Person
+sealed trait Person derives Print
 case class Employee(name: String, alter: Int) extends Person
-case class Employer(name: String, alter: Int) extends Person
 
 object Hallo extends App:
 
@@ -14,10 +13,8 @@ object Hallo extends App:
 
   val b: A = B(1, 2, 3)
 
-  println("Hallo Welt")
-  println("Hallo Welt!")
   println(1.print)
   println(b.print)
+  println(Tree.Branch(Tree.Branch(Tree.Leaf(1), Tree.Leaf(2)), Tree.Leaf(3)).print)
 
-  val t = Tree.Branch(Tree.Branch(Tree.Leaf(1), Tree.Leaf(2)), Tree.Leaf(3)).print
-  println(t)
+  println(Employee("Name", 3).print)

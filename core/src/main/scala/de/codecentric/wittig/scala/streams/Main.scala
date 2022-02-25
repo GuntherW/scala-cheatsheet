@@ -10,9 +10,8 @@ object Main extends App:
     .toList
     .foreach(println)
 
-
 object MainIO extends IOApp.Simple:
-  val run = Stream
+  val run: IO[Unit] = Stream
     .duration[IO]
     .evalMap(d => IO(println(d)))
     .take(10)

@@ -22,5 +22,5 @@ object Print extends AutoDerivation[Print]:
         sub.typeclass.print(sub.cast(value))
       }
 
-//  given Print[Int] = _.toString
-  implicit val intPrint: Print[Int] = i => s"!$i!"
+  given Print[Int]    = i => s"|$i|"
+  given Print[String] = i => s"-$i-"

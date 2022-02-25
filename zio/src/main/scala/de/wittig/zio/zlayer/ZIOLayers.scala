@@ -23,8 +23,8 @@ object ZIOLayers extends App:
 
   // Implementation 2
   case class ShowTest(lines: Ref[List[String]]) extends Show:
-    override def display(message: String): ZIO[Any, Nothing, Unit] =
-      lines.update(_ :+ message)
+    override def display(message: String): ZIO[Any, Nothing, Unit] = lines.update(_ :+ message)
+
   def layer2(ref: Ref[List[String]]): ULayer[Show] = ZLayer.succeed(ShowTest(ref))
 
   // Using Layers

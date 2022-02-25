@@ -12,13 +12,16 @@ object Main extends App:
   val two  = Two(1)
   val twoE = TwoE(1)
 
-  def withoutStrictEquality =
+  withStrictEquality
+  withoutStrictEquality
+
+  private def withoutStrictEquality =
     println(oneE == oneE)
     println(one == one)
     println(one == two)
 //    println(oneE == twoE)
 
-  def withStrictEquality =
+  private def withStrictEquality =
     import scala.language.strictEquality // or "-language:strictEquality"
     println(oneE == oneE)
 //    println(one == one)

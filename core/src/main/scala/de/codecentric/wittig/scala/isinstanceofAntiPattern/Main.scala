@@ -8,6 +8,7 @@ import scala.concurrent.Future
 /** https://alexn.org/blog/2019/08/11/isinstanceof-anti-pattern.html
   */
 object Main extends App:
+
   guarantee {
     println("hallo welt")
     1 + 1

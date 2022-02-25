@@ -28,7 +28,7 @@ object ScalaXml extends App:
   println(a \@ "id")
 
   // Rewrite XML
-  val abbreviateDayRule: RewriteRule = new RewriteRule {
+  val abbreviateDayRule: RewriteRule = new RewriteRule:
     override def transform(n: Node): Seq[Node] =
       n match
         case elem: Elem if elem.label == "book" =>
@@ -36,7 +36,6 @@ object ScalaXml extends App:
             Text(data.take(3))
           })
         case n                                  => n
-  }
 
   val transform   = new RuleTransformer(abbreviateDayRule)
   val transformed = transform(books)
