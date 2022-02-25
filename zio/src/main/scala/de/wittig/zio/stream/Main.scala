@@ -8,10 +8,11 @@ import zio.Duration.*
 object HelloWorld extends App {
   def run(args: List[String]): URIO[Console, ExitCode] = programm.exitCode
 
-  private val programm = for {
-    elements <- ZStream("Hello", "World").runCollect
-    _        <- printLine(elements.toString)
-  } yield ()
+  private val programm =
+    for
+      elements <- ZStream("Hello", "World").runCollect
+      _        <- printLine(elements.toString)
+    yield ()
 }
 
 object InfiniteStream extends App {

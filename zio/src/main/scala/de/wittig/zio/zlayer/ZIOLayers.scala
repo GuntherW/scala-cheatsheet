@@ -34,11 +34,11 @@ object ZIOLayers extends App {
   // Using Layers
   val showUsingLayer1: ZIO[Any, Nothing, Unit]    = show("Hallo Welt").provideLayer(layer1)
   val showUsingLayer2: ZIO[Any, Nothing, Boolean] =
-    for {
+    for
       state <- Ref.make(List.empty[String])
       _     <- (show("Hallo") *> show("Welt")).provideLayer(layer2(state))
       lines <- state.get
-    } yield lines == List("Hallo", "Welt")
+    yield lines == List("Hallo", "Welt")
 
   // execute
   val runtime = Runtime.default

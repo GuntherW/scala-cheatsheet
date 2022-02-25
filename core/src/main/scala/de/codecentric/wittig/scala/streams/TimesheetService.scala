@@ -21,7 +21,7 @@ object TimesheetService extends IOApp.Simple {
       .flatMap(Stream.emits)
 
   val program: Stream[IO, (List[Worklog], Map[WorklogId, IssueDetails])] =
-    for {
+    for
       topic             <- Stream.eval(Topic[IO, Worklog])
       publisher          = stream.through(topic.publish) ++ Stream.eval(topic.close)
       subscriberWorklogs = topic.subscribe(wlBatchSize * 2)
@@ -29,7 +29,7 @@ object TimesheetService extends IOApp.Simple {
                              .fold(List.empty[Worklog]) { case (ws, w) => w :: ws }
       subscriberIssues   = topic.subscribe(wlBatchSize * 2).mapAccumulate(Set.empty[WorklogId]) {
                              case (set, worklog) =>
-                               if (set(worklog.id)) (set, None)
+                               if set(worklog.id) then (set, None)
                                else (set + worklog.id, Some(worklog))
                            }
                              .map(_._2)
@@ -38,7 +38,7 @@ object TimesheetService extends IOApp.Simple {
                              .debug(e => "issue-detail-" + e.head._1.value)
                              .fold(Map.empty[WorklogId, IssueDetails])(_ ++ _)
       result            <- subscriberWorklogs.parZip(subscriberIssues).concurrently(publisher)
-    } yield result
+    yield result
 
   def run: IO[Unit] = program.debug(_.toString).compile.drain
 }

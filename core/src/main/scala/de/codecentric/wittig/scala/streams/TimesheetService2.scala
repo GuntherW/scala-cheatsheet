@@ -24,7 +24,7 @@ object TimesheetService2 extends IOApp.Simple {
     }.debug(_.toString)
 
   val program: Stream[IO, (List[Worklog], Map[WorklogId, IssueDetails])] =
-    for {
+    for
       topic             <- Stream.eval(Topic[IO, Worklog])
       publisher          = stream.through(topic.publish) ++ Stream.eval(topic.close)
       subscriberWorklogs = topic.subscribe(5)
@@ -33,7 +33,7 @@ object TimesheetService2 extends IOApp.Simple {
       subscriberIssues   = topic.subscribe(5)
                              .mapAccumulate(Set.empty[WorklogId]) {
                                case (set, worklog) =>
-                                 if (set(worklog.id)) (set, None)
+                                 if set(worklog.id) then (set, None)
                                  else (set + worklog.id, Some(worklog))
                              }.map(_._2)
                              .collect { case Some(w) => w }
@@ -49,7 +49,7 @@ object TimesheetService2 extends IOApp.Simple {
                                }
                                (ws_, m_)
                              }.concurrently(publisher)
-    } yield result
+    yield result
 
   def run: IO[Unit] = program.debug(_.toString).compile.drain
 

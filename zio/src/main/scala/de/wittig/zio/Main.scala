@@ -9,9 +9,9 @@ object Main extends App {
     myAppLogic.exitCode
 
   private val myAppLogic =
-    for {
+    for
       _ <- printLine("Hello! What is your name?")
       n <- readLine
       _ <- printLine(s"Hello, $n, good to meet you!")
-    } yield ()
+    yield ()
 }

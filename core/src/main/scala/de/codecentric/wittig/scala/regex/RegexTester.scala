@@ -26,11 +26,11 @@ object RegexTester extends App:
   val s3 = Date.findFirstIn(dates).getOrElse("nicht gematched")
   println(s"s3: $s3")
 
-  val s4 = for (m <- DatePattern.findFirstMatchIn(dates)) yield m.group("year")
+  val s4 = for m <- DatePattern.findFirstMatchIn(dates) yield m.group("year")
   println(s"s4: $s4")
 
   // Find all:
-  val s5 = for (m <- Date findAllMatchIn dates) yield m group 1
+  val s5 = for m <- Date findAllMatchIn dates yield m group 1
   s5.map(x => "s5: " + x).foreach(println)
 
   val dates2 = "Date: 2004-01-20 1950-01-20 1960-01-20 "

@@ -140,7 +140,7 @@ object DoobieDemo extends IOApp.Simple {
         .to[List]
 
     val query =
-      for {
+      for
         maybeMovie    <- findMovieByTitle()
         maybeDirector <- maybeMovie match {
                            case Some(_, _, _, directorId) => findDirectorById(directorId)
@@ -150,10 +150,10 @@ object DoobieDemo extends IOApp.Simple {
                            case Some(movieId, _, _, _) => findActorsByMovieId(movieId)
                            case None                   => List.empty[String].pure[ConnectionIO]
                          }
-      } yield for {
+      yield for
         (id, t, year, _)      <- maybeMovie
         (firstName, lastName) <- maybeDirector
-      } yield Movie(id.toString, t, year, actors, s"$firstName $lastName")
+      yield Movie(id.toString, t, year, actors, s"$firstName $lastName")
 
     query.transact(xa)
   }

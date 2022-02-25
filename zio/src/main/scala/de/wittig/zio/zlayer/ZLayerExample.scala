@@ -63,10 +63,10 @@ object ZLayerExample extends ZIOAppDefault {
     type UserSubscriptionEnv = UserSubscription.Service
     class Service(notifier: UserEmailer.Service, userDb: UserDb.Service) {
       def subscribe(user: User): Task[User] =
-        for {
+        for
           _ <- notifier.notify(gunther, s"Willkommen ${user.name}")
           _ <- userDb.insert(user)
-        } yield user
+        yield user
     }
 
     val live: ZLayer[UserEmailerEnv & UserDbEnv, Nothing, UserSubscriptionEnv] =

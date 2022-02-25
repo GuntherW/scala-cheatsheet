@@ -9,10 +9,10 @@ object ReaderMonadExample extends App {
   def hallo2: Reader[Config, String] = Reader(config => s"hallo2 ${config.y}")
 
   def program: Reader[Config, (String, String)] =
-    for {
+    for
       h1 <- hallo1
       h2 <- hallo2
-    } yield (h1, h2)
+    yield (h1, h2)
 
   println(program.run(Config("x-wert", "y-wert")))
 }

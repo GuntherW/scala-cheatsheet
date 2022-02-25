@@ -19,7 +19,7 @@ object Main extends App {
 //    println(oneE == twoE)
 
   def withStrictEquality =
-    import scala.language.strictEquality
+    import scala.language.strictEquality // or "-language:strictEquality"
     println(oneE == oneE)
 //    println(one == one)
 //    println(one == two)

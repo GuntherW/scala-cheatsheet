@@ -32,7 +32,7 @@ object MainEffects extends App {
 
   def fib(n: Long): UIO[Long] =
     UIO {
-      if (n <= 1) UIO.succeed(n)
+      if n <= 1 then UIO.succeed(n)
       else fib(n - 1).zipWith(fib(n - 2))(_ + _)
     }.flatten
 }
