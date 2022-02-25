@@ -6,6 +6,7 @@ object Version {
   final val circeVersion            = "0.14.1"
   final val doobie                  = "1.0.0-RC2"
   final val fs2                     = "3.2.5"
+  final val gatling                 = "3.7.5"
   final val kafka                   = "2.8.1"
   final val logback                 = "1.2.10"
   final val log4j                   = "2.17.1"
@@ -71,8 +72,10 @@ object Library {
   final val zioPrelude              = "dev.zio"                       %% "zio-prelude"                      % Version.zioPrelude
   final val zioHttp                 = "io.d11"                        %% "zhttp"                            % Version.zioHttp
   // test
-  final val mockito                 = "org.mockito"                    % "mockito-all"                      % Version.mockito
 
+  final val gatlingCharts   = "io.gatling.highcharts"   % "gatling-charts-highcharts"      % Version.gatling
+  final val gatling         = "io.gatling"              % "gatling-test-framework"         % Version.gatling
+  final val mockito         = "org.mockito"             % "mockito-all"                    % Version.mockito
   final val munit           = "org.scalameta"          %% "munit"                          % Version.munit
   final val munitScalaCheck = "org.scalameta"          %% "munit-scalacheck"               % Version.munit
   final val scalatest       = "org.scalatest"          %% "scalatest"                      % Version.scalaTest

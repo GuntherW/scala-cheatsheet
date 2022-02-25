@@ -6,6 +6,7 @@ lazy val `scala-cheatsheet` = (project in file("."))
   .aggregate(
     core,
     doobie,
+    gatling,
     kafka,
     scalacheck,
     magnolia,
@@ -173,6 +174,16 @@ lazy val doobie = project
       Library.doobieCore,
       Library.doobiePostgres,
       Library.doobieHirari
+    )
+  )
+
+lazy val gatling = project
+  .enablePlugins(GatlingPlugin)
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.gatling,
+      Library.gatlingCharts,
     )
   )
 
