@@ -3,7 +3,7 @@ import zhttp.service.Server
 import zio.stream.ZStream
 import zio.*
 
-object HelloWorld extends zio.ZIOAppDefault {
+object HelloWorld extends zio.ZIOAppDefault:
 
   private val collect = Http.collect[Request] {
     case Method.GET -> !!                  => Response.text(s"Hallo Welt")
@@ -21,4 +21,3 @@ object HelloWorld extends zio.ZIOAppDefault {
   private val app = collect2 ++ collect ++ collectM
 
   override def run: ZIO[Any, Throwable, Nothing] = Server.start(8090, app)
-}

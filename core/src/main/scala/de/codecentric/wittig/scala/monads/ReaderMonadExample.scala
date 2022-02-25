@@ -2,7 +2,7 @@ package de.codecentric.wittig.scala.monads
 import cats.data.Reader
 import cats.*
 
-object ReaderMonadExample extends App {
+object ReaderMonadExample extends App:
   case class Config(x: String, y: String)
 
   def hallo1: Reader[Config, String] = Reader(config => s"hallo1 ${config.x}")
@@ -15,4 +15,3 @@ object ReaderMonadExample extends App {
     yield (h1, h2)
 
   println(program.run(Config("x-wert", "y-wert")))
-}

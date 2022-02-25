@@ -8,18 +8,17 @@ import zio.*
   * @see
   *   https://www.youtube.com/watch?v=PaogLRrYo64&list=PLmtsMNDRU0Bzu7NfhTiGK7iCYjcFAYlal
   */
-object ZLayerExample extends ZIOAppDefault {
+object ZLayerExample extends ZIOAppDefault:
 
   private val gunther = User("gunther", "gunther@gunther.de")
   case class User(name: String, email: String)
 
-  object UserEmailer {
+  object UserEmailer:
     type UserEmailerEnv = UserEmailer.Service
 
     // service definition
-    trait Service {
+    trait Service:
       def notify(user: User, messages: String): Task[Unit]
-    }
 
     // service implementation
     val live: ULayer[UserEmailerEnv] = ZLayer.succeed(new Service {
@@ -31,14 +30,12 @@ object ZLayerExample extends ZIOAppDefault {
     // front-facing API
     def notify(user: User, message: String): ZIO[UserEmailerEnv, Throwable, Unit] =
       ZIO.environmentWithZIO(_.get.notify(user, message))
-  }
 
-  object UserDb {
+  object UserDb:
     type UserDbEnv = UserDb.Service
 
-    trait Service {
+    trait Service:
       def insert(user: User): Task[Unit]
-    }
 
     val live: ULayer[UserDbEnv] = ZLayer.succeed(new Service {
       override def insert(user: User): Task[Unit] = Task {
@@ -48,7 +45,6 @@ object ZLayerExample extends ZIOAppDefault {
 
     def insert(user: User): ZIO[UserDbEnv, Throwable, Unit] =
       ZIO.environmentWithZIO(_.get.insert(user))
-  }
 
   // Horizontal composition
   val userBackendLayer: ZLayer[Any, Nothing, UserDbEnv & UserEmailerEnv] = UserDb.live ++ UserEmailer.live
@@ -59,15 +55,14 @@ object ZLayerExample extends ZIOAppDefault {
 //      .provideLayer(userBackendLayer)
 
   // Vertical composition
-  object UserSubscription {
+  object UserSubscription:
     type UserSubscriptionEnv = UserSubscription.Service
-    class Service(notifier: UserEmailer.Service, userDb: UserDb.Service) {
+    class Service(notifier: UserEmailer.Service, userDb: UserDb.Service):
       def subscribe(user: User): Task[User] =
         for
           _ <- notifier.notify(gunther, s"Willkommen ${user.name}")
           _ <- userDb.insert(user)
         yield user
-    }
 
     val live: ZLayer[UserEmailerEnv & UserDbEnv, Nothing, UserSubscriptionEnv] =
       (new Service(_, _)).toLayer
@@ -75,7 +70,6 @@ object ZLayerExample extends ZIOAppDefault {
     // front facing API
     def subscribe(user: User): ZIO[UserSubscriptionEnv, Throwable, User] =
       ZIO.environmentWithZIO(_.get.subscribe(user))
-  }
 
   val userSubscriptionLayer: ZLayer[Any, Nothing, UserSubscriptionEnv] = userBackendLayer >>> UserSubscription.live
 
@@ -83,4 +77,3 @@ object ZLayerExample extends ZIOAppDefault {
     UserSubscription
       .subscribe(gunther)
       .provideLayer(userSubscriptionLayer)
-}

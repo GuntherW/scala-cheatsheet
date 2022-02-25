@@ -5,14 +5,12 @@ case class Person(
     lastName: String,
     age: Int,
     season: Season
-) {
+):
   def birthday: Person = copy(age = age + 1)
-}
 
 sealed trait Season
-object Season {
+object Season:
   case object Winter extends Season
   case object Spring extends Season
   case object Summer extends Season
   case object Autumn extends Season
-}

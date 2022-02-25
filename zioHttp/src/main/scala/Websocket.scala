@@ -4,7 +4,7 @@ import zhttp.socket.{Socket, WebSocketFrame}
 import zio.*
 import zio.stream.ZStream
 
-object Websocket {
+object Websocket:
 
   val socket = Socket.collect[WebSocketFrame] {
     case WebSocketFrame.Text("FOO")  => ZStream.succeed(WebSocketFrame.text("BAR"))
@@ -13,4 +13,3 @@ object Websocket {
     case WebSocketFrame.Pong         => ZStream.succeed(WebSocketFrame.ping)
     case fr @ WebSocketFrame.Text(_) => ZStream.repeat(fr).schedule(Schedule.spaced(1.second)).take(10)
   }
-}

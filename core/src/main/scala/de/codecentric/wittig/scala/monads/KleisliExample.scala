@@ -8,7 +8,7 @@ import cats.implicits.*
   * @see
   *   https://typelevel.org/cats/datatypes/kleisli.html
   */
-object KleisliExample extends App {
+object KleisliExample extends App:
 
   val parse: Kleisli[Option, String, Int] =
     Kleisli(s => if s.matches("-?[0-9]+") then s.toInt.some else None)
@@ -16,10 +16,8 @@ object KleisliExample extends App {
   val reciprocal: Kleisli[Option, Int, Double] =
     Kleisli(i => if i != 0 then Some(1.0 / i) else None)
 
-  val parseAndReciprocal: Kleisli[Option, String, Double] = {
+  val parseAndReciprocal: Kleisli[Option, String, Double] =
 //    parse.andThen(reciprocal)
     reciprocal.compose(parse)
-  }
 
   println(parseAndReciprocal.run("3"))
-}

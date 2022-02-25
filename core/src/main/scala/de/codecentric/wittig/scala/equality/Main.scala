@@ -5,7 +5,7 @@ case class OneE(i: Int) derives CanEqual
 case class Two(i: Int)
 case class TwoE(i: Int) derives CanEqual
 
-object Main extends App {
+object Main extends App:
 
   val one  = One(1)
   val oneE = OneE(1)
@@ -24,4 +24,3 @@ object Main extends App {
 //    println(one == one)
 //    println(one == two)
 //    println(oneE == twoE)
-}

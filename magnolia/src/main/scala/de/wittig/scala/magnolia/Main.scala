@@ -7,7 +7,7 @@ sealed trait Person
 case class Employee(name: String, alter: Int) extends Person
 case class Employer(name: String, alter: Int) extends Person
 
-object Hallo extends App {
+object Hallo extends App:
 
   sealed trait A derives Print
   case class B(eins: Int, zwei: Int, drei: Int) extends A
@@ -21,4 +21,3 @@ object Hallo extends App {
 
   val t = Tree.Branch(Tree.Branch(Tree.Leaf(1), Tree.Leaf(2)), Tree.Leaf(3)).print
   println(t)
-}

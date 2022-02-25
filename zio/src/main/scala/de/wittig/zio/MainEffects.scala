@@ -6,7 +6,7 @@ import zio.Duration.*
 
 import scala.concurrent.Future
 import scala.util.Try
-object MainEffects extends App {
+object MainEffects extends App:
   val ZERO                    = 0
   def run(args: List[String]) =
     fib(100).fork
@@ -35,4 +35,3 @@ object MainEffects extends App {
       if n <= 1 then UIO.succeed(n)
       else fib(n - 1).zipWith(fib(n - 2))(_ + _)
     }.flatten
-}

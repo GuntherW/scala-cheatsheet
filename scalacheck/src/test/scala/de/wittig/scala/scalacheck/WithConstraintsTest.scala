@@ -4,7 +4,7 @@ import org.scalacheck.Prop.*
 import org.scalacheck.*
 import scala.language.adhocExtensions
 
-object WithConstraintsTest extends Properties("Int") {
+object WithConstraintsTest extends Properties("Int"):
 
   /** Würde ohne Constraint fehlschlagen bei Int.MinValue
     */
@@ -12,4 +12,3 @@ object WithConstraintsTest extends Properties("Int") {
     i > Int.MinValue ==> // Constraint
       Math.abs(i) >= 0
   }
-}

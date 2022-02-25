@@ -4,7 +4,7 @@ import scala.reflect.{ClassTag, classTag}
 
 case class Teil[T](inhalt: T)
 
-object ClassTagExample extends App {
+object ClassTagExample extends App:
 
   def usingClassTag[T: ClassTag](l: Teil[T]): Unit =
     println(s"mit ClassTag: ${l.inhalt} ${classTag[T].runtimeClass}")
@@ -12,4 +12,3 @@ object ClassTagExample extends App {
   usingClassTag(Teil("Teil"))
   usingClassTag(Teil(2))
   usingClassTag(Teil(BigDecimal(2)))
-}

@@ -8,7 +8,7 @@ import fs2.io.file.{Files, Path}
 import fs2.{text, Stream}
 import fs2.concurrent.{SignallingRef, Topic}
 
-object TimesheetService2 extends IOApp.Simple {
+object TimesheetService2 extends IOApp.Simple:
 
   case class WorklogId(value: Int)
   case class Worklog(id: WorklogId, name: String)
@@ -43,14 +43,12 @@ object TimesheetService2 extends IOApp.Simple {
       result            <- subscriberWorklogs
                              .merge(subscriberIssues)
                              .fold((List.empty[Worklog], Map.empty[WorklogId, IssueDetails])) { case ((ws, m), either) =>
-                               val (ws_, m_) = either match {
+                               val (ws_, m_) = either match
                                  case Left(wl)          => (wl :: ws, m)
                                  case Right(detailsMap) => (ws, m ++ detailsMap)
-                               }
                                (ws_, m_)
                              }.concurrently(publisher)
     yield result
 
   def run: IO[Unit] = program.debug(_.toString).compile.drain
 
-}

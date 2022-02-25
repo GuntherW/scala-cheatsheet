@@ -3,21 +3,18 @@ package de.wittig.zio.zlayer
 import zio.{Ref, Runtime, ULayer, ZIO, ZLayer}
 
 /** https://www.youtube.com/watch?v=u5IrfkAo6nk&list=WL&index=38&t=64s */
-object ZIOLayers extends App {
+object ZIOLayers extends App:
 
-  def show(message: String): ZIO[Show, Nothing, Unit] = {
+  def show(message: String): ZIO[Show, Nothing, Unit] =
     Show.display(message)
 //    ZIO.accessM[Has[Show]](_.get.display(message))
 //    ZIO.service[Show].flatMap(_.display(message))
-  }
 
-  trait Show {
+  trait Show:
     def display(message: String): ZIO[Any, Nothing, Unit]
-  }
 
-  object Show {
+  object Show:
     def display(message: String): ZIO[Show, Nothing, Unit] = ZIO.environmentWithZIO[Show](_.get.display(message))
-  }
 
   // Implementation 1
   val layer1: ZLayer[Any, Nothing, Show] = ZLayer.succeed(new Show {
@@ -25,10 +22,9 @@ object ZIOLayers extends App {
   })
 
   // Implementation 2
-  case class ShowTest(lines: Ref[List[String]]) extends Show {
+  case class ShowTest(lines: Ref[List[String]]) extends Show:
     override def display(message: String): ZIO[Any, Nothing, Unit] =
       lines.update(_ :+ message)
-  }
   def layer2(ref: Ref[List[String]]): ULayer[Show] = ZLayer.succeed(ShowTest(ref))
 
   // Using Layers
@@ -45,4 +41,3 @@ object ZIOLayers extends App {
 
   runtime.unsafeRun(showUsingLayer1)
   runtime.unsafeRun(showUsingLayer2)
-}

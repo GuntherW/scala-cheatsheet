@@ -5,7 +5,7 @@ import org.scalatest.funsuite.AnyFunSuite
 import scala.util.Properties
 import scala.language.adhocExtensions
 
-class FunScalaTest extends AnyFunSuite {
+class FunScalaTest extends AnyFunSuite:
 
   case class Person(name: String, color: String)
 
@@ -19,4 +19,3 @@ class FunScalaTest extends AnyFunSuite {
     val wronglPerson = Person("Hans", "black")
     assert(realPerson == wronglPerson)
   }
-}

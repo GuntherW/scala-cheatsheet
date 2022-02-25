@@ -3,7 +3,7 @@ package de.codecentric.wittig.scala.circe
 import io.circe.parser.*
 import io.circe.{Json, ParsingFailure}
 
-object Parsing extends App {
+object Parsing extends App:
   val rawJson: String =
     """
       {
@@ -22,4 +22,3 @@ object Parsing extends App {
   // use with getOrElse
   val json: Json = parse(rawJson).getOrElse(Json.Null)
   println(json)
-}

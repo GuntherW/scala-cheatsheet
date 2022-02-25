@@ -3,7 +3,7 @@ package de.codecentric.wittig.scala.xml
 import scala.xml.*
 import scala.xml.transform.{RewriteRule, RuleTransformer}
 
-object ScalaXml extends App {
+object ScalaXml extends App:
 
   val books  =
     <books>
@@ -30,16 +30,14 @@ object ScalaXml extends App {
   // Rewrite XML
   val abbreviateDayRule: RewriteRule = new RewriteRule {
     override def transform(n: Node): Seq[Node] =
-      n match {
+      n match
         case elem: Elem if elem.label == "book" =>
           elem.copy(child = elem.child collect { case Text(data) =>
             Text(data.take(3))
           })
         case n                                  => n
-      }
   }
 
   val transform   = new RuleTransformer(abbreviateDayRule)
   val transformed = transform(books)
   println(transformed)
-}

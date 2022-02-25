@@ -2,7 +2,7 @@ package de.codecentric.wittig.scala.monocle
 import monocle.syntax.all.*
 import scala.util.chaining.*
 
-object Main extends App {
+object Main extends App:
 
   println("Hallo Welt")
 
@@ -12,7 +12,6 @@ object Main extends App {
     .replace("Bob")
     .tap(println)
 
-}
 case class User(name: String, age: Int, address: Address)
 
 case class Address(streetNumber: Int, streetName: String)

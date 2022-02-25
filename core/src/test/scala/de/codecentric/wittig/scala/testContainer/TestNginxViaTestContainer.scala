@@ -15,7 +15,7 @@ import scala.language.adhocExtensions
   * @see
   *   https://dkovalenko.net/testcontainer-aerospike/
   */
-class TestNginxViaTestContainer extends AnyFunSuite with ForAllTestContainer {
+class TestNginxViaTestContainer extends AnyFunSuite with ForAllTestContainer:
 
   override val container: GenericContainer = GenericContainer(
     "nginx:latest",
@@ -30,4 +30,3 @@ class TestNginxViaTestContainer extends AnyFunSuite with ForAllTestContainer {
       .mkString
     assert(nginxResponse.contains("If you see this page, the nginx web server is successfully installed"))
   }
-}

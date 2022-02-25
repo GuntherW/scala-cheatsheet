@@ -3,7 +3,7 @@ package de.wittig
 import munit.ScalaCheckSuite
 import org.scalacheck.Prop.*
 
-class CheckTest extends ScalaCheckSuite {
+class CheckTest extends ScalaCheckSuite:
 
   property("addition is commutative") {
     forAll { (n1: Int, n2: Int) =>
@@ -16,4 +16,3 @@ class CheckTest extends ScalaCheckSuite {
       n + 0 == n
     }
   }
-}

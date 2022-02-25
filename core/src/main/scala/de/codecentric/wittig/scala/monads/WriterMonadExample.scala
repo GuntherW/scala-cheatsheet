@@ -4,7 +4,7 @@ import cats.data.Writer
 import cats.implicits.{catsSyntaxApplicativeId, catsSyntaxWriterId}
 import cats.catsInstancesForId
 
-object WriterMonadExample extends App {
+object WriterMonadExample extends App:
   type Logged[A] = Writer[Vector[String], A]
 
   val direct1: Logged[Int]  = 123.pure[Logged]
@@ -29,4 +29,3 @@ object WriterMonadExample extends App {
     res => res * 1000
   ))
 
-}

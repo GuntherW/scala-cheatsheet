@@ -22,16 +22,15 @@ import scala.util.Random
 
 /** https://www.youtube.com/watch?v=MYTFPTtOoLs&t=156s https://blog.rockthejvm.com/kafka-streams/
   */
-object KafkaStreams extends App {
+object KafkaStreams extends App:
 
-  implicit def serde[A >: Null: Decoder: Encoder]: Serde[A] = {
+  implicit def serde[A >: Null: Decoder: Encoder]: Serde[A] =
     val serializer   = (a: A) => a.asJson.noSpaces.getBytes()
     val deserializer = (bytes: Array[Byte]) => {
       val string = new String(bytes)
       decode[A](string).toOption
     }
     Serdes.fromFn[A](serializer, deserializer)
-  }
 
   // topology
   val builder = new StreamsBuilder()
@@ -80,9 +79,8 @@ object KafkaStreams extends App {
 
   val application = new KafkaStreams(topology, props)
   application.start
-}
 
-object Domain {
+object Domain:
   type UserId  = String
   type Profile = String
   type Product = String
@@ -91,13 +89,11 @@ object Domain {
   case class Order(orderId: OrderId, user: UserId, products: List[Product], amount: Double)
   case class Discount(profile: Profile, amount: Double) // in percentage points
   case class Payment(orderId: OrderId, status: String)
-}
 
-object Topics {
+object Topics:
   final val OrdersByUserTopic           = "orders-by-user"
   final val DiscountProfilesByUserTopic = "discount-profiles-by-user"
   final val DiscountsTopic              = "discounts"
   final val OrdersTopic                 = "orders"
   final val PaymentsTopic               = "payments"
   final val PaidOrdersTopic             = "paid-orders"
-}

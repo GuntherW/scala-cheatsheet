@@ -3,7 +3,7 @@ package de.codecentric.wittig.scala.universal_constructions
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-object Main extends App {
+object Main extends App:
 
   val l = List(1, 3, 3)
 
@@ -24,12 +24,10 @@ object Main extends App {
     fanOut(f compose (_._1), g compose (_._2))
 
   // For Sum Types
-  def either[C, A, B](f: A => C, g: B => C): Either[A, B] => C = {
+  def either[C, A, B](f: A => C, g: B => C): Either[A, B] => C =
     case Left(a)  => f(a)
     case Right(b) => g(b)
-  }
 
   val f = Future(1)
 
   //def choice[A, A1, B, B1](f: A => A1, g: B => B1): Either[A,B] =>
-}

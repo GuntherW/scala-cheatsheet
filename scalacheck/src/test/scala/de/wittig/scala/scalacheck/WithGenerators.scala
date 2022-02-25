@@ -5,7 +5,7 @@ import org.scalacheck.Prop.forAll
 import org.scalacheck.{Gen, Properties}
 import scala.language.adhocExtensions
 
-object WithGenerators extends Properties("String") {
+object WithGenerators extends Properties("String"):
 
   private val gen1: Gen[String] = Gen.alphaNumStr.map(_.toLowerCase())
   private val gen2: Gen[String] = Gen.alphaStr
@@ -22,4 +22,3 @@ object WithGenerators extends Properties("String") {
   property("oneOf") = forAll(genOneOf) { (a: String) =>
     a == "hallo" || a == "hello"
   }
-}

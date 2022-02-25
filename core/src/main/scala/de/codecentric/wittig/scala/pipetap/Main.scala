@@ -2,7 +2,7 @@ package de.codecentric.wittig.scala.pipetap
 
 import scala.util.chaining.*
 
-object Main extends App {
+object Main extends App:
 
   def plus1(i: Int)  = i + 1
   def double(i: Int) = i * 2
@@ -15,4 +15,3 @@ object Main extends App {
   // tap ist eher wie das Unix "tee".
   // Kann einen Seiteneffekt auslösen und gibt das ursprüngliche Objekt zurück.
   val x2: Int = 1.pipe(plus1).pipe(double).tap(println) // Seiteneffekt und gibt Int zurück
-}

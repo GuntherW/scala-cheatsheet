@@ -9,7 +9,7 @@ import scala.language.adhocExtensions
 /** @author
   *   gunther
   */
-object CaseClass extends Properties("Person") {
+object CaseClass extends Properties("Person"):
   // Diese impliciter Arbitrary[Person] kann auch durch shapeless-scalacheck automatisch erzeugt werden. Jedoch nur mit Standardwerten für die einfachen Typen (String und Int)
   implicit val arbPerson: Arbitrary[Person] = Arbitrary {
 
@@ -24,4 +24,3 @@ object CaseClass extends Properties("Person") {
   property("birthday makes people older") = forAll { (person: Person) =>
     person.birthday.age > person.age
   }
-}

@@ -8,7 +8,7 @@ import fs2.io.file.{Files, Path}
 import fs2.{text, Stream}
 import fs2.concurrent.{SignallingRef, Topic}
 
-object TimesheetService extends IOApp.Simple {
+object TimesheetService extends IOApp.Simple:
 
   private val wlBatchSize  = 10
   private val wlBatchCount = 10
@@ -41,16 +41,14 @@ object TimesheetService extends IOApp.Simple {
     yield result
 
   def run: IO[Unit] = program.debug(_.toString).compile.drain
-}
 
 // Simulating WS-Calls
-object WebService {
+object WebService:
   def getWorklogs(index: Int, wlBatchSize: Int): IO[List[Worklog]] =
     IO(List.tabulate(wlBatchSize)(i => Worklog(WorklogId(index * 10 + i), s"Name: ${index * 10 + i}")))
 
   def getIssueDetails(worklog: Worklog): IO[Map[WorklogId, IssueDetails]] =
     IO(Map(worklog.id -> IssueDetails(worklog.name.toUpperCase))).delayBy(11.millis)
-}
 
 // Domain Model
 case class WorklogId(value: Int)

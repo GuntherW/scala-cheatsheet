@@ -5,7 +5,7 @@ import java.nio.charset.StandardCharsets
 
 import zio.{App, Task, UIO}
 
-object MainBracket extends App {
+object MainBracket extends App:
 
   // run my bracket
   def run(args: List[String]) =
@@ -14,11 +14,10 @@ object MainBracket extends App {
   def closeStream(is: FileInputStream) = UIO(is.close())
 
   // helper method to work around in Java 8
-  def readAll(fis: FileInputStream, len: Long): Array[Byte] = {
+  def readAll(fis: FileInputStream, len: Long): Array[Byte] =
     val content: Array[Byte] = Array.ofDim(len.toInt)
     fis.read(content)
     content
-  }
 
   def convertBytes(is: FileInputStream, len: Long) =
     Task.attempt(println(new String(readAll(is, len), StandardCharsets.UTF_8))) // Java 8
@@ -30,4 +29,3 @@ object MainBracket extends App {
     len     = file.length
     string <- Task(new FileInputStream(file)).acquireReleaseWith(closeStream)(convertBytes(_, len))
   yield string
-}

@@ -9,10 +9,10 @@ import scala.util.{Failure, Success}
 /** @author
   *   gunther
   */
-object TestFuture extends App {
+object TestFuture extends App:
   val randomNumber = 42
 
-  def test1: Future[Int] = {
+  def test1: Future[Int] =
     val f = Future(randomNumber)
     f.andThen {
       case _ =>
@@ -23,7 +23,6 @@ object TestFuture extends App {
       case Success(v) => println("andthen 2 success" + v)
     }
     f
-  }
 
   private val f1 = Future(randomNumber)
   private val f2 = Future(new Exception("Boom"))
@@ -36,4 +35,3 @@ object TestFuture extends App {
   println(test1.await == randomNumber)
   println(test2.await)
 
-}

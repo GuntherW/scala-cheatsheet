@@ -5,7 +5,7 @@ import zio.Console.*
 import zio.stream.ZStream
 import zio.Duration.*
 
-object HelloWorld extends App {
+object HelloWorld extends App:
   def run(args: List[String]): URIO[Console, ExitCode] = programm.exitCode
 
   private val programm =
@@ -13,9 +13,8 @@ object HelloWorld extends App {
       elements <- ZStream("Hello", "World").runCollect
       _        <- printLine(elements.toString)
     yield ()
-}
 
-object InfiniteStream extends App {
+object InfiniteStream extends App:
   def run(args: List[String]): ZIO[ZEnv, Nothing, ExitCode] =
     ZStream
       .iterate(0)(_ + 1)
@@ -25,17 +24,14 @@ object InfiniteStream extends App {
         printLine(chunk.toString)
       }
       .exitCode
-}
 
-object Effect extends App {
-  def run(args: List[String]): ZIO[ZEnv, Nothing, ExitCode] = {
+object Effect extends App:
+  def run(args: List[String]): ZIO[ZEnv, Nothing, ExitCode] =
     val pr = ZStream.fromZIO(printLine("Hello World")).drain
     val em = ZStream.iterate(0)(_ + 1).tap(i => printLine((i * 2).toString)).take(20)
     (pr ++ em).runCollect.exitCode
-  }
-}
 
-object ControllFlow extends App {
+object ControllFlow extends App:
   def run(args: List[String]): ZIO[ZEnv, Nothing, ExitCode] =
     ZStream
       .repeatZIO(readLine)
@@ -43,9 +39,8 @@ object ControllFlow extends App {
       .tap(line => printLine(line) *> printLine(line))
       .runCollect
       .exitCode
-}
 
-object Transforming extends App {
+object Transforming extends App:
   case class StockQoute(symbol: String, openPrice: Double, closePrice: Double)
 
   private val streamStocks       = ZStream(StockQoute("DDOG", 37.123, 34.123), StockQoute("NET", 35.123, 37.123))
@@ -59,4 +54,3 @@ object Transforming extends App {
 
   def run(args: List[String]): ZIO[ZEnv, Nothing, ExitCode] =
     streamOpenAndClose.runCollect.exitCode
-}

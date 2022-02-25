@@ -3,7 +3,7 @@ package de.codecentric.wittig.scala.xml
 import com.thoughtworks.xstream.*
 import com.thoughtworks.xstream.io.xml.DomDriver
 
-object XStream extends App {
+object XStream extends App:
   val xstream = new XStream(new DomDriver)
 
   val b           = Baum("Eiche", 20, 2)
@@ -12,6 +12,5 @@ object XStream extends App {
 
   val b2 = xstream.fromXML(xml)
   println(b2)
-}
 
 case class Baum(name: String, hoehe: Int, wurzeltiefe: Int)

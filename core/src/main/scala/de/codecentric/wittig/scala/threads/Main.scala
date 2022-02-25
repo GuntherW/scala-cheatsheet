@@ -1,10 +1,10 @@
 package de.codecentric.wittig.scala.threads
 
-object Main extends App {
+object Main extends App:
 
 //  first()
   new Thread(task(1)).start()
-  def first(): Unit = {
+  def first(): Unit =
     println("a")
 
     /** * It calls the thread API of the underlying OS * Because the JVM uses a one to one mapping between Java and kernel threads, it asks the OS to give up the thread’s “rights” to the CPU for the
@@ -14,7 +14,6 @@ object Main extends App {
       */
     Thread.sleep(10000)
     println("b")
-  }
 
   def task(id: Int): Runnable = () => {
     println(s"${Thread.currentThread().getName()} start-$id")
@@ -22,4 +21,3 @@ object Main extends App {
     println(s"${Thread.currentThread().getName()} end-$id")
   }
 
-}

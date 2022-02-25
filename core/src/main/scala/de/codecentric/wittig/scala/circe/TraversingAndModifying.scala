@@ -2,7 +2,7 @@ package de.codecentric.wittig.scala.circe
 import io.circe.*
 import io.circe.parser.*
 
-object TraversingAndModifying extends App {
+object TraversingAndModifying extends App:
   val json: String = """
   {
     "id": "c730433b-082c-4984-9d66-855c243266f0",
@@ -34,4 +34,3 @@ object TraversingAndModifying extends App {
   // Transforming data:
   val reversedNameCursor: ACursor = cursor.downField("name").withFocus(_.mapString(_.reverse))
   val reversedName: Option[Json]  = reversedNameCursor.top // The result contains the original document with the "name" field reversed.
-}

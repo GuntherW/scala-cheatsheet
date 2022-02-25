@@ -5,7 +5,7 @@ import org.scalacheck.Prop.forAll
 import org.scalacheck.{Arbitrary, Gen, Properties}
 import scala.language.adhocExtensions
 
-object WithArbitraries extends Properties("String") {
+object WithArbitraries extends Properties("String"):
   private val gen: Gen[String]                = Gen.alphaUpperStr
   implicit private val arb: Arbitrary[String] = Arbitrary(gen)
 
@@ -13,4 +13,3 @@ object WithArbitraries extends Properties("String") {
     printn(a, b)
     (a + b).startsWith(a)
   }
-}

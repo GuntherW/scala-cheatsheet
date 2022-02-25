@@ -1,6 +1,6 @@
 package de.codecentric.wittig.scala.playground
 
-object StringUtil {
+object StringUtil:
   def camelcase(s: String): String =
     (s.split("_").toList match
       case head :: tail => head :: tail.map(_.capitalize)
@@ -12,4 +12,3 @@ object StringUtil {
       case (s, c) if Character.isUpperCase(c) => s.append("_").append(Character.toLowerCase(c))
       case (s, c)                             => s.append(c)
     }.toString
-}

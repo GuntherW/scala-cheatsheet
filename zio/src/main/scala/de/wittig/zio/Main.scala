@@ -3,7 +3,7 @@ package de.wittig.zio
 import zio.Console.*
 import zio.App
 
-object Main extends App {
+object Main extends App:
 
   def run(args: List[String]) =
     myAppLogic.exitCode
@@ -14,4 +14,3 @@ object Main extends App {
       n <- readLine
       _ <- printLine(s"Hello, $n, good to meet you!")
     yield ()
-}
