@@ -1,6 +1,5 @@
 package de.codecentric.wittig.scala.types
 
-import de.codecentric.wittig.scala.Printer
 import de.codecentric.wittig.scala.Printer.printlnYellow
 
 object UpperBound extends App:

@@ -1,0 +1,10 @@
+GET localhost:8090/
+
+###
+GET localhost:8090/n
+
+###
+GET localhost:8090/m
+
+###
+GET localhost:8090/greet/Gunther

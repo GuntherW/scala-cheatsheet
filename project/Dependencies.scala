@@ -19,7 +19,7 @@ object Version {
   final val xstream                 = "1.4.19"
   final val xml                     = "2.0.1"
   final val zio                     = "1.0.13"
-  final val zioHttp                 = "2.0.0-RC3"
+  final val zioHttp                 = "2.0.0-RC4"
   final val zioPrelude              = "1.0.0-RC10"
 
   // ScalaJS

@@ -184,6 +184,7 @@ lazy val commonSettings = Seq(
   scalacOptions ++= Seq(
     "-feature",
     "-language:higherKinds",
+//    "-language:strictEquality",
     "-deprecation",
     "-source:future", // für better-monadic-for, das es für Scala3 nicht mehr gibt
   ),
