@@ -9,7 +9,7 @@ object Version {
   final val gatling                 = "3.7.5"
   final val kafka                   = "2.8.1"
   final val logback                 = "1.2.10"
-  final val log4j                   = "2.17.1"
+  final val log4j                   = "2.17.2"
   final val magnolia                = "1.1.0"
   final val monocle                 = "3.1.0"
   final val scala                   = "3.1.1"
