@@ -6,7 +6,7 @@ object Version {
   final val circeVersion            = "0.14.1"
   final val doobie                  = "1.0.0-RC2"
   final val fs2                     = "3.2.5"
-  final val gatling                 = "3.7.5"
+  final val gatling                 = "3.7.6"
   final val kafka                   = "2.8.1"
   final val logback                 = "1.2.10"
   final val log4j                   = "2.17.2"
