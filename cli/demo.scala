@@ -3,4 +3,6 @@
 import pprint.*
 
 @main
-def main = pprintln("Hallo Welt!")
+def main =
+  pprintln("Hallo schönes print!")
+  println("Hallo normales print!")
