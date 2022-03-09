@@ -25,5 +25,7 @@ trait Tier extends Lebewesen:
 /** Testaufruf
   */
 object Main extends App:
-  val goldi = new Wesen("Goldi") with Tier
+  private val goldi  = new Wesen("Goldi") with Tier
+  private val koebes = new Wesen("Köbes") with Mensch
   println(goldi.faehigkeiten)
+  println(koebes.faehigkeiten)

@@ -13,7 +13,7 @@ object Print extends AutoDerivation[Print]:
       val label = param.label
       val wert  = param.typeclass.print(param.deref(value))
       val index = param.index
-      s"$label[$index]=$wert"
+      s"$label[${Console.RED_B}$index${Console.RESET}]=$wert"
     }.mkString(s"${ctx.typeInfo.short}(", ",", ")")
 
   override def split[T](ctx: SealedTrait[Print, T]): Print[T] =
@@ -22,5 +22,6 @@ object Print extends AutoDerivation[Print]:
         sub.typeclass.print(sub.cast(value))
       }
 
-  given Print[Int]    = i => s"|$i|"
-  given Print[String] = i => s"-$i-"
+  given Print[Int]    = i => s"${Console.RED}$i${Console.RESET}"
+  given Print[String] = i => s"${Console.BLUE}$i${Console.RESET}"
+  given Print[Double] = i => s"${Console.YELLOW}$i${Console.RESET}"

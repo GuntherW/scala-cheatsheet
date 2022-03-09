@@ -10,6 +10,7 @@ import scala.util.{Failure, Success}
   *   gunther
   */
 object TestFuture extends App:
+
   val randomNumber = 42
 
   def test1: Future[Int] =
@@ -32,6 +33,5 @@ object TestFuture extends App:
 
   val test2 = Future.sequence(List(f1, f2))
 
-  println(test1.await == randomNumber)
+//  println(test1.await == randomNumber)
   println(test2.await)
-

@@ -6,6 +6,7 @@ import cats.implicits.*
 import cats.implicits.catsSyntaxValidatedIdBinCompat0
 
 case class User(name: String, password: String)
+
 object ValidationWithNonEmptyChain extends App:
 
   type ValidationResult[A] = ValidatedNec[String, A]
@@ -18,7 +19,8 @@ object ValidationWithNonEmptyChain extends App:
     if s == s.toLowerCase then s.validNec
     else "not lowercase".invalidNec
 
-  private def lowerUserName(userName: String) = validateUserName(userName).andThen(isLowerCase)
+  private def lowerUserName(userName: String) =
+    validateUserName(userName).andThen(isLowerCase)
 
   private def validatePassword(password: String): ValidationResult[String] =
     if password.matches("(?=^.{10,}$)((?=.*\\d)|(?=.*\\W+))(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$") then password.validNec
@@ -27,12 +29,12 @@ object ValidationWithNonEmptyChain extends App:
   val validUser = (
     lowerUserName("username"),
     validatePassword("passW0rd123")
-  ).mapN(User)
+  ).mapN(User.apply)
 
   val invalidUser = (
     validateUserName("%%%"),
     validatePassword("pass")
-  ).mapN(User)
+  ).mapN(User.apply)
 
   println(validUser)
   println(invalidUser)
