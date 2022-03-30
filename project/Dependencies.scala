@@ -5,12 +5,12 @@ object Version {
   final val catsConsole             = "0.8.1"
   final val circeVersion            = "0.14.1"
   final val doobie                  = "1.0.0-RC2"
-  final val fs2                     = "3.2.5"
+  final val fs2                     = "3.2.6"
   final val gatling                 = "3.7.6"
   final val kafka                   = "2.8.1"
   final val logback                 = "1.2.11"
   final val log4j                   = "2.17.2"
-  final val magnolia                = "1.1.0"
+  final val magnolia                = "1.1.1"
   final val monocle                 = "3.1.0"
   final val scala                   = "3.1.1"
   final val scalaParallelCollection = "1.0.4"
@@ -31,10 +31,10 @@ object Version {
   final val mockito       = "1.10.19"
   final val munit         = "0.7.29"
   final val scalaTest     = "3.2.11"
-  final val selenium      = "4.1.2"
+  final val selenium      = "4.1.3"
   final val seleniumPlus  = "3.2.10.0"
   final val scalaCheck    = "1.15.4"
-  final val testContainer = "0.40.2"
+  final val testContainer = "0.40.4"
 }
 
 object Library {

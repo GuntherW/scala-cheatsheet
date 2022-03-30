@@ -1,6 +1,7 @@
 package de.codecentric.wittig.scala.scala213
 
 object Main extends App:
+
   literalTypes()
   underScoresInNumerics()
   patternMatchingStrings()
@@ -31,6 +32,6 @@ object Main extends App:
     l.view.filter(_ < 3)
 
     val m = Map(1 -> "eins", 2 -> "zwei")
-    //m.mapValues(_.capitalize)            // "mapValues" und "filterKeys" deprecated
+    // m.mapValues(_.capitalize)            // "mapValues" und "filterKeys" deprecated
     m.view.mapValues(_.capitalize).toMap // use .view.mapValues(A=>B).toMap instead
     println(m.view.filterKeys(_ < 2).mapValues(_.capitalize).toMap)
