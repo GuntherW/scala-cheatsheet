@@ -4,6 +4,7 @@ scalaVersion := Version.scala
 
 lazy val `scala-cheatsheet` = (project in file("."))
   .aggregate(
+    akka,
     core,
     doobie,
     gatling,
