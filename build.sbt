@@ -156,6 +156,15 @@ lazy val kafka = project
     )
   )
 
+lazy val akka = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.akka,
+      Library.logback
+    )
+  )
+
 lazy val zioHttp = project
   .settings(
     commonSettings,

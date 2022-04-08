@@ -1,11 +1,12 @@
 import sbt._
 
 object Version {
+  final val akka                    = "2.6.19"
   final val catsVersion             = "2.7.0"
   final val catsConsole             = "0.8.1"
   final val circeVersion            = "0.14.1"
   final val doobie                  = "1.0.0-RC2"
-  final val fs2                     = "3.2.6"
+  final val fs2                     = "3.2.7"
   final val gatling                 = "3.7.6"
   final val kafka                   = "2.8.1"
   final val logback                 = "1.2.11"
@@ -18,7 +19,7 @@ object Version {
   final val scodec                  = "2.1.0"
   final val sttp                    = "3.5.1"
   final val xstream                 = "1.4.19"
-  final val xml                     = "2.0.1"
+  final val xml                     = "2.1.0"
   final val zio                     = "1.0.13"
   final val zioHttp                 = "2.0.0-RC4"
   final val zioPrelude              = "1.0.0-RC10"
@@ -33,11 +34,12 @@ object Version {
   final val scalaTest     = "3.2.11"
   final val selenium      = "4.1.3"
   final val seleniumPlus  = "3.2.10.0"
-  final val scalaCheck    = "1.15.4"
-  final val testContainer = "0.40.4"
+  final val scalaCheck    = "1.16.0"
+  final val testContainer = "0.40.5"
 }
 
 object Library {
+  final val akka                    = "com.typesafe.akka"             %% "akka-actor-typed"                 % Version.akka
   final val catsCore                = "org.typelevel"                 %% "cats-core"                        % Version.catsVersion
   final val catsFree                = "org.typelevel"                 %% "cats-free"                        % Version.catsVersion
   final val circeCore               = "io.circe"                      %% "circe-core"                       % Version.circeVersion

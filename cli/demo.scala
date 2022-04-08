@@ -4,5 +4,5 @@ import pprint.*
 
 @main
 def main =
-  pprintln("Hallo schönes print!")
+  pprintln("Hallo schönes pprint!")
   println("Hallo normales print!")
