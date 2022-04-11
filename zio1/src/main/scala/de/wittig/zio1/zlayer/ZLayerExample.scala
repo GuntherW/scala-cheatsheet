@@ -1,7 +1,7 @@
-package de.wittig.zio.zlayer
-import de.wittig.zio.zlayer.ZLayerExample.UserDb.UserDbEnv
-import de.wittig.zio.zlayer.ZLayerExample.UserEmailer.UserEmailerEnv
-import de.wittig.zio.zlayer.ZLayerExample.UserSubscription.UserSubscriptionEnv
+package de.wittig.zio1.zlayer
+import de.wittig.zio1.zlayer.ZLayerExample.UserDb.UserDbEnv
+import de.wittig.zio1.zlayer.ZLayerExample.UserEmailer.UserEmailerEnv
+import de.wittig.zio1.zlayer.ZLayerExample.UserSubscription.UserSubscriptionEnv
 import zio.*
 
 /** Example from Rock the JVM

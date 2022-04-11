@@ -1,4 +1,4 @@
-package de.wittig.zio.zlayer
+package de.wittig.zio1.zlayer
 
 import zio.{Ref, Runtime, ULayer, ZIO, ZLayer}
 

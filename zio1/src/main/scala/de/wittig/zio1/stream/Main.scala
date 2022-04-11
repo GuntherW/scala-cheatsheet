@@ -1,4 +1,4 @@
-package de.wittig.zio.stream
+package de.wittig.zio1.stream
 
 import zio.*
 import zio.Console.*

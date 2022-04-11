@@ -1,4 +1,4 @@
-package de.wittig.zio
+package de.wittig.zio1
 
 import zio.Console.*
 import zio.App

@@ -20,7 +20,9 @@ object Version {
   final val sttp                    = "3.5.1"
   final val xstream                 = "1.4.19"
   final val xml                     = "2.1.0"
-  final val zio                     = "1.0.13"
+  final val zio1                    = "1.0.13"
+  final val zio2                    = "2.0.0-RC5"
+  final val zioJson                 = "0.3.0-RC7"
   final val zioHttp                 = "2.0.0-RC6"
   final val zioPrelude              = "1.0.0-RC10"
 
@@ -69,9 +71,12 @@ object Library {
   final val sttpsSlf4j              = "com.softwaremill.sttp.client3" %% "slf4j-backend"                    % Version.sttp
   final val xstream                 = "com.thoughtworks.xstream"       % "xstream"                          % Version.xstream
   final val xml                     = "org.scala-lang.modules"        %% "scala-xml"                        % Version.xml
-  final val zio                     = "dev.zio"                       %% "zio"                              % Version.zio
-  final val zioStreams              = "dev.zio"                       %% "zio-streams"                      % Version.zio
-  final val zioPrelude              = "dev.zio"                       %% "zio-prelude"                      % Version.zioPrelude
+  final val zio1                    = "dev.zio"                       %% "zio"                              % Version.zio1
+  final val zioStreams1             = "dev.zio"                       %% "zio-streams"                      % Version.zio1
+  final val zio2                    = "dev.zio"                       %% "zio"                              % Version.zio2
+  final val zioStreams2             = "dev.zio"                       %% "zio-streams"                      % Version.zio2
+  final val zio2Json                = "dev.zio"                       %% "zio-json"                         % Version.zioJson
+  final val zioPrelude1             = "dev.zio"                       %% "zio-prelude"                      % Version.zioPrelude
   final val zioHttp                 = "io.d11"                        %% "zhttp"                            % Version.zioHttp
   // test
 
@@ -105,7 +110,7 @@ object Dependencies {
     scodec,
     xstream,
     xml,
-    zio
+    zio1
   )
 
   val testDependencies = Seq(

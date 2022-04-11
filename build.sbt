@@ -17,7 +17,8 @@ lazy val `scala-cheatsheet` = (project in file("."))
     subprojectTestInParallel2,
     subprojectTestInParallelForkGroup,
     sttp,
-    zio,
+    zio1,
+    zio2,
     zioHttp
   )
 
@@ -113,13 +114,23 @@ lazy val sttp = project
     )
   )
 
-lazy val zio = project
+lazy val zio1 = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(
-      Library.zio,
-      Library.zioStreams,
-      Library.zioPrelude
+      Library.zio1,
+      Library.zioStreams1,
+      Library.zioPrelude1
+    )
+  )
+
+lazy val zio2 = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.zio2,
+      Library.zioStreams2,
+      Library.zio2Json,
     )
   )
 
@@ -170,8 +181,8 @@ lazy val zioHttp = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(
-      Library.zio,
-      Library.zioStreams,
+      Library.zio1,
+      Library.zioStreams1,
       Library.zioHttp,
       Library.zioHttpTest % Test
     )

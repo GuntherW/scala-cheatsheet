@@ -1,4 +1,4 @@
-package de.wittig.zio.prelude
+package de.wittig.zio1.prelude
 
 import scala.io.StdIn.readLine
 

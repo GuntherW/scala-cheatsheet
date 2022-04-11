@@ -1,4 +1,4 @@
-package de.wittig.zio
+package de.wittig.zio1
 import zio.*
 import zio.Clock
 import zio.Clock.*
