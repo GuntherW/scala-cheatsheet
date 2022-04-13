@@ -3,13 +3,12 @@ package de.wittig.zio1
 import java.io.{File, FileInputStream}
 import java.nio.charset.StandardCharsets
 
-import zio.{App, Task, UIO}
+import zio.{ZIOAppDefault, Task, UIO}
 
-object MainBracket extends App:
+object MainBracket extends ZIOAppDefault:
 
   // run my bracket
-  def run(args: List[String]) =
-    mybracket.exitCode
+  def run = mybracket
 
   def closeStream(is: FileInputStream) = UIO(is.close())
 

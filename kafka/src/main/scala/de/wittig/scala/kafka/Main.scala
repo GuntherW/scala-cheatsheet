@@ -64,7 +64,7 @@ object KafkaStreams extends App:
   val joinWindow        = JoinWindows.of(Duration.of(5, ChronoUnit.MINUTES))
   val joinOrderPayments = (order: Order, payments: Payment) => if payments.status == "PAID" then Option(order) else Option.empty[Order]
   val ordersPaid        = ordersStream.join(paymentsStream)(joinOrderPayments, joinWindow)
-    .flatMapValues(maybeOrder => maybeOrder.toIterable)
+    .flatMapValues(maybeOrder => maybeOrder.toList)
 
   // sink
   ordersPaid.to(PaidOrdersTopic)
@@ -78,7 +78,7 @@ object KafkaStreams extends App:
   props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.stringSerde.getClass)
 
   val application = new KafkaStreams(topology, props)
-  application.start
+  application.start()
 
 object Domain:
   type UserId  = String

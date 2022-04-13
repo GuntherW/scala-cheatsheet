@@ -7,12 +7,12 @@ import zio.Duration.*
 import scala.concurrent.Future
 import scala.util.Try
 
-object MainEffects extends App:
-  val ZERO                    = 0
-  def run(args: List[String]) = fib(100)
+object MainEffects extends ZIOAppDefault:
+  val ZERO = 0
+
+  def run = fib(100)
     .fork
     .map(i => println(s"Hallo $i"))
-    .exitCode
 
   val zoption: IO[Option[Nothing], Int] = ZIO.fromOption(Some(2))
   val zoption2: ZIO[Any, String, Int]   = zoption.mapError(_ => "It wasn't there!")

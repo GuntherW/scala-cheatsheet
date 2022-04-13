@@ -1,12 +1,11 @@
 package de.wittig.zio1
 
 import zio.Console.*
-import zio.App
+import zio.ZIOAppDefault
 
-object Main extends App:
+object Main extends ZIOAppDefault:
 
-  def run(args: List[String]) =
-    myAppLogic.exitCode
+  def run = myAppLogic
 
   private val myAppLogic =
     for
