@@ -17,12 +17,12 @@ object Version {
   final val scalaParallelCollection = "1.0.4"
   final val scalaz                  = "7.2.29"
   final val scodec                  = "2.1.0"
-  final val sttp                    = "3.5.2"
+  final val sttp                    = "3.6.1"
   final val xstream                 = "1.4.19"
   final val xml                     = "2.1.0"
   final val zio1                    = "1.0.14"
-  final val zio2                    = "2.0.0-RC5"
-  final val zioJson                 = "0.3.0-RC7"
+  final val zio2                    = "2.0.0-RC6"
+  final val zioJson                 = "0.3.0-RC8"
   final val zioHttp                 = "2.0.0-RC7"
   final val zioPrelude              = "1.0.0-RC10"
 
@@ -34,10 +34,10 @@ object Version {
   final val mockito       = "1.10.19"
   final val munit         = "0.7.29"
   final val scalaTest     = "3.2.12"
-  final val selenium      = "4.1.3"
+  final val selenium      = "4.1.4"
   final val seleniumPlus  = "3.2.10.0"
   final val scalaCheck    = "1.16.0"
-  final val testContainer = "0.40.6"
+  final val testContainer = "0.40.7"
 }
 
 object Library {
@@ -67,7 +67,7 @@ object Library {
   final val sttpCore                = "com.softwaremill.sttp.client3" %% "core"                             % Version.sttp
   final val sttpCirce               = "com.softwaremill.sttp.client3" %% "circe"                            % Version.sttp
   final val sttpBEAsync             = "com.softwaremill.sttp.client3" %% "async-http-client-backend-future" % Version.sttp
-  final val sttpBEZio               = "com.softwaremill.sttp.client3" %% "httpclient-backend-zio"           % Version.sttp
+  final val sttpBEZio               = "com.softwaremill.sttp.client3" %% "zio"                              % Version.sttp
   final val sttpsSlf4j              = "com.softwaremill.sttp.client3" %% "slf4j-backend"                    % Version.sttp
   final val xstream                 = "com.thoughtworks.xstream"       % "xstream"                          % Version.xstream
   final val xml                     = "org.scala-lang.modules"        %% "scala-xml"                        % Version.xml

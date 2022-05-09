@@ -4,7 +4,8 @@ import zio.*
 import zio.stream.*
 import zio.Console.*
 
-object Main extends ZIOAppDefault {
+object Main extends ZIOAppDefault:
 
-  def run = printLine("lkj") *> printLine("lkjlkj")
-}
+  private val program = printLine("Guten") *> printLine("Tag")
+
+  def run = program

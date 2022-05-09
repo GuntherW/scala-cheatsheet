@@ -140,6 +140,12 @@ lazy val magnolia = project
     libraryDependencies += Library.magnolia
   )
 
+lazy val mongo = project
+  .settings(
+    commonSettings,
+    libraryDependencies += "org.mongodb" % "mongodb-driver-sync" % "4.6.0"
+  )
+
 lazy val scalajs = project
   .enablePlugins(ScalaJSPlugin)
   .settings(
