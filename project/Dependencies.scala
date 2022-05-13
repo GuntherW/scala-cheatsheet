@@ -11,11 +11,10 @@ object Version {
   final val kafka                   = "2.8.1"
   final val logback                 = "1.2.11"
   final val log4j                   = "2.17.2"
-  final val magnolia                = "1.1.1"
+  final val magnolia                = "1.1.2"
   final val monocle                 = "3.1.0"
   final val scala                   = "3.1.2"
   final val scalaParallelCollection = "1.0.4"
-  final val scalaz                  = "7.2.29"
   final val scodec                  = "2.1.0"
   final val sttp                    = "3.6.1"
   final val xstream                 = "1.4.19"
@@ -27,7 +26,7 @@ object Version {
   final val zioPrelude              = "1.0.0-RC10"
 
   // ScalaJS
-  final val scalaJsDom = "2.1.0"
+  final val scalaJsDom = "2.2.0"
   final val uTest      = "0.7.11"
 
   // Test
