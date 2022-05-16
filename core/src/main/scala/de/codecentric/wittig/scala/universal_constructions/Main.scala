@@ -30,4 +30,4 @@ object Main extends App:
 
   val f = Future(1)
 
-  //def choice[A, A1, B, B1](f: A => A1, g: B => B1): Either[A,B] =>
+  // def choice[A, A1, B, B1](f: A => A1, g: B => B1): Either[A,B] =>

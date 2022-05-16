@@ -15,11 +15,12 @@ object WriterMonadExample extends App:
   println(direct2.written)
   println(direct3.run)
 
-  val example = for
-    a <- 10.pure[Logged]
-    _ <- Vector("a", "b").tell
-    b <- 32.writer(Vector("c"))
-  yield a + b
+  val example =
+    for
+      a <- 10.pure[Logged]
+      _ <- Vector("a", "b").tell
+      b <- 32.writer(Vector("c"))
+    yield a + b
   println(example.run)
 
   println(example.mapWritten(_.map(_.toUpperCase)))
@@ -28,4 +29,3 @@ object WriterMonadExample extends App:
     log => log.map(_.toUpperCase),
     res => res * 1000
   ))
-

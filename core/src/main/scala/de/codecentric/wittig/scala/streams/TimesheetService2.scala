@@ -51,4 +51,3 @@ object TimesheetService2 extends IOApp.Simple:
     yield result
 
   def run: IO[Unit] = program.debug(_.toString).compile.drain
-

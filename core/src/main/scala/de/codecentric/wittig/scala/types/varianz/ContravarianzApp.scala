@@ -17,4 +17,3 @@ object ContravarianzApp extends App:
   val arzt: Tierarzt[Dog]         = holeTierarzt
 
   arzt.heilen(dog)
-

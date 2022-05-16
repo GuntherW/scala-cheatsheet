@@ -1,4 +1,4 @@
-package de.codecentric.wittig.scala.gzip
+package de.codecentric.wittig.scala.compress
 
 import java.io.*
 import java.util.Base64
@@ -7,7 +7,7 @@ import java.util.zip.{GZIPInputStream, GZIPOutputStream}
 import scala.util.chaining.scalaUtilChainingOps
 import scala.util.Try
 
-import de.codecentric.wittig.scala.gzip.Gzip.*
+import de.codecentric.wittig.scala.compress.Gzip.*
 
 object Main extends App:
 
