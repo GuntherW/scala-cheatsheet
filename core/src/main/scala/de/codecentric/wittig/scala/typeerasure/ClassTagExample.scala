@@ -1,6 +1,6 @@
 package de.codecentric.wittig.scala.typeerasure
 
-import scala.reflect.{ClassTag, classTag}
+import scala.reflect.{classTag, ClassTag}
 
 case class Teil[T](inhalt: T)
 

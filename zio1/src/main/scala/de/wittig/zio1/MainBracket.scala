@@ -3,7 +3,7 @@ package de.wittig.zio1
 import java.io.{File, FileInputStream}
 import java.nio.charset.StandardCharsets
 
-import zio.{ZIOAppDefault, Task, UIO}
+import zio.{Task, UIO, ZIOAppDefault}
 
 object MainBracket extends ZIOAppDefault:
 

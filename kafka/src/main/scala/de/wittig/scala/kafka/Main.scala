@@ -45,12 +45,12 @@ object KafkaStreams extends App:
   val discountProfilesGTable: GlobalKTable[Profile, Discount] = builder.globalTable[Profile, Discount](DiscountsTopic)
 
   // KStream transformations
-  val expensiveOrders = userOrdersStream.filter { (userId, order) => order.amount > 1000 }
+  val expensiveOrders = userOrdersStream.filter((userId, order) => order.amount > 1000)
   val listOfProducts  = userOrdersStream.mapValues(_.products)
   val productStream   = userOrdersStream.flatMapValues(_.products)
 
   // join
-  val ordersWithUserProfiles = userOrdersStream.join(userProfilesTable) { (order, profile) => (order, profile) }
+  val ordersWithUserProfiles = userOrdersStream.join(userProfilesTable)((order, profile) => (order, profile))
   val discountedOrdersStream = ordersWithUserProfiles.join(discountProfilesGTable)(
     { case (userId, (order, profile)) => profile },
     { case ((order, profile), discount) => order.copy(amount = order.amount - discount.amount) }
