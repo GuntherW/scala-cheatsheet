@@ -1,23 +1,24 @@
 import zhttp.http.*
-import zhttp.service.Server
-import zio.stream.ZStream
 import zio.*
+import zio.stream.ZStream
+import zhttp.service.*
 
 object HelloWorld extends zio.ZIOAppDefault:
 
   private val collect = Http.collect[Request] {
-    case Method.GET -> !!                  => Response.text(s"Hallo Welt")
-    case Method.GET -> !! / "greet" / name => Response.text(s"Hallo $name!")
+    case Method.GET -> !!                  => Response.text(s"Hallo /")
+    case Method.GET -> !! / "greet" / name => Response.text(s"Hallo /$name")
   }
 
   private val collect2 = Http.collect[Request] {
-    case Method.GET -> !! / "n" => Response.text(s"Hello n!")
+    case Method.GET -> !! / "n" => Response.text(s"Hallo /n")
   }
 
-  private val collectM = Http.collectZIO[Request] {
-    case Method.GET -> !! / "m" => ZIO.succeed(Response.text("zio m"))
+  private val collectZIO = Http.collectZIO[Request] {
+    case Method.GET -> !! / "zio"        => ZIO.succeed(Response.text("Hallo /zio"))
+    case req @ Method.POST -> !! / "zio" => req.bodyAsString.map(Response.text)
   }
 
-  private val app = collect2 ++ collect ++ collectM
+  private val app = collect2 ++ collect ++ collectZIO
 
   override def run: ZIO[Any, Throwable, Nothing] = Server.start(8090, app)

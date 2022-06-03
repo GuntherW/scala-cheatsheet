@@ -1,6 +1,6 @@
 package de.wittig.scala.magnolia
 
-import de.wittig.scala.magnolia.Print.{given, *}
+import de.wittig.scala.magnolia.Print.{*, given}
 import magnolia1.*
 
 sealed trait Person derives Print

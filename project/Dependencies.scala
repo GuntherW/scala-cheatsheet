@@ -4,25 +4,25 @@ object Version {
   final val akka                    = "2.6.19"
   final val catsVersion             = "2.7.0"
   final val catsConsole             = "0.8.1"
-  final val circeVersion            = "0.14.1"
+  final val circeVersion            = "0.14.2"
   final val doobie                  = "1.0.0-RC2"
   final val fs2                     = "3.2.7"
   final val gatling                 = "3.7.6"
   final val kafka                   = "2.8.1"
   final val logback                 = "1.2.11"
   final val log4j                   = "2.17.2"
-  final val magnolia                = "1.1.2"
+  final val magnolia                = "1.1.3"
   final val monocle                 = "3.1.0"
   final val scala                   = "3.1.2"
   final val scalaParallelCollection = "1.0.4"
   final val scodec                  = "2.1.0"
-  final val sttp                    = "3.6.1"
+  final val sttp                    = "3.6.2"
   final val xstream                 = "1.4.19"
   final val xml                     = "2.1.0"
   final val zio1                    = "1.0.14"
   final val zio2                    = "2.0.0-RC6"
   final val zioJson                 = "0.3.0-RC8"
-  final val zioHttp                 = "2.0.0-RC7"
+  final val zioHttp                 = "2.0.0-RC9"
   final val zioPrelude              = "1.0.0-RC10"
 
   // ScalaJS
@@ -33,10 +33,10 @@ object Version {
   final val mockito       = "1.10.19"
   final val munit         = "0.7.29"
   final val scalaTest     = "3.2.12"
-  final val selenium      = "4.1.4"
+  final val selenium      = "4.2.1"
   final val seleniumPlus  = "3.2.10.0"
   final val scalaCheck    = "1.16.0"
-  final val testContainer = "0.40.7"
+  final val testContainer = "0.40.8"
 }
 
 object Library {
@@ -77,8 +77,8 @@ object Library {
   final val zio2Json                = "dev.zio"                       %% "zio-json"                         % Version.zioJson
   final val zioPrelude1             = "dev.zio"                       %% "zio-prelude"                      % Version.zioPrelude
   final val zioHttp                 = "io.d11"                        %% "zhttp"                            % Version.zioHttp
-  // test
 
+  // test
   final val gatlingCharts   = "io.gatling.highcharts"   % "gatling-charts-highcharts"      % Version.gatling
   final val gatling         = "io.gatling"              % "gatling-test-framework"         % Version.gatling
   final val mockito         = "org.mockito"             % "mockito-all"                    % Version.mockito
