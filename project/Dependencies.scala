@@ -19,7 +19,7 @@ object Version {
   final val sttp                    = "3.6.2"
   final val xstream                 = "1.4.19"
   final val xml                     = "2.1.0"
-  final val zio1                    = "1.0.14"
+  final val zio1                    = "1.0.15"
   final val zio2                    = "2.0.0-RC6"
   final val zioJson                 = "0.3.0-RC8"
   final val zioHttp                 = "2.0.0-RC9"
