@@ -6,13 +6,14 @@ object Version {
   final val catsConsole             = "0.8.1"
   final val circeVersion            = "0.14.2"
   final val doobie                  = "1.0.0-RC2"
-  final val fs2                     = "3.2.7"
+  final val fs2                     = "3.2.8"
   final val gatling                 = "3.7.6"
   final val kafka                   = "2.8.1"
   final val logback                 = "1.2.11"
   final val log4j                   = "2.17.2"
   final val magnolia                = "1.1.3"
   final val monocle                 = "3.1.0"
+  final val refined                 = "0.9.29"
   final val scala                   = "3.1.2"
   final val scalaParallelCollection = "1.0.4"
   final val scodec                  = "2.1.0"
@@ -33,7 +34,7 @@ object Version {
   final val mockito       = "1.10.19"
   final val munit         = "0.7.29"
   final val scalaTest     = "3.2.12"
-  final val selenium      = "4.2.1"
+  final val selenium      = "4.2.2"
   final val seleniumPlus  = "3.2.10.0"
   final val scalaCheck    = "1.16.0"
   final val testContainer = "0.40.8"
@@ -61,6 +62,7 @@ object Library {
   final val log4jSlf4jImpl          = "org.apache.logging.log4j"       % "log4j-slf4j-impl"                 % Version.log4j
   final val magnolia                = "com.softwaremill.magnolia1_3"  %% "magnolia"                         % Version.magnolia
   final val monocle                 = "dev.optics"                    %% "monocle-core"                     % Version.monocle
+  final val refined                 = "eu.timepit"                    %% "refined"                          % Version.refined
   final val scalaParallelCollection = "org.scala-lang.modules"        %% "scala-parallel-collections"       % Version.scalaParallelCollection
   final val scodec                  = "org.scodec"                    %% "scodec-core"                      % Version.scodec
   final val sttpCore                = "com.softwaremill.sttp.client3" %% "core"                             % Version.sttp
@@ -105,6 +107,7 @@ object Dependencies {
     fs2ReactiveStreams,
     logback,
     monocle,
+    refined,
     scalaParallelCollection,
     scodec,
     xstream,
