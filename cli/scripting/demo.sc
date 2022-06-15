@@ -10,4 +10,4 @@ import constants.Messages
 pprintln("Hallo schönes pprint!")
 println("Hallo normales print!")
 println(s"Aus anderer Datei: $guten")
-println(s"Aus Unterverzeichnis: ${Messages.messagec1}]")
+println(s"Aus Unterverzeichnis: ${Messages.msg}")

@@ -1,1 +1,1 @@
-val messagec1 = "Message C1"
+val msg = "Guten Tag!"

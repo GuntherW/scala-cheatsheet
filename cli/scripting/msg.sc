@@ -1,1 +1,1 @@
-val guten = "Guten Tag"
+val guten = "Guten Tag?"
