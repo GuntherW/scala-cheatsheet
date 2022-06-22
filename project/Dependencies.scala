@@ -2,7 +2,7 @@ import sbt._
 
 object Version {
   final val akka                    = "2.6.19"
-  final val catsVersion             = "2.7.0"
+  final val catsVersion             = "2.8.0"
   final val catsConsole             = "0.8.1"
   final val circeVersion            = "0.14.2"
   final val doobie                  = "1.0.0-RC2"
@@ -14,7 +14,7 @@ object Version {
   final val magnolia                = "1.1.3"
   final val monocle                 = "3.1.0"
   final val refined                 = "0.9.29"
-  final val scala                   = "3.1.2"
+  final val scala                   = "3.1.3"
   final val scalaParallelCollection = "1.0.4"
   final val scodec                  = "2.1.0"
   final val sttp                    = "3.6.2"
