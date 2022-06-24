@@ -1,4 +1,4 @@
-package de.wittig.funwithzio
+package de.wittig.zio
 
 import zio.*
 import zio.stream.*

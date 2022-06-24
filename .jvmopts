@@ -1,3 +1,2 @@
 -Dwebdriver.gecko.driver=/home/gunther/projekte/scala/scala-cheatsheet/core/src/it/resources/geckodriver
--Xmx10g
--Xms10g
+-XX:+UseParallelGC

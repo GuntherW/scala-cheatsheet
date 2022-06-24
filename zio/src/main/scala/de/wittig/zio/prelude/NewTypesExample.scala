@@ -1,9 +1,9 @@
-package de.wittig.zio1.prelude
+package de.wittig.zio.prelude
 
 import scala.io.StdIn.readLine
 
 import zio.prelude.*
-import Assertion.*
+import zio.prelude.Assertion.*
 import Person.*
 
 object NewTypesExample extends App {
@@ -29,7 +29,8 @@ object NewTypesExample extends App {
 
   // validating in parallel
   val person2b = Validation.validateWith(name2, email2, address2)(Person.apply)
-  println(person2a)
+  println(person2a.toOption.getOrElse("Error"))
+  println(person2b.toOption.getOrElse("Error"))
 }
 
 case class Person(name: Name, email: Email, address: Address)

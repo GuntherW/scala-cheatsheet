@@ -1,3 +1,4 @@
+import org.scalajs.linker.interface.ModuleSplitStyle
 import sbt._
 
 scalaVersion := Version.scala
@@ -17,8 +18,7 @@ lazy val `scala-cheatsheet` = (project in file("."))
     subprojectTestInParallel2,
     subprojectTestInParallelForkGroup,
     sttp,
-    zio1,
-    zio2,
+    zio,
     zioHttp
   )
 
@@ -114,23 +114,14 @@ lazy val sttp = project
     )
   )
 
-lazy val zio1 = project
+lazy val zio = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(
-      Library.zio1,
-      Library.zioStreams1,
-      Library.zioPrelude1
-    )
-  )
-
-lazy val zio2 = project
-  .settings(
-    commonSettings,
-    libraryDependencies ++= Seq(
-      Library.zio2,
-      Library.zioStreams2,
-      Library.zio2Json,
+      Library.zio,
+      Library.zioStreams,
+      Library.zioJson,
+      Library.zioPrelude
     )
   )
 
@@ -187,8 +178,8 @@ lazy val zioHttp = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(
-      Library.zio1,
-      Library.zioStreams1,
+      Library.zio,
+      Library.zioStreams,
       Library.zioHttp,
       Library.zioHttpTest % Test
     )

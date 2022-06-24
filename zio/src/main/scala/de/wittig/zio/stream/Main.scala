@@ -1,4 +1,4 @@
-package de.wittig.zio1.stream
+package de.wittig.zio.stream
 
 import zio.*
 import zio.Console.*
@@ -50,5 +50,4 @@ object Transforming extends ZIOAppDefault:
       )
   }
 
-  def run =
-    streamOpenAndClose.runCollect
+  def run = streamOpenAndClose.runCollect
