@@ -20,10 +20,10 @@ object Version {
   final val sttp                    = "3.6.2"
   final val xstream                 = "1.4.19"
   final val xml                     = "2.1.0"
-  final val zio                     = "2.0.0-RC6"
+  final val zio                     = "2.0.0"
   final val zioJson                 = "0.3.0-RC8"
   final val zioHttp                 = "2.0.0-RC9"
-  final val zioPrelude              = "1.0.0-RC14"
+  final val zioPrelude              = "1.0.0-RC15"
 
   // ScalaJS
   final val scalaJsDom = "2.2.0"
