@@ -26,13 +26,9 @@ object KafkaStreams extends App:
 
   implicit def serde[A >: Null: Decoder: Encoder]: Serde[A] =
     val serializer   = (a: A) => a.asJson.noSpaces.getBytes()
-    val deserializer = (bytes: Array[Byte]) => {
-      val string = new String(bytes)
-      decode[A](string).toOption
-    }
+    val deserializer = (bs: Array[Byte]) => decode[A](new String(bs)).toOption
     Serdes.fromFn[A](serializer, deserializer)
 
-  // topology
   val builder = new StreamsBuilder()
 
   // KStream
@@ -52,7 +48,7 @@ object KafkaStreams extends App:
   // join
   val ordersWithUserProfiles = userOrdersStream.join(userProfilesTable)((order, profile) => (order, profile))
   val discountedOrdersStream = ordersWithUserProfiles.join(discountProfilesGTable)(
-    { case (userId, (order, profile)) => profile },
+    { case (userId, (order, profile)) => profile }, // key of the join, picked of the "left" stream
     { case ((order, profile), discount) => order.copy(amount = order.amount - discount.amount) }
   )
 
@@ -97,3 +93,16 @@ object Topics:
   final val OrdersTopic                 = "orders"
   final val PaymentsTopic               = "payments"
   final val PaidOrdersTopic             = "paid-orders"
+
+/** login first with `docker exec -it kafka bash` */
+@main def createTopics(): Unit =
+  List(
+    OrdersByUserTopic,
+    DiscountProfilesByUserTopic,
+    DiscountsTopic,
+    OrdersTopic,
+    PaymentsTopic,
+    PaidOrdersTopic
+  ).foreach { topic =>
+    println(s"""kafka-topics --bootstrap-server localhost:9092 --topic $topic --create --config "cleanup.policy=compact"""")
+  }
