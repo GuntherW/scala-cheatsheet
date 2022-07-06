@@ -27,11 +27,11 @@ object Version {
 
   // ScalaJS
   final val scalaJsDom = "2.2.0"
-  final val uTest      = "0.7.11"
+  final val uTest      = "0.8.0"
 
   // Test
   final val mockito       = "1.10.19"
-  final val munit         = "0.7.29"
+  final val munit         = "1.0.0-M6"
   final val scalaTest     = "3.2.12"
   final val selenium      = "4.3.0"
   final val seleniumPlus  = "3.2.10.0"

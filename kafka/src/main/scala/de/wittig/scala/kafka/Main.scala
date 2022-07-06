@@ -31,14 +31,15 @@ object KafkaStreams extends App:
 
   val builder = new StreamsBuilder()
 
-  // KStream
-  val userOrdersStream: KStream[UserId, Order] = builder.stream[UserId, Order](OrdersByUserTopic)
-
   // KTable - (distributed)
-  val userProfilesTable: KTable[UserId, Profile] = builder.table[UserId, Profile](DiscountProfilesByUserTopic)
+  val userProfilesTable: KTable[UserId, Profile] = builder.table[UserId, Profile](DiscountProfilesByUserTable.value)
 
   // GlobalKTable - (copied to all the nodes)
-  val discountProfilesGTable: GlobalKTable[Profile, Discount] = builder.globalTable[Profile, Discount](DiscountsTopic)
+  val discountProfilesGTable: GlobalKTable[Profile, Discount] = builder.globalTable[Profile, Discount](DiscountsTable.value)
+
+  // KStream
+  val userOrdersStream: KStream[UserId, Order] = builder.stream[UserId, Order](OrdersByUserTopic.value)
+  val paymentsStream                           = builder.stream[OrderId, Payment](PaymentsTopic.value)
 
   // KStream transformations
   val expensiveOrders = userOrdersStream.filter((userId, order) => order.amount > 1000)
@@ -47,23 +48,25 @@ object KafkaStreams extends App:
 
   // join
   val ordersWithUserProfiles = userOrdersStream.join(userProfilesTable)((order, profile) => (order, profile))
+  ordersWithUserProfiles.to(DebugOrdersWithUserProfilesTopic.value)
   val discountedOrdersStream = ordersWithUserProfiles.join(discountProfilesGTable)(
     { case (userId, (order, profile)) => profile }, // key of the join, picked of the "left" stream
     { case ((order, profile), discount) => order.copy(amount = order.amount - discount.amount) }
   )
+  discountedOrdersStream.to(DebugOrdersWithUserProfilesDiscountedTopic.value)
 
   // pick another identifier
-  val ordersStream   = discountedOrdersStream.selectKey((userId, order) => order.orderId)
-  val paymentsStream = builder.stream[OrderId, Payment](PaymentsTopic)
+  val ordersStream = discountedOrdersStream.selectKey((userId, order) => order.orderId)
+  ordersStream.to(DebugOrdersTopic.value)
 
   // Join Window
   val joinWindow        = JoinWindows.of(Duration.of(5, ChronoUnit.MINUTES))
   val joinOrderPayments = (order: Order, payments: Payment) => if payments.status == "PAID" then Option(order) else Option.empty[Order]
-  val ordersPaid        = ordersStream.join(paymentsStream)(joinOrderPayments, joinWindow)
+  val ordersPaid        = ordersStream.join[Payment, Option[Order]](paymentsStream)(joinOrderPayments, joinWindow)
     .flatMapValues(maybeOrder => maybeOrder.toList)
 
   // sink
-  ordersPaid.to(PaidOrdersTopic)
+  ordersPaid.to(PaidOrdersTopic.value)
 
   val topology = builder.build()
   println(topology.describe) // prints topology to console
@@ -75,6 +78,8 @@ object KafkaStreams extends App:
 
   val application = new KafkaStreams(topology, props)
   application.start()
+//  Thread.sleep(120000)
+//  application.close()
 
 object Domain:
   type UserId  = String
@@ -86,23 +91,49 @@ object Domain:
   case class Discount(profile: Profile, amount: Double) // in percentage points
   case class Payment(orderId: OrderId, status: String)
 
-object Topics:
-  final val OrdersByUserTopic           = "orders-by-user"
-  final val DiscountProfilesByUserTopic = "discount-profiles-by-user"
-  final val DiscountsTopic              = "discounts"
-  final val OrdersTopic                 = "orders"
-  final val PaymentsTopic               = "payments"
-  final val PaidOrdersTopic             = "paid-orders"
+enum Topics(val value: String, val compact: Boolean = false):
+  case DiscountProfilesByUserTable                extends Topics("discount-profiles-by-user", true)
+  case DiscountsTable                             extends Topics("discounts", true)
+  case OrdersByUserTopic                          extends Topics("orders-by-user")
+  case PaymentsTopic                              extends Topics("payments")
+  case PaidOrdersTopic                            extends Topics("paid-orders")
+  case DebugOrdersWithUserProfilesTopic           extends Topics("orders-with-user-profiles")
+  case DebugOrdersWithUserProfilesDiscountedTopic extends Topics("orders-with-user-profiles-discounted")
+  case DebugOrdersTopic                           extends Topics("orders")
 
 /** login first with `docker exec -it kafka bash` */
 @main def createTopics(): Unit =
-  List(
-    OrdersByUserTopic,
-    DiscountProfilesByUserTopic,
-    DiscountsTopic,
-    OrdersTopic,
-    PaymentsTopic,
-    PaidOrdersTopic
-  ).foreach { topic =>
-    println(s"""kafka-topics --bootstrap-server localhost:9092 --topic $topic --create --config "cleanup.policy=compact"""")
+  Topics.values.foreach { topic =>
+    val create  = s"kafka-topics --bootstrap-server localhost:9092 --topic ${topic.value} --create"
+    val compact = if (topic.compact) """ --config "cleanup.policy=compact"""" else ""
+    println(create + compact)
   }
+
+// In separaten Konsolen füllen:
+
+//kafka-console-producer --topic discounts --broker-list localhost:9092 --property parse.key=true --property key.separator=,
+//<Hit Enter>
+//profile1,{"profile":"profile1","amount":0.5}
+//profile2,{"profile":"profile2","amount":0.25}
+//profile3,{"profile":"profile3","amount":0.15}
+
+//kafka-console-producer --topic discount-profiles-by-user --broker-list localhost:9092 --property parse.key=true --property key.separator=,
+//<Hit Enter>
+//Daniel,profile1
+//Riccardo,profile2
+
+//kafka-console-producer --topic orders-by-user --broker-list localhost:9092 --property parse.key=true --property key.separator=,
+//<Hit Enter>
+//Daniel,{"orderId":"order1","user":"Daniel","products":[ "iPhone 13","MacBook Pro 15"],"amount":4000/.0 }
+//Riccardo,{"orderId":"order2","user":"Riccardo","products":["iPhone 11"],"amount":800.0}
+//Riccardo,{"orderId":"order3","user":"Riccardo","products":["iPhone 10"],"amount":800.0}
+
+//kafka-console-producer --topic payments --broker-list localhost:9092 --property parse.key=true --property key.separator=,
+//<Hit Enter>
+//order1,{"orderId":"order1","status":"PAID"}
+//order2,{"orderId":"order2","status":"PENDING"}
+
+//kafka-console-consumer --bootstrap-server localhost:9092 --topic orders-with-user-profiles --from-beginning
+//kafka-console-consumer --bootstrap-server localhost:9092 --topic orders-with-user-profiles-discounted --from-beginning
+//kafka-console-consumer --bootstrap-server localhost:9092 --topic orders --from-beginning
+//kafka-console-consumer --bootstrap-server localhost:9092 --topic paid-orders --from-beginning
