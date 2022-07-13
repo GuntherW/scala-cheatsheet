@@ -19,7 +19,8 @@ lazy val `scala-cheatsheet` = (project in file("."))
     subprojectTestInParallelForkGroup,
     sttp,
     zio,
-    zioHttp
+    zioHttp,
+    zioKafka
   )
 
 lazy val core = project
@@ -162,6 +163,15 @@ lazy val kafka = project
       Library.circeCore,
       Library.circeParser,
       Library.circeGeneric,
+    )
+  )
+
+lazy val zioKafka = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.zioKafka,
+      Library.zioJson
     )
   )
 

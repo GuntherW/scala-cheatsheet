@@ -104,7 +104,7 @@ enum Topics(val value: String, val compact: Boolean = false):
 /** login first with `docker exec -it kafka bash` */
 @main def createTopics(): Unit =
   Topics.values.foreach { topic =>
-    val create  = s"kafka-topics --bootstrap-server localhost:9092 --topic ${topic.value} --create"
+    val create  = s"kafka-topics --bootstrap-server localhost:9092 --topic ${topic.value} --create --partitions 2"
     val compact = if (topic.compact) """ --config "cleanup.policy=compact"""" else ""
     println(create + compact)
   }

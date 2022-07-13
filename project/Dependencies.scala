@@ -6,8 +6,8 @@ object Version {
   final val catsConsole             = "0.8.1"
   final val circeVersion            = "0.14.2"
   final val doobie                  = "1.0.0-RC2"
-  final val fs2                     = "3.2.9"
-  final val gatling                 = "3.8.0"
+  final val fs2                     = "3.2.10"
+  final val gatling                 = "3.8.2"
   final val kafka                   = "3.2.0"
   final val logback                 = "1.2.11"
   final val log4j                   = "2.18.0"
@@ -21,7 +21,8 @@ object Version {
   final val xstream                 = "1.4.19"
   final val xml                     = "2.1.0"
   final val zio                     = "2.0.0"
-  final val zioJson                 = "0.3.0-RC9"
+  final val zioJson                 = "0.3.0-RC10"
+  final val zioKafka                = "2.0.0"
   final val zioHttp                 = "2.0.0-RC9"
   final val zioPrelude              = "1.0.0-RC15"
 
@@ -72,6 +73,7 @@ object Library {
   final val xstream                 = "com.thoughtworks.xstream"       % "xstream"                          % Version.xstream
   final val xml                     = "org.scala-lang.modules"        %% "scala-xml"                        % Version.xml
   final val zio                     = "dev.zio"                       %% "zio"                              % Version.zio
+  final val zioKafka                = "dev.zio"                       %% "zio-kafka"                        % Version.zioKafka
   final val zioStreams              = "dev.zio"                       %% "zio-streams"                      % Version.zio
   final val zioJson                 = "dev.zio"                       %% "zio-json"                         % Version.zioJson
   final val zioPrelude              = "dev.zio"                       %% "zio-prelude"                      % Version.zioPrelude
