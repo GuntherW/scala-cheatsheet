@@ -6,7 +6,7 @@ object Version {
   final val catsConsole             = "0.8.1"
   final val circeVersion            = "0.14.2"
   final val doobie                  = "1.0.0-RC2"
-  final val fs2                     = "3.2.10"
+  final val fs2                     = "3.2.11"
   final val gatling                 = "3.8.2"
   final val kafka                   = "3.2.0"
   final val logback                 = "1.2.11"
