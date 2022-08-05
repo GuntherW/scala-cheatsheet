@@ -3,6 +3,7 @@ package de.wittig.ziokafka
 import scala.concurrent.duration.DurationInt
 
 import de.wittig.ziokafka.ConsumerGroup1Client1._settings
+import de.wittig.ziokafka.MyConstants.{bootstrapServer, topics}
 import zio.Console.printLine
 import zio.{Duration, Schedule, ZIO, ZIOAppDefault, ZLayer}
 import zio.kafka.consumer.ConsumerSettings
@@ -11,14 +12,23 @@ import zio.*
 import zio.Console.*
 import zio.kafka.serde.*
 
+/** // Löschen, falls Topic mit nur einer Partition
+  *
+  * kafka-topics --bootstrap-server localhost:9092 --topic zioKafka --delete
+  *
+  * // Anlegen des Topic mit zwei Partitionen
+  *
+  * kafka-topics --bootstrap-server localhost:9092 --topic zioKafka --create --partitions 2
+  */
 object MyProducer extends ZIOAppDefault:
 
-  private val managedProducer: ZIO[Scope, Throwable, Producer] = Producer.make(ProducerSettings(List("localhost:9092")))
+  private val managedProducer: ZIO[Scope, Throwable, Producer] = Producer.make(ProducerSettings(List(bootstrapServer)))
   private val producer: ZLayer[Scope, Throwable, Producer]     = ZLayer.fromZIO(managedProducer)
-  private def produce(key: String, value: String)              = Producer.produce("orders-by-user", key, value, Serde.string, Serde.string)
+  private val topic                                            = topics.split(",").head
+  private def produce(key: String, value: String)              = Producer.produce(topic, key, value, Serde.string, Serde.string)
 
   private val program = for {
-    key        <- Random.nextIntBetween(100, 1000).map(_.toString)
+    key        <- Random.nextIntBetween(10000, 100000).map(_.toString)
     value      <- Random.nextString(10)
     recordMeta <- produce(key, value).debug(s"[$key:$value]")
   } yield recordMeta

@@ -1,6 +1,7 @@
 package de.wittig.ziokafka
 
 import de.wittig.ziokafka.ConsumerGroup1Client1.consumerIO
+import de.wittig.ziokafka.MyConstants.bootstrapServer
 import zio.*
 import zio.Console.*
 import zio.kafka.consumer.*
@@ -27,9 +28,9 @@ object ConsumerGroup2Client1 extends ZIOAppDefault with KafkaCommon:
 trait KafkaCommon {
   ZIOAppDefault =>
 
-  val _settings: ConsumerSettings             = ConsumerSettings(List("localhost:9092")).withCloseTimeout(30.seconds)
+  val _settings: ConsumerSettings             = ConsumerSettings(List(bootstrapServer)).withCloseTimeout(30.seconds)
   def settings: ConsumerSettings
-  def topics                                  = "orders-by-user"
+  def topics                                  = MyConstants.topics
   private lazy val list                       = topics.split(",")
   private lazy val subscription: Subscription = Subscription.topics(list.head, list.tail*)
   def consumerIO: RIO[Any, Unit]              = Consumer.consumeWith(settings, subscription, Serde.string, Serde.string) {

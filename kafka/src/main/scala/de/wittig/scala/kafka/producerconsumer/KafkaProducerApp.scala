@@ -1,6 +1,7 @@
 package de.wittig.scala.kafka.producerconsumer
 
-import java.util.Properties
+import java.time.{LocalDate, LocalDateTime}
+import java.util.{Properties, UUID}
 
 import scala.util.{Failure, Success, Try}
 
@@ -22,7 +23,7 @@ object KafkaProducerApp extends App:
 
   try
     for (i <- 0 to 15)
-      val r        = new ProducerRecord[String, String](topic, i.toString, s"Test $i")
+      val r        = new ProducerRecord[String, String](topic, i.toString, s"""{ "test": $i, "uuid": "${UUID.randomUUID().toString}" "ts": "${LocalDateTime.now}" """)
       val metadata = producer.send(r)
       println(s"sent (key=${r.key} value=${r.value}) meta(partition=${metadata.get.partition}, offset=${metadata.get.offset})")
   catch

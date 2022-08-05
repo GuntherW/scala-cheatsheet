@@ -1,7 +1,7 @@
 version: '3'
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:6.2.1
+    image: confluentinc/cp-zookeeper:7.2.1
     hostname: zookeeper
     container_name: zookeeper
     ports:
@@ -11,7 +11,7 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
 
   kafka:
-    image: confluentinc/cp-kafka:6.2.1
+    image: confluentinc/cp-kafka:7.2.1
     hostname: kafka
     container_name: kafka
     depends_on:
@@ -32,8 +32,18 @@ services:
       KAFKA_JMX_PORT: 9101
       KAFKA_JMX_HOSTNAME: localhost
 
+  kowl:
+    container_name: kowl
+    image: rsmnarts/kowl:latest
+    depends_on:
+      - kafka
+    ports:
+      - "7777:8080"
+    environment:
+      KAFKA_BROKERS: kafka:29092
+
   postgresForDotty:
-    image: postgres:14.1-alpine
+    image: postgres:14.4-alpine
     container_name: postgresForDotty
     deploy:
       resources:
@@ -56,15 +66,6 @@ services:
       - "./sql:/docker-entrypoint-initdb.d"
 
     #command: ["postgres", "-c", "log_statement=all", "-c", "log_destination=stderr"]
-
-  # Für Postgres
-  adminer:
-    image: adminer
-    container_name: adminer
-    restart: always
-    ports:
-      - 8083:8080
-
 
 volumes:
   data:
