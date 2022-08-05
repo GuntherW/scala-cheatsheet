@@ -3,7 +3,7 @@ import zio.*
 import zio.stream.ZStream
 import zhttp.service.*
 
-object HelloWorld extends zio.ZIOAppDefault:
+object HelloWorld extends ZIOAppDefault:
 
   private val collect = Http.collect[Request] {
     case Method.GET -> !!                  => Response.text(s"Hallo /")

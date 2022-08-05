@@ -7,8 +7,8 @@ object Version {
   final val circeVersion            = "0.14.2"
   final val doobie                  = "1.0.0-RC2"
   final val fs2                     = "3.2.11"
-  final val gatling                 = "3.8.2"
-  final val kafka                   = "3.2.0"
+  final val gatling                 = "3.8.3"
+  final val kafka                   = "3.2.1"
   final val logback                 = "1.2.11"
   final val log4j                   = "2.18.0"
   final val magnolia                = "1.1.4"
@@ -17,7 +17,7 @@ object Version {
   final val scala                   = "3.1.3"
   final val scalaParallelCollection = "1.0.4"
   final val scodec                  = "2.1.0"
-  final val sttp                    = "3.7.1"
+  final val sttp                    = "3.7.2"
   final val xstream                 = "1.4.19"
   final val xml                     = "2.1.0"
   final val zio                     = "2.0.0"
@@ -31,13 +31,17 @@ object Version {
   final val uTest      = "0.8.0"
 
   // Test
-  final val mockito       = "1.10.19"
-  final val munit         = "1.0.0-M6"
-  final val scalaTest     = "3.2.12"
-  final val selenium      = "4.3.0"
-  final val seleniumPlus  = "3.2.10.0"
-  final val scalaCheck    = "1.16.0"
-  final val testContainer = "0.40.9"
+  final val cucumber       = "7.5.0"
+  final val cucumberScala  = "8.6.0"
+  final val junit          = "4.13.2"
+  final val junitInterface = "0.13.3"
+  final val mockito        = "1.10.19"
+  final val munit          = "1.0.0-M6"
+  final val scalaTest      = "3.2.13"
+  final val selenium       = "4.3.0"
+  final val seleniumPlus   = "3.2.10.0"
+  final val scalaCheck     = "1.16.0"
+  final val testContainer  = "0.40.10"
 }
 
 object Library {
@@ -80,6 +84,11 @@ object Library {
   final val zioHttp                 = "io.d11"                        %% "zhttp"                            % Version.zioHttp
 
   // test
+  final val cucumberScala   = "io.cucumber"            %% "cucumber-scala"                 % Version.cucumberScala
+  final val cucumberJunit   = "io.cucumber"             % "cucumber-junit"                 % Version.cucumber
+  final val cucumberPico    = "io.cucumber"             % "cucumber-picocontainer"         % Version.cucumber
+  final val junitInterface  = "com.github.sbt"          % "junit-interface"                % Version.junitInterface
+  final val junit           = "junit"                   % "junit"                          % Version.junit
   final val gatlingCharts   = "io.gatling.highcharts"   % "gatling-charts-highcharts"      % Version.gatling
   final val gatling         = "io.gatling"              % "gatling-test-framework"         % Version.gatling
   final val mockito         = "org.mockito"             % "mockito-all"                    % Version.mockito
@@ -111,7 +120,9 @@ object Dependencies {
     scodec,
     xstream,
     xml,
-    zio
+    zio,
+    "com.fasterxml.jackson.core"    % "jackson-databind"     % "2.13.3",
+    "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.13.3",
   )
 
   val testDependencies = Seq(

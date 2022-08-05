@@ -7,6 +7,7 @@ lazy val `scala-cheatsheet` = (project in file("."))
   .aggregate(
     akka,
     core,
+    cucumber,
     doobie,
     gatling,
     kafka,
@@ -40,6 +41,18 @@ lazy val docs = project // new documentation project
       "VERSION" -> version.value)
   )
   .enablePlugins(MdocPlugin)
+
+lazy val cucumber = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.cucumberScala  % Test,
+      Library.cucumberJunit  % Test,
+      Library.cucumberPico   % Test,
+      Library.junitInterface % Test,
+      Library.junit          % Test
+    )
+  )
 
 lazy val subprojectTestInParallel1 = project
   .settings(
