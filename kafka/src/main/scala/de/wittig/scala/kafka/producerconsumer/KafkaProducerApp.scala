@@ -5,6 +5,7 @@ import java.util.{Properties, UUID}
 
 import scala.util.{Failure, Success, Try}
 
+import de.wittig.scala.kafka.producerconsumer.Constants.*
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 
 /** kafka-topics --bootstrap-server localhost:9092 --topic text_topic --create
@@ -13,13 +14,12 @@ import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 object KafkaProducerApp extends App:
 
   val props: Properties = new Properties()
-  props.put("bootstrap.servers", "localhost:9092")
+  props.put("bootstrap.servers", bootstrapServer)
   props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
   props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
   props.put("acks", "all")
 
   val producer = new KafkaProducer[String, String](props)
-  val topic    = "text_topic"
 
   try
     for (i <- 0 to 15)

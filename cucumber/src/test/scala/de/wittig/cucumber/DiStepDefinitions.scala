@@ -5,8 +5,8 @@ import org.junit.Assert.*
 
 class Di1StepDefinitions extends ScalaDsl with DE {
 
-  var a: Int = _
-  var b: Int = _
+  var a: Int = 0
+  var b: Int = 0
 
   Angenommen("""Ich habe die Werte {} und {}""") { (pa: Int, pb: Int) =>
     a = pa

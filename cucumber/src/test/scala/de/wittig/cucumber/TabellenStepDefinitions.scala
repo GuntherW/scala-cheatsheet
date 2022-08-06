@@ -7,8 +7,8 @@ import org.junit.Assert.*
 
 class TabellenStepDefinitions extends ScalaDsl with DE {
 
-  var quellListe: List[Seq[Option[String]]] = _
-  var istListe: List[Int]                   = _
+  var quellListe: List[Seq[Option[String]]] = Nil
+  var istListe: List[Int]                   = Nil
 
   Angenommen("""Ich habe die Wertetabelle""") { (table: DataTable) =>
     quellListe = table.asScalaLists.toList
