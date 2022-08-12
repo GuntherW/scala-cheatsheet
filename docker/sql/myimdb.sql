@@ -78,3 +78,14 @@ VALUES ('5e5a39bb-a497-4432-93e8-7322f16ac0b2', 5);
 INSERT INTO movies_actors (movie_id, actor_id)
 VALUES ('5e5a39bb-a497-4432-93e8-7322f16ac0b2', 6);
 COMMIT;
+
+
+-- Persons
+CREATE TABLE person (
+                        first_name varchar NOT NULL,
+                        last_name varchar  NOT NULL,
+                        age integer NOT NULL
+);
+INSERT INTO person (first_name, last_name,age) VALUES ('Hans', 'GuckInDieLuft', 100);
+INSERT INTO person (first_name, last_name,age) VALUES ('Peter', 'UndDerWolf', 200);
+INSERT INTO person (first_name, last_name,age) VALUES ('Hans', 'ImGlück', 300);

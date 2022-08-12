@@ -14,6 +14,7 @@ lazy val `scala-cheatsheet` = (project in file("."))
     scalacheck,
     magnolia,
     munit,
+    quill,
     scalajs,
     subprojectTestInParallel1,
     subprojectTestInParallel2,
@@ -51,6 +52,21 @@ lazy val cucumber = project
       Library.cucumberPico   % Test,
       Library.junitInterface % Test,
       Library.junit          % Test
+    )
+  )
+
+lazy val quill = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      "org.postgresql" % "postgresql"            % "42.4.1",
+      "io.getquill"   %% "quill-jdbc"            % "4.3.0",
+      // Or ZIO Modules
+      "io.getquill"   %% "quill-jdbc-zio"        % "4.3.0",
+      // Or Postgres Async
+      "io.getquill"   %% "quill-jasync-postgres" % "4.3.0",
+      // Add for Caliban Integration
+      "io.getquill"   %% "quill-caliban"         % "4.3.0"
     )
   )
 
