@@ -8,11 +8,14 @@ object Version {
   final val doobie                  = "1.0.0-RC2"
   final val fs2                     = "3.2.12"
   final val gatling                 = "3.8.3"
+  final val h2                      = "1.4.199"
   final val kafka                   = "3.2.1"
   final val logback                 = "1.2.11"
   final val log4j                   = "2.18.0"
   final val magnolia                = "1.1.5"
   final val monocle                 = "3.1.0"
+  final val postgres                = "42.4.2"
+  final val quill                   = "4.3.0"
   final val refined                 = "0.10.1"
   final val scala                   = "3.1.3"
   final val scalaParallelCollection = "1.0.4"
@@ -20,8 +23,8 @@ object Version {
   final val sttp                    = "3.7.4"
   final val xstream                 = "1.4.19"
   final val xml                     = "2.1.0"
-  final val zio                     = "2.0.0"
-  final val zioJson                 = "0.3.0-RC10"
+  final val zio                     = "2.0.1"
+  final val zioJson                 = "0.3.0-RC11"
   final val zioKafka                = "2.0.0"
   final val zioHttp                 = "2.0.0-RC9"
   final val zioPrelude              = "1.0.0-RC15"
@@ -57,6 +60,7 @@ object Library {
   final val doobieHirari            = "org.tpolecat"                  %% "doobie-hikari"                    % Version.doobie
   final val fs2IO                   = "co.fs2"                        %% "fs2-io"                           % Version.fs2
   final val fs2ReactiveStreams      = "co.fs2"                        %% "fs2-reactive-streams"             % Version.fs2
+  final val h2                      = "com.h2database"                 % "h2"                               % Version.h2
   final val kafkaClients            = "org.apache.kafka"               % "kafka-clients"                    % Version.kafka
   final val kafkaStreams            = "org.apache.kafka"               % "kafka-streams"                    % Version.kafka
   final val kafkaStreamsScala       = "org.apache.kafka"              %% "kafka-streams-scala"              % Version.kafka cross CrossVersion.for3Use2_13
@@ -66,6 +70,10 @@ object Library {
   final val log4jSlf4jImpl          = "org.apache.logging.log4j"       % "log4j-slf4j-impl"                 % Version.log4j
   final val magnolia                = "com.softwaremill.magnolia1_3"  %% "magnolia"                         % Version.magnolia
   final val monocle                 = "dev.optics"                    %% "monocle-core"                     % Version.monocle
+  final val postgres                = "org.postgresql"                 % "postgresql"                       % Version.postgres
+  final val quillJdbc               = "io.getquill"                   %% "quill-jdbc"                       % Version.quill
+  final val quillJdbcZio            = "io.getquill"                   %% "quill-jdbc-zio"                   % Version.quill
+  final val quillJasyncPostgres     = "io.getquill"                   %% "quill-jasync-postgres"            % Version.quill
   final val refined                 = "eu.timepit"                    %% "refined"                          % Version.refined
   final val scalaParallelCollection = "org.scala-lang.modules"        %% "scala-parallel-collections"       % Version.scalaParallelCollection
   final val scodec                  = "org.scodec"                    %% "scodec-core"                      % Version.scodec
