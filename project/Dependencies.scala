@@ -6,6 +6,7 @@ object Version {
   final val catsConsole             = "0.8.1"
   final val circeVersion            = "0.14.2"
   final val doobie                  = "1.0.0-RC2"
+  final val ducktape                = "0.1.0-RC1"
   final val fs2                     = "3.2.12"
   final val gatling                 = "3.8.3"
   final val h2                      = "2.1.214"
@@ -58,6 +59,7 @@ object Library {
   final val doobieCore              = "org.tpolecat"                  %% "doobie-core"                      % Version.doobie
   final val doobiePostgres          = "org.tpolecat"                  %% "doobie-postgres"                  % Version.doobie
   final val doobieHirari            = "org.tpolecat"                  %% "doobie-hikari"                    % Version.doobie
+  final val ducktape                = "io.github.arainko"             %% "ducktape"                         % Version.ducktape
   final val fs2IO                   = "co.fs2"                        %% "fs2-io"                           % Version.fs2
   final val fs2ReactiveStreams      = "co.fs2"                        %% "fs2-reactive-streams"             % Version.fs2
   final val h2                      = "com.h2database"                 % "h2"                               % Version.h2
@@ -118,6 +120,7 @@ object Dependencies {
     circeCore,
     circeGeneric,
     circeParser,
+    ducktape,
     fs2Core,
     fs2IO,
     fs2ReactiveStreams,
