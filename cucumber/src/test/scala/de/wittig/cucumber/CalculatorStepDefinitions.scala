@@ -3,7 +3,7 @@ package de.wittig.cucumber
 import io.cucumber.scala.{EN, ScalaDsl, Scenario}
 import org.junit.Assert.*
 
-class CalculatorStepDefinitions extends ScalaDsl with EN {
+class CalculatorStepDefinitions extends ScalaDsl with EN:
 
   var added: Int = 0
 
@@ -22,4 +22,3 @@ class CalculatorStepDefinitions extends ScalaDsl with EN {
   Before("@foo") { (scenario: Scenario) =>
     println(s"Runs before scenarios tagged with @foo (${scenario.getId})")
   }
-}

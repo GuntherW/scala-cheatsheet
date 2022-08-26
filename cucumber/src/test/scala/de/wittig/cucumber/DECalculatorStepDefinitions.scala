@@ -3,7 +3,7 @@ package de.wittig.cucumber
 import io.cucumber.scala.{DE, EN, ScalaDsl, Scenario}
 import org.junit.Assert.*
 
-class DECalculatorStepDefinitions extends ScalaDsl with DE {
+class DECalculatorStepDefinitions extends ScalaDsl with DE:
 
   var added: Int = 0
 
@@ -14,4 +14,3 @@ class DECalculatorStepDefinitions extends ScalaDsl with DE {
   Dann("ist das Ergebnis {}") { (c: Int) =>
     assertEquals(c, added)
   }
-}

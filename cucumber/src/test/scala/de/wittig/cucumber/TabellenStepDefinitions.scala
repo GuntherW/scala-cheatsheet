@@ -5,7 +5,7 @@ import io.cucumber.scala.{DE, EN, ScalaDsl, Scenario}
 import io.cucumber.scala.Implicits.ScalaDataTable
 import org.junit.Assert.*
 
-class TabellenStepDefinitions extends ScalaDsl with DE {
+class TabellenStepDefinitions extends ScalaDsl with DE:
 
   var quellListe: List[Seq[Option[String]]] = Nil
   var istListe: List[Int]                   = Nil
@@ -24,4 +24,3 @@ class TabellenStepDefinitions extends ScalaDsl with DE {
     val sollListe = table.asScalaList.toList.flatten.map(_.toInt)
     assertEquals(sollListe, istListe)
   }
-}

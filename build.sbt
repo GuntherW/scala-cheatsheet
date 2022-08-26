@@ -1,4 +1,3 @@
-import org.scalajs.linker.interface.ModuleSplitStyle
 import sbt._
 
 scalaVersion := Version.scala
