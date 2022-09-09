@@ -59,3 +59,12 @@ object Matching extends App:
     case List(1, 2, _*) => "list with 1,2 and something else"
     case _              => "empty listq"
   println(listDescription)
+
+  val p = Person("lkj", 33)
+  println(p)
+  p match
+    case Person(a, b) => println(a + " " + b)
+  println(Person.unapply(p))
+  println(Person.apply("kkk", 44))
+
+case class Person(name: String, alter: Int)

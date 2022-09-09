@@ -1,22 +1,23 @@
 import sbt._
 
 object Version {
-  final val akka                    = "2.6.19"
+  final val akka                    = "2.6.20"
   final val catsVersion             = "2.8.0"
   final val catsConsole             = "0.8.1"
   final val circeVersion            = "0.14.2"
   final val doobie                  = "1.0.0-RC2"
   final val ducktape                = "0.1.0-RC1"
-  final val fs2                     = "3.2.12"
+  final val fs2                     = "3.2.14"
   final val gatling                 = "3.8.3"
   final val h2                      = "2.1.214"
+  final val jackson                 = "2.13.4"
   final val kafka                   = "3.2.1"
   final val logback                 = "1.4.0"
   final val log4j                   = "2.18.0"
   final val magnolia                = "1.1.5"
   final val monocle                 = "3.1.0"
   final val postgres                = "42.5.0"
-  final val quill                   = "4.3.0"
+  final val quill                   = "4.4.0"
   final val refined                 = "0.10.1"
   final val scala                   = "3.2.0"
   final val scalaParallelCollection = "1.0.4"
@@ -35,8 +36,8 @@ object Version {
   final val uTest      = "0.8.0"
 
   // Test
-  final val cucumber       = "7.6.0"
-  final val cucumberScala  = "8.8.0"
+  final val cucumber       = "7.7.0"
+  final val cucumberScala  = "8.9.0"
   final val junit          = "4.13.2"
   final val junitInterface = "0.13.3"
   final val mockito        = "1.10.19"
@@ -63,6 +64,8 @@ object Library {
   final val fs2IO                   = "co.fs2"                        %% "fs2-io"                           % Version.fs2
   final val fs2ReactiveStreams      = "co.fs2"                        %% "fs2-reactive-streams"             % Version.fs2
   final val h2                      = "com.h2database"                 % "h2"                               % Version.h2
+  final val jacksonCore             = "com.fasterxml.jackson.core"     % "jackson-databind"                 % Version.jackson
+  final val jacksonScala            = "com.fasterxml.jackson.module"  %% "jackson-module-scala"             % Version.jackson
   final val kafkaClients            = "org.apache.kafka"               % "kafka-clients"                    % Version.kafka
   final val kafkaStreams            = "org.apache.kafka"               % "kafka-streams"                    % Version.kafka
   final val kafkaStreamsScala       = "org.apache.kafka"              %% "kafka-streams-scala"              % Version.kafka cross CrossVersion.for3Use2_13
@@ -132,8 +135,8 @@ object Dependencies {
     xstream,
     xml,
     zio,
-    "com.fasterxml.jackson.core"    % "jackson-databind"     % "2.13.3",
-    "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.13.3",
+    jacksonCore,
+    jacksonScala,
   )
 
   val testDependencies = Seq(

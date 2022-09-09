@@ -250,7 +250,7 @@ lazy val commonSettings = Seq(
     "-language:higherKinds",
 //    "-language:strictEquality",
     "-deprecation",
-    "-source:future", // für better-monadic-for, das es für Scala3 nicht mehr gibt
+    "-source:future-migration",
   ),
   Test / fork       := true, // subprojects won't run in parallel then
   Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oF"), // Showing full stack trace
