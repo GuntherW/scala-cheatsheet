@@ -4,10 +4,10 @@ object Version {
   final val akka                    = "2.6.20"
   final val catsVersion             = "2.8.0"
   final val catsConsole             = "0.8.1"
-  final val circeVersion            = "0.14.2"
+  final val circeVersion            = "0.14.3"
   final val doobie                  = "1.0.0-RC2"
   final val ducktape                = "0.1.0-RC1"
-  final val fs2                     = "3.2.14"
+  final val fs2                     = "3.3.0"
   final val gatling                 = "3.8.4"
   final val h2                      = "2.1.214"
   final val jackson                 = "2.13.4"
@@ -26,7 +26,7 @@ object Version {
   final val xstream                 = "1.4.19"
   final val xml                     = "2.1.0"
   final val zio                     = "2.0.2"
-  final val zioJson                 = "0.3.0-RC11"
+  final val zioJson                 = "0.3.0"
   final val zioKafka                = "2.0.0"
   final val zioHttp                 = "2.0.0-RC9"
   final val zioPrelude              = "1.0.0-RC15"
@@ -36,8 +36,8 @@ object Version {
   final val uTest      = "0.8.1"
 
   // Test
-  final val cucumber       = "7.7.0"
-  final val cucumberScala  = "8.9.0"
+  final val cucumber       = "7.8.0"
+  final val cucumberScala  = "8.10.0"
   final val junit          = "4.13.2"
   final val junitInterface = "0.13.3"
   final val mockito        = "1.10.19"
@@ -45,7 +45,7 @@ object Version {
   final val scalaTest      = "3.2.13"
   final val selenium       = "4.4.0"
   final val seleniumPlus   = "3.2.10.0"
-  final val scalaCheck     = "1.16.0"
+  final val scalaCheck     = "1.17.0"
   final val testContainer  = "0.40.10"
 }
 

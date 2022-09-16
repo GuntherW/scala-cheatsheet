@@ -6,7 +6,7 @@ import scala.language.adhocExtensions
 class TestSequentially extends AnyFunSuite:
   (0 to 10).foreach(i =>
     test(s"$i") {
-      Thread.sleep(200)
+//      Thread.sleep(200)
       println(s"TestSequentially $i")
     }
   )

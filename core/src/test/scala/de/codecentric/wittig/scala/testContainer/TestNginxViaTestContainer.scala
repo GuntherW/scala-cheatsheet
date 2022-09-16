@@ -9,6 +9,8 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.testcontainers.containers.wait.strategy.Wait
 import scala.language.adhocExtensions
 
+import org.scalatest.tagobjects.Slow
+
 /** @see
   *   https://github.com/testcontainers/testcontainers-scala
   *
@@ -23,7 +25,7 @@ class TestNginxViaTestContainer extends AnyFunSuite with ForAllTestContainer:
     waitStrategy = Wait.forHttp("/")
   )
 
-  test("GenericContainer should start nginx and expose 80 port") {
+  ignore("GenericContainer should start nginx and expose 80 port", Slow) {
     val nginxUrl      = new URL(s"http://${container.containerIpAddress}:${container.mappedPort(80)}/")
     val nginxResponse = Source
       .fromInputStream(nginxUrl.openConnection().getInputStream)

@@ -9,7 +9,7 @@ import scala.language.adhocExtensions
 class TestInParallel extends AnyFunSuite with ParallelTestExecution:
   (0 to 10).foreach(i =>
     test(s"$i") {
-      Thread.sleep(500)
+//      Thread.sleep(500)
       println(s"TestInParallel $i")
     }
   )

@@ -15,9 +15,6 @@ lazy val `scala-cheatsheet` = (project in file("."))
     munit,
     quill,
     scalajs,
-    subprojectTestInParallel1,
-    subprojectTestInParallel2,
-    subprojectTestInParallelForkGroup,
     sttp,
     zio,
     zioHttp,
@@ -64,43 +61,6 @@ lazy val quill = project
       Library.quillJdbcZio,
       Library.quillJasyncPostgres,
     )
-  )
-
-lazy val subprojectTestInParallel1 = project
-  .settings(
-    commonSettings,
-    libraryDependencies ++= Seq(
-      Library.scalatest % Test
-    ),
-    Test / fork := false // subprojects tests will run parallel with other subprojects
-  )
-
-lazy val subprojectTestInParallel2 = project
-  .settings(
-    commonSettings,
-    libraryDependencies ++= Seq(
-      Library.scalatest % Test
-    ),
-    Test / fork := false //  subprojects tests will run parallel with other subprojects
-  )
-
-lazy val subprojectTestInParallelForkGroup = project
-  .settings(
-    commonSettings,
-    libraryDependencies ++= Seq(
-      Library.scalatest % Test
-    ),
-    Test / parallelExecution  := true,
-    Test / testForkedParallel := false, // Hier kann man auch noch innerhalb der Gruppe parallelisieren. Sollte False sein.
-    Test / fork               := false,
-    Test / testGrouping       := (Test / definedTests).value
-      .groupBy(_.name.split('.')(1)(0)) // Gruppierung hier nach erstem Buchstabe der Testklasse
-      .map { case (letter, tests) =>
-        println(s"--------> Testgruppe $letter mit ${tests.length} Tests")
-        val options = ForkOptions().withRunJVMOptions(Vector("-Dfirst.letter" + letter))
-        Tests.Group(letter.toString, tests, Tests.SubProcess(options))
-      }
-      .toSeq
   )
 
 lazy val munit = project
