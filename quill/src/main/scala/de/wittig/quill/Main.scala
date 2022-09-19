@@ -14,9 +14,9 @@ object Main extends App:
 
   inline def updateHans() = quote(persons.filter(_.firstName == "Hans").update(_.age -> 123))
 
-  pc(run(hans).toString)
+  printColored(run(hans).toString)
   run(updateHans())
   println("-" * 50)
-  pc(run(all).toString)
+  printColored(run(all).toString)
 
-  private def pc(msg: String): Unit = println(Console.CYAN + msg + Console.RESET)
+  private def printColored(msg: String): Unit = println(Console.CYAN + msg + Console.RESET)

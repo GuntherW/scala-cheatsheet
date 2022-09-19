@@ -21,4 +21,4 @@ object HelloWorld extends ZIOAppDefault:
 
   private val app = collect2 ++ collect ++ collectZIO
 
-  override def run: ZIO[Any, Any, Any] = Server.start(8090, app)
+  override def run = Server.start(8090, app)
