@@ -208,7 +208,6 @@ lazy val commonSettings = Seq(
   scalacOptions ++= Seq(
     "-feature",
     "-language:higherKinds",
-//    "-language:strictEquality",
     "-deprecation",
     "-source:future-migration",
   ),
