@@ -2,12 +2,21 @@ package de.wittig.quill
 
 import io.getquill.*
 import io.getquill.context.jdbc.JdbcContext
+import DBContext.*
+
+enum DBContext {
+  case PostgresContext, H2Context
+}
+case class Person(firstName: String, lastName: String, age: Int)
 
 object Main extends App:
-  case class Person(firstName: String, lastName: String, age: Int)
 
-//  val ctx = new PostgresJdbcContext(SnakeCase, "ctxpg")
-  val ctx = new H2JdbcContext(SnakeCase, "ctxh2")
+  val dbContext: DBContext = H2Context
+
+  private val ctx = dbContext match {
+    case PostgresContext => new PostgresJdbcContext(SnakeCase, "ctxpg")
+    case H2Context       => new H2JdbcContext(SnakeCase, "ctxh2")
+  }
   import ctx.*
 
   inline def persons              = query[Person]
