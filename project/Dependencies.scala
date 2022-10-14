@@ -11,24 +11,24 @@ object Version {
   final val gatling                 = "3.8.4"
   final val h2                      = "2.1.214"
   final val jackson                 = "2.13.4"
-  final val kafka                   = "3.3.0"
-  final val logback                 = "1.4.1"
+  final val kafka                   = "3.3.1"
+  final val logback                 = "1.4.4"
   final val log4j                   = "2.19.0"
   final val magnolia                = "1.2.0"
   final val monocle                 = "3.1.0"
   final val postgres                = "42.5.0"
-  final val quill                   = "4.5.0"
+  final val quill                   = "4.6.0"
   final val refined                 = "0.10.1"
   final val scala                   = "3.2.0"
   final val scalaParallelCollection = "1.0.4"
   final val scodec                  = "2.2.0"
-  final val sttp                    = "3.8.0"
+  final val sttp                    = "3.8.2"
   final val xstream                 = "1.4.19"
   final val xml                     = "2.1.0"
   final val zio                     = "2.0.2"
   final val zioJson                 = "0.3.0"
-  final val zioKafka                = "2.0.0"
-  final val zioHttp                 = "2.0.0-RC9"
+  final val zioKafka                = "2.0.1"
+  final val zioHttp                 = "2.0.0-RC11"
   final val zioPrelude              = "1.0.0-RC15"
 
   // ScalaJS
@@ -36,8 +36,8 @@ object Version {
   final val uTest      = "0.8.1"
 
   // Test
-  final val cucumber       = "7.8.0"
-  final val cucumberScala  = "8.10.0"
+  final val cucumber       = "7.8.1"
+  final val cucumberScala  = "8.10.1"
   final val junit          = "4.13.2"
   final val junitInterface = "0.13.3"
   final val mockito        = "1.10.19"
@@ -46,7 +46,7 @@ object Version {
   final val selenium       = "4.5.0"
   final val seleniumPlus   = "3.2.10.0"
   final val scalaCheck     = "1.17.0"
-  final val testContainer  = "0.40.10"
+  final val testContainer  = "0.40.11"
 }
 
 object Library {
@@ -112,7 +112,7 @@ object Library {
   final val seleniumPlus    = "org.scalatestplus"      %% "selenium-3-141"                 % Version.seleniumPlus
   final val scalaCheck      = "org.scalacheck"         %% "scalacheck"                     % Version.scalaCheck
   final val testContainer   = "com.dimafeng"           %% "testcontainers-scala-scalatest" % Version.testContainer
-  final val zioHttpTest     = "io.d11"                 %% "zhttp-test"                     % Version.zioHttp
+  final val zioHttpTest     = "io.d11"                 %% "zhttp-test"                     % "2.0.0-RC9"
 }
 
 object Dependencies {

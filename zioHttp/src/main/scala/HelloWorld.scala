@@ -16,7 +16,7 @@ object HelloWorld extends ZIOAppDefault:
 
   private val collectZIO = Http.collectZIO[Request] {
     case Method.GET -> !! / "zio"        => ZIO.succeed(Response.text("Hallo /zio"))
-    case req @ Method.POST -> !! / "zio" => req.bodyAsString.map(Response.text)
+    case req @ Method.POST -> !! / "zio" => req.body.asString.map(Response.text)
   }
 
   private val app = collect2 ++ collect ++ collectZIO
