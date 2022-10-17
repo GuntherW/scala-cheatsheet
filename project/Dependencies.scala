@@ -29,7 +29,7 @@ object Version {
   final val zioJson                 = "0.3.0"
   final val zioKafka                = "2.0.1"
   final val zioHttp                 = "2.0.0-RC11"
-  final val zioPrelude              = "1.0.0-RC15"
+  final val zioPrelude              = "1.0.0-RC16"
 
   // ScalaJS
   final val scalaJsDom = "2.3.0"
