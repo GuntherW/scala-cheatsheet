@@ -176,6 +176,7 @@ lazy val zioHttp = project
       Library.zio,
       Library.zioStreams,
       Library.zioHttp,
+      Library.zioJson,
       Library.zioHttpTest % Test
     )
   )

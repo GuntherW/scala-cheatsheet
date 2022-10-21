@@ -1,0 +1,28 @@
+### Testing CORS + CSRF
+GET localhost:9000/owls
+Origin: localhost
+
+> {%
+client.global.set("csrf_token", response.headers.x-csrf-token);
+%}
+
+### Testing CORS + CSRF
+POST localhost:9000/owls
+Origin: localhost
+x-csrf-token:{{csrf_token}}
+Cookie: x-csrf-token={{csrf_token}}
+
+### Testing basic auth
+GET http://localhost:9000/secret/owls
+Authorization: Basic gunther cc
+
+
+### Testing Websocket
+WEBSOCKET ws://localhost:9000/ws
+
+"Hallo Welt"
+===
+"Wunderbar"
+===
+"Noch eins"
+=== wait-for-server
