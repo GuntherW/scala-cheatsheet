@@ -37,13 +37,13 @@ object Version {
 
   // Test
   final val cucumber       = "7.8.1"
-  final val cucumberScala  = "8.10.1"
+  final val cucumberScala  = "8.11.0"
   final val junit          = "4.13.2"
   final val junitInterface = "0.13.3"
   final val mockito        = "1.10.19"
   final val munit          = "1.0.0-M6"
   final val scalaTest      = "3.2.14"
-  final val selenium       = "4.5.0"
+  final val selenium       = "4.5.3"
   final val seleniumPlus   = "3.2.10.0"
   final val scalaCheck     = "1.17.0"
   final val testContainer  = "0.40.11"
