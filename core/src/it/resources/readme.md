@@ -1,6 +1,6 @@
 ### How to integration test:
 
-1. Anlegen eine `it` Ordners in `src`
+1. Anlegen eines `it` Ordners in `src`
 2. Konfiguration von Sbt:
     ```
     lazy val root = (project in file("."))
