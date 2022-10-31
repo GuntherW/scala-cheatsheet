@@ -137,3 +137,12 @@ enum Topics(val value: String, val compact: Boolean = false):
 //kafka-console-consumer --bootstrap-server localhost:9092 --topic orders-with-user-profiles-discounted --from-beginning
 //kafka-console-consumer --bootstrap-server localhost:9092 --topic orders --from-beginning
 //kafka-console-consumer --bootstrap-server localhost:9092 --topic paid-orders --from-beginning
+
+/** Playing with compaction and deletion */
+//kafka-topics --bootstrap-server localhost:9092 --topic gunther1 --create --config "cleanup.policy=compact" --config "delete.retention.ms=100" --config "segment.ms=100" --config "min.cleanable.dirty.ratio=0.01"
+//kafka-topics --bootstrap-server localhost:9092 --topic gunther2 --create --config "cleanup.policy=compact" --config "delete.retention.ms=100" --config "segment.ms=100"
+//kafka-topics --bootstrap-server localhost:9092 --topic gunther2s --create --config "cleanup.policy=compact" --config "segment.ms=100"
+//kafka-topics --bootstrap-server localhost:9092 --topic gunther3 --create --config "cleanup.policy=compact" --config "delete.retention.ms=100"
+//kafka-topics --bootstrap-server localhost:9092 --topic gunther4 --create --config "cleanup.policy=compact"
+//kafka-topics --bootstrap-server localhost:9092 --topic gunther10 --create --config "cleanup.policy=compact,delete" --config "retention.ms=60000" --config "delete.retention.ms=30000" --config "segment.ms=1"
+//kafka-console-consumer  --from-beginning  --bootstrap-server localhost:9092 --property print.key=true --property print.value=false --property print.partition --topic gunther1 --timeout-ms 5000 | tail -n 10|grep "Processed a total of"

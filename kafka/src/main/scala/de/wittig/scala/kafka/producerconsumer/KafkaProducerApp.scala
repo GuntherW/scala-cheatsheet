@@ -23,9 +23,9 @@ object KafkaProducerApp extends App:
 
   try
     for (i <- 0 to 15)
-      val r        = new ProducerRecord[String, String](topic, i.toString, s"""{ "test": $i, "uuid": "${UUID.randomUUID().toString}" "ts": "${LocalDateTime.now}" """)
-      val metadata = producer.send(r)
-      println(s"sent (key=${r.key} value=${r.value}) meta(partition=${metadata.get.partition}, offset=${metadata.get.offset})")
+      val r1       = new ProducerRecord[String, String](topic, i.toString, s"""{ "test": $i, "uuid": "${UUID.randomUUID().toString}" "ts": "${LocalDateTime.now}" """)
+      val metadata = producer.send(r1)
+      println(s"sent (key=${r1.key} value=${r1.value}) meta(partition=${metadata.get.partition}, offset=${metadata.get.offset})")
   catch
     case e: Exception => e.printStackTrace()
   finally

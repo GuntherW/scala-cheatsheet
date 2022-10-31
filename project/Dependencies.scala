@@ -19,7 +19,7 @@ object Version {
   final val postgres                = "42.5.0"
   final val quill                   = "4.6.0"
   final val refined                 = "0.10.1"
-  final val scala                   = "3.2.0"
+  final val scala                   = "3.2.1"
   final val scalaParallelCollection = "1.0.4"
   final val scodec                  = "2.2.0"
   final val sttp                    = "3.8.3"

@@ -1,6 +1,6 @@
 package de.codecentric.wittig.scala.futur
 
-import de.codecentric.wittig.scala.Implicits.*
+import de.codecentric.wittig.scala.Ops.*
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

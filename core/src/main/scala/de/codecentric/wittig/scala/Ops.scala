@@ -2,7 +2,7 @@ package de.codecentric.wittig.scala
 import scala.concurrent.duration.{Duration, *}
 import scala.concurrent.{Await, Future}
 
-object Implicits:
+object Ops:
 
   extension [T](future: Future[T])
     def await(using duration: Duration = 10.seconds): T = Await.result(future, duration)
