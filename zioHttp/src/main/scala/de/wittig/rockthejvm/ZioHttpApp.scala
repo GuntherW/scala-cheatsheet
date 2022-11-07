@@ -13,13 +13,13 @@ object ZioHttpApp extends ZIOAppDefault:
   private val port = 9000
 
   private val app: UHttpApp = Http.collect[Request] {
-    case Method.GET -> !! / "owls" => Response.text("Hello, owls!")
+    case Method.GET -> !! / "generateCSRF" => Response.text("Generate CSRF")
   } @@ Middleware.csrfGenerate()
 
   private val zApp: UHttpApp = Http.collectZIO[Request] {
-    case Method.POST -> !! / "owls" => Random
+    case Method.POST -> !! / "validateCSRF" => Random
         .nextIntBetween(3, 5)
-        .map(n => Response.text(s"Hello $n owls"))
+        .map(n => Response.text(s"Validate CSRF Random:[$n]"))
   } @@ Middleware.csrfValidate()
 
   private val authApp: UHttpApp = Http.collect[Request] {

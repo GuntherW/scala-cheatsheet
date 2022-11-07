@@ -1,14 +1,15 @@
 ### Testing CORS + CSRF
-GET localhost:9000/owls
+GET localhost:9000/generateCSRF
 Origin: localhost
 
 > {%
-client.global.set("csrf_token", response.headers.x-csrf-token);
+client.global.set("csrf_token", response.cookie.x-csrf-token);
 %}
 
 ### Testing CORS + CSRF
-POST localhost:9000/owls
+POST localhost:9000/validateCSRF
 Origin: localhost
+Authorization: Basic gunther cc
 x-csrf-token:{{csrf_token}}
 Cookie: x-csrf-token={{csrf_token}}
 
