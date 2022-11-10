@@ -211,6 +211,7 @@ lazy val commonSettings = Seq(
     "-language:higherKinds",
     "-deprecation",
     "-source:future-migration",
+    // "-Vprofile"
   ),
   Test / fork       := true, // subprojects won't run in parallel then
   Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oF"), // Showing full stack trace
