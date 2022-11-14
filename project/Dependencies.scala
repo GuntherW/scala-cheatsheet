@@ -2,11 +2,11 @@ import sbt._
 
 object Version {
   final val akka                    = "2.7.0"
-  final val catsVersion             = "2.8.0"
+  final val catsVersion             = "2.9.0"
   final val catsConsole             = "0.8.1"
   final val circeVersion            = "0.14.3"
   final val doobie                  = "1.0.0-RC2"
-  final val ducktape                = "0.1.0-RC2"
+  final val ducktape                = "0.1.0"
   final val fs2                     = "3.3.0"
   final val gatling                 = "3.8.4"
   final val h2                      = "2.1.214"
