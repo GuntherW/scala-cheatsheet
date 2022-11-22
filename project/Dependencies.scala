@@ -10,7 +10,7 @@ object Version {
   final val fs2                     = "3.4.0"
   final val gatling                 = "3.8.4"
   final val h2                      = "2.1.214"
-  final val jackson                 = "2.14.0"
+  final val jackson                 = "2.14.1"
   final val kafka                   = "3.3.1"
   final val logback                 = "1.4.5"
   final val log4j                   = "2.19.0"
