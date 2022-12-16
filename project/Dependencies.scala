@@ -6,29 +6,29 @@ object Version {
   final val catsConsole             = "0.8.1"
   final val circeVersion            = "0.14.3"
   final val doobie                  = "1.0.0-RC2"
-  final val ducktape                = "0.1.0"
+  final val ducktape                = "0.1.1"
   final val fs2                     = "3.4.0"
-  final val gatling                 = "3.8.4"
+  final val gatling                 = "3.9.0"
   final val h2                      = "2.1.214"
   final val jackson                 = "2.14.1"
   final val kafka                   = "3.3.1"
   final val logback                 = "1.4.5"
   final val log4j                   = "2.19.0"
-  final val magnolia                = "1.2.0"
+  final val magnolia                = "1.2.5"
   final val monocle                 = "3.1.0"
-  final val postgres                = "42.5.0"
+  final val postgres                = "42.5.1"
   final val quill                   = "4.6.0"
   final val refined                 = "0.10.1"
   final val scala                   = "3.2.1"
   final val scalaParallelCollection = "1.0.4"
   final val scodec                  = "2.2.0"
-  final val sttp                    = "3.8.3"
+  final val sttp                    = "3.8.5"
   final val xstream                 = "1.4.19"
   final val xml                     = "2.1.0"
-  final val zio                     = "2.0.4"
-  final val zioJson                 = "0.3.0"
+  final val zio                     = "2.0.5"
+  final val zioJson                 = "0.4.2"
   final val zioKafka                = "2.0.1"
-  final val zioHttp                 = "2.0.0-RC11"
+  final val zioHttp                 = "0.0.3"
   final val zioPrelude              = "1.0.0-RC16"
 
   // ScalaJS
@@ -36,17 +36,17 @@ object Version {
   final val uTest      = "0.8.1"
 
   // Test
-  final val cucumber       = "7.9.0"
-  final val cucumberScala  = "8.12.0"
+  final val cucumber       = "7.10.0"
+  final val cucumberScala  = "8.13.0"
   final val junit          = "4.13.2"
   final val junitInterface = "0.13.3"
   final val mockito        = "1.10.19"
   final val munit          = "1.0.0-M7"
   final val scalaTest      = "3.2.14"
-  final val selenium       = "4.6.0"
+  final val selenium       = "4.7.2"
   final val seleniumPlus   = "3.2.10.0"
   final val scalaCheck     = "1.17.0"
-  final val testContainer  = "0.40.11"
+  final val testContainer  = "0.40.12"
 }
 
 object Library {
@@ -94,7 +94,7 @@ object Library {
   final val zioStreams              = "dev.zio"                       %% "zio-streams"                      % Version.zio
   final val zioJson                 = "dev.zio"                       %% "zio-json"                         % Version.zioJson
   final val zioPrelude              = "dev.zio"                       %% "zio-prelude"                      % Version.zioPrelude
-  final val zioHttp                 = "io.d11"                        %% "zhttp"                            % Version.zioHttp
+  final val zioHttp                 = "dev.zio"                       %% "zio-http"                         % Version.zioHttp
 
   // test
   final val cucumberScala   = "io.cucumber"            %% "cucumber-scala"                 % Version.cucumberScala
@@ -112,7 +112,6 @@ object Library {
   final val seleniumPlus    = "org.scalatestplus"      %% "selenium-3-141"                 % Version.seleniumPlus
   final val scalaCheck      = "org.scalacheck"         %% "scalacheck"                     % Version.scalaCheck
   final val testContainer   = "com.dimafeng"           %% "testcontainers-scala-scalatest" % Version.testContainer
-  final val zioHttpTest     = "io.d11"                 %% "zhttp-test"                     % "2.0.0-RC9"
 }
 
 object Dependencies {

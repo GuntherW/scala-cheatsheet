@@ -1,7 +1,7 @@
-import zhttp.http.*
 import zio.*
+import zio.http.*
+import zio.http.model.Method
 import zio.stream.ZStream
-import zhttp.service.*
 
 object HelloWorld extends ZIOAppDefault:
 
@@ -21,4 +21,5 @@ object HelloWorld extends ZIOAppDefault:
 
   private val app = collect2 ++ collect ++ collectZIO
 
-  override def run = Server.start(8090, app)
+  private val configLayer = ServerConfig.live(ServerConfig.default.port(8090))
+  override val run        = Server.serve(app).provide(configLayer, Server.live)

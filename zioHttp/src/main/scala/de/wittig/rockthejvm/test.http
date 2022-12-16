@@ -10,7 +10,7 @@ client.global.set("csrf_token", response.cookie.x-csrf-token);
 POST localhost:9000/validateCSRF
 Origin: localhost
 Authorization: Basic gunther cc
-x-csrf-token:{{csrf_token}}
+x-csrf-token: {{csrf_token}}
 Cookie: x-csrf-token={{csrf_token}}
 
 ### Testing basic auth

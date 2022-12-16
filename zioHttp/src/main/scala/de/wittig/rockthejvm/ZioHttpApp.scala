@@ -1,12 +1,12 @@
 package de.wittig.rockthejvm
 
 import zio.*
-import zhttp.http.*
-import zhttp.http.middleware.Cors.CorsConfig
-import zhttp.service.ChannelEvent.*
-import zhttp.service.{ChannelEvent, Server}
-import zhttp.service.ChannelEvent.UserEvent.*
-import zhttp.socket.{WebSocketChannelEvent, WebSocketFrame}
+import zio.http.*
+import zio.http.ChannelEvent.UserEvent.{HandshakeComplete, HandshakeTimeout}
+import zio.http.ChannelEvent.{ChannelRead, ChannelUnregistered, UserEventTriggered}
+import zio.http.middleware.Cors.CorsConfig
+import zio.http.model.Method
+import zio.http.socket.{WebSocketChannelEvent, WebSocketFrame}
 
 object ZioHttpApp extends ZIOAppDefault:
 
@@ -14,13 +14,13 @@ object ZioHttpApp extends ZIOAppDefault:
 
   private val app: UHttpApp = Http.collect[Request] {
     case Method.GET -> !! / "generateCSRF" => Response.text("Generate CSRF")
-  } @@ Middleware.csrfGenerate()
+  }.withMiddleware(api.Middleware.csrfGenerate())
 
   private val zApp: UHttpApp = Http.collectZIO[Request] {
     case Method.POST -> !! / "validateCSRF" => Random
         .nextIntBetween(3, 5)
         .map(n => Response.text(s"Validate CSRF Random:[$n]"))
-  } @@ Middleware.csrfValidate()
+  }.withMiddleware(api.Middleware.csrfValidate())
 
   private val authApp: UHttpApp = Http.collect[Request] {
     case Method.GET -> !! / "secret" / "owls" => Response.text("secret")
@@ -56,11 +56,12 @@ object ZioHttpApp extends ZIOAppDefault:
     allowedMethods = Some(Set(Method.GET, Method.POST)),
   )
 
-  private val httpWithMiddleware = combined @@ Middleware.debug @@ Middleware.cors(corsConfig) @@ VerboseLoggingMiddleware.log
+  private val httpWithMiddleware = combined @@ Middleware.debug @@ Middleware.cors(corsConfig)
 
   private val program = for {
     _ <- Console.printLine(s"Starting server at http://localhost:$port")
-    _ <- Server.start(port, httpWithMiddleware)
+    _ <- Server.serve(httpWithMiddleware)
   } yield ()
 
-  override def run = program
+  private val configLayer = ServerConfig.live(ServerConfig.default.port(9000))
+  override def run        = program.provide(configLayer, Server.live)

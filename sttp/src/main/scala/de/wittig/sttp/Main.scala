@@ -10,7 +10,7 @@ import scala.concurrent.duration.DurationInt
 
 object Main extends App:
 
-  private val backend = AsyncHttpClientFutureBackend()
+  private val backend = HttpClientFutureBackend()
   private val query   = "language:scala"
   private val sort    = Some("stars")
 
