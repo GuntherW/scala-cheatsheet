@@ -1,6 +1,7 @@
 package de.codecentric.wittig.scala.ducktape
 import io.github.arainko.ducktape.*
 import io.github.arainko.ducktape.Field.{computed, const, renamed}
+
 object Main extends App:
 
   final case class Person(firstName: String, lastName: String, age: Int)

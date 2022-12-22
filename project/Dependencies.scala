@@ -27,7 +27,7 @@ object Version {
   final val xml                     = "2.1.0"
   final val zio                     = "2.0.5"
   final val zioJson                 = "0.4.2"
-  final val zioKafka                = "2.0.1"
+  final val zioKafka                = "2.0.2"
   final val zioHttp                 = "0.0.3"
   final val zioPrelude              = "1.0.0-RC16"
 
@@ -36,8 +36,8 @@ object Version {
   final val uTest      = "0.8.1"
 
   // Test
-  final val cucumber       = "7.10.0"
-  final val cucumberScala  = "8.13.0"
+  final val cucumber       = "7.10.1"
+  final val cucumberScala  = "8.13.1"
   final val junit          = "4.13.2"
   final val junitInterface = "0.13.3"
   final val mockito        = "1.10.19"
