@@ -15,7 +15,7 @@ object Version {
   final val logback                 = "1.4.5"
   final val log4j                   = "2.19.0"
   final val magnolia                = "1.2.6"
-  final val monocle                 = "3.1.0"
+  final val monocle                 = "3.2.0"
   final val postgres                = "42.5.1"
   final val quill                   = "4.6.0"
   final val refined                 = "0.10.1"
