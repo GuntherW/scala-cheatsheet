@@ -6,7 +6,7 @@ object Version {
   final val catsConsole             = "0.8.1"
   final val circeVersion            = "0.14.3"
   final val doobie                  = "1.0.0-RC2"
-  final val ducktape                = "0.1.1"
+  final val ducktape                = "0.1.2"
   final val fs2                     = "3.4.0"
   final val gatling                 = "3.9.0"
   final val h2                      = "2.1.214"
@@ -15,6 +15,7 @@ object Version {
   final val logback                 = "1.4.5"
   final val log4j                   = "2.19.0"
   final val magnolia                = "1.2.6"
+  final val mongo                   = "4.8.1"
   final val monocle                 = "3.2.0"
   final val postgres                = "42.5.1"
   final val quill                   = "4.6.0"
@@ -22,14 +23,15 @@ object Version {
   final val scala                   = "3.2.1"
   final val scalaParallelCollection = "1.0.4"
   final val scodec                  = "2.2.0"
-  final val sttp                    = "3.8.6"
+  final val sttp                    = "3.8.7"
   final val xstream                 = "1.4.20"
   final val xml                     = "2.1.0"
   final val zio                     = "2.0.5"
   final val zioJson                 = "0.4.2"
-  final val zioKafka                = "2.0.2"
+  final val zioKafka                = "2.0.3"
   final val zioHttp                 = "0.0.3"
   final val zioPrelude              = "1.0.0-RC16"
+  final val zioCli                  = "0.3.0-M02"
 
   // ScalaJS
   final val scalaJsDom = "2.3.0"
@@ -42,7 +44,7 @@ object Version {
   final val junitInterface = "0.13.3"
   final val mockito        = "1.10.19"
   final val munit          = "1.0.0-M7"
-  final val scalaTest      = "3.2.14"
+  final val scalaTest      = "3.2.15"
   final val selenium       = "4.7.2"
   final val seleniumPlus   = "3.2.10.0"
   final val scalaCheck     = "1.17.0"
@@ -74,6 +76,7 @@ object Library {
   final val log4jCore               = "org.apache.logging.log4j"       % "log4j-core"                       % Version.log4j
   final val log4jSlf4jImpl          = "org.apache.logging.log4j"       % "log4j-slf4j-impl"                 % Version.log4j
   final val magnolia                = "com.softwaremill.magnolia1_3"  %% "magnolia"                         % Version.magnolia
+  final val mongoDriverJava         = "org.mongodb"                    % "mongodb-driver-sync"              % Version.mongo
   final val monocle                 = "dev.optics"                    %% "monocle-core"                     % Version.monocle
   final val postgres                = "org.postgresql"                 % "postgresql"                       % Version.postgres
   final val quillJdbc               = "io.getquill"                   %% "quill-jdbc"                       % Version.quill
@@ -95,6 +98,7 @@ object Library {
   final val zioJson                 = "dev.zio"                       %% "zio-json"                         % Version.zioJson
   final val zioPrelude              = "dev.zio"                       %% "zio-prelude"                      % Version.zioPrelude
   final val zioHttp                 = "dev.zio"                       %% "zio-http"                         % Version.zioHttp
+  final val zioCli                  = "dev.zio"                       %% "zio-cli"                          % Version.zioCli
 
   // test
   final val cucumberScala   = "io.cucumber"            %% "cucumber-scala"                 % Version.cucumberScala

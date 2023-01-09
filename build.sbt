@@ -12,13 +12,15 @@ lazy val `scala-cheatsheet` = (project in file("."))
     kafka,
     scalacheck,
     magnolia,
+    mongo,
     munit,
     quill,
     scalajs,
     sttp,
     zio,
     zioHttp,
-    zioKafka
+    zioKafka,
+    ziocli
   )
 
 lazy val core = project
@@ -120,7 +122,15 @@ lazy val magnolia = project
 lazy val mongo = project
   .settings(
     commonSettings,
-    libraryDependencies += "org.mongodb" % "mongodb-driver-sync" % "4.6.0"
+    libraryDependencies ++= Seq(
+      Library.mongoDriverJava,
+    )
+  )
+
+lazy val ziocli = project
+  .settings(
+    commonSettings,
+    libraryDependencies += Library.zioCli,
   )
 
 lazy val scalajs = project
