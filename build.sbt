@@ -18,9 +18,9 @@ lazy val `scala-cheatsheet` = (project in file("."))
     scalajs,
     sttp,
     zio,
+    ziocli,
     zioHttp,
     zioKafka,
-    ziocli
   )
 
 lazy val core = project
