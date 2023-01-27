@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Cheat Sheet: https://devhints.io/bash
+
 
 # use predefined variables to access passed arguments
 #echo arguments to the shell

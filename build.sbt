@@ -95,6 +95,8 @@ lazy val sttp = project
       Library.sttpBEZio,
       Library.sttpCirce,
       Library.sttpsSlf4j,
+      Library.sttpOAuth,
+      Library.catsCore,
       Library.circeGeneric,
       Library.log4jApi,
       Library.log4jCore,

@@ -1,4 +1,4 @@
-//> using lib "com.lihaoyi::pprint::0.7.1"
+//> using lib "com.lihaoyi::pprint::0.8.1"
 
 import pprint.*
 

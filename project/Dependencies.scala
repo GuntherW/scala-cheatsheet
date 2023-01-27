@@ -23,7 +23,8 @@ object Version {
   final val scala                   = "3.2.2"
   final val scalaParallelCollection = "1.0.4"
   final val scodec                  = "2.2.0"
-  final val sttp                    = "3.8.8"
+  final val sttp                    = "3.8.9"
+  final val sttpOAuth               = "0.16.0"
   final val xstream                 = "1.4.20"
   final val xml                     = "2.1.0"
   final val zio                     = "2.0.6"
@@ -45,7 +46,7 @@ object Version {
   final val mockito        = "1.10.19"
   final val munit          = "1.0.0-M7"
   final val scalaTest      = "3.2.15"
-  final val selenium       = "4.7.2"
+  final val selenium       = "4.8.0"
   final val seleniumPlus   = "3.2.10.0"
   final val scalaCheck     = "1.17.0"
   final val testContainer  = "0.40.12"
@@ -90,6 +91,7 @@ object Library {
   final val sttpBEAsync             = "com.softwaremill.sttp.client3" %% "async-http-client-backend-future" % Version.sttp
   final val sttpBEZio               = "com.softwaremill.sttp.client3" %% "zio"                              % Version.sttp
   final val sttpsSlf4j              = "com.softwaremill.sttp.client3" %% "slf4j-backend"                    % Version.sttp
+  final val sttpOAuth               = "com.ocadotechnology"           %% "sttp-oauth2"                      % Version.sttpOAuth
   final val xstream                 = "com.thoughtworks.xstream"       % "xstream"                          % Version.xstream
   final val xml                     = "org.scala-lang.modules"        %% "scala-xml"                        % Version.xml
   final val zio                     = "dev.zio"                       %% "zio"                              % Version.zio
