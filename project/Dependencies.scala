@@ -10,37 +10,38 @@ object Version {
   final val fs2                     = "3.5.0"
   final val gatling                 = "3.9.0"
   final val h2                      = "2.1.214"
-  final val jackson                 = "2.14.1"
+  final val jackson                 = "2.14.2"
   final val kafka                   = "3.3.2"
   final val logback                 = "1.4.5"
   final val log4j                   = "2.19.0"
   final val magnolia                = "1.2.6"
   final val mongo                   = "4.8.2"
   final val monocle                 = "3.2.0"
-  final val postgres                = "42.5.1"
+  final val postgres                = "42.5.2"
   final val quill                   = "4.6.0"
   final val refined                 = "0.10.1"
   final val scala                   = "3.2.2"
   final val scalaParallelCollection = "1.0.4"
   final val scodec                  = "2.2.0"
-  final val sttp                    = "3.8.9"
+  final val sttp                    = "3.8.10"
   final val sttpOAuth               = "0.16.0"
   final val xstream                 = "1.4.20"
   final val xml                     = "2.1.0"
   final val zio                     = "2.0.6"
   final val zioJson                 = "0.4.2"
   final val zioKafka                = "2.0.6"
-  final val zioHttp                 = "0.0.3"
+  final val zioHttp                 = "0.0.4"
   final val zioPrelude              = "1.0.0-RC16"
   final val zioCli                  = "0.3.0-M02"
+  final val zioOpenAI               = "0.0.1"
 
   // ScalaJS
   final val scalaJsDom = "2.3.0"
   final val uTest      = "0.8.1"
 
   // Test
-  final val cucumber       = "7.11.0"
-  final val cucumberScala  = "8.14.0"
+  final val cucumber       = "7.11.1"
+  final val cucumberScala  = "8.14.1"
   final val junit          = "4.13.2"
   final val junitInterface = "0.13.3"
   final val mockito        = "1.10.19"
@@ -101,6 +102,7 @@ object Library {
   final val zioPrelude              = "dev.zio"                       %% "zio-prelude"                      % Version.zioPrelude
   final val zioHttp                 = "dev.zio"                       %% "zio-http"                         % Version.zioHttp
   final val zioCli                  = "dev.zio"                       %% "zio-cli"                          % Version.zioCli
+  final val zioOpenAI               = "dev.zio"                       %% "zio-openai"                       % Version.zioOpenAI
 
   // test
   final val cucumberScala   = "io.cucumber"            %% "cucumber-scala"                 % Version.cucumberScala

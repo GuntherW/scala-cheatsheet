@@ -21,6 +21,7 @@ lazy val `scala-cheatsheet` = (project in file("."))
     ziocli,
     zioHttp,
     zioKafka,
+    openAI,
   )
 
 lazy val core = project
@@ -192,6 +193,14 @@ lazy val zioHttp = project
     )
   )
 
+lazy val openAI = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.zioOpenAI,
+    )
+  )
+
 lazy val doobie = project
   .settings(
     commonSettings,
@@ -231,4 +240,4 @@ lazy val commonSettings = Seq(
 
 ThisBuild / concurrentRestrictions := Seq(Tags.limit(Tags.ForkedTestGroup, 2))
 Global / concurrentRestrictions += Tags.limit(Tags.Test, 1)
-Global / onChangedBuildSource := ReloadOnSourceChanges
+Global / onChangedBuildSource      := ReloadOnSourceChanges

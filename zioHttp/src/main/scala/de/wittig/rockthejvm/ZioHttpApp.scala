@@ -56,7 +56,7 @@ object ZioHttpApp extends ZIOAppDefault:
     allowedMethods = Some(Set(Method.GET, Method.POST)),
   )
 
-  private val httpWithMiddleware = combined @@ Middleware.debug @@ Middleware.cors(corsConfig)
+  private val httpWithMiddleware = combined @@ Middleware.cors(corsConfig)
 
   private val program = for {
     _ <- Console.printLine(s"Starting server at http://localhost:$port")

@@ -16,10 +16,11 @@ object HelloWorld extends ZIOAppDefault:
 
   private val collectZIO = Http.collectZIO[Request] {
     case Method.GET -> !! / "zio"        => ZIO.succeed(Response.text("Hallo /zio"))
-    case req @ Method.POST -> !! / "zio" => req.body.asString.map(Response.text)
+    case req @ Method.POST -> !! / "zio" => req.body.asString.map(Response.text).orDie
   }
 
   private val app = collect2 ++ collect ++ collectZIO
 
   private val configLayer = ServerConfig.live(ServerConfig.default.port(8090))
-  override val run        = Server.serve(app).provide(configLayer, Server.live)
+
+  override val run = Server.serve(app).provide(configLayer, Server.live)
