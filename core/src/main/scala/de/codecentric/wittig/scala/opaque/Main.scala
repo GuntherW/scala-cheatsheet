@@ -3,9 +3,11 @@ package de.codecentric.wittig.scala.opaque
 object Main extends App:
 
   opaque type Year <: Int = Int
+
   object Year:
     def apply(i: Int): Year        = i
     def make(i: Int): Option[Year] = if i < 10 then Some(i) else None
+
   extension (y: Year) {
     def pprint = s"--$y--"
   }
