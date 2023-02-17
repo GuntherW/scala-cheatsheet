@@ -8,7 +8,7 @@ object Version {
   final val doobie                  = "1.0.0-RC2"
   final val ducktape                = "0.1.3"
   final val fs2                     = "3.6.1"
-  final val gatling                 = "3.9.0"
+  final val gatling                 = "3.9.1"
   final val h2                      = "2.1.214"
   final val jackson                 = "2.14.2"
   final val kafka                   = "3.4.0"
@@ -17,8 +17,8 @@ object Version {
   final val magnolia                = "1.2.6"
   final val mongo                   = "4.9.0"
   final val monocle                 = "3.2.0"
-  final val postgres                = "42.5.3"
-  final val quill                   = "4.6.0"
+  final val postgres                = "42.5.4"
+  final val quill                   = "4.6.0.1"
   final val refined                 = "0.10.1"
   final val scala                   = "3.2.2"
   final val scalaParallelCollection = "1.0.4"
@@ -27,16 +27,17 @@ object Version {
   final val sttpOAuth               = "0.16.0"
   final val xstream                 = "1.4.20"
   final val xml                     = "2.1.0"
-  final val zio                     = "2.0.8"
+  final val zio                     = "2.0.9"
   final val zioJson                 = "0.4.2"
   final val zioKafka                = "2.0.7"
   final val zioHttp                 = "0.0.4"
   final val zioPrelude              = "1.0.0-RC16"
-  final val zioCli                  = "0.3.0-M02"
+  final val zioSchema               = "0.4.7"
+  final val zioCli                  = "0.4.0"
   final val zioOpenAI               = "0.1.0"
 
   // ScalaJS
-  final val scalaJsDom = "2.3.0"
+  final val scalaJsDom = "2.4.0"
   final val uTest      = "0.8.1"
 
   // Test
@@ -86,6 +87,7 @@ object Library {
   final val quillJasyncPostgres     = "io.getquill"                   %% "quill-jasync-postgres"            % Version.quill
   final val refined                 = "eu.timepit"                    %% "refined"                          % Version.refined
   final val scalaParallelCollection = "org.scala-lang.modules"        %% "scala-parallel-collections"       % Version.scalaParallelCollection
+  final val scalaReflect            = "org.scala-lang"                 % "scala-reflect"                    % Version.scala % "provided"
   final val scodec                  = "org.scodec"                    %% "scodec-core"                      % Version.scodec
   final val sttpCore                = "com.softwaremill.sttp.client3" %% "core"                             % Version.sttp
   final val sttpCirce               = "com.softwaremill.sttp.client3" %% "circe"                            % Version.sttp
@@ -100,6 +102,10 @@ object Library {
   final val zioStreams              = "dev.zio"                       %% "zio-streams"                      % Version.zio
   final val zioJson                 = "dev.zio"                       %% "zio-json"                         % Version.zioJson
   final val zioPrelude              = "dev.zio"                       %% "zio-prelude"                      % Version.zioPrelude
+  final val zioSchema               = "dev.zio"                       %% "zio-schema"                       % Version.zioSchema
+  final val zioSchemaJson           = "dev.zio"                       %% "zio-schema-json"                  % Version.zioSchema
+  final val zioSchemaProtobuf       = "dev.zio"                       %% "zio-schema-protobuf"              % Version.zioSchema
+  final val zioSchemaDerivation     = "dev.zio"                       %% "zio-schema-derivation"            % Version.zioSchema
   final val zioHttp                 = "dev.zio"                       %% "zio-http"                         % Version.zioHttp
   final val zioCli                  = "dev.zio"                       %% "zio-cli"                          % Version.zioCli
   final val zioOpenAI               = "dev.zio"                       %% "zio-openai"                       % Version.zioOpenAI

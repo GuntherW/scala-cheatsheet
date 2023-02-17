@@ -21,6 +21,7 @@ lazy val `scala-cheatsheet` = (project in file("."))
     ziocli,
     zioHttp,
     zioKafka,
+    zioSchema,
     openAI,
   )
 
@@ -134,6 +135,17 @@ lazy val ziocli = project
   .settings(
     commonSettings,
     libraryDependencies += Library.zioCli,
+  )
+
+lazy val zioSchema = project
+  .settings(
+    commonSettings,
+    libraryDependencies += Library.zio,
+    libraryDependencies += Library.zioSchema,
+    libraryDependencies += Library.zioSchemaJson,
+    libraryDependencies += Library.zioSchemaProtobuf,
+    libraryDependencies += Library.zioSchemaDerivation,
+//    libraryDependencies += Library.scalaReflect,
   )
 
 lazy val scalajs = project
