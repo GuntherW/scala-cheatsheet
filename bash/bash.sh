@@ -1,19 +1,7 @@
 #!/usr/bin/env bash
 # Cheat Sheet: https://devhints.io/bash
 
+export SERVER_URL_PROD=https://api.dev.gunther.cloud
+export SERVER_URL="$SERVER_URL_PROD"
 
-# use predefined variables to access passed arguments
-#echo arguments to the shell
-echo $0 $1 $2 $3 ' -> echo $0 $1 $2 $3'
-
-# We can also store arguments from bash command line in special array
-args=$@
-#echo arguments to the shell
-echo ${args[0]} ${args[1]} ${args[2]} ' -> args=("$@"); echo ${args[0]} ${args[1]} ${args[2]}'
-
-#use $@ to print out all arguments at once
-echo $@ ' -> echo $@'
-
-# use $# variable to print out
-# number of arguments passed to the bash script
-echo Number of arguments passed: $# ' -> echo Number of arguments passed: $#'
+echo "${SERVER_URL}?und=mehr"
