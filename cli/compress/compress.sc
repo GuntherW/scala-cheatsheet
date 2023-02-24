@@ -1,4 +1,4 @@
-//> using lib "org.apache.commons:commons-compress:1.22"
+//> using dep "org.apache.commons:commons-compress:1.22"
 
 import java.io.ByteArrayOutputStream
 import java.util.zip.GZIPOutputStream

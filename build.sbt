@@ -74,6 +74,9 @@ lazy val munit = project
       Library.munit           % Test,
       Library.scalatest       % Test,
       Library.munitScalaCheck % Test,
+      Library.circeCore       % Test,
+      Library.circeGeneric    % Test,
+      Library.circeParser     % Test,
     ),
     testFrameworks += new TestFramework("munit.Framework"),
     Test / fork := true, //  subprojects tests will run parallel with other subprojects
@@ -231,6 +234,11 @@ lazy val gatling = project
       Library.gatling,
       Library.gatlingCharts,
     )
+  )
+
+lazy val metaprogramming = project
+  .settings(
+    commonSettings
   )
 
 lazy val commonSettings = Seq(
