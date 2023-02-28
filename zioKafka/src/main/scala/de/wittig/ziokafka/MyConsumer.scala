@@ -34,7 +34,7 @@ trait KafkaCommon {
   private lazy val list                       = topics.split(",")
   private lazy val subscription: Subscription = Subscription.topics(list.head, list.tail*)
   def consumerIO: RIO[Any, Unit]              = Consumer.consumeWith(settings, subscription, Serde.string, Serde.string) {
-    case (key, value) => ZIO.succeed(println(s"Received record: $key: $value"))
+    consumerRecord => ZIO.succeed(println(s"Received record: ${consumerRecord.key}: ${consumerRecord.value}"))
   }
 
   def run: RIO[Any, Unit] = consumerIO
