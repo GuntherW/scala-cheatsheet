@@ -2,8 +2,8 @@ package de.wittig.openai.explainCode
 
 import zio.{Console, ZIOAppDefault}
 import zio.openai.Completions
-import zio.openai.model.CreateCompletionRequest.{FrequencyPenalty, MaxTokens, PresencePenalty, Prompt, Stop}
-import zio.openai.model.{Temperature, TopP}
+import zio.openai.model.CreateCompletionRequest.{MaxTokens, Prompt, Stop}
+import zio.openai.model.{FrequencyPenalty, PresencePenalty, Temperature, TopP}
 
 /** Based on https://beta.openai.com/examples/default-explain-code
   */

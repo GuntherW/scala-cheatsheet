@@ -38,4 +38,15 @@ rg -l -g 'ripg*.md' '// TODO'
 rg --files-without-match '// TODO'
 ```
 
+### Drumherum die Zeilen mit Anzeigen
+```shell
+rg  '// TODO' -C 2
+```
+
+### Die nächsten Zeilen mit Anzeigen
+```shell
+rg  '// TODO' -A 2 # -B für Before
+```
+
+
 
