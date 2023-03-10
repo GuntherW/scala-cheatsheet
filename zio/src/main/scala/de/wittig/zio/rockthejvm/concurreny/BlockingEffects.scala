@@ -9,7 +9,7 @@ object BlockingEffects extends ZIOAppDefault:
 
   def blockintTask(n: Int): UIO[Unit] =
     ZIO.succeed(s"running blocking task $n").debugThread *>
-      ZIO.succeed(Thread.sleep(10000)) *>
+      ZIO.succeed(Thread.sleep(10000)) *> // Thread.sleep ist blockend (ZIO.sleep wäre es nicht)
       blockintTask(n)
 
   val programm = ZIO.foreachPar((1 to 100).toList)(blockintTask)
