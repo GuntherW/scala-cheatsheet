@@ -5,6 +5,7 @@ import zio.*
 import zio.stm.*
 
 // STM - Software Transactional Memory (atomic effect)
+// TRef, TArray, TSet, TMap, TQueue, TPriorityQueue, TPromise, TSemaphore
 object Main extends ZIOAppDefault {
 
 //  def run = NotTransactional.exploitBuggyBank.ignore.repeatN(10000)

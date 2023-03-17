@@ -2,6 +2,7 @@ package de.wittig.rockthejvm
 
 import zio.*
 import zio.http.*
+import zio.http.HttpAppMiddleware.*
 import zio.http.ChannelEvent.UserEvent.{HandshakeComplete, HandshakeTimeout}
 import zio.http.ChannelEvent.{ChannelRead, ChannelUnregistered, UserEventTriggered}
 import zio.http.middleware.Cors.CorsConfig
@@ -12,19 +13,21 @@ object ZioHttpApp extends ZIOAppDefault:
 
   private val port = 9000
 
+  // TODO: Fix Generation of CSRF token
   private val app: UHttpApp = Http.collect[Request] {
     case Method.GET -> !! / "generateCSRF" => Response.text("Generate CSRF")
-  }.withMiddleware(api.Middleware.csrfGenerate())
+  } @@ withContentSecurityPolicy("a")
 
+  // TODO: Fix usage of CSRF token
   private val zApp: UHttpApp = Http.collectZIO[Request] {
     case Method.POST -> !! / "validateCSRF" => Random
         .nextIntBetween(3, 5)
         .map(n => Response.text(s"Validate CSRF Random:[$n]"))
-  }.withMiddleware(api.Middleware.csrfValidate())
+  } @@ withContentSecurityPolicy("b")
 
   private val authApp: UHttpApp = Http.collect[Request] {
     case Method.GET -> !! / "secret" / "owls" => Response.text("secret")
-  } @@ Middleware.basicAuth("gunther", "cc")
+  } @@ basicAuth("gunther", "cc")
 
   // websockets
   private val sarcastic: String => String = txt =>
@@ -56,7 +59,7 @@ object ZioHttpApp extends ZIOAppDefault:
     allowedMethods = Some(Set(Method.GET, Method.POST)),
   )
 
-  private val httpWithMiddleware = combined @@ Middleware.cors(corsConfig)
+  private val httpWithMiddleware = combined @@ cors(corsConfig)
 
   private val program = for {
     _ <- Console.printLine(s"Starting server at http://localhost:$port")

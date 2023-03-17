@@ -11,6 +11,7 @@ lazy val `scala-cheatsheet` = (project in file("."))
     gatling,
     kafka,
     scalacheck,
+    macros,
     magnolia,
     mongo,
     munit,
@@ -67,6 +68,9 @@ lazy val quill = project
     )
   )
 
+lazy val macros = project
+  .settings(commonSettings)
+
 lazy val munit = project
   .settings(
     commonSettings,
@@ -116,8 +120,12 @@ lazy val zio = project
       Library.zio,
       Library.zioStreams,
       Library.zioJson,
-      Library.zioPrelude
-    )
+      Library.zioPrelude,
+      Library.zioTest      % Test,
+      Library.zioTestSbt   % Test,
+      Library.zioTestJUnit % Test,
+    ),
+    testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
   )
 
 lazy val magnolia = project

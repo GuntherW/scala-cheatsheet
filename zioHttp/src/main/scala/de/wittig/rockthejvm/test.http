@@ -22,8 +22,8 @@ Authorization: Basic gunther cc
 WEBSOCKET ws://localhost:9000/ws
 
 "Hallo Welt"
-===
+=== wait-for-server
 "Wunderbar"
-===
+=== wait-for-server
 "Noch eins"
 === wait-for-server

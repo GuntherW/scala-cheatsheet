@@ -1,7 +1,7 @@
 import sbt._
 
 object Version {
-  final val akka                    = "2.7.0"
+  final val akka                    = "2.8.0"
   final val catsVersion             = "2.9.0"
   final val catsConsole             = "0.8.1"
   final val circeVersion            = "0.14.5"
@@ -12,7 +12,7 @@ object Version {
   final val h2                      = "2.1.214"
   final val jackson                 = "2.14.2"
   final val kafka                   = "3.4.0"
-  final val logback                 = "1.4.5"
+  final val logback                 = "1.4.6"
   final val log4j                   = "2.20.0"
   final val magnolia                = "1.3.0"
   final val mongo                   = "4.9.0"
@@ -30,7 +30,7 @@ object Version {
   final val zio                     = "2.0.10"
   final val zioJson                 = "0.4.2"
   final val zioKafka                = "2.1.3"
-  final val zioHttp                 = "0.0.4"
+  final val zioHttp                 = "0.0.5"
   final val zioPrelude              = "1.0.0-RC18"
   final val zioSchema               = "0.4.8"
   final val zioCli                  = "0.4.0"
@@ -126,6 +126,9 @@ object Library {
   final val seleniumPlus    = "org.scalatestplus"      %% "selenium-3-141"                 % Version.seleniumPlus
   final val scalaCheck      = "org.scalacheck"         %% "scalacheck"                     % Version.scalaCheck
   final val testContainer   = "com.dimafeng"           %% "testcontainers-scala-scalatest" % Version.testContainer
+  final val zioTest         = "dev.zio"                %% "zio-test"                       % Version.zio
+  final val zioTestSbt      = "dev.zio"                %% "zio-test-sbt"                   % Version.zio
+  final val zioTestJUnit     = "dev.zio"                %% "zio-test-junit"                 % Version.zio
 }
 
 object Dependencies {
