@@ -17,9 +17,10 @@ object Version {
   final val magnolia                = "1.3.0"
   final val mongo                   = "4.9.0"
   final val monocle                 = "3.2.0"
-  final val postgres                = "42.5.4"
+  final val osLib                   = "0.9.1"
+  final val postgres                = "42.6.0"
   final val quill                   = "4.6.0.1"
-  final val refined                 = "0.10.2"
+  final val refined                 = "0.10.3"
   final val scala                   = "3.3.0-RC3"
   final val scalaParallelCollection = "1.0.4"
   final val scodec                  = "2.2.1"
@@ -28,11 +29,11 @@ object Version {
   final val xstream                 = "1.4.20"
   final val xml                     = "2.1.0"
   final val zio                     = "2.0.10"
-  final val zioJson                 = "0.4.2"
+  final val zioJson                 = "0.5.0"
   final val zioKafka                = "2.1.3"
   final val zioHttp                 = "0.0.5"
   final val zioPrelude              = "1.0.0-RC18"
-  final val zioSchema               = "0.4.8"
+  final val zioSchema               = "0.4.9"
   final val zioCli                  = "0.4.0"
   final val zioOpenAI               = "0.2.0"
 
@@ -41,7 +42,7 @@ object Version {
   final val uTest      = "0.8.1"
 
   // Test
-  final val cucumber       = "7.11.1"
+  final val cucumber       = "7.11.2"
   final val cucumberScala  = "8.14.1"
   final val junit          = "4.13.2"
   final val junitInterface = "0.13.3"
@@ -51,7 +52,7 @@ object Version {
   final val selenium       = "4.8.1"
   final val seleniumPlus   = "3.2.10.0"
   final val scalaCheck     = "1.17.0"
-  final val testContainer  = "0.40.12"
+  final val testContainer  = "0.40.14"
 }
 
 object Library {
@@ -81,6 +82,7 @@ object Library {
   final val magnolia                = "com.softwaremill.magnolia1_3"  %% "magnolia"                         % Version.magnolia
   final val mongoDriverJava         = "org.mongodb"                    % "mongodb-driver-sync"              % Version.mongo
   final val monocle                 = "dev.optics"                    %% "monocle-core"                     % Version.monocle
+  final val osLib                   = "com.lihaoyi"                   %% "os-lib"                           % Version.osLib
   final val postgres                = "org.postgresql"                 % "postgresql"                       % Version.postgres
   final val quillJdbc               = "io.getquill"                   %% "quill-jdbc"                       % Version.quill
   final val quillJdbcZio            = "io.getquill"                   %% "quill-jdbc-zio"                   % Version.quill
@@ -128,7 +130,7 @@ object Library {
   final val testContainer   = "com.dimafeng"           %% "testcontainers-scala-scalatest" % Version.testContainer
   final val zioTest         = "dev.zio"                %% "zio-test"                       % Version.zio
   final val zioTestSbt      = "dev.zio"                %% "zio-test-sbt"                   % Version.zio
-  final val zioTestJUnit     = "dev.zio"                %% "zio-test-junit"                 % Version.zio
+  final val zioTestJUnit    = "dev.zio"                %% "zio-test-junit"                 % Version.zio
 }
 
 object Dependencies {

@@ -1,13 +1,13 @@
 package de.wittig.doobie
 
 import java.util.UUID
-
 import cats.effect.*
 import cats.implicits.*
 import de.wittig.doobie.CustomSupport.ActorName
 import doobie.util.transactor.Transactor
 import doobie.implicits.*
 import doobie.*
+import doobie.hikari.HikariTransactor
 import doobie.util.update.Update
 import doobie.util.{Get, Put, Read, Write}
 
@@ -32,6 +32,18 @@ object DoobieDemo extends IOApp.Simple:
     "postgres",
     "test"
   )
+
+  val xaResource =
+    for
+      ec <- ExecutionContexts.fixedThreadPool[IO](16)
+      xa <- HikariTransactor.newHikariTransactor[IO](
+              "org.postgresql.Driver",
+              "jdbc:postgresql://localhost:5432/myimdb",
+              "postgres",
+              "test",
+              ec
+            )
+    yield xa
 
   def findAllActorNames: IO[List[String]] =
     val query  = sql"select name from actors".query[String]

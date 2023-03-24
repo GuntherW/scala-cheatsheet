@@ -15,6 +15,7 @@ lazy val `scala-cheatsheet` = (project in file("."))
     magnolia,
     mongo,
     munit,
+    osLib,
     quill,
     scalajs,
     sttp,
@@ -65,6 +66,14 @@ lazy val quill = project
       Library.quillJdbc,
       Library.quillJdbcZio,
       Library.quillJasyncPostgres,
+    )
+  )
+
+lazy val osLib = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.osLib
     )
   )
 
