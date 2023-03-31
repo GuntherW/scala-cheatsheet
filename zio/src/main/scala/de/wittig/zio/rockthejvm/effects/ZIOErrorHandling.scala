@@ -172,7 +172,7 @@ object ZIOErrorHandling extends ZIOAppDefault:
   def betterLookupProfile_v2(userId: String): ZIO[Any, Option[QueryError], UserProfile] =
     lookupProfile(userId).some
 
-  override def run                                                                      =
+  override def run =
     for
       f <- foldedWithCause
       p <- failedInt

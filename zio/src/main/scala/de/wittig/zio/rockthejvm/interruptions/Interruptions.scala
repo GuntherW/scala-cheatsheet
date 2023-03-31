@@ -53,5 +53,5 @@ object Interruptions extends ZIOAppDefault:
   val testRace   = aRace.fork *> ZIO.sleep(3.seconds)
 
   def run =
-      testOutlivingParents *>
+    testOutlivingParents *>
       testRace

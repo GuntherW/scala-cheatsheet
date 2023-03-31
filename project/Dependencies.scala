@@ -24,7 +24,7 @@ object Version {
   final val scala                   = "3.3.0-RC3"
   final val scalaParallelCollection = "1.0.4"
   final val scodec                  = "2.2.1"
-  final val sttp                    = "3.8.13"
+  final val sttp                    = "3.8.14"
   final val sttpOAuth               = "0.16.0"
   final val xstream                 = "1.4.20"
   final val xml                     = "2.1.0"
@@ -33,7 +33,7 @@ object Version {
   final val zioKafka                = "2.1.3"
   final val zioHttp                 = "0.0.5"
   final val zioPrelude              = "1.0.0-RC18"
-  final val zioSchema               = "0.4.9"
+  final val zioSchema               = "0.4.10"
   final val zioCli                  = "0.4.0"
   final val zioOpenAI               = "0.2.0"
 

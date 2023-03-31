@@ -11,7 +11,7 @@ object Main extends App:
     for i <- 0 until n do f
 
   times(3):
-      println("Hallo Welt")
+    println("Hallo Welt")
 
   val fold = l.foldLeft(0): (x, y) =>
     x + y

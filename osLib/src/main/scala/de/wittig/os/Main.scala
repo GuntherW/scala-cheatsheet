@@ -30,3 +30,26 @@ object Main extends App:
   val gzip = os.proc("gzip", "-n").spawn(stdin = curl.stdout)
   val sha  = os.proc("shasum", "-a", "256").spawn(stdin = gzip.stdout)
   println(sha.stdout.trim())
+  println("-" * 10)
+
+  // Find and concatenate all .txt files directly in the working directory
+  os.write(
+    wd / "all.txt",
+    os.list(wd).filter(_.ext == "txt").map(os.read)
+  )
+  println(os.read(wd / "all.txt"))
+
+  // Line-count of all .txt files recursively in wd
+  val lineCount = os.walk(wd)
+    .filter(_.ext == "txt")
+    .map(os.read.lines)
+    .map(_.size)
+    .sum
+  println(lineCount)
+
+  // Find the largest two files in the given folder tree
+  val largestTwo = os.walk(wd)
+    .filter(os.isFile(_, followLinks = false))
+    .map(x => os.size(x) -> x).sortBy(-_._1)
+    .take(2)
+  println(largestTwo)
