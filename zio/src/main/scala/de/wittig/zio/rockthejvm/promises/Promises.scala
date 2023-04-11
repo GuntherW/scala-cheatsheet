@@ -32,7 +32,7 @@ object Promises extends ZIOAppDefault {
 
     for
       promise <- Promise.make[Throwable, Int]
-      _       <- consumer(promise) zipPar producer(promise)
+      _       <- consumer(promise).zipPar(producer(promise))
     yield ()
 
   def run = demoPromise()
