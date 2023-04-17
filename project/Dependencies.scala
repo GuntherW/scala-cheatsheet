@@ -24,8 +24,8 @@ object Version {
   final val scala                   = "3.3.0-RC3"
   final val scalaParallelCollection = "1.0.4"
   final val scodec                  = "2.2.1"
-  final val sttp                    = "3.8.14"
-  final val sttpOAuth               = "0.16.0" 
+  final val sttp                    = "3.8.15"
+  final val sttpOAuth               = "0.16.0"
   final val xstream                 = "1.4.20"
   final val xml                     = "2.1.0"
   final val zio                     = "2.0.12"
@@ -52,7 +52,7 @@ object Version {
   final val selenium       = "4.8.3"
   final val seleniumPlus   = "3.2.10.0"
   final val scalaCheck     = "1.17.0"
-  final val testContainer  = "0.40.14"
+  final val testContainer  = "0.40.15"
 }
 
 object Library {
