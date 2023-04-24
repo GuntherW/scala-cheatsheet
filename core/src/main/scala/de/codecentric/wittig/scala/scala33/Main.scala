@@ -1,5 +1,7 @@
 package de.codecentric.wittig.scala.scala33
 
+import scala.concurrent.duration.DurationInt
+
 object Main extends App:
 
   private val l  = List.tabulate(5)(identity)
@@ -12,7 +14,3 @@ object Main extends App:
 
   times(3):
     println("Hallo Welt")
-
-  val fold = l.foldLeft(0): (x, y) =>
-    x + y
-  println(fold)
