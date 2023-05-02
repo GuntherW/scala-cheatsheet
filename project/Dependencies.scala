@@ -1,16 +1,16 @@
-import sbt._
+import sbt.*
 
 object Version {
-  final val akka                    = "2.8.0"
+  final val akka                    = "2.8.1"
   final val catsVersion             = "2.9.0"
   final val catsConsole             = "0.8.1"
   final val circeVersion            = "0.14.5"
   final val doobie                  = "1.0.0-RC2"
-  final val ducktape                = "0.1.5"
+  final val ducktape                = "0.1.6"
   final val fs2                     = "3.6.1"
   final val gatling                 = "3.9.3"
   final val h2                      = "2.1.214"
-  final val jackson                 = "2.14.2"
+  final val jackson                 = "2.15.0"
   final val kafka                   = "3.4.0"
   final val logback                 = "1.4.7"
   final val log4j                   = "2.20.0"
@@ -21,7 +21,7 @@ object Version {
   final val postgres                = "42.6.0"
   final val quill                   = "4.6.0.1"
   final val refined                 = "0.10.3"
-  final val scala                   = "3.3.0-RC4"
+  final val scala                   = "3.3.0-RC5"
   final val scalaParallelCollection = "1.0.4"
   final val scodec                  = "2.2.1"
   final val sttp                    = "3.8.15"
@@ -32,18 +32,18 @@ object Version {
   final val zioJson                 = "0.5.0"
   final val zioKafka                = "2.2"
   final val zioHttp                 = "0.0.5"
-  final val zioPrelude              = "1.0.0-RC18"
-  final val zioSchema               = "0.4.10"
+  final val zioPrelude              = "1.0.0-RC19"
+  final val zioSchema               = "0.4.11"
   final val zioCli                  = "0.4.0"
-  final val zioOpenAI               = "0.2.0"
+  final val zioOpenAI               = "0.2.1"
 
   // ScalaJS
   final val scalaJsDom = "2.4.0"
   final val uTest      = "0.8.1"
 
   // Test
-  final val cucumber       = "7.11.2"
-  final val cucumberScala  = "8.14.2"
+  final val cucumber       = "7.12.0"
+  final val cucumberScala  = "8.15.0"
   final val junit          = "4.13.2"
   final val junitInterface = "0.13.3"
   final val mockito        = "1.10.19"
@@ -134,7 +134,7 @@ object Library {
 }
 
 object Dependencies {
-  import Library._
+  import Library.*
   val dependencies = Seq(
     catsCore,
     catsFree,

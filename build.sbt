@@ -1,6 +1,27 @@
-import sbt._
+import sbt.*
 
 scalaVersion := Version.scala
+
+lazy val commonSettings = Seq(
+  version           := "1.0",
+  organization      := "de.wittig",
+  semanticdbEnabled := true,
+  scalaVersion      := Version.scala,
+  scalacOptions ++= Seq(
+    "-feature",
+    "-language:higherKinds",
+    "-deprecation",
+    "-source:future-migration",
+    // "-Vprofile"
+  ),
+  Test / fork       := true, // subprojects won't run in parallel then
+  Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oF"), // Showing full stack trace
+  turbo := true
+)
+
+ThisBuild / concurrentRestrictions := Seq(Tags.limit(Tags.ForkedTestGroup, 2))
+Global / concurrentRestrictions += Tags.limit(Tags.Test, 1)
+Global / onChangedBuildSource      := ReloadOnSourceChanges
 
 lazy val `scala-cheatsheet` = (project in file("."))
   .aggregate(
@@ -257,24 +278,3 @@ lazy val metaprogramming = project
   .settings(
     commonSettings
   )
-
-lazy val commonSettings = Seq(
-  version           := "1.0",
-  organization      := "de.wittig",
-  semanticdbEnabled := true,
-  scalaVersion      := Version.scala,
-  scalacOptions ++= Seq(
-    "-feature",
-    "-language:higherKinds",
-    "-deprecation",
-    "-source:future-migration",
-    // "-Vprofile"
-  ),
-  Test / fork       := true, // subprojects won't run in parallel then
-  Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oF"), // Showing full stack trace
-  turbo := true
-)
-
-ThisBuild / concurrentRestrictions := Seq(Tags.limit(Tags.ForkedTestGroup, 2))
-Global / concurrentRestrictions += Tags.limit(Tags.Test, 1)
-Global / onChangedBuildSource      := ReloadOnSourceChanges
