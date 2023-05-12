@@ -3,14 +3,16 @@ package de.codecentric.wittig.scala.xml
 import com.thoughtworks.xstream.*
 import com.thoughtworks.xstream.io.xml.DomDriver
 
-object XStream extends App:
-  val xstream = new XStream(new DomDriver)
+case class Baum(name: String, hoehe: Int, wurzeltiefe: Int)
 
-  val b           = Baum("Eiche", 20, 2)
-  val xml: String = xstream.toXML(b)
+object XStream extends App:
+  private val xStream = new XStream(new DomDriver)
+  xStream
+    .allowTypesByWildcard(Array("de.codecentric.wittig.**"))
+
+  private val baum1       = Baum("Eiche", 20, 2)
+  private val xml: String = xStream.toXML(baum1)
   println(xml)
 
-  val b2 = xstream.fromXML(xml)
-  println(b2)
-
-case class Baum(name: String, hoehe: Int, wurzeltiefe: Int)
+  private val baum2 = xStream.fromXML(xml)
+  println(baum2)

@@ -8,7 +8,7 @@ import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.DurationInt
 
-object Main extends App:
+object GithubFuture extends App:
 
   private val backend = HttpClientFutureBackend()
   private val query   = "language:scala"
@@ -29,5 +29,5 @@ object Main extends App:
         }
   }
 
-  Await.result(res, 3.seconds)
+  Await.result(res, 5.seconds)
   backend.close()

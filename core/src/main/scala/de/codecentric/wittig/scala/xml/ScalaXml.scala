@@ -10,6 +10,7 @@ object ScalaXml extends App:
       <book id="b1615">Don Quixote</book>
       <book id="b1867">War and Peace</book>
     </books>
+
   val ids    = (books \ "book").map(book => book \@ "id").toList
   val titles = (books \ "book").map(book => book.text).toList
   titles.foreach(println)

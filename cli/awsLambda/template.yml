@@ -1,0 +1,13 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: An AWS Serverless Specification template describing your function.
+Resources:
+  HelloFunction:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      CodeUri: MyApp.jar
+      Handler: 'MyApp::apply'
+      Runtime: java17
+      Description: 'Hello Java 17 in the cloud'
+      MemorySize: 1769
+      Timeout: 15
