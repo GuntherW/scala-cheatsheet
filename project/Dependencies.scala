@@ -7,7 +7,7 @@ object Version {
   final val circeVersion            = "0.14.5"
   final val doobie                  = "1.0.0-RC2"
   final val ducktape                = "0.1.7"
-  final val fs2                     = "3.6.1"
+  final val fs2                     = "3.7.0"
   final val gatling                 = "3.9.5"
   final val h2                      = "2.1.214"
   final val jackson                 = "2.15.0"
@@ -21,7 +21,7 @@ object Version {
   final val postgres                = "42.6.0"
   final val quill                   = "4.6.0.1"
   final val refined                 = "0.10.3"
-  final val scala                   = "3.3.0-RC5"
+  final val scala                   = "3.3.0-RC6"
   final val scalaParallelCollection = "1.0.4"
   final val scodec                  = "2.2.1"
   final val sttp                    = "3.8.15"
@@ -38,7 +38,7 @@ object Version {
   final val zioOpenAI               = "0.2.1"
 
   // ScalaJS
-  final val scalaJsDom = "2.4.0"
+  final val scalaJsDom = "2.5.0"
   final val uTest      = "0.8.1"
 
   // Test
@@ -48,7 +48,7 @@ object Version {
   final val junitInterface = "0.13.3"
   final val mockito        = "1.10.19"
   final val munit          = "1.0.0-M7"
-  final val scalaTest      = "3.2.15"
+  final val scalaTest      = "3.2.16"
   final val selenium       = "4.9.1"
   final val seleniumPlus   = "3.2.10.0"
   final val scalaCheck     = "1.17.0"
