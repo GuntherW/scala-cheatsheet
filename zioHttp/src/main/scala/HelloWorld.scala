@@ -1,6 +1,9 @@
 import zio.*
 import zio.http.*
+import zio.http.codec.HttpCodec.{literal, queryInt, string}
+import zio.http.endpoint.*
 import zio.http.model.Method
+import zio.schema.{DeriveSchema, Schema}
 import zio.stream.ZStream
 
 object HelloWorld extends ZIOAppDefault:
@@ -21,6 +24,9 @@ object HelloWorld extends ZIOAppDefault:
 
   private val app = collect2 ++ collect ++ collectZIO
 
-  private val configLayer = ServerConfig.live(ServerConfig.default.port(8090))
-
-  override val run = Server.serve(app).provide(configLayer, Server.live)
+  override val run = Server
+    .serve(app)
+    .provide(
+      ServerConfig.live(ServerConfig.default.port(8090)),
+      Server.live
+    )

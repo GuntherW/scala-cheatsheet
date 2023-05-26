@@ -14,12 +14,6 @@ scala-cli package js.scala
 node js.js
 ```
 
-### Package native app
-```shell
-scala-cli package native.scala -o nativeApp
-./nativeApp
-```
-
 ### Run as script
 ```shell
 chmod +x embeddable.scala

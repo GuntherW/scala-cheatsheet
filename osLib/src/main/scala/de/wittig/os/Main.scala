@@ -1,5 +1,5 @@
 package de.wittig.os
-
+import os.Path
 object Main extends App:
 
   println(s"pwd : ${os.pwd}")

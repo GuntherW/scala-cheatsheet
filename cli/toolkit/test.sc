@@ -1,6 +1,5 @@
-//> using toolkit "0.1.4"
+//> using toolkit latest
 
-
-println("#"*100)
+println("#" * 100)
 println(os.pwd)
-println("#"*100)
+println("#" * 100)
