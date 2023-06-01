@@ -14,4 +14,3 @@ object ZIOApps:
 
 object BetterApp extends ZIOAppDefault:
   override def run = ZIO.succeed(42).debug
-

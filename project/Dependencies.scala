@@ -10,7 +10,7 @@ object Version {
   val fs2                     = "3.7.0"
   val gatling                 = "3.9.5"
   val h2                      = "2.1.214"
-  val jackson                 = "2.15.1"
+  val jackson                 = "2.15.2"
   val kafka                   = "3.4.0"
   val logback                 = "1.4.7"
   val log4j                   = "2.20.0"
@@ -28,7 +28,7 @@ object Version {
   val sttpOAuth               = "0.16.0"
   val xstream                 = "1.4.20"
   val xml                     = "2.1.0"
-  val zio                     = "2.0.13"
+  val zio                     = "2.0.14"
   val zioJson                 = "0.5.0"
   val zioKafka                = "2.3.1"
   val zioHttp                 = "0.0.5"
@@ -52,7 +52,7 @@ object Version {
   val selenium       = "4.9.1"
   val seleniumPlus   = "3.2.10.0"
   val scalaCheck     = "1.17.0"
-  val testContainer  = "0.40.15"
+  val testContainer  = "0.40.16"
 }
 
 object Library {

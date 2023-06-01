@@ -27,5 +27,3 @@ object InSameScope extends App:
   println(p2)
   println(Year.make(5))
   println(Year.make(5).map(_.pprint))
-
-

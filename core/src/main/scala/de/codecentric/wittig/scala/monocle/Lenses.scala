@@ -18,16 +18,11 @@ object Main extends App:
     Map(
       "Computer Science" -> Department(
         45,
-        List(
-          Lecturer("john", "doe", 10),
-          Lecturer("robert", "johnson", 16)
-        )
+        List(Lecturer("john", "doe", 10), Lecturer("robert", "johnson", 16))
       ),
       "History"          -> Department(
         30,
-        List(
-          Lecturer("arnold", "stones", 20)
-        )
+        List(Lecturer("arnold", "stones", 20))
       )
     )
   )

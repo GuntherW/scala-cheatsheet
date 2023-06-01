@@ -5,7 +5,7 @@ import scala.xml.transform.{RewriteRule, RuleTransformer}
 
 object ScalaXml extends App:
 
-  val books  =
+  val books =
     <books>
       <book id="b1615">Don Quixote</book>
       <book id="b1867">War and Peace</book>
