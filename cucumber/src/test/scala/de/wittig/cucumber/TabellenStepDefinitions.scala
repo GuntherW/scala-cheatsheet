@@ -5,7 +5,7 @@ import io.cucumber.scala.{DE, EN, ScalaDsl, Scenario}
 import io.cucumber.scala.Implicits.ScalaDataTable
 import org.junit.Assert.*
 
-class TabellenStepDefinitions extends ScalaDsl with DE:
+class TabellenStepDefinitions extends ScalaDsl, DE:
 
   var quellListe: List[Seq[Option[String]]] = Nil
   var istListe: List[Int]                   = Nil

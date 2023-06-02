@@ -15,7 +15,7 @@ class Di1StepDefinitions extends ScalaDsl, DE:
     b = pb
   }
 
-class Di2StepDefinitions(di1: Di1StepDefinitions) extends ScalaDsl with DE:
+class Di2StepDefinitions(di1: Di1StepDefinitions) extends ScalaDsl, DE:
 
   var addition: Int = uninitialized
 
@@ -23,7 +23,7 @@ class Di2StepDefinitions(di1: Di1StepDefinitions) extends ScalaDsl with DE:
     addition = Calculator.add(di1.a, di1.b)
   }
 
-class Di3StepDefinitions(di2: Di2StepDefinitions) extends ScalaDsl with DE:
+class Di3StepDefinitions(di2: Di2StepDefinitions) extends ScalaDsl, DE:
 
   Dann("""sei das Ergebnis {}""") { (c: Int) =>
     assertEquals(c, di2.addition)

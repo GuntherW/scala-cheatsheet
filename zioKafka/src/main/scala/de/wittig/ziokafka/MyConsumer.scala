@@ -7,19 +7,19 @@ import zio.Console.*
 import zio.kafka.consumer.*
 import zio.kafka.serde.*
 
-object ConsumerGroup1Client1 extends ZIOAppDefault with KafkaCommon:
+object ConsumerGroup1Client1 extends ZIOAppDefault, KafkaCommon:
   def settings: ConsumerSettings =
     _settings
       .withGroupId("g1")
       .withClientId("g1c1")
 
-object ConsumerGroup1Client2 extends ZIOAppDefault with KafkaCommon:
+object ConsumerGroup1Client2 extends ZIOAppDefault, KafkaCommon:
   def settings: ConsumerSettings =
     _settings
       .withGroupId("g1")
       .withClientId("g1c2")
 
-object ConsumerGroup2Client1 extends ZIOAppDefault with KafkaCommon:
+object ConsumerGroup2Client1 extends ZIOAppDefault, KafkaCommon:
   def settings: ConsumerSettings =
     _settings
       .withGroupId("g2")

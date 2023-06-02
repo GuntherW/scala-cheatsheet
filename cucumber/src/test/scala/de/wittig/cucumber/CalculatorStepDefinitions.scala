@@ -3,7 +3,7 @@ package de.wittig.cucumber
 import io.cucumber.scala.{EN, ScalaDsl, Scenario}
 import org.junit.Assert.*
 
-class CalculatorStepDefinitions extends ScalaDsl with EN:
+class CalculatorStepDefinitions extends ScalaDsl, EN:
 
   var added: Int = 0
 

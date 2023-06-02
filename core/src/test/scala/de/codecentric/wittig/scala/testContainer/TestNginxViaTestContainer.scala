@@ -17,7 +17,7 @@ import org.scalatest.tagobjects.Slow
   * @see
   *   https://dkovalenko.net/testcontainer-aerospike/
   */
-class TestNginxViaTestContainer extends AnyFunSuite with ForAllTestContainer:
+class TestNginxViaTestContainer extends AnyFunSuite, ForAllTestContainer:
 
   override val container: GenericContainer = GenericContainer(
     "nginx:latest",

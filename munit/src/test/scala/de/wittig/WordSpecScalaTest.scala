@@ -3,7 +3,7 @@ package de.wittig
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 
-class WordSpecScalaTest extends AnyWordSpecLike with Matchers:
+class WordSpecScalaTest extends AnyWordSpecLike, Matchers:
 
   case class Person(name: String, color: String)
 
