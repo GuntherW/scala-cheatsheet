@@ -14,7 +14,7 @@ object Version {
   val kafka                   = "3.4.0"
   val logback                 = "1.4.7"
   val log4j                   = "2.20.0"
-  val magnolia                = "1.3.0"
+  val magnolia                = "1.3.1"
   val mongo                   = "4.9.1"
   val monocle                 = "3.2.0"
   val osLib                   = "0.9.1"
@@ -26,6 +26,7 @@ object Version {
   val scodec                  = "2.2.1"
   val sttp                    = "3.8.15"
   val sttpOAuth               = "0.16.0"
+  val sttpOpenAi              = "0.0.6"
   val xstream                 = "1.4.20"
   val xml                     = "2.1.0"
   val zio                     = "2.0.14"
@@ -97,6 +98,7 @@ object Library {
   val sttpBEZio               = "com.softwaremill.sttp.client3" %% "zio"                              % Version.sttp
   val sttpsSlf4j              = "com.softwaremill.sttp.client3" %% "slf4j-backend"                    % Version.sttp
   val sttpOAuth               = "com.ocadotechnology"           %% "sttp-oauth2"                      % Version.sttpOAuth
+  val sttpOpenAi              = "com.softwaremill.sttp.openai"  %% "core"                             % Version.sttpOpenAi
   val xstream                 = "com.thoughtworks.xstream"       % "xstream"                          % Version.xstream
   val xml                     = "org.scala-lang.modules"        %% "scala-xml"                        % Version.xml
   val zio                     = "dev.zio"                       %% "zio"                              % Version.zio

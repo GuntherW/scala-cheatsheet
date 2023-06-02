@@ -5,7 +5,7 @@ import scala.compiletime.uninitialized
 import io.cucumber.scala.{DE, EN, ScalaDsl, Scenario}
 import org.junit.Assert.*
 
-class Di1StepDefinitions extends ScalaDsl with DE:
+class Di1StepDefinitions extends ScalaDsl, DE:
 
   var a: Int = 0
   var b: Int = 0

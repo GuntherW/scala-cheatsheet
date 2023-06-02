@@ -1,4 +1,4 @@
-package de.wittig.openai.explainCode
+package de.wittig.openai.zio.explainCode
 
 import zio.{Console, ZIOAppDefault}
 import zio.openai.Completions

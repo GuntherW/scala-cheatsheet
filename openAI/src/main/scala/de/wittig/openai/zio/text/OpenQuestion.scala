@@ -1,4 +1,4 @@
-package de.wittig.openai.text
+package de.wittig.openai.zio.text
 
 import zio.openai.*
 import zio.openai.model.CreateCompletionRequest.{MaxTokens, Prompt}

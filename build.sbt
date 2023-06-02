@@ -252,6 +252,7 @@ lazy val openAI = project
     commonSettings,
     libraryDependencies ++= Seq(
       Library.zioOpenAI,
+      Library.sttpOpenAi,
     )
   )
 

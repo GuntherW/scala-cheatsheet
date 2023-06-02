@@ -1,4 +1,4 @@
-package de.wittig.openai.image
+package de.wittig.openai.zio.image
 
 import zio.{Chunk, Console, ZIO, ZIOAppDefault}
 import zio.nio.file.{Files, Path}
@@ -9,25 +9,26 @@ import java.util.Base64
 
 /** Based on https://beta.openai.com/docs/api-reference/images
   */
-object ImageVariation extends ZIOAppDefault {
+object ImageEdit extends ZIOAppDefault {
 
-  private def createImageVariations =
+  private def createImageEdit =
     for {
       input    <- File.read(Path("openAI/ZIO.png"))
-      response <- Images.createImageVariation(
+      response <- Images.createImageEdit(
                     image = input,
+                    prompt = "ZIO logo with a dog",
                     n = N(2),
-                    size = Size.`1024x1024`,
+                    size = Size.`512x512`,
                     responseFormat = ResponseFormat.B64_json
                   )
       _        <- ZIO.foreachDiscard(response.data.zipWithIndex) {
                     case (data, idx) =>
                       val imageData = Base64.getDecoder.decode(data.b64Json.getOrElse(""))
-                      val path      = Path(s"openAI/createdImageVariation-$idx.png")
+                      val path      = Path(s"openAI/editedImage-$idx.png")
 
                       Files.writeBytes(path, Chunk.fromArray(imageData)) *> Console.printLine(s"Image written to $path")
                   }
     } yield ()
 
-  def run = createImageVariations.provide(Images.default)
+  def run = createImageEdit.provide(Images.default)
 }
