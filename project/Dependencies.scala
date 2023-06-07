@@ -11,7 +11,7 @@ object Version {
   val gatling                 = "3.9.5"
   val h2                      = "2.1.214"
   val jackson                 = "2.15.2"
-  val kafka                   = "3.4.0"
+  val kafka                   = "3.4.1"
   val logback                 = "1.4.7"
   val log4j                   = "2.20.0"
   val magnolia                = "1.3.1"
@@ -29,12 +29,12 @@ object Version {
   val sttpOpenAi              = "0.0.6"
   val xstream                 = "1.4.20"
   val xml                     = "2.1.0"
-  val zio                     = "2.0.14"
+  val zio                     = "2.0.15"
   val zioJson                 = "0.5.0"
   val zioKafka                = "2.3.1"
   val zioHttp                 = "0.0.5"
   val zioPrelude              = "1.0.0-RC19"
-  val zioSchema               = "0.4.11"
+  val zioSchema               = "0.4.12"
   val zioCli                  = "0.5.0"
   val zioOpenAI               = "0.2.1"
 
@@ -43,7 +43,7 @@ object Version {
   val uTest      = "0.8.1"
 
   // Test
-  val cucumber       = "7.12.0"
+  val cucumber       = "7.12.1"
   val cucumberScala  = "8.15.0"
   val junit          = "4.13.2"
   val junitInterface = "0.13.3"
