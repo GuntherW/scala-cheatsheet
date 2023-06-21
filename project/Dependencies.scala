@@ -11,16 +11,16 @@ object Version {
   val gatling                 = "3.9.5"
   val h2                      = "2.1.214"
   val jackson                 = "2.15.2"
-  val kafka                   = "3.4.1"
-  val logback                 = "1.4.7"
+  val kafka                   = "3.5.0"
+  val logback                 = "1.4.8"
   val log4j                   = "2.20.0"
-  val magnolia                = "1.3.1"
+  val magnolia                = "1.3.2"
   val mongo                   = "4.9.1"
   val monocle                 = "3.2.0"
   val osLib                   = "0.9.1"
   val postgres                = "42.6.0"
   val quill                   = "4.6.0.1"
-  val refined                 = "0.10.3"
+  val refined                 = "0.11.0"
   val scala                   = "3.3.0"
   val scalaParallelCollection = "1.0.4"
   val scodec                  = "2.2.1"
@@ -31,7 +31,7 @@ object Version {
   val xml                     = "2.1.0"
   val zio                     = "2.0.15"
   val zioJson                 = "0.5.0"
-  val zioKafka                = "2.3.1"
+  val zioKafka                = "2.3.2"
   val zioHttp                 = "0.0.5"
   val zioPrelude              = "1.0.0-RC19"
   val zioSchema               = "0.4.12"
@@ -47,13 +47,11 @@ object Version {
   val cucumberScala  = "8.15.0"
   val junit          = "4.13.2"
   val junitInterface = "0.13.3"
-  val mockito        = "1.10.19"
-  val munit          = "1.0.0-M7"
+  val mockito        = "4.11.0"
+  val munit          = "1.0.0-M8"
   val scalaTest      = "3.2.16"
-  val selenium       = "4.9.1"
-  val seleniumPlus   = "3.2.10.0"
   val scalaCheck     = "1.17.0"
-  val testContainer  = "0.40.16"
+  val testContainer  = "0.40.17"
 }
 
 object Library {
@@ -115,24 +113,22 @@ object Library {
   val zioOpenAI               = "dev.zio"                       %% "zio-openai"                       % Version.zioOpenAI
 
   // test
-  val cucumberScala   = "io.cucumber"            %% "cucumber-scala"                 % Version.cucumberScala
-  val cucumberJunit   = "io.cucumber"             % "cucumber-junit"                 % Version.cucumber
-  val cucumberPico    = "io.cucumber"             % "cucumber-picocontainer"         % Version.cucumber
-  val junitInterface  = "com.github.sbt"          % "junit-interface"                % Version.junitInterface
-  val junit           = "junit"                   % "junit"                          % Version.junit
-  val gatlingCharts   = "io.gatling.highcharts"   % "gatling-charts-highcharts"      % Version.gatling
-  val gatling         = "io.gatling"              % "gatling-test-framework"         % Version.gatling
-  val mockito         = "org.mockito"             % "mockito-all"                    % Version.mockito
-  val munit           = "org.scalameta"          %% "munit"                          % Version.munit
-  val munitScalaCheck = "org.scalameta"          %% "munit-scalacheck"               % Version.munit
-  val scalatest       = "org.scalatest"          %% "scalatest"                      % Version.scalaTest
-  val selenium        = "org.seleniumhq.selenium" % "selenium-java"                  % Version.selenium
-  val seleniumPlus    = "org.scalatestplus"      %% "selenium-3-141"                 % Version.seleniumPlus
-  val scalaCheck      = "org.scalacheck"         %% "scalacheck"                     % Version.scalaCheck
-  val testContainer   = "com.dimafeng"           %% "testcontainers-scala-scalatest" % Version.testContainer
-  val zioTest         = "dev.zio"                %% "zio-test"                       % Version.zio
-  val zioTestSbt      = "dev.zio"                %% "zio-test-sbt"                   % Version.zio
-  val zioTestJUnit    = "dev.zio"                %% "zio-test-junit"                 % Version.zio
+  val cucumberScala   = "io.cucumber"          %% "cucumber-scala"                 % Version.cucumberScala
+  val cucumberJunit   = "io.cucumber"           % "cucumber-junit"                 % Version.cucumber
+  val cucumberPico    = "io.cucumber"           % "cucumber-picocontainer"         % Version.cucumber
+  val junitInterface  = "com.github.sbt"        % "junit-interface"                % Version.junitInterface
+  val junit           = "junit"                 % "junit"                          % Version.junit
+  val gatlingCharts   = "io.gatling.highcharts" % "gatling-charts-highcharts"      % Version.gatling
+  val gatling         = "io.gatling"            % "gatling-test-framework"         % Version.gatling
+  val mockito         = "org.mockito"           % "mockito-core"                   % Version.mockito
+  val munit           = "org.scalameta"        %% "munit"                          % Version.munit
+  val munitScalaCheck = "org.scalameta"        %% "munit-scalacheck"               % Version.munit
+  val scalatest       = "org.scalatest"        %% "scalatest"                      % Version.scalaTest
+  val scalaCheck      = "org.scalacheck"       %% "scalacheck"                     % Version.scalaCheck
+  val testContainer   = "com.dimafeng"         %% "testcontainers-scala-scalatest" % Version.testContainer
+  val zioTest         = "dev.zio"              %% "zio-test"                       % Version.zio
+  val zioTestSbt      = "dev.zio"              %% "zio-test-sbt"                   % Version.zio
+  val zioTestJUnit    = "dev.zio"              %% "zio-test-junit"                 % Version.zio
 }
 
 object Dependencies {
@@ -161,9 +157,7 @@ object Dependencies {
 
   val testDependencies: Seq[ModuleID] = Seq(
     mockito       % Test,
-    scalatest     % "it,test",
-    seleniumPlus  % "it",
-    selenium      % "it",
+    scalatest     % Test,
     scalaCheck    % Test,
     testContainer % Test,
   )

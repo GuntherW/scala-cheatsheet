@@ -22,7 +22,7 @@ class TestNginxViaTestContainer extends AnyFunSuite, ForAllTestContainer:
   override val container: GenericContainer = GenericContainer(
     "nginx:latest",
     exposedPorts = Seq(80),
-    waitStrategy = Wait.forHttp("/")
+    waitStrategy = Wait.forHttp("/"),
   )
 
   ignore("GenericContainer should start nginx and expose 80 port", Slow) {

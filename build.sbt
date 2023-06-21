@@ -49,12 +49,10 @@ lazy val `scala-cheatsheet` = (project in file("."))
   )
 
 lazy val core = project
-  .configs(IntegrationTest)
   .settings(
     commonSettings,
     libraryDependencies ++= Dependencies.dependencies ++ Dependencies.testDependencies,
     libraryDependencies += "io.github.resilience4j" % "resilience4j-all" % "2.0.2",
-    Defaults.itSettings,
     Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-s", "4") // scalacheck should emit 4 examples only
   )
 

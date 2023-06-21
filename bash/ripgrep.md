@@ -47,6 +47,3 @@ rg  '// TODO' -C 2
 ```shell
 rg  '// TODO' -A 2 # -B für Before
 ```
-
-
-
