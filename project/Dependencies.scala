@@ -5,7 +5,7 @@ object Version {
   val catsVersion             = "2.9.0"
   val catsConsole             = "0.8.1"
   val circeVersion            = "0.14.5"
-  val doobie                  = "1.0.0-RC2"
+  val doobie                  = "1.0.0-RC4"
   val ducktape                = "0.1.8"
   val fs2                     = "3.7.0"
   val gatling                 = "3.9.5"
@@ -15,7 +15,7 @@ object Version {
   val logback                 = "1.4.8"
   val log4j                   = "2.20.0"
   val magnolia                = "1.3.2"
-  val mongo                   = "4.9.1"
+  val mongo                   = "4.10.0"
   val monocle                 = "3.2.0"
   val osLib                   = "0.9.1"
   val postgres                = "42.6.0"
@@ -44,7 +44,7 @@ object Version {
 
   // Test
   val cucumber       = "7.12.1"
-  val cucumberScala  = "8.15.0"
+  val cucumberScala  = "8.16.0"
   val junit          = "4.13.2"
   val junitInterface = "0.13.3"
   val mockito        = "4.11.0"
