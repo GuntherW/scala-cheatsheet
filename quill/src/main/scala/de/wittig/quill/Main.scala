@@ -4,6 +4,8 @@ import io.getquill.*
 import io.getquill.context.jdbc.JdbcContext
 import DBContext.*
 
+import scala.util.chaining.scalaUtilChainingOps
+
 enum DBContext {
   case PostgresContext, H2Context
 }
@@ -35,6 +37,5 @@ object Main extends App:
 
   extension [A](a: A) {
     def printColored(c: String = Console.CYAN): A =
-      println(c + a.toString + Console.RESET)
-      a
+      a.tap(s => println(c + s.toString + Console.RESET))
   }

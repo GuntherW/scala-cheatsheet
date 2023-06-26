@@ -52,7 +52,6 @@ lazy val core = project
   .settings(
     commonSettings,
     libraryDependencies ++= Dependencies.dependencies ++ Dependencies.testDependencies,
-    libraryDependencies += "io.github.resilience4j" % "resilience4j-all" % "2.0.2",
     Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-s", "4") // scalacheck should emit 4 examples only
   )
 

@@ -15,12 +15,13 @@ object Version {
   val logback                 = "1.4.8"
   val log4j                   = "2.20.0"
   val magnolia                = "1.3.2"
-  val mongo                   = "4.10.0"
+  val mongo                   = "4.10.1"
   val monocle                 = "3.2.0"
   val osLib                   = "0.9.1"
   val postgres                = "42.6.0"
   val quill                   = "4.6.0.1"
   val refined                 = "0.11.0"
+  val resilience4j            = "2.0.2"
   val scala                   = "3.3.0"
   val scalaParallelCollection = "1.0.4"
   val scodec                  = "2.2.1"
@@ -87,6 +88,7 @@ object Library {
   val quillJdbcZio            = "io.getquill"                   %% "quill-jdbc-zio"                   % Version.quill
   val quillJasyncPostgres     = "io.getquill"                   %% "quill-jasync-postgres"            % Version.quill
   val refined                 = "eu.timepit"                    %% "refined"                          % Version.refined
+  val resilience4j            = "io.github.resilience4j"         % "resilience4j-all"                 % Version.resilience4j
   val scalaParallelCollection = "org.scala-lang.modules"        %% "scala-parallel-collections"       % Version.scalaParallelCollection
   val scalaReflect            = "org.scala-lang"                 % "scala-reflect"                    % Version.scala % "provided"
   val scodec                  = "org.scodec"                    %% "scodec-core"                      % Version.scodec
@@ -146,6 +148,7 @@ object Dependencies {
     logback,
     monocle,
     refined,
+    resilience4j,
     scalaParallelCollection,
     scodec,
     xstream,

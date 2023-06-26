@@ -1,20 +1,26 @@
 package de.codecentric.wittig.scala.phantomtypes.example
 
+import scala.annotation.targetName
+
 object Problem extends App:
   private val tenString  = Code("10")
   private val trueString = Code("true")
 
-  tenString and trueString // Code((10 && true)) // unsafe
+  tenString && trueString // Code((10 && true)) // unsafe
 
 case class Code(value: String):
-  infix def add(that: Code): Code =
+  @targetName("add")
+  infix def +(that: Code): Code =
     Code(s"($value + ${that.value})")
 
-  infix def multiply(that: Code): Code =
+  @targetName("multiply")
+  infix def *(that: Code): Code =
     Code(s"($value * ${that.value})")
 
-  infix def and(that: Code): Code =
+  @targetName("and")
+  infix def &&(that: Code): Code =
     Code(s"($value && ${that.value})")
 
-  infix def or(that: Code): Code =
+  @targetName("or")
+  infix def ||(that: Code): Code =
     Code(s"($value || ${that.value})")

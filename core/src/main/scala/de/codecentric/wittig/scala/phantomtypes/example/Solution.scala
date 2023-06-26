@@ -1,24 +1,30 @@
 package de.codecentric.wittig.scala.phantomtypes.example
 
+import scala.annotation.targetName
+
 object Solution extends App:
   private val tenString  = CodeSafe[Int]("10")
   private val trueString = CodeSafe[Boolean]("true")
 
-  tenString add tenString
-  // tenString and trueString // won't compile
+  tenString + tenString
+  // tenString + trueString // won't compile
 
 case class CodeSafe[A](value: String)
 object CodeSafe:
-  extension (intCode: CodeSafe[Int])
-    infix def add(that: CodeSafe[Int]): CodeSafe[Int] =
-      CodeSafe(s"(${intCode.value} + ${that.value})")
+  extension (code: CodeSafe[Int])
+    @targetName("add")
+    infix def +(that: CodeSafe[Int]): CodeSafe[Int] =
+      CodeSafe(s"(${code.value} + ${that.value})")
 
-    infix def multiply(that: CodeSafe[Int]): CodeSafe[Int] =
-      CodeSafe(s"(${intCode.value} * ${that.value})")
+    @targetName("multiply")
+    infix def *(that: CodeSafe[Int]): CodeSafe[Int] =
+      CodeSafe(s"(${code.value} * ${that.value})")
 
-  extension (boolCode: CodeSafe[Boolean])
-    infix def and(that: CodeSafe[Boolean]): CodeSafe[Boolean] =
-      CodeSafe(s"(${boolCode.value} && ${that.value})")
+  extension (code: CodeSafe[Boolean])
+    @targetName("and")
+    infix def &&(that: CodeSafe[Boolean]): CodeSafe[Boolean] =
+      CodeSafe(s"(${code.value} && ${that.value})")
 
-    infix def or(that: CodeSafe[Boolean]): CodeSafe[Boolean] =
-      CodeSafe(s"(${boolCode.value} || ${that.value})")
+    @targetName("or")
+    infix def ||(that: CodeSafe[Boolean]): CodeSafe[Boolean] =
+      CodeSafe(s"(${code.value} || ${that.value})")
