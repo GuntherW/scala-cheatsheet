@@ -33,5 +33,4 @@ class MockingTest extends AnyFunSuite {
     assert(m.m2("eins", "zwei") === "snie")
     assert(m.m2("eins", "zwei", "drei") === "snie")
   }
-
 }
