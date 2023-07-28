@@ -27,7 +27,7 @@ object Version {
   val scodec                  = "2.2.1"
   val sttp                    = "3.8.16"
   val sttpOAuth               = "0.16.0"
-  val sttpOpenAi              = "0.0.6"
+  val sttpOpenAi              = "0.0.7"
   val xstream                 = "1.4.20"
   val xml                     = "2.2.0"
   val zio                     = "2.0.15"
