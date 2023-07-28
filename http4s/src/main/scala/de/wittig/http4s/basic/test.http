@@ -1,0 +1,2 @@
+GET localhost:9081/welcome
+Authorization: Basic R3VudGhlcjpwYXNzd29yZAo= # echo "gunther:password" | base64

@@ -1,0 +1,2 @@
+GET localhost:9082/welcome
+Authorization: Digest username password

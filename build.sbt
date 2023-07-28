@@ -29,6 +29,7 @@ lazy val `scala-cheatsheet` = (project in file("."))
     core,
     cucumber,
     doobie,
+    http4s,
     gatling,
     kafka,
     scalacheck,
@@ -276,4 +277,16 @@ lazy val gatling = project
 lazy val metaprogramming = project
   .settings(
     commonSettings
+  )
+
+lazy val http4s = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.http4s,
+      Library.http4sEmber,
+      Library.jwtHttp4s,
+      Library.jwtScala,
+      Library.jwtCirce,
+    )
   )

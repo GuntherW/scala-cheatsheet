@@ -1,0 +1,14 @@
+GET localhost:9083/login/welcome
+Authorization: Digest username password
+
+> {%
+    client.global.set("my_cookie", response.headers.valuesOf("Set-Cookie")[0]);
+%}
+###
+
+GET localhost:9083/statement
+Cookie: {{my_cookie}}
+###
+
+GET localhost:9083/logout
+Cookie: {{my_cookie}}
