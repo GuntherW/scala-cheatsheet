@@ -283,8 +283,14 @@ lazy val http4s = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(
+      Library.ciris,
+      Library.cirisCirce,
+      Library.circeCore,
+      Library.circeParser,
       Library.http4s,
-      Library.http4sEmber,
+      Library.http4sEmberServer,
+      Library.http4sEmberClient,
+      Library.http4sDsl,
       Library.jwtHttp4s,
       Library.jwtScala,
       Library.jwtCirce,

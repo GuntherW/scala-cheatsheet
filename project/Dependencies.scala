@@ -1,12 +1,13 @@
 import sbt.*
 
 object Version {
-  val akka                    = "2.8.3"
+  val akka                    = "2.8.4"
   val catsVersion             = "2.10.0"
   val catsConsole             = "0.8.1"
   val circeVersion            = "0.14.5"
+  val cirisVersion            = "3.2.0"
   val doobie                  = "1.0.0-RC4"
-  val ducktape                = "0.1.10"
+  val ducktape                = "0.1.11"
   val fs2                     = "3.8.0"
   val gatling                 = "3.9.5"
   val h2                      = "2.2.220"
@@ -65,6 +66,8 @@ object Library {
   val circeCore               = "io.circe"                      %% "circe-core"                       % Version.circeVersion
   val circeGeneric            = "io.circe"                      %% "circe-generic"                    % Version.circeVersion
   val circeParser             = "io.circe"                      %% "circe-parser"                     % Version.circeVersion
+  val ciris                   = "is.cir"                        %% "ciris"                            % Version.cirisVersion
+  val cirisCirce              = "is.cir"                        %% "ciris-circe"                      % Version.cirisVersion
   val fs2Core                 = "co.fs2"                        %% "fs2-core"                         % Version.fs2
   val doobieCore              = "org.tpolecat"                  %% "doobie-core"                      % Version.doobie
   val doobiePostgres          = "org.tpolecat"                  %% "doobie-postgres"                  % Version.doobie
@@ -74,7 +77,9 @@ object Library {
   val fs2ReactiveStreams      = "co.fs2"                        %% "fs2-reactive-streams"             % Version.fs2
   val h2                      = "com.h2database"                 % "h2"                               % Version.h2
   val http4s                  = "org.http4s"                    %% "http4s-dsl"                       % Version.http4s
-  val http4sEmber             = "org.http4s"                    %% "http4s-ember-server"              % Version.http4s
+  val http4sEmberServer       = "org.http4s"                    %% "http4s-ember-server"              % Version.http4s
+  val http4sEmberClient       = "org.http4s"                    %% "http4s-ember-client"              % Version.http4s
+  val http4sDsl               = "org.http4s"                    %% "http4s-dsl"                       % Version.http4s
   val jacksonCore             = "com.fasterxml.jackson.core"     % "jackson-databind"                 % Version.jackson
   val jacksonScala            = "com.fasterxml.jackson.module"  %% "jackson-module-scala"             % Version.jackson
   val jwtHttp4s               = "dev.profunktor"                %% "http4s-jwt-auth"                  % Version.jwtHttp4s

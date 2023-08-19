@@ -34,3 +34,4 @@ project/plugins/project/
 
 package-lock.json
 node_modules
+/http4s/src/main/resources/appConfig.json
