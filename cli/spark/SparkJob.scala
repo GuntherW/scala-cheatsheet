@@ -1,5 +1,5 @@
 //> using dep org.apache.spark::spark-sql:3.4.1
-//> using scala 2.13.10
+//> using scala 2.13.11
 
 import org.apache.spark._
 import org.apache.spark.sql._
@@ -8,7 +8,7 @@ object SparkJob extends App {
 
   val spark = SparkSession.builder().appName("Test job").getOrCreate()
   import spark.implicits._
-  def sc = spark.sparkContext
+  def sc    = spark.sparkContext
 
   val accum = sc.longAccumulator
   sc
