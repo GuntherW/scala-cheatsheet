@@ -1,7 +1,8 @@
 package de.wittig.scala.scalacheck.helper
 
 object Printer:
-  def printn(a: String, b: String): Unit =
-    println(s"arb a: [$a]")
-    println(s"arb b: [$b]")
+  def printn(s: String*): Unit =
+    s.zipWithIndex.foreach {
+      case (s, i) => println(s"$i: [$s]")
+    }
     println("\u2500" * 50)
