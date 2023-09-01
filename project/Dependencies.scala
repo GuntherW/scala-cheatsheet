@@ -4,11 +4,11 @@ object Version {
   val akka                    = "2.8.4"
   val catsVersion             = "2.10.0"
   val catsConsole             = "0.8.1"
-  val circeVersion            = "0.14.5"
+  val circeVersion            = "0.14.6"
   val cirisVersion            = "3.2.0"
   val doobie                  = "1.0.0-RC4"
   val ducktape                = "0.1.11"
-  val fs2                     = "3.8.0"
+  val fs2                     = "3.9.1"
   val gatling                 = "3.9.5"
   val h2                      = "2.2.220"
   val http4s                  = "0.23.23"
@@ -56,7 +56,7 @@ object Version {
   val munit          = "1.0.0-M8"
   val scalaTest      = "3.2.16"
   val scalaCheck     = "1.17.0"
-  val testContainer  = "0.40.17"
+  val testContainer  = "0.41.0"
 }
 
 object Library {
