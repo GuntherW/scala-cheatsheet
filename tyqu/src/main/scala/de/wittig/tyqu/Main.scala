@@ -1,0 +1,50 @@
+package de.wittig.tyqu
+
+import tyqu.given
+import tyqu.*
+
+import scala.language.implicitConversions
+import scala.language.adhocExtensions
+import BookDatabase.*
+import tyqu.execution.PostgreSqlQueryExecutor
+
+import java.sql.DriverManager
+
+object Main extends App:
+
+  val connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/booksdb?user=postgres&password=postgres&ssl=false")
+  given PostgreSqlQueryExecutor(connection)
+
+  val results1 =
+    from(Authors)
+      .filter(_.birthYear > 1970)
+      .sortBy(_.lastName)
+      .limit(10)
+      .execute()
+  for author <- results1 do
+    println(s"${author.firstName} ${author.lastName} (born ${author.birthYear})")
+
+  val results2 =
+    from(Authors)
+      .filter(_.books.exists(_.title.contains("Scala")))
+      .limit(10)
+      .execute()
+  for author <- results2 do
+    println(s"${author.firstName} ${author.lastName} (born ${author.birthYear})")
+
+  val results3 = from(Books).filter(_.author.firstName === "Peter").execute()
+  for book <- results3 do
+    println(s"${book.title} ")
+
+  val currentYear = 2023
+  val results4    =
+    from(Authors)
+      .map { a =>
+        (
+          (a.firstName + " " + a.lastName).as("name"),
+          (currentYear - a.birthYear).as("age"),
+        )
+      }
+      .execute()
+  for author <- results4 do
+    println(s"${author.name} (${author.age})")

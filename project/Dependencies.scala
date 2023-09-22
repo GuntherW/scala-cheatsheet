@@ -1,7 +1,7 @@
 import sbt.*
 
 object Version {
-  val akka                    = "2.8.4"
+  val akka                    = "2.8.5"
   val catsVersion             = "2.10.0"
   val catsConsole             = "0.8.1"
   val circeVersion            = "0.14.6"
@@ -29,9 +29,10 @@ object Version {
   val scala                   = "3.3.1"
   val scalaParallelCollection = "1.0.4"
   val scodec                  = "2.2.1"
-  val sttp                    = "4.0.0-M4"
+  val sttp                    = "4.0.0-M5"
   val sttpOAuth               = "0.16.0"
   val sttpOpenAi              = "0.0.7"
+  val tyqu                    = "0.1.0"
   val xstream                 = "1.4.20"
   val xml                     = "2.2.0"
   val zio                     = "2.0.17"
@@ -44,7 +45,7 @@ object Version {
   val zioOpenAI               = "0.2.1"
 
   // ScalaJS
-  val scalaJsDom = "2.6.0"
+  val scalaJsDom = "2.7.0"
   val uTest      = "0.8.1"
 
   // Test
@@ -112,6 +113,7 @@ object Library {
   val sttpsSlf4j              = "com.softwaremill.sttp.client4" %% "slf4j-backend"                    % Version.sttp
   val sttpOAuth               = "com.ocadotechnology"           %% "sttp-oauth2"                      % Version.sttpOAuth
   val sttpOpenAi              = "com.softwaremill.sttp.openai"  %% "core"                             % Version.sttpOpenAi
+  val tyqu                    = "ch.epfl.tyqu"                  %% "tyqu"                             % Version.tyqu
   val xstream                 = "com.thoughtworks.xstream"       % "xstream"                          % Version.xstream
   val xml                     = "org.scala-lang.modules"        %% "scala-xml"                        % Version.xml
   val zio                     = "dev.zio"                       %% "zio"                              % Version.zio

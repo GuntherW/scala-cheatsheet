@@ -115,7 +115,7 @@ services:
       - data:/var/lib/postgres/dottydb/data
       - "./sql:/docker-entrypoint-initdb.d"
 
-    #command: ["postgres", "-c", "log_statement=all", "-c", "log_destination=stderr"]
+    command: ["postgres", "-c", "log_statement=all", "-c", "log_destination=stderr"]
 
 volumes:
   data:

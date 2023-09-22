@@ -33,6 +33,7 @@ lazy val `scala-cheatsheet` = (project in file("."))
     gatling,
     kafka,
     scalacheck,
+    storch,
     macros,
     magnolia,
     mongo,
@@ -41,6 +42,7 @@ lazy val `scala-cheatsheet` = (project in file("."))
     quill,
     scalajs,
     sttp,
+    tyqu,
     zio,
     ziocli,
     zioHttp,
@@ -54,6 +56,21 @@ lazy val core = project
     commonSettings,
     libraryDependencies ++= Dependencies.dependencies ++ Dependencies.testDependencies,
     Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-s", "4") // scalacheck should emit 4 examples only
+  )
+
+lazy val storch = project
+  .settings(
+    commonSettings,
+    resolvers ++= Resolver.sonatypeOssRepos("snapshots"),
+    libraryDependencies ++= Seq(
+      "dev.storch"  %% "core"     % "0.0-b634ff1-SNAPSHOT",
+      "org.bytedeco" % "pytorch"  % "2.0.1-1.5.10-SNAPSHOT",
+      "org.bytedeco" % "pytorch"  % "2.0.1-1.5.10-SNAPSHOT" classifier "linux-x86_64-gpu",
+      "org.bytedeco" % "openblas" % "0.3.23-1.5.10-SNAPSHOT" classifier "linux-x86_64",
+      "org.bytedeco" % "cuda"     % "12.1-8.9-1.5.10-SNAPSHOT",
+      "org.bytedeco" % "cuda"     % "12.1-8.9-1.5.10-SNAPSHOT" classifier "linux-x86_64",
+      "org.bytedeco" % "cuda"     % "12.1-8.9-1.5.10-SNAPSHOT" classifier "linux-x86_64-redist"
+    )
   )
 
 lazy val docs = project // new documentation project
@@ -294,5 +311,14 @@ lazy val http4s = project
       Library.jwtHttp4s,
       Library.jwtScala,
       Library.jwtCirce,
+    )
+  )
+
+lazy val tyqu = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.tyqu,
+      Library.postgres
     )
   )
