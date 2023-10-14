@@ -5,39 +5,40 @@ object Version {
   val catsVersion             = "2.10.0"
   val catsConsole             = "0.8.1"
   val circeVersion            = "0.14.6"
-  val cirisVersion            = "3.2.0"
+  val cirisVersion            = "3.3.0"
   val doobie                  = "1.0.0-RC4"
   val ducktape                = "0.1.11"
   val fs2                     = "3.9.2"
   val gatling                 = "3.9.5"
-  val h2                      = "2.2.222"
+  val h2                      = "2.2.224"
   val http4s                  = "0.23.23"
-  val jackson                 = "2.15.2"
+  val jackson                 = "2.15.3"
   val jwtHttp4s               = "1.2.1"
   val jwtScala                = "9.4.4"
-  val kafka                   = "3.5.1"
+  val kafka                   = "3.6.0"
   val logback                 = "1.4.11"
   val log4j                   = "2.20.0"
   val magnolia                = "1.3.3"
-  val mongo                   = "4.10.2"
+  val mongo                   = "4.11.0"
   val monocle                 = "3.2.0"
   val osLib                   = "0.9.1"
   val postgres                = "42.6.0"
-  val quill                   = "4.6.0.1"
+  val quill                   = "4.8.0"
   val refined                 = "0.11.0"
   val resilience4j            = "2.1.0"
   val scala                   = "3.3.1"
   val scalaParallelCollection = "1.0.4"
   val scodec                  = "2.2.1"
-  val sttp                    = "4.0.0-M5"
+  val sttp                    = "4.0.0-M6"
   val sttpOAuth               = "0.16.0"
   val sttpOpenAi              = "0.0.7"
+  val squants                 = "1.8.3"
   val tyqu                    = "0.1.0"
   val xstream                 = "1.4.20"
   val xml                     = "2.2.0"
-  val zio                     = "2.0.17"
+  val zio                     = "2.0.18"
   val zioJson                 = "0.6.2"
-  val zioKafka                = "2.4.2"
+  val zioKafka                = "2.5.0"
   val zioHttp                 = "0.0.5"
   val zioPrelude              = "1.0.0-RC21"
   val zioSchema               = "0.4.14"
@@ -45,7 +46,7 @@ object Version {
   val zioOpenAI               = "0.2.1"
 
   // ScalaJS
-  val scalaJsDom = "2.7.0"
+  val scalaJsDom = "2.8.0"
   val uTest      = "0.8.1"
 
   // Test
@@ -53,7 +54,7 @@ object Version {
   val cucumberScala  = "8.17.0"
   val junit          = "4.13.2"
   val junitInterface = "0.13.3"
-  val mockito        = "5.5.0"
+  val mockito        = "5.6.0"
   val munit          = "1.0.0-M10"
   val scalaTest      = "3.2.17"
   val scalaCheck     = "1.17.0"
@@ -113,6 +114,7 @@ object Library {
   val sttpsSlf4j              = "com.softwaremill.sttp.client4" %% "slf4j-backend"                    % Version.sttp
   val sttpOAuth               = "com.ocadotechnology"           %% "sttp-oauth2"                      % Version.sttpOAuth
   val sttpOpenAi              = "com.softwaremill.sttp.openai"  %% "core"                             % Version.sttpOpenAi
+  val squants                 = "org.typelevel"                 %% "squants"                          % Version.squants
   val tyqu                    = "ch.epfl.tyqu"                  %% "tyqu"                             % Version.tyqu
   val xstream                 = "com.thoughtworks.xstream"       % "xstream"                          % Version.xstream
   val xml                     = "org.scala-lang.modules"        %% "scala-xml"                        % Version.xml
@@ -166,6 +168,7 @@ object Dependencies {
     resilience4j,
     scalaParallelCollection,
     scodec,
+    squants,
     xstream,
     xml,
     zio,
