@@ -43,7 +43,7 @@ object Version {
   val zioPrelude              = "1.0.0-RC21"
   val zioSchema               = "0.4.14"
   val zioCli                  = "0.5.0"
-  val zioOpenAI               = "0.2.1"
+  val zioOpenAI               = "0.3.0"
 
   // ScalaJS
   val scalaJsDom = "2.8.0"

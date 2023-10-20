@@ -1,7 +1,8 @@
 package de.wittig.openai.zio.text
 
 import zio.openai.*
-import zio.openai.model.CreateCompletionRequest.Prompt
+import zio.openai.model.CreateCompletionRequest.Model.Models
+import zio.openai.model.CreateCompletionRequest.{Model, Prompt}
 import zio.openai.model.Temperature
 import zio.{Console, ZIO, ZIOAppDefault}
 
@@ -21,11 +22,11 @@ object Quickstart extends ZIOAppDefault {
   private def loop = for {
     animal <- Console.readLine("Animal: ")
     result <- Completions.createCompletion(
-                model = "text-davinci-003",
+                model = Model.Predefined(Models.`Text-davinci-003`),
                 prompt = generatePrompt(animal),
                 temperature = Temperature(0.6)
               )
-    _      <- Console.printLine("Names: " + result.choices.flatMap(_.text.toOption).mkString(", "))
+    _      <- Console.printLine("Names: " + result.choices.map(_.text).mkString(", "))
   } yield ()
 
   override def run = loop.forever.provide(Completions.default)

@@ -2,8 +2,9 @@ package de.wittig.openai.zio.explainCode
 
 import zio.{Console, ZIOAppDefault}
 import zio.openai.Completions
-import zio.openai.model.CreateCompletionRequest.{MaxTokens, Prompt, Stop}
-import zio.openai.model.{FrequencyPenalty, PresencePenalty, Temperature, TopP}
+import zio.openai.model.CreateCompletionRequest.Model.Models
+import zio.openai.model.CreateCompletionRequest.{MaxTokens, Model, Prompt, Stop}
+import zio.openai.model.{CreateCompletionRequest, FrequencyPenalty, PresencePenalty, Temperature, TopP}
 
 /** Based on https://beta.openai.com/examples/default-explain-code
   */
@@ -48,7 +49,7 @@ object ExplainCode extends ZIOAppDefault {
   private def program =
     for {
       response <- Completions.createCompletion(
-                    model = "code-davinci-002",
+                    model = Model.Predefined(Models.`Code-davinci-002`),
                     prompt = prompt,
                     temperature = Temperature(0.0),
                     maxTokens = MaxTokens(64),
@@ -57,7 +58,7 @@ object ExplainCode extends ZIOAppDefault {
                     presencePenalty = PresencePenalty(0.0),
                     stop = Stop.String("'''")
                   )
-      _        <- Console.printLine(response.choices.headOption.flatMap(_.text.toOption).getOrElse("No response"))
+      _        <- Console.printLine(response.choices.map(_.text))
     } yield ()
 
   def run = program.provide(Completions.default)
