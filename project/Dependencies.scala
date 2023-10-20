@@ -17,7 +17,7 @@ object Version {
   val jwtScala                = "9.4.4"
   val kafka                   = "3.6.0"
   val logback                 = "1.4.11"
-  val log4j                   = "2.20.0"
+  val log4j                   = "2.21.0"
   val magnolia                = "1.3.3"
   val mongo                   = "4.11.0"
   val monocle                 = "3.2.0"
