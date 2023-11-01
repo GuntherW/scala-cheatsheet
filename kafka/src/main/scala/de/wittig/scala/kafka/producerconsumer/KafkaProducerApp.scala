@@ -13,13 +13,13 @@ import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 
 object KafkaProducerApp extends App:
 
-  val props: Properties = new Properties()
+  private val props: Properties = new Properties()
   props.put("bootstrap.servers", bootstrapServer)
   props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
   props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
   props.put("acks", "all")
 
-  val producer = new KafkaProducer[String, String](props)
+  private val producer = new KafkaProducer[String, String](props)
 
   try
     for (i <- 0 to 15)

@@ -11,7 +11,7 @@ import de.wittig.scala.kafka.producerconsumer.Constants.*
 
 object KafkaConsumerApp extends App {
 
-  val props: Properties = new Properties()
+  private val props: Properties = new Properties()
   props.put("group.id", "test")
   props.put("bootstrap.servers", bootstrapServer)
   props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
@@ -19,8 +19,8 @@ object KafkaConsumerApp extends App {
   props.put("enable.auto.commit", "true")
   props.put("auto.commit.interval.ms", "1000")
 
-  val consumer = new KafkaConsumer(props)
-  val topics   = List(topic)
+  private val consumer = new KafkaConsumer(props)
+  private val topics   = List(topic)
 
   try
     consumer.subscribe(topics.asJava)
