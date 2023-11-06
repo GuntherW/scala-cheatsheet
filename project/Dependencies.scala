@@ -21,8 +21,9 @@ object Version {
   val magnolia                = "1.3.4"
   val mongo                   = "4.11.0"
   val monocle                 = "3.2.0"
-  val osLib                   = "0.9.1"
+  val osLib                   = "0.9.2"
   val postgres                = "42.6.0"
+  val pureConfig              = "0.17.4"
   val quill                   = "4.8.0"
   val refined                 = "0.11.0"
   val resilience4j            = "2.1.0"
@@ -47,14 +48,14 @@ object Version {
 
   // ScalaJS
   val scalaJsDom = "2.8.0"
-  val uTest      = "0.8.1"
+  val uTest      = "0.8.2"
 
   // Test
   val cucumber       = "7.14.0"
-  val cucumberScala  = "8.17.0"
+  val cucumberScala  = "8.18.0"
   val junit          = "4.13.2"
   val junitInterface = "0.13.3"
-  val mockito        = "5.6.0"
+  val mockito        = "5.7.0"
   val munit          = "1.0.0-M10"
   val scalaTest      = "3.2.17"
   val scalaCheck     = "1.17.0"
@@ -99,6 +100,7 @@ object Library {
   val monocle                 = "dev.optics"                    %% "monocle-core"                     % Version.monocle
   val osLib                   = "com.lihaoyi"                   %% "os-lib"                           % Version.osLib
   val postgres                = "org.postgresql"                 % "postgresql"                       % Version.postgres
+  val pureConfig              = "com.github.pureconfig"         %% "pureconfig-core"                  % Version.pureConfig
   val quillJdbc               = "io.getquill"                   %% "quill-jdbc"                       % Version.quill
   val quillJdbcZio            = "io.getquill"                   %% "quill-jdbc-zio"                   % Version.quill
   val quillJasyncPostgres     = "io.getquill"                   %% "quill-jasync-postgres"            % Version.quill

@@ -24,59 +24,59 @@ import scala.util.Random
   */
 object KafkaStreams extends App:
 
-  implicit def serde[A >: Null: Decoder: Encoder]: Serde[A] =
+  implicit private def serde[A >: Null: Decoder: Encoder]: Serde[A] =
     val serializer   = (a: A) => a.asJson.noSpaces.getBytes()
     val deserializer = (bs: Array[Byte]) => decode[A](new String(bs)).toOption
     Serdes.fromFn[A](serializer, deserializer)
 
-  val builder = new StreamsBuilder()
+  private val builder = new StreamsBuilder()
 
-  // KTable - (distributed)
-  val userProfilesTable: KTable[UserId, Profile] = builder.table[UserId, Profile](DiscountProfilesByUserTable.value)
+  // KTable - (compacted, distributed)
+  private val userProfilesTable: KTable[UserId, Profile] = builder.table[UserId, Profile](DiscountProfilesByUserTable.value)
 
-  // GlobalKTable - (copied to all the nodes)
-  val discountProfilesGTable: GlobalKTable[Profile, Discount] = builder.globalTable[Profile, Discount](DiscountsTable.value)
+  // GlobalKTable - (compacted, copied to all the nodes)
+  private val discountProfilesGTable: GlobalKTable[Profile, Discount] = builder.globalTable[Profile, Discount](DiscountsTable.value)
 
   // KStream
-  val userOrdersStream: KStream[UserId, Order] = builder.stream[UserId, Order](OrdersByUserTopic.value)
-  val paymentsStream                           = builder.stream[OrderId, Payment](PaymentsTopic.value)
+  private val userOrdersStream: KStream[UserId, Order] = builder.stream[UserId, Order](OrdersByUserTopic.value)
+  private val paymentsStream                           = builder.stream[OrderId, Payment](PaymentsTopic.value)
 
   // KStream transformations
-  val expensiveOrders = userOrdersStream.filter((userId, order) => order.amount > 1000)
-  val listOfProducts  = userOrdersStream.mapValues(_.products)
-  val productStream   = userOrdersStream.flatMapValues(_.products)
+  private val expensiveOrders = userOrdersStream.filter((userId, order) => order.amount > 1000)
+  private val listOfProducts  = userOrdersStream.mapValues(_.products)
+  private val productStream   = userOrdersStream.flatMapValues(_.products)
 
   // join
-  val ordersWithUserProfiles = userOrdersStream.join(userProfilesTable)((order, profile) => (order, profile))
+  private val ordersWithUserProfiles = userOrdersStream.join(userProfilesTable)((order, profile) => (order, profile))
   ordersWithUserProfiles.to(DebugOrdersWithUserProfilesTopic.value)
-  val discountedOrdersStream = ordersWithUserProfiles.join(discountProfilesGTable)(
+  private val discountedOrdersStream = ordersWithUserProfiles.join(discountProfilesGTable)(
     { case (userId, (order, profile)) => profile }, // key of the join, picked of the "left" stream
     { case ((order, profile), discount) => order.copy(amount = order.amount - discount.amount) }
   )
   discountedOrdersStream.to(DebugOrdersWithUserProfilesDiscountedTopic.value)
 
   // pick another identifier
-  val ordersStream = discountedOrdersStream.selectKey((userId, order) => order.orderId)
+  private val ordersStream = discountedOrdersStream.selectKey((userId, order) => order.orderId)
   ordersStream.to(DebugOrdersTopic.value)
 
   // Join Window
-  val joinWindow        = JoinWindows.of(Duration.of(5, ChronoUnit.MINUTES))
-  val joinOrderPayments = (order: Order, payments: Payment) => if payments.status == "PAID" then Option(order) else Option.empty[Order]
-  val ordersPaid        = ordersStream.join[Payment, Option[Order]](paymentsStream)(joinOrderPayments, joinWindow)
+  private val joinWindow        = JoinWindows.of(Duration.of(5, ChronoUnit.MINUTES))
+  private val joinOrderPayments = (order: Order, payments: Payment) => if payments.status == "PAID" then Option(order) else Option.empty[Order]
+  private val ordersPaid        = ordersStream.join[Payment, Option[Order]](paymentsStream)(joinOrderPayments, joinWindow)
     .flatMapValues(maybeOrder => maybeOrder.toList)
 
   // sink
   ordersPaid.to(PaidOrdersTopic.value)
 
-  val topology = builder.build()
+  private val topology = builder.build()
   println(topology.describe) // prints topology to console
 
-  val props = new Properties
+  private val props = new Properties
   props.put(StreamsConfig.APPLICATION_ID_CONFIG, "orders-application")
   props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092")
   props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.stringSerde.getClass)
 
-  val application = new KafkaStreams(topology, props)
+  private val application = new KafkaStreams(topology, props)
   application.start()
 //  Thread.sleep(120000)
 //  application.close()

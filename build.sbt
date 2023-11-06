@@ -311,6 +311,7 @@ lazy val http4s = project
       Library.jwtHttp4s,
       Library.jwtScala,
       Library.jwtCirce,
+      Library.pureConfig
     )
   )
 
