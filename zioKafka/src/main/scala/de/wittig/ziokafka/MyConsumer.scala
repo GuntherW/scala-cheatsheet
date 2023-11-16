@@ -1,9 +1,7 @@
 package de.wittig.ziokafka
 
-import de.wittig.ziokafka.ConsumerGroup1Client1.consumerIO
 import de.wittig.ziokafka.MyConstants.bootstrapServer
 import zio.*
-import zio.Console.*
 import zio.kafka.consumer.*
 import zio.kafka.serde.*
 
@@ -34,7 +32,7 @@ trait KafkaCommon {
   private lazy val list                       = topics.split(",")
   private lazy val subscription: Subscription = Subscription.topics(list.head, list.tail*)
   def consumerIO: RIO[Any, Unit]              = Consumer.consumeWith(settings, subscription, Serde.string, Serde.string) {
-    consumerRecord => ZIO.succeed(println(s"Received record: ${consumerRecord.key}: ${consumerRecord.value}"))
+    consumerRecord => ZIO.succeed(println(s"[${consumerRecord.partition}] record: ${consumerRecord.key}: ${consumerRecord.value}"))
   }
 
   def run: RIO[Any, Unit] = consumerIO

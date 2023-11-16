@@ -1,16 +1,10 @@
 package de.wittig.ziokafka
 
-import scala.concurrent.duration.DurationInt
-
-import de.wittig.ziokafka.ConsumerGroup1Client1._settings
 import de.wittig.ziokafka.MyConstants.{bootstrapServer, topics}
-import zio.Console.printLine
-import zio.{Duration, Schedule, ZIO, ZIOAppDefault, ZLayer}
-import zio.kafka.consumer.ConsumerSettings
-import zio.kafka.producer.*
-import zio.*
 import zio.Console.*
+import zio.kafka.producer.*
 import zio.kafka.serde.*
+import zio.*
 
 /** // Löschen, falls Topic mit nur einer Partition
   *
