@@ -9,7 +9,8 @@ import scala.util.chaining.scalaUtilChainingOps
 enum DBContext {
   case PostgresContext, H2Context
 }
-case class Person(firstName: String, lastName: String, age: Int)
+case class Person(id: Int, firstName: String, lastName: String, age: Int)
+case class Book(id: Int, ownerId: Int, title: String)
 
 object Main extends App:
 
@@ -22,18 +23,26 @@ object Main extends App:
   import ctx.*
 
   inline def persons              = query[Person]
-  inline def all                  = quote(persons)
+  inline def books                = query[Book]
+  inline def allPersons           = quote(persons)
+  inline def allBooks             = quote(books)
   inline def hans                 = quote(persons.filter(_.firstName == "Hans"))
   inline def updateHans(age: Int) = quote(persons.filter(_.firstName == "Hans").update(_.age -> age))
 
+  val p1    = Person(0, "Peter", "Pan", 88)
+  val book1 = Book(0, 0, "Titel 1")
+  val book2 = Book(1, 0, "Titel 2")
   transaction(
-    run(persons.insertValue(Person("Peter", "Pan", 88))).printColored(Console.YELLOW),
-    run(persons.insertValue(Person("Hans", "Franz", 88))).printColored(Console.YELLOW),
+    run(persons.insertValue(lift(p1))).printColored(Console.YELLOW),
+    run(persons.insertValue(Person(1, "Hans", "Franz", 88))).printColored(Console.YELLOW),
+    run(books.insertValue(lift(book1))).printColored(Console.YELLOW),
+    run(books.insertValue(lift(book2))).printColored(Console.YELLOW),
   )
   run(hans).printColored()
   run(updateHans(111))
   ("-" * 50).printColored(Console.RED)
-  run(all).printColored()
+  run(allPersons).printColored()
+  run(allBooks).printColored()
 
   extension [A](a: A) {
     def printColored(c: String = Console.CYAN): A =
