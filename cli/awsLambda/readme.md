@@ -3,9 +3,9 @@
 https://blog.lambdaspot.dev/one-and-done-part-2-industrys-adoption-of-self-contained-jvm-applications
 
 ```bash
-scala-cli --power package MyApp.scala --assembly --preamble=false
+scala-cli --power package MyApp.scala -f --assembly --preamble=false
 ```
 
 ```bash
-echo '{"name": "Daniel Düsentrieb", "age": 44}' | sam local invoke --event - "HelloFunction"
+echo '{"name": "Daniel Düsentrieb", "age": 44}' | sam local invoke --event - "HelloFunction" | jq
 ```
