@@ -185,6 +185,8 @@ lazy val mongo = project
     commonSettings,
     libraryDependencies ++= Seq(
       Library.mongoDriverJava,
+      Library.logback,
+      "org.reactivemongo" %% "reactivemongo" % "1.1.0-RC11",
     )
   )
 
