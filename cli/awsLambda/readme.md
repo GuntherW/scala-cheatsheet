@@ -7,5 +7,5 @@ scala-cli --power package MyApp.scala --assembly --preamble=false
 ```
 
 ```bash
-echo '{"name": "John Doe", "age": 44}' | sam local invoke --event - "HelloFunction"
+echo '{"name": "Daniel Düsentrieb", "age": 44}' | sam local invoke --event - "HelloFunction"
 ```
