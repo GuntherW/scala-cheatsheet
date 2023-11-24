@@ -32,7 +32,7 @@ object Version {
   val scodec                  = "2.2.2"
   val sttp                    = "4.0.0-M6"
   val sttpOAuth               = "0.16.0"
-  val sttpOpenAi              = "0.0.7"
+  val sttpOpenAi              = "0.0.8"
   val squants                 = "1.8.3"
   val tyqu                    = "0.1.0"
   val xstream                 = "1.4.20"
@@ -44,7 +44,7 @@ object Version {
   val zioPrelude              = "1.0.0-RC21"
   val zioSchema               = "0.4.16"
   val zioCli                  = "0.5.0"
-  val zioOpenAI               = "0.3.0"
+  val zioOpenAI               = "0.4.0"
 
   // ScalaJS
   val scalaJsDom = "2.8.0"

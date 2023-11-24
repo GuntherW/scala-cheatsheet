@@ -3,7 +3,8 @@ package de.wittig.openai.zio.image
 import zio.{Chunk, Console, ZIO, ZIOAppDefault}
 import zio.nio.file.{Files, Path}
 import zio.openai.Images
-import zio.openai.model.{File, N, ResponseFormat, Size}
+import zio.openai.model.CreateImageEditRequest.N
+import zio.openai.model.{File, ResponseFormat, Size}
 
 import java.util.Base64
 

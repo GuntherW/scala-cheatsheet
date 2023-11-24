@@ -1,13 +1,9 @@
 package de.wittig.openai.sttp
 
-import sttp.client4.*
 import sttp.openai.OpenAISyncClient
-import sttp.openai.requests.completions.chat.ChatRequestBody.{ChatBody, ChatCompletionModel}
-import sttp.openai.requests.completions.chat.ChatRequestResponseData.ChatResponse
-import sttp.openai.requests.completions.chat.{Message, Role}
-import sttp.openai.requests.images.{ResponseFormat, Size}
 import sttp.openai.requests.images.creation.ImageCreationRequestBody
 import sttp.openai.requests.images.creation.ImageCreationRequestBody.ImageCreationBody
+import sttp.openai.requests.images.{ResponseFormat, Size}
 
 object Image extends App {
 

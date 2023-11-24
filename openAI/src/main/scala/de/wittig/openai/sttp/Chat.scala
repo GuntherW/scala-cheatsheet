@@ -1,19 +1,17 @@
 package de.wittig.openai.sttp
 
-import sttp.client4.*
 import sttp.openai.OpenAISyncClient
-import sttp.openai.requests.completions.chat.ChatRequestResponseData.ChatResponse
 import sttp.openai.requests.completions.chat.ChatRequestBody.{ChatBody, ChatCompletionModel}
-import sttp.openai.requests.completions.chat.{Message, Role}
+import sttp.openai.requests.completions.chat.ChatRequestResponseData.ChatResponse
+import sttp.openai.requests.completions.chat.message.*
 
 object Chat extends App {
 
   private val openAI: OpenAISyncClient = OpenAISyncClient(sys.env("OPENAI_APIKEY"))
 
   private val requestMessage = Seq(
-    Message(
-      role = Role.User,
-      content = "Hello!"
+    Message.UserMessage(
+      content = Content.TextContent("Hello!")
     )
   )
 

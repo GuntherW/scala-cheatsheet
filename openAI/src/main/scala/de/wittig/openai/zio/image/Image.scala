@@ -3,16 +3,17 @@ package de.wittig.openai.zio.image
 import zio.nio.file.{Files, Path}
 import zio.{Chunk, Console, ZIO, ZIOAppDefault}
 import zio.openai.Images
-import zio.openai.model.{N, ResponseFormat, Size}
+import zio.openai.model.CreateImageRequest.Size
+import zio.openai.model.{N, ResponseFormat}
 
 import java.util.Base64
 
 /** Based on https://beta.openai.com/docs/api-reference/images
   */
-object Image extends ZIOAppDefault {
+object Image extends ZIOAppDefault:
 
   private def createImageFromPrompt =
-    for {
+    for
       response <- Images.createImage(
                     "Wildschwein Logo",
                     n = N(2),
@@ -26,7 +27,6 @@ object Image extends ZIOAppDefault {
 
                       Files.writeBytes(path, Chunk.fromArray(imageData)) *> Console.printLine(s"Image written to $path")
                   }
-    } yield ()
+    yield ()
 
   def run = createImageFromPrompt.provide(Images.default)
-}
