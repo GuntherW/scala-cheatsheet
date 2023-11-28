@@ -15,6 +15,7 @@ object Version {
   val jackson                 = "2.16.0"
   val jwtHttp4s               = "1.2.1"
   val jwtScala                = "9.4.5"
+  val jsonSchemaValidator     = "1.0.82"
   val kafka                   = "3.6.0"
   val logback                 = "1.4.11"
   val log4j                   = "2.22.0"
@@ -85,6 +86,7 @@ object Library {
   val http4sDsl               = "org.http4s"                    %% "http4s-dsl"                       % Version.http4s
   val jacksonCore             = "com.fasterxml.jackson.core"     % "jackson-databind"                 % Version.jackson
   val jacksonScala            = "com.fasterxml.jackson.module"  %% "jackson-module-scala"             % Version.jackson
+  val jsonSchemaValidator     = "com.networknt"                  % "json-schema-validator"            % Version.jsonSchemaValidator
   val jwtHttp4s               = "dev.profunktor"                %% "http4s-jwt-auth"                  % Version.jwtHttp4s
   val jwtScala                = "com.github.jwt-scala"          %% "jwt-core"                         % Version.jwtScala
   val jwtCirce                = "com.github.jwt-scala"          %% "jwt-circe"                        % Version.jwtScala
@@ -164,6 +166,7 @@ object Dependencies {
     fs2Core,
     fs2IO,
     fs2ReactiveStreams,
+    jsonSchemaValidator,
     logback,
     monocle,
     refined,

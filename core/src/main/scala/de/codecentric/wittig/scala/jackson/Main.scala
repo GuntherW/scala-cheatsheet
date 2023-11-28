@@ -1,10 +1,10 @@
 package de.codecentric.wittig.scala.jackson
 
-import scala.jdk.CollectionConverters.MapHasAsJava
-
-import com.fasterxml.jackson.annotation.{JsonAnyGetter, JsonValue}
+import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
+
+import scala.jdk.CollectionConverters.MapHasAsJava
 
 object Main extends App:
 

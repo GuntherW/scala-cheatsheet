@@ -1,0 +1,6 @@
+{
+  "productId": 1,
+  "productName": "A green door",
+  "invalid": 12.50,
+  "tags": [ "home", "green" ]
+}
