@@ -1,10 +1,10 @@
-package de.wittig.ziokafka
+package de.wittig.ziokafka.simple
 
 import de.wittig.ziokafka.MyConstants.{bootstrapServer, topics}
+import zio.*
 import zio.Console.*
 import zio.kafka.producer.*
 import zio.kafka.serde.*
-import zio.*
 
 /** // Löschen, falls Topic mit nur einer Partition
   *

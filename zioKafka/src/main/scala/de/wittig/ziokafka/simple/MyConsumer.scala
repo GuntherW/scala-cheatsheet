@@ -1,6 +1,7 @@
-package de.wittig.ziokafka
+package de.wittig.ziokafka.simple
 
 import de.wittig.ziokafka.MyConstants.bootstrapServer
+import de.wittig.ziokafka.MyConstants
 import zio.*
 import zio.kafka.consumer.*
 import zio.kafka.serde.*
