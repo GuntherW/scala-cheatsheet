@@ -9,5 +9,5 @@ Resources:
       Handler: 'MyApp::apply'
       Runtime: java21
       Description: 'Hello Java 21 in the cloud'
-      MemorySize: 1769
+      MemorySize: 1024
       Timeout: 15

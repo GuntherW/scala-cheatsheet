@@ -17,10 +17,7 @@ object Main extends App:
   Repository.updatePerson(p2.copy(age = 123)).await
 
 object Repository:
-  // My settings (see available connection options)
-  private val mongoUri = "mongodb://localhost:27017/"
-
-  // Connect to the database: Must be done only once per application
+  private val mongoUri  = "mongodb://localhost:27017/"
   private val driver    = AsyncDriver()
   private val parsedUri = MongoConnection.fromString(mongoUri)
 
