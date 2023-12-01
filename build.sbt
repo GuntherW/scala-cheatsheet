@@ -31,6 +31,7 @@ lazy val `scala-cheatsheet` = (project in file("."))
     doobie,
     http4s,
     gatling,
+    grpcFs2,
     kafka,
     scalacheck,
     storch,
@@ -72,6 +73,18 @@ lazy val storch = project
       "org.bytedeco" % "cuda"     % "12.3-8.9-1.5.10-SNAPSHOT" classifier "linux-x86_64-redist"
     )
   )
+
+lazy val grpcFs2 = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      "io.grpc"              % "grpc-netty-shaded"   % scalapb.compiler.Version.grpcJavaVersion,
+      "org.http4s"          %% "http4s-ember-server" % "0.23.23",
+      "org.http4s"          %% "http4s-dsl"          % "0.23.23",
+      "org.http4s"          %% "http4s-circe"        % "0.23.23",
+      "com.disneystreaming" %% "weaver-cats"         % "0.8.3" % Test
+    )
+  ).enablePlugins(Fs2Grpc)
 
 lazy val docs = project // new documentation project
   .in(file("cheatsheet-docs")) // important: it must not be docs/
