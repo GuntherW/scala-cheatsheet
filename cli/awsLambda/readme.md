@@ -5,12 +5,13 @@ https://blog.lambdaspot.dev/one-and-done-part-2-industrys-adoption-of-self-conta
 SAM = Serverless Application Model. (Wrapper für Cloudformation)
 
 ```bash
-
-
-```bash
 scala-cli --power package MyApp.scala -f --assembly --preamble=false
 ```
 
 ```bash
 echo '{"name": "Daniel Düsentrieb", "age": 44}' | sam local invoke --event - "HelloFunction" | jq
+```
+
+```bash
+sam local invoke --event event.json "HelloFunction" | jq
 ```

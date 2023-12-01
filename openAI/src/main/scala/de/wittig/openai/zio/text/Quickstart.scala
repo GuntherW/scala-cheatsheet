@@ -10,13 +10,13 @@ object Quickstart extends ZIOAppDefault {
 
   private def generatePrompt(animal: String): Prompt = Prompt.String {
     s"""Suggest three names for an animal that is a superhero.
-         |
-         |Animal: Cat
-         |Names: Captain Sharpclaw, Agent Fluffball, The Incredible Feline
-         |Animal: Dog
-         |Names: Ruff the Protector, Wonder Canine, Sir Barks-a-Lot
-         |Animal: ${animal.capitalize}
-         |Names:""".stripMargin
+       |
+       |Animal: Cat
+       |Names: Captain Sharpclaw, Agent Fluffball, The Incredible Feline
+       |Animal: Dog
+       |Names: Ruff the Protector, Wonder Canine, Sir Barks-a-Lot
+       |Animal: ${animal.capitalize}
+       |Names:""".stripMargin
   }
 
   private def loop = for {
