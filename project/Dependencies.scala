@@ -61,6 +61,7 @@ object Version {
   val scalaTest      = "3.2.17"
   val scalaCheck     = "1.17.0"
   val testContainer  = "0.41.0"
+  val weaverCats     = "0.8.3"
 }
 
 object Library {
@@ -83,6 +84,7 @@ object Library {
   val http4s                  = "org.http4s"                    %% "http4s-dsl"                       % Version.http4s
   val http4sEmberServer       = "org.http4s"                    %% "http4s-ember-server"              % Version.http4s
   val http4sEmberClient       = "org.http4s"                    %% "http4s-ember-client"              % Version.http4s
+  val http4sCirce             = "org.http4s"                    %% "http4s-circe"                     % Version.http4s
   val http4sDsl               = "org.http4s"                    %% "http4s-dsl"                       % Version.http4s
   val jacksonCore             = "com.fasterxml.jackson.core"     % "jackson-databind"                 % Version.jackson
   val jacksonScala            = "com.fasterxml.jackson.module"  %% "jackson-module-scala"             % Version.jackson
@@ -149,6 +151,7 @@ object Library {
   val scalatest       = "org.scalatest"        %% "scalatest"                      % Version.scalaTest
   val scalaCheck      = "org.scalacheck"       %% "scalacheck"                     % Version.scalaCheck
   val testContainer   = "com.dimafeng"         %% "testcontainers-scala-scalatest" % Version.testContainer
+  val weaverCats      = "com.disneystreaming"  %% "weaver-cats"                    % Version.weaverCats
   val zioTest         = "dev.zio"              %% "zio-test"                       % Version.zio
   val zioTestSbt      = "dev.zio"              %% "zio-test-sbt"                   % Version.zio
   val zioTestJUnit    = "dev.zio"              %% "zio-test-junit"                 % Version.zio

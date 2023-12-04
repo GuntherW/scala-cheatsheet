@@ -67,7 +67,7 @@ lazy val storch = project
       "dev.storch"  %% "core"     % "0.0-b634ff1-SNAPSHOT",
       "org.bytedeco" % "pytorch"  % "2.1.1-1.5.10-SNAPSHOT",
       "org.bytedeco" % "pytorch"  % "2.1.1-1.5.10-SNAPSHOT" classifier "linux-x86_64-gpu",
-      "org.bytedeco" % "openblas" % "0.3.24-1.5.10-SNAPSHOT" classifier "linux-x86_64",
+      "org.bytedeco" % "openblas" % "0.3.25-1.5.10-SNAPSHOT" classifier "linux-x86_64",
       "org.bytedeco" % "cuda"     % "12.3-8.9-1.5.10-SNAPSHOT",
       "org.bytedeco" % "cuda"     % "12.3-8.9-1.5.10-SNAPSHOT" classifier "linux-x86_64",
       "org.bytedeco" % "cuda"     % "12.3-8.9-1.5.10-SNAPSHOT" classifier "linux-x86_64-redist"
@@ -78,11 +78,11 @@ lazy val grpcFs2 = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(
-      "io.grpc"              % "grpc-netty-shaded"   % scalapb.compiler.Version.grpcJavaVersion,
-      "org.http4s"          %% "http4s-ember-server" % "0.23.23",
-      "org.http4s"          %% "http4s-dsl"          % "0.23.23",
-      "org.http4s"          %% "http4s-circe"        % "0.23.23",
-      "com.disneystreaming" %% "weaver-cats"         % "0.8.3" % Test
+      "io.grpc"          % "grpc-netty-shaded" % scalapb.compiler.Version.grpcJavaVersion,
+      Library.http4sEmberServer,
+      Library.http4sDsl,
+      Library.http4sCirce,
+      Library.weaverCats % Test
     )
   ).enablePlugins(Fs2Grpc)
 
