@@ -10,6 +10,7 @@ import fs2.grpc.syntax.all.*
 
 //https://blog.rockthejvm.com/grpc-in-scala-with-fs2-scalapb/
 
+// Business logic
 class OrderService extends OrderFs2Grpc[IO, Metadata]:
   override def sendOrderStream(request: Stream[IO, OrderRequest], ctx: Metadata): Stream[IO, OrderReply] =
     request.map { orderReq =>

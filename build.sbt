@@ -127,6 +127,14 @@ lazy val osLib = project
     )
   )
 
+lazy val tess4j = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      "net.sourceforge.tess4j" % "tess4j" % "5.8.0"
+    )
+  )
+
 lazy val macros = project
   .settings(commonSettings)
 
