@@ -14,8 +14,8 @@ import dev.lambdaspot.aws.lambda.events.ApiGatewayProxiedResponse
 import scala.util.{Success, Try}
 
 object MyApp extends AwsLambdaEntryPoint:
-  override lazy val entryPoint = new AwsLambda[PersonDto, ApiGatewayProxiedResponse]:
 
+  override lazy val entryPoint = new AwsLambda[PersonDto, ApiGatewayProxiedResponse]:
     override def run(person: PersonDto, context: Context): Try[ApiGatewayProxiedResponse] =
       context.getLogger.log(s"Request received: $person\n")
       Success(
