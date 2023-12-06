@@ -1,7 +1,6 @@
 ### Bauen und lokales Testen einer Lambdafunktion für AWS
 
 https://blog.lambdaspot.dev/one-and-done-part-2-industrys-adoption-of-self-contained-jvm-applications
-
 SAM = Serverless Application Model. (Wrapper für Cloudformation)
 
 ```bash
