@@ -1,4 +1,3 @@
-//> using scala "3"
 //> using jvm "21"
 //> using repository "jitpack"
 //> using dep "com.github.lambdaspot:aws-lambda-scala-bridge:0.1.5"
