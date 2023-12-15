@@ -2,6 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.5"
+  val aws                     = "2.115.0"
   val catsVersion             = "2.10.0"
   val catsConsole             = "0.8.1"
   val circeVersion            = "0.14.6"
@@ -66,6 +67,7 @@ object Version {
 
 object Library {
   val akka                    = "com.typesafe.akka"             %% "akka-actor-typed"                 % Version.akka
+  val awsCdk                  = "software.amazon.awscdk"         % "aws-cdk-lib"                      % Version.aws
   val catsCore                = "org.typelevel"                 %% "cats-core"                        % Version.catsVersion
   val catsFree                = "org.typelevel"                 %% "cats-free"                        % Version.catsVersion
   val circeCore               = "io.circe"                      %% "circe-core"                       % Version.circeVersion

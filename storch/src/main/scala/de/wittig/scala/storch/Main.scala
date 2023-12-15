@@ -24,3 +24,4 @@ object Main extends App:
 
   val model = NeuralNetwork().to(device)
   println(model)
+  println(device)

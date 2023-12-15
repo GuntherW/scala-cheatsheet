@@ -27,6 +27,7 @@ lazy val `scala-cheatsheet` = (project in file("."))
   .aggregate(
     akka,
     core,
+    cdk,
     cucumber,
     doobie,
     http4s,
@@ -57,6 +58,15 @@ lazy val core = project
     commonSettings,
     libraryDependencies ++= Dependencies.dependencies ++ Dependencies.testDependencies,
     Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-s", "4") // scalacheck should emit 4 examples only
+  )
+
+lazy val cdk = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.awsCdk,
+      "software.constructs" % "constructs" % "10.3.0"
+    )
   )
 
 lazy val storch = project
