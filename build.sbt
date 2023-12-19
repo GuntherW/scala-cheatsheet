@@ -75,8 +75,8 @@ lazy val storch = project
     resolvers ++= Resolver.sonatypeOssRepos("snapshots"),
     libraryDependencies ++= Seq(
       "dev.storch"  %% "core"     % "0.0-b634ff1-SNAPSHOT",
-      "org.bytedeco" % "pytorch"  % "2.1.1-1.5.10-SNAPSHOT",
-      "org.bytedeco" % "pytorch"  % "2.1.1-1.5.10-SNAPSHOT" classifier "linux-x86_64-gpu",
+      "org.bytedeco" % "pytorch"  % "2.1.2-1.5.10-SNAPSHOT",
+      "org.bytedeco" % "pytorch"  % "2.1.2-1.5.10-SNAPSHOT" classifier "linux-x86_64-gpu",
       "org.bytedeco" % "openblas" % "0.3.25-1.5.10-SNAPSHOT" classifier "linux-x86_64",
       "org.bytedeco" % "cuda"     % "12.3-8.9-1.5.10-SNAPSHOT",
       "org.bytedeco" % "cuda"     % "12.3-8.9-1.5.10-SNAPSHOT" classifier "linux-x86_64",
