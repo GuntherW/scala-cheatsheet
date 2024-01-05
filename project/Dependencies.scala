@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.5"
-  val aws                     = "2.116.1"
+  val aws                     = "2.118.0"
   val catsVersion             = "2.10.0"
   val catsConsole             = "0.8.1"
   val circeVersion            = "0.14.6"
@@ -12,18 +12,18 @@ object Version {
   val fs2                     = "3.9.3"
   val gatling                 = "3.10.3"
   val h2                      = "2.2.224"
-  val http4s                  = "0.23.24"
-  val jackson                 = "2.16.0"
+  val http4s                  = "0.23.25"
+  val jackson                 = "2.16.1"
   val jwtHttp4s               = "1.2.1"
   val jwtScala                = "9.4.5"
   val jsonSchemaValidator     = "1.1.0"
   val kafka                   = "3.6.1"
   val logback                 = "1.4.14"
-  val log4j                   = "2.22.0"
+  val log4j                   = "2.22.1"
   val magnolia                = "1.3.4"
   val mongo                   = "4.11.1"
   val monocle                 = "3.2.0"
-  val osLib                   = "0.9.2"
+  val osLib                   = "0.9.3"
   val postgres                = "42.7.1"
   val pureConfig              = "0.17.4"
   val quill                   = "4.8.0"
@@ -36,15 +36,16 @@ object Version {
   val sttpOAuth               = "0.16.0"
   val sttpOpenAi              = "0.0.9"
   val squants                 = "1.8.3"
+  val tapir                   = "1.9.6"
   val tyqu                    = "0.1.0"
   val xstream                 = "1.4.20"
   val xml                     = "2.2.0"
-  val zio                     = "2.0.20"
+  val zio                     = "2.0.21"
   val zioJson                 = "0.6.2"
   val zioKafka                = "2.7.1"
   val zioHttp                 = "0.0.5"
   val zioPrelude              = "1.0.0-RC21"
-  val zioSchema               = "0.4.16"
+  val zioSchema               = "0.4.17"
   val zioCli                  = "0.5.0"
   val zioOpenAI               = "0.4.0"
 
@@ -123,6 +124,12 @@ object Library {
   val sttpOAuth               = "com.ocadotechnology"           %% "sttp-oauth2"                      % Version.sttpOAuth
   val sttpOpenAi              = "com.softwaremill.sttp.openai"  %% "core"                             % Version.sttpOpenAi
   val squants                 = "org.typelevel"                 %% "squants"                          % Version.squants
+  val tapirAwsLambda          = "com.softwaremill.sttp.tapir"   %% "tapir-aws-lambda"                 % Version.tapir
+  val tapirAwsCdk             = "com.softwaremill.sttp.tapir"   %% "tapir-aws-cdk"                    % Version.tapir
+  val tapirAwsSam             = "com.softwaremill.sttp.tapir"   %% "tapir-aws-sam"                    % Version.tapir
+  val tapirJsonCirce          = "com.softwaremill.sttp.tapir"   %% "tapir-json-circe"                 % Version.tapir
+  val tapirJdkHttp            = "com.softwaremill.sttp.tapir"   %% "tapir-jdkhttp-server"             % Version.tapir
+  val tapirNettyFuture        = "com.softwaremill.sttp.tapir"   %% "tapir-netty-server"               % Version.tapir
   val tyqu                    = "ch.epfl.tyqu"                  %% "tyqu"                             % Version.tyqu
   val xstream                 = "com.thoughtworks.xstream"       % "xstream"                          % Version.xstream
   val xml                     = "org.scala-lang.modules"        %% "scala-xml"                        % Version.xml

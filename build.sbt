@@ -44,6 +44,7 @@ lazy val `scala-cheatsheet` = (project in file("."))
     quill,
     scalajs,
     sttp,
+    tapir,
     tyqu,
     zio,
     ziocli,
@@ -348,7 +349,19 @@ lazy val http4s = project
     )
   )
 
-lazy val tyqu = project
+lazy val tapir = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.tapirAwsLambda,
+      Library.tapirAwsCdk,
+      Library.tapirAwsSam,
+      Library.tapirJsonCirce,
+      Library.tapirJdkHttp,
+      Library.tapirNettyFuture,
+    )
+  )
+lazy val tyqu  = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(
