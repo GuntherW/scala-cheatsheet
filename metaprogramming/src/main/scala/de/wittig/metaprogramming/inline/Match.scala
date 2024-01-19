@@ -1,7 +1,5 @@
 package de.wittig.metaprogramming.inline
 
-import scala.util.Random
-
 inline def test(x: String | Int): String =
   inline x match
     case _: String => "s"
