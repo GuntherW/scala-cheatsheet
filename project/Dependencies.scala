@@ -9,14 +9,14 @@ object Version {
   val cirisVersion            = "3.5.0"
   val doobie                  = "1.0.0-RC5"
   val ducktape                = "0.1.11"
-  val fs2                     = "3.9.3"
+  val fs2                     = "3.9.4"
   val gatling                 = "3.10.3"
   val h2                      = "2.2.224"
   val http4s                  = "0.23.25"
   val jackson                 = "2.16.1"
   val jwtHttp4s               = "1.2.1"
   val jwtScala                = "9.4.6"
-  val jsonSchemaValidator     = "1.1.0"
+  val jsonSchemaValidator     = "1.2.0"
   val kafka                   = "3.6.1"
   val logback                 = "1.4.14"
   val log4j                   = "2.22.1"
@@ -27,6 +27,7 @@ object Version {
   val postgres                = "42.7.1"
   val pureConfig              = "0.17.5"
   val quill                   = "4.8.0"
+  val reactiveMongo           = "1.1.0-RC12"
   val refined                 = "0.11.0"
   val resilience4j            = "2.2.0"
   val scala                   = "3.4.0-RC1"
@@ -111,6 +112,7 @@ object Library {
   val quillJdbc               = "io.getquill"                   %% "quill-jdbc"                       % Version.quill
   val quillJdbcZio            = "io.getquill"                   %% "quill-jdbc-zio"                   % Version.quill
   val quillJasyncPostgres     = "io.getquill"                   %% "quill-jasync-postgres"            % Version.quill
+  val reactiveMongo           = "org.reactivemongo"             %% "reactivemongo"                    % Version.reactiveMongo
   val refined                 = "eu.timepit"                    %% "refined"                          % Version.refined
   val resilience4j            = "io.github.resilience4j"         % "resilience4j-all"                 % Version.resilience4j
   val scalaParallelCollection = "org.scala-lang.modules"        %% "scala-parallel-collections"       % Version.scalaParallelCollection
