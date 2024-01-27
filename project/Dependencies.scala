@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.5"
-  val aws                     = "2.122.0"
+  val aws                     = "2.124.0"
   val catsVersion             = "2.10.0"
   val catsConsole             = "0.8.1"
   val circeVersion            = "0.14.6"
@@ -14,9 +14,9 @@ object Version {
   val h2                      = "2.2.224"
   val http4s                  = "0.23.25"
   val jackson                 = "2.16.1"
-  val jwtHttp4s               = "1.2.1"
+  val jwtHttp4s               = "1.2.2"
   val jwtScala                = "9.4.6"
-  val jsonSchemaValidator     = "1.2.0"
+  val jsonSchemaValidator     = "1.3.0"
   val kafka                   = "3.6.1"
   val logback                 = "1.4.14"
   val log4j                   = "2.22.1"
@@ -28,7 +28,7 @@ object Version {
   val pureConfig              = "0.17.5"
   val quill                   = "4.8.0"
   val reactiveMongo           = "1.1.0-RC12"
-  val refined                 = "0.11.0"
+  val refined                 = "0.11.1"
   val resilience4j            = "2.2.0"
   val scala                   = "3.4.0-RC1"
   val scalaParallelCollection = "1.0.4"
@@ -37,7 +37,7 @@ object Version {
   val sttpOAuth               = "0.16.0"
   val sttpOpenAi              = "0.0.9"
   val squants                 = "1.8.3"
-  val tapir                   = "1.9.6"
+  val tapir                   = "1.9.7"
   val tyqu                    = "0.1.0"
   val xstream                 = "1.4.20"
   val xml                     = "2.2.0"
@@ -59,12 +59,12 @@ object Version {
   val cucumberScala  = "8.20.0"
   val junit          = "4.13.2"
   val junitInterface = "0.13.3"
-  val mockito        = "5.9.0"
+  val mockito        = "5.10.0"
   val munit          = "1.0.0-M10"
   val scalaTest      = "3.2.17"
   val scalaCheck     = "1.17.0"
   val testContainer  = "0.41.0"
-  val weaverCats     = "0.8.3"
+  val weaverCats     = "0.8.4"
 }
 
 object Library {
