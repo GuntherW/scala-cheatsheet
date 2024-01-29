@@ -63,7 +63,7 @@ object Version {
   val munit          = "1.0.0-M10"
   val scalaTest      = "3.2.17"
   val scalaCheck     = "1.17.0"
-  val testContainer  = "0.41.0"
+  val testContainer  = "0.41.2"
   val weaverCats     = "0.8.4"
 }
 
