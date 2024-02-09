@@ -16,7 +16,8 @@ lazy val commonSettings = Seq(
   ),
   Test / fork       := true, // subprojects won't run in parallel then
   Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oF"), // Showing full stack trace
-  turbo := true
+  turbo         := true,
+  usePipelining := true
 )
 
 ThisBuild / concurrentRestrictions := Seq(Tags.limit(Tags.ForkedTestGroup, 2))
@@ -215,12 +216,11 @@ lazy val ziocli = project
 lazy val zioSchema = project
   .settings(
     commonSettings,
-    libraryDependencies += Library.zio,
     libraryDependencies += Library.zioSchema,
     libraryDependencies += Library.zioSchemaJson,
+    libraryDependencies += Library.zioSchemaBson,
     libraryDependencies += Library.zioSchemaProtobuf,
     libraryDependencies += Library.zioSchemaDerivation,
-//    libraryDependencies += Library.scalaReflect,
   )
 
 lazy val scalajs = project

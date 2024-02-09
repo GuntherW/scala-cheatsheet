@@ -1,4 +1,4 @@
-//> using dep com.github.ghostdogpr::caliban-quick:2.5.0
+//> using dep com.github.ghostdogpr::caliban-quick:2.5.1
 
 import caliban.*
 import caliban.schema.ArgBuilder.auto.*

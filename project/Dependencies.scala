@@ -2,7 +2,8 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.5"
-  val aws                     = "2.125.0"
+  val aws                     = "2.126.0"
+  val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.10.0"
   val catsConsole             = "0.8.1"
   val circeVersion            = "0.14.6"
@@ -16,7 +17,7 @@ object Version {
   val jackson                 = "2.16.1"
   val jwtHttp4s               = "1.2.2"
   val jwtScala                = "9.4.6"
-  val jsonSchemaValidator     = "1.3.1"
+  val jsonSchemaValidator     = "1.3.2"
   val kafka                   = "3.6.1"
   val logback                 = "1.4.14"
   val log4j                   = "2.22.1"
@@ -33,11 +34,11 @@ object Version {
   val scala                   = "3.3.1"
   val scalaParallelCollection = "1.0.4"
   val scodec                  = "2.2.2"
-  val sttp                    = "4.0.0-M8"
+  val sttp                    = "4.0.0-M9"
   val sttpOAuth               = "0.16.0"
   val sttpOpenAi              = "0.0.9"
   val squants                 = "1.8.3"
-  val tapir                   = "1.9.8"
+  val tapir                   = "1.9.9"
   val tyqu                    = "0.1.0"
   val xstream                 = "1.4.20"
   val xml                     = "2.2.0"
@@ -45,7 +46,7 @@ object Version {
   val zioJson                 = "0.6.2"
   val zioKafka                = "2.7.2"
   val zioHttp                 = "0.0.5"
-  val zioPrelude              = "1.0.0-RC22"
+  val zioPrelude              = "1.0.0-RC23"
   val zioSchema               = "0.4.17"
   val zioCli                  = "0.5.0"
   val zioOpenAI               = "0.4.0"
@@ -60,8 +61,8 @@ object Version {
   val junit          = "4.13.2"
   val junitInterface = "0.13.3"
   val mockito        = "5.10.0"
-  val munit          = "1.0.0-M10"
-  val scalaTest      = "3.2.17"
+  val munit          = "1.0.0-M11"
+  val scalaTest      = "3.2.18"
   val scalaCheck     = "1.17.0"
   val testContainer  = "0.41.2"
   val weaverCats     = "0.8.4"
@@ -71,6 +72,7 @@ object Library {
   val akka                    = "com.typesafe.akka"             %% "akka-actor-typed"                 % Version.akka
   val awsCdk                  = "software.amazon.awscdk"         % "aws-cdk-lib"                      % Version.aws
   val catsCore                = "org.typelevel"                 %% "cats-core"                        % Version.catsVersion
+  val catsEffectCps           = "org.typelevel"                 %% "cats-effect-cps"                  % Version.catsEffectCps
   val catsFree                = "org.typelevel"                 %% "cats-free"                        % Version.catsVersion
   val circeCore               = "io.circe"                      %% "circe-core"                       % Version.circeVersion
   val circeGeneric            = "io.circe"                      %% "circe-generic"                    % Version.circeVersion
@@ -142,6 +144,7 @@ object Library {
   val zioPrelude              = "dev.zio"                       %% "zio-prelude"                      % Version.zioPrelude
   val zioSchema               = "dev.zio"                       %% "zio-schema"                       % Version.zioSchema
   val zioSchemaJson           = "dev.zio"                       %% "zio-schema-json"                  % Version.zioSchema
+  val zioSchemaBson           = "dev.zio"                       %% "zio-schema-bson"                  % Version.zioSchema
   val zioSchemaProtobuf       = "dev.zio"                       %% "zio-schema-protobuf"              % Version.zioSchema
   val zioSchemaDerivation     = "dev.zio"                       %% "zio-schema-derivation"            % Version.zioSchema
   val zioHttp                 = "dev.zio"                       %% "zio-http"                         % Version.zioHttp
@@ -172,6 +175,7 @@ object Dependencies {
   import Library.*
   val dependencies: Seq[ModuleID] = Seq(
     catsCore,
+    catsEffectCps,
     catsFree,
     circeCore,
     circeGeneric,
