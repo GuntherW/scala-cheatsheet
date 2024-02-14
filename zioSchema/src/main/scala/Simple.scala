@@ -1,4 +1,4 @@
-import Json.Person
+import JsonBson.Person
 import zio.Chunk
 import zio.schema.syntax.*
 import zio.schema.{DeriveSchema, Schema}

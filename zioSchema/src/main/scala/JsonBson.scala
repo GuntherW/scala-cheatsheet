@@ -7,7 +7,7 @@ import java.time.LocalDate
 import java.util.UUID
 import scala.util.chaining.*
 
-object Json extends App:
+object JsonBson extends App:
 
   final case class Person(name: String, age: Int, date: LocalDate, id: UUID)
 
