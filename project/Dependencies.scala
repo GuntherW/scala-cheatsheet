@@ -27,7 +27,7 @@ object Version {
   val osLib                   = "0.9.3"
   val postgres                = "42.7.1"
   val pureConfig              = "0.17.5"
-  val quill                   = "4.8.0"
+  val quill                   = "4.8.1"
   val reactiveMongo           = "1.1.0.noshaded-RC12"
   val refined                 = "0.11.1"
   val resilience4j            = "2.2.0"
@@ -113,7 +113,6 @@ object Library {
   val pureConfig              = "com.github.pureconfig"         %% "pureconfig-core"                  % Version.pureConfig
   val quillJdbc               = "io.getquill"                   %% "quill-jdbc"                       % Version.quill
   val quillJdbcZio            = "io.getquill"                   %% "quill-jdbc-zio"                   % Version.quill
-  val quillJasyncPostgres     = "io.getquill"                   %% "quill-jasync-postgres"            % Version.quill
   val reactiveMongo           = "org.reactivemongo"             %% "reactivemongo"                    % Version.reactiveMongo
   val refined                 = "eu.timepit"                    %% "refined"                          % Version.refined
   val resilience4j            = "io.github.resilience4j"         % "resilience4j-all"                 % Version.resilience4j
