@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.5"
-  val aws                     = "2.126.0"
+  val aws                     = "2.128.0"
   val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.10.0"
   val catsConsole             = "0.8.1"
@@ -49,7 +49,7 @@ object Version {
   val zioPrelude              = "1.0.0-RC23"
   val zioSchema               = "0.4.17"
   val zioCli                  = "0.5.0"
-  val zioOpenAI               = "0.4.0"
+  val zioOpenAI               = "0.4.1"
 
   // ScalaJS
   val scalaJsDom = "2.8.0"

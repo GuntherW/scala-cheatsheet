@@ -49,7 +49,7 @@ object ExplainCode extends ZIOAppDefault {
   private def program =
     for {
       response <- Completions.createCompletion(
-                    model = Model.Predefined(Models.`Code-davinci-002`),
+                    model = Model.Predefined(Models.`Davinci-002`),
                     prompt = prompt,
                     temperature = Temperature(0.0),
                     maxTokens = MaxTokens(64),
