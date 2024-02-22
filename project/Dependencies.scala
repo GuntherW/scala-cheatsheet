@@ -31,7 +31,7 @@ object Version {
   val reactiveMongo           = "1.1.0.noshaded-RC12"
   val refined                 = "0.11.1"
   val resilience4j            = "2.2.0"
-  val scala                   = "3.3.1"
+  val scala                   = "3.4.0"
   val scalaParallelCollection = "1.0.4"
   val scodec                  = "2.2.2"
   val sttp                    = "4.0.0-M9"
