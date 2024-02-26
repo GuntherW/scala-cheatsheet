@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.5"
-  val aws                     = "2.129.0"
+  val aws                     = "2.130.0"
   val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.10.0"
   val catsConsole             = "0.8.1"
@@ -26,7 +26,7 @@ object Version {
   val monocle                 = "3.2.0"
   val osLib                   = "0.9.3"
   val postgres                = "42.7.2"
-  val pureConfig              = "0.17.5"
+  val pureConfig              = "0.17.6"
   val quill                   = "4.8.1"
   val reactiveMongo           = "1.1.0.noshaded-RC12"
   val refined                 = "0.11.1"
