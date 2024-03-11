@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.5"
-  val aws                     = "2.131.0"
+  val aws                     = "2.132.0"
   val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.10.0"
   val catsConsole             = "0.8.1"
@@ -13,17 +13,18 @@ object Version {
   val fs2                     = "3.9.4"
   val gatling                 = "3.10.4"
   val h2                      = "2.2.224"
-  val http4s                  = "0.23.25"
-  val jackson                 = "2.16.1"
+  val http4s                  = "0.23.26"
+  val jackson                 = "2.16.2"
   val jwtHttp4s               = "1.2.2"
   val jwtScala                = "9.4.6"
   val jsonSchemaValidator     = "1.3.3"
   val kafka                   = "3.7.0"
-  val logback                 = "1.5.2"
-  val log4j                   = "2.23.0"
+  val logback                 = "1.5.3"
+  val log4j                   = "2.23.1"
   val magnolia                = "1.3.4"
   val mongo                   = "5.0.0"
   val monocle                 = "3.2.0"
+  val neotype                 = "0.2.3"
   val osLib                   = "0.9.3"
   val postgres                = "42.7.2"
   val pureConfig              = "0.17.6"
@@ -34,11 +35,11 @@ object Version {
   val scala                   = "3.4.0"
   val scalaParallelCollection = "1.0.4"
   val scodec                  = "2.2.2"
-  val sttp                    = "4.0.0-M9"
+  val sttp                    = "4.0.0-M10"
   val sttpOAuth               = "0.16.0"
   val sttpOpenAi              = "0.0.10"
   val squants                 = "1.8.3"
-  val tapir                   = "1.9.10"
+  val tapir                   = "1.9.11"
   val tyqu                    = "0.1.0"
   val xstream                 = "1.4.20"
   val xml                     = "2.2.0"
@@ -108,6 +109,7 @@ object Library {
   val magnolia                = "com.softwaremill.magnolia1_3"  %% "magnolia"                         % Version.magnolia
   val mongoDriverJava         = "org.mongodb"                    % "mongodb-driver-sync"              % Version.mongo
   val monocle                 = "dev.optics"                    %% "monocle-core"                     % Version.monocle
+  val neotype                 = "io.github.kitlangton"          %% "neotype"                          % Version.neotype
   val osLib                   = "com.lihaoyi"                   %% "os-lib"                           % Version.osLib
   val postgres                = "org.postgresql"                 % "postgresql"                       % Version.postgres
   val pureConfig              = "com.github.pureconfig"         %% "pureconfig-core"                  % Version.pureConfig
@@ -186,6 +188,7 @@ object Dependencies {
     jsonSchemaValidator,
     logback,
     monocle,
+    neotype,
     refined,
     resilience4j,
     scalaParallelCollection,

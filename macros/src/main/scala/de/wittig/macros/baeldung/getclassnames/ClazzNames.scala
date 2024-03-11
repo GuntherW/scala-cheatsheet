@@ -1,4 +1,4 @@
-package de.wittig.macros.baeldung
+package de.wittig.macros.baeldung.getclassnames
 
 import scala.quoted.{Expr, Quotes, Type}
 
@@ -6,12 +6,12 @@ import scala.quoted.{Expr, Quotes, Type}
   */
 object ClazzNames:
 
-  def getType1[T](obj: Expr[T])(using Type[T])(using Quotes): Expr[String] = '{
+  private def getType1[T](obj: Expr[T])(using Type[T])(using Quotes): Expr[String] = '{
     val o: T = $obj
     o.getClass.getSimpleName
   }
 
-  def getType2[T](obj: Expr[T])(using t: Type[T])(using Quotes): Expr[String] = '{
+  private def getType2[T](obj: Expr[T])(using t: Type[T])(using Quotes): Expr[String] = '{
     val o: t.Underlying = $obj
     o.getClass.getSimpleName
   }

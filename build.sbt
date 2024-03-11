@@ -12,6 +12,7 @@ lazy val commonSettings = Seq(
     "-language:higherKinds",
     "-deprecation",
     "-source:future-migration",
+//    "-language:strictEquality"
     // "-Vprofile"
   ),
   Test / fork       := true, // subprojects won't run in parallel then

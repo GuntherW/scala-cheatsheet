@@ -1,9 +1,10 @@
-package de.wittig.macros.baeldung
+package de.wittig.macros.baeldung.getclassnames
+
+import de.wittig.macros.baeldung.getclassnames.ClazzNames.*
 
 import scala.util.chaining.scalaUtilChainingOps
-import ClazzNames.*
 
-object ClazzNamesMain extends App:
+object Main extends App:
 
   case class Person(name: String)
 
