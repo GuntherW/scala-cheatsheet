@@ -39,7 +39,7 @@ object Version {
   val sttpOAuth               = "0.16.0"
   val sttpOpenAi              = "0.0.10"
   val squants                 = "1.8.3"
-  val tapir                   = "1.9.11"
+  val tapir                   = "1.10.0"
   val tyqu                    = "0.1.0"
   val xstream                 = "1.4.20"
   val xml                     = "2.2.0"
