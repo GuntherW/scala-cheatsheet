@@ -17,7 +17,7 @@ object Version {
   val jackson                 = "2.17.0"
   val jwtHttp4s               = "1.2.2"
   val jwtScala                = "9.4.6"
-  val jsonSchemaValidator     = "1.3.3"
+  val jsonSchemaValidator     = "1.4.0"
   val kafka                   = "3.7.0"
   val logback                 = "1.5.3"
   val log4j                   = "2.23.1"
