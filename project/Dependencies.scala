@@ -10,7 +10,7 @@ object Version {
   val cirisVersion            = "3.5.0"
   val doobie                  = "1.0.0-RC5"
   val ducktape                = "0.1.11"
-  val fs2                     = "3.9.4"
+  val fs2                     = "3.10.0"
   val gatling                 = "3.10.4"
   val h2                      = "2.2.224"
   val http4s                  = "0.23.26"
@@ -24,7 +24,7 @@ object Version {
   val magnolia                = "1.3.4"
   val mongo                   = "5.0.0"
   val monocle                 = "3.2.0"
-  val neotype                 = "0.2.4"
+  val neotype                 = "0.2.5"
   val osLib                   = "0.9.3"
   val postgres                = "42.7.3"
   val pureConfig              = "0.17.6"
@@ -57,8 +57,8 @@ object Version {
   val uTest      = "0.8.2"
 
   // Test
-  val cucumber       = "7.15.0"
-  val cucumberScala  = "8.20.0"
+  val cucumber       = "7.16.0"
+  val cucumberScala  = "8.21.0"
   val junit          = "4.13.2"
   val junitInterface = "0.13.3"
   val mockito        = "5.11.0"
