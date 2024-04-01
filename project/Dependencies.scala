@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.5"
-  val aws                     = "2.133.0"
+  val aws                     = "2.134.0"
   val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.10.0"
   val catsConsole             = "0.8.1"
@@ -10,8 +10,8 @@ object Version {
   val cirisVersion            = "3.5.0"
   val doobie                  = "1.0.0-RC5"
   val ducktape                = "0.1.11"
-  val fs2                     = "3.10.0"
-  val gatling                 = "3.10.4"
+  val fs2                     = "3.10.2"
+  val gatling                 = "3.10.5"
   val h2                      = "2.2.224"
   val http4s                  = "0.23.26"
   val jackson                 = "2.17.0"
@@ -32,7 +32,7 @@ object Version {
   val reactiveMongo           = "1.1.0.noshaded-RC12"
   val refined                 = "0.11.1"
   val resilience4j            = "2.2.0"
-  val scala                   = "3.4.0"
+  val scala                   = "3.4.1"
   val scalaParallelCollection = "1.0.4"
   val scodec                  = "2.2.2"
   val sttp                    = "4.0.0-M11"
@@ -57,8 +57,8 @@ object Version {
   val uTest      = "0.8.2"
 
   // Test
-  val cucumber       = "7.16.0"
-  val cucumberScala  = "8.21.0"
+  val cucumber       = "7.16.1"
+  val cucumberScala  = "8.21.1"
   val junit          = "4.13.2"
   val junitInterface = "0.13.3"
   val mockito        = "5.11.0"

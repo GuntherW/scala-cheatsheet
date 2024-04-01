@@ -10,7 +10,6 @@ object Main extends App:
 
   val txtFiles = os.list(os.pwd).find(_.ext == "txt")
   println(s"list pwd: $txtFiles}")
-
   println(os.read(txtFiles.head))
 
   val wd      = os.pwd / "osLib" / "testordner"
