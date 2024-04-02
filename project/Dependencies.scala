@@ -2,14 +2,14 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.5"
-  val aws                     = "2.134.0"
+  val aws                     = "2.135.0"
   val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.10.0"
   val catsConsole             = "0.8.1"
   val circeVersion            = "0.14.6"
   val cirisVersion            = "3.5.0"
   val doobie                  = "1.0.0-RC5"
-  val ducktape                = "0.1.11"
+  val ducktape                = "0.2.0"
   val fs2                     = "3.10.2"
   val gatling                 = "3.10.5"
   val h2                      = "2.2.224"
