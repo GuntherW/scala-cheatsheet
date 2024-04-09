@@ -17,4 +17,12 @@ object Main extends App:
   private val abc = "abc"
   println(StringStartsWithNumber.make(abc))
 
-  case class Person(name: NonEmptyString, age: Int) // derives Codec.AsObject
+  case class Person(name: String, age: Int)
+
+  type ElderlyPerson = ElderlyPerson.Type
+  object ElderlyPerson extends Newtype[Person]:
+    override inline def validate(value: Person): Boolean =
+      value.age > 65
+
+  val elder = ElderlyPerson(Person("Lazarus", 70))
+//  val youth = ElderlyPerson(Person("Kit", 30))

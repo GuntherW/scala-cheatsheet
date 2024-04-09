@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.5"
-  val aws                     = "2.135.0"
+  val aws                     = "2.136.0"
   val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.10.0"
   val catsConsole             = "0.8.1"
@@ -19,6 +19,7 @@ object Version {
   val jwtScala                = "9.4.6"
   val jsonSchemaValidator     = "1.4.0"
   val kafka                   = "3.7.0"
+  val kyo                     = "0.9.1"
   val logback                 = "1.5.3"
   val log4j                   = "2.23.1"
   val magnolia                = "1.3.4"
@@ -39,7 +40,7 @@ object Version {
   val sttpOAuth               = "0.16.0"
   val sttpOpenAi              = "0.0.10"
   val squants                 = "1.8.3"
-  val tapir                   = "1.10.3"
+  val tapir                   = "1.10.4"
   val tyqu                    = "0.1.0"
   val xstream                 = "1.4.20"
   val xml                     = "2.2.0"
@@ -48,7 +49,7 @@ object Version {
   val zioKafka                = "2.7.4"
   val zioHttp                 = "0.0.5"
   val zioPrelude              = "1.0.0-RC23"
-  val zioSchema               = "1.0.1"
+  val zioSchema               = "1.1.0"
   val zioCli                  = "0.5.0"
   val zioOpenAI               = "0.4.1"
 
@@ -102,6 +103,12 @@ object Library {
   val kafkaClients            = "org.apache.kafka"               % "kafka-clients"                    % Version.kafka
   val kafkaStreams            = "org.apache.kafka"               % "kafka-streams"                    % Version.kafka
   val kafkaStreamsScala       = "org.apache.kafka"              %% "kafka-streams-scala"              % Version.kafka cross CrossVersion.for3Use2_13
+  val kyoCore                 = "io.getkyo"                     %% "kyo-core"                         % Version.kyo
+  val kyoDirect               = "io.getkyo"                     %% "kyo-direct"                       % Version.kyo
+  val kyoCache                = "io.getkyo"                     %% "kyo-cache"                        % Version.kyo
+  val kyoStat                 = "io.getkyo"                     %% "kyo-stats-otel"                   % Version.kyo
+  val kyoSttp                 = "io.getkyo"                     %% "kyo-sttp"                         % Version.kyo
+  val kyoTapir                = "io.getkyo"                     %% "kyo-tapir"                        % Version.kyo
   val logback                 = "ch.qos.logback"                 % "logback-classic"                  % Version.logback
   val log4jApi                = "org.apache.logging.log4j"       % "log4j-api"                        % Version.log4j
   val log4jCore               = "org.apache.logging.log4j"       % "log4j-core"                       % Version.log4j

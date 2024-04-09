@@ -36,6 +36,7 @@ lazy val `scala-cheatsheet` = (project in file("."))
     gatling,
     grpcFs2,
     kafka,
+    kyo,
     macros,
     magnolia,
     mongo,
@@ -112,6 +113,19 @@ lazy val quill = project
       Library.h2,
       Library.quillJdbc,
       Library.quillJdbcZio,
+    )
+  )
+
+lazy val kyo = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.kyoCore,
+      Library.kyoDirect,
+      Library.kyoCache,
+      Library.kyoStat,
+      Library.kyoSttp,
+      Library.kyoTapir,
     )
   )
 

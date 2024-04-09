@@ -46,7 +46,7 @@ object BlockingEffects extends ZIOAppDefault:
 
   // set a flag/switch
   def interruptibleBlockingEffects(cancelledFlag: AtomicBoolean): Task[Unit] =
-    ZIO.attemptBlockingCancelable {         // effect
+    ZIO.attemptBlockingCancelable { // effect
       (1 to 100000).foreach { element =>
         if (!cancelledFlag.get()) {
           println(element)
