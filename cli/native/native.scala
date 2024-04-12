@@ -1,5 +1,5 @@
 //> using platform "scala-native"
-//> using nativeVersion "0.4.14"
+//> using nativeVersion "0.5.0"
 //> using nativeMode release-full
 
 @main
