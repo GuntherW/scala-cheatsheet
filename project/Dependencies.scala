@@ -20,7 +20,7 @@ object Version {
   val jsonSchemaValidator     = "1.4.0"
   val kafka                   = "3.7.0"
   val kyo                     = "0.9.1"
-  val logback                 = "1.5.4"
+  val logback                 = "1.5.5"
   val log4j                   = "2.23.1"
   val magnolia                = "1.3.4"
   val mongo                   = "5.0.1"
@@ -55,7 +55,7 @@ object Version {
 
   // ScalaJS
   val scalaJsDom = "2.8.0"
-  val uTest      = "0.8.2"
+  val uTest      = "0.8.3"
 
   // Test
   val cucumber       = "7.16.1"
