@@ -10,7 +10,7 @@ object osLib extends SbtModule {
 }
 
 object macros extends SbtModule {
-  def scalaVersion = "3.4.0"
+  def scalaVersion = "3.4.1"
   def forkArgs     = Seq("-Xmx4g")
 
 }
