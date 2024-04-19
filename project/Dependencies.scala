@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.5"
-  val aws                     = "2.137.0"
+  val aws                     = "2.138.0"
   val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.10.0"
   val catsConsole             = "0.8.1"
@@ -20,7 +20,7 @@ object Version {
   val jsonSchemaValidator     = "1.4.0"
   val kafka                   = "3.7.0"
   val kyo                     = "0.9.2"
-  val logback                 = "1.5.5"
+  val logback                 = "1.5.6"
   val log4j                   = "2.23.1"
   val magnolia                = "1.3.4"
   val mongo                   = "5.0.1"
@@ -58,14 +58,14 @@ object Version {
   val uTest      = "0.8.3"
 
   // Test
-  val cucumber       = "7.16.1"
+  val cucumber       = "7.17.0"
   val cucumberScala  = "8.21.1"
   val junit          = "4.13.2"
   val junitInterface = "0.13.3"
   val mockito        = "5.11.0"
-  val munit          = "1.0.0-M11"
+  val munit          = "1.0.0-M12"
   val scalaTest      = "3.2.18"
-  val scalaCheck     = "1.17.1"
+  val scalaCheck     = "1.18.0"
   val testContainer  = "0.41.3"
   val weaverCats     = "0.8.4"
 }

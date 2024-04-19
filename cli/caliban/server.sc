@@ -1,11 +1,10 @@
-//> using dep com.github.ghostdogpr::caliban-quick:2.5.1
+//> using dep com.github.ghostdogpr::caliban-quick:2.6.0
 
 import caliban.*
 import caliban.schema.ArgBuilder.auto.*
 import caliban.schema.Schema.auto.*
 
 // 1. Defining the schema
-
 enum Origin {
   case EARTH, MARS, BELT
 }
@@ -22,7 +21,6 @@ case class Query(
 println(render[Query])
 
 // 2. Some data and business logic for our example
-
 val sampleCharacters = List(
   Character("James Holden", List("Jim", "Hoss"), Origin.EARTH),
   Character("Naomi Nagata", Nil, Origin.BELT),
@@ -40,7 +38,6 @@ def characterByName(name: String): Option[Character] =
   sampleCharacters.find(_.name == name)
 
 // 3. Creating the resolver
-
 val queryResolver =
   Query(
     characters = args => charactersByOrigin(args.origin),
@@ -48,11 +45,8 @@ val queryResolver =
   )
 
 // 4. Turn the resolver into an API
-
 val api = graphQL(RootResolver(queryResolver))
 
 // 5. Start a server for our API
-
 import caliban.quick.*
-
 api.unsafe.runServer(8088, "/api/graphql")
