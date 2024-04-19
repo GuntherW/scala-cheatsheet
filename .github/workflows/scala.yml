@@ -17,23 +17,12 @@ jobs:
         java-version: 21
         distribution: temurin
         cache: sbt
+        cache-dependency-path: | # optional
+          sub-project/build.sbt
+          sub-project/project/build.properties
     - uses: actions/setup-node@v3
       with:
-        node-version: '16'
+        node-version: '20'
     - uses: japgolly/setup-scalajs@v1
     - name: Run tests
       run: sbt test
-  check:
-    runs-on: ubuntu-latest
-    env:
-      SBT_NATIVE_CLIENT: true
-    steps:
-      - uses: actions/checkout@v4
-      - uses: olafurpg/setup-scala@v14
-        with:
-          java-version: zulu@
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-      - uses: japgolly/setup-scalajs@v1
-      - run: sbt test
