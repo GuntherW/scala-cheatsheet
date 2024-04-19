@@ -17,9 +17,6 @@ jobs:
         java-version: 21
         distribution: temurin
         cache: sbt
-        cache-dependency-path: | # optional
-          sub-project/build.sbt
-          sub-project/project/build.properties
     - uses: actions/setup-node@v3
       with:
         node-version: '20'
