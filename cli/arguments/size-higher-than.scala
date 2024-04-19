@@ -1,4 +1,4 @@
-//> using dep com.lihaoyi::os-lib::0.9.1
+//> using dep com.lihaoyi::os-lib::0.10.0
 
 import os.Path
 
