@@ -1,6 +1,6 @@
 package de.codecentric.wittig.scala.logging
 
-import org.slf4j.{Logger, LoggerFactory}
+import org.slf4j.LoggerFactory
 
 object Main extends App:
   val c1 = MeineTestKlasse1()

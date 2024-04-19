@@ -130,3 +130,17 @@ object UseOption extends App:
         val bb = h(opt)
         assert(aa == bb)
       }
+
+object A extends App {
+  val m: Map[Int, Option[String]] = Map(1 -> Some("a"), 2 -> None)
+
+  val a = m.view
+    .map { case (variationId, value) =>
+      if (value.isEmpty) println("Llkjlkj")
+      variationId -> value
+    }
+    .tapEach{ case (variationId, a)  => if a.isEmpty  then println(s"Empty $variationId") }
+    .collect { case (variationId, Some(value)) => variationId -> value }
+    .toMap
+  println(a)
+}

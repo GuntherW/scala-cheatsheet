@@ -1,5 +1,7 @@
 package de.codecentric.wittig.scala.scala33
 
+import java.net.URI
+
 object Main extends App:
 
   private val l  = List.tabulate(5)(identity)
@@ -12,3 +14,7 @@ object Main extends App:
 
   times(3):
     println("Hallo Welt")
+
+  val url = "https://www.google.de?a=1&b=2"
+  println(url)
+  println(url.substring(0, url.lastIndexOf("?")))

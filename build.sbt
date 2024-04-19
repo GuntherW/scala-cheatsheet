@@ -12,11 +12,13 @@ lazy val commonSettings = Seq(
     "-language:higherKinds",
     "-deprecation",
     "-source:future-migration",
+//    "-language:strictEquality"
     // "-Vprofile"
   ),
   Test / fork       := true, // subprojects won't run in parallel then
   Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oF"), // Showing full stack trace
-  turbo := true
+  turbo         := true,
+  usePipelining := true
 )
 
 ThisBuild / concurrentRestrictions := Seq(Tags.limit(Tags.ForkedTestGroup, 2))
@@ -27,22 +29,24 @@ lazy val `scala-cheatsheet` = (project in file("."))
   .aggregate(
     akka,
     core,
+    cdk,
     cucumber,
     doobie,
     http4s,
     gatling,
     grpcFs2,
     kafka,
-    scalacheck,
-    storch,
+    kyo,
     macros,
     magnolia,
     mongo,
     munit,
     osLib,
     quill,
+    scalacheck,
     scalajs,
     sttp,
+    tapir,
     tyqu,
     zio,
     ziocli,
@@ -59,18 +63,12 @@ lazy val core = project
     Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-s", "4") // scalacheck should emit 4 examples only
   )
 
-lazy val storch = project
+lazy val cdk = project
   .settings(
     commonSettings,
-    resolvers ++= Resolver.sonatypeOssRepos("snapshots"),
     libraryDependencies ++= Seq(
-      "dev.storch"  %% "core"     % "0.0-b634ff1-SNAPSHOT",
-      "org.bytedeco" % "pytorch"  % "2.1.1-1.5.10-SNAPSHOT",
-      "org.bytedeco" % "pytorch"  % "2.1.1-1.5.10-SNAPSHOT" classifier "linux-x86_64-gpu",
-      "org.bytedeco" % "openblas" % "0.3.25-1.5.10-SNAPSHOT" classifier "linux-x86_64",
-      "org.bytedeco" % "cuda"     % "12.3-8.9-1.5.10-SNAPSHOT",
-      "org.bytedeco" % "cuda"     % "12.3-8.9-1.5.10-SNAPSHOT" classifier "linux-x86_64",
-      "org.bytedeco" % "cuda"     % "12.3-8.9-1.5.10-SNAPSHOT" classifier "linux-x86_64-redist"
+      Library.awsCdk,
+      "software.constructs" % "constructs" % "10.3.0"
     )
   )
 
@@ -115,7 +113,19 @@ lazy val quill = project
       Library.h2,
       Library.quillJdbc,
       Library.quillJdbcZio,
-      Library.quillJasyncPostgres,
+    )
+  )
+
+lazy val kyo = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.kyoCore,
+      Library.kyoDirect,
+      Library.kyoCache,
+      Library.kyoStat,
+      Library.kyoSttp,
+      Library.kyoTapir,
     )
   )
 
@@ -207,7 +217,7 @@ lazy val mongo = project
     libraryDependencies ++= Seq(
       Library.mongoDriverJava,
       Library.logback,
-      "org.reactivemongo" %% "reactivemongo" % "1.1.0-RC11",
+      Library.reactiveMongo
     )
   )
 
@@ -220,12 +230,11 @@ lazy val ziocli = project
 lazy val zioSchema = project
   .settings(
     commonSettings,
-    libraryDependencies += Library.zio,
     libraryDependencies += Library.zioSchema,
     libraryDependencies += Library.zioSchemaJson,
+    libraryDependencies += Library.zioSchemaBson,
     libraryDependencies += Library.zioSchemaProtobuf,
     libraryDependencies += Library.zioSchemaDerivation,
-//    libraryDependencies += Library.scalaReflect,
   )
 
 lazy val scalajs = project
@@ -338,7 +347,19 @@ lazy val http4s = project
     )
   )
 
-lazy val tyqu = project
+lazy val tapir = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.tapirAwsLambda,
+      Library.tapirAwsCdk,
+      Library.tapirAwsSam,
+      Library.tapirJsonCirce,
+      Library.tapirJdkHttp,
+      Library.tapirNettyFuture,
+    )
+  )
+lazy val tyqu  = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(

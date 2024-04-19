@@ -15,3 +15,5 @@ sudo apt-get install \
 
 sudo snap install \
  procs `# better ps https://github.com/dalance/procs`
+
+# https://atuin.sh/

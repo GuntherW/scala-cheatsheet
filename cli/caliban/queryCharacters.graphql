@@ -1,0 +1,8 @@
+query {
+    characters { # characters (origin: BELT) {
+        name
+        nicknames
+        origin
+    }
+}
+

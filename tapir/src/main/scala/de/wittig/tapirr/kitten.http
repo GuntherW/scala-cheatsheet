@@ -1,0 +1,24 @@
+###
+
+GET localhost:9091/kitten
+###
+
+GET localhost:9091/kittenSecured
+Authorization: Bearer papa
+
+
+### post
+
+POST localhost:9091/kitten
+
+{
+    "id": 4,
+    "name": "Kitty",
+    "gender": "a",
+    "age_in_days": 123
+}
+
+
+### delete
+
+DELETE localhost:9091/kitten/4

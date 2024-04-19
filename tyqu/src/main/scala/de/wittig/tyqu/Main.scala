@@ -32,10 +32,6 @@ object Main extends App:
   for author <- results2 do
     println(s"${author.firstName} ${author.lastName} (born ${author.birthYear})")
 
-  val results3 = from(Books).filter(_.author.firstName === "Peter").execute()
-  for book <- results3 do
-    println(s"${book.title} ")
-
   val currentYear = 2023
   val results4    =
     from(Authors)

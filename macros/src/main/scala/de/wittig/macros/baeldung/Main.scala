@@ -1,0 +1,54 @@
+package de.wittig.macros.baeldung
+
+import scala.quoted.{Expr, Quotes}
+import scala.util.chaining.scalaUtilChainingOps
+import Inliners.*
+import Macros.*
+
+object Main extends App:
+
+  oddEvenInline(1).tap(println)
+  oddEvenInlineArgument(1).tap(println)
+  oddEvenInlineInlineMatch(1).tap(println)
+  oddEvenTransparent(1).tap(println)
+  oddEvenQuote(1).tap(println)
+  println("-" * 10)
+
+  oddEvenInline(2).tap(println)
+  oddEvenInlineArgument(2).tap(println)
+  oddEvenInlineInlineMatch(2).tap(println)
+  oddEvenTransparent(2).tap(println)
+  oddEvenQuote(2).tap(println)
+  println("-" * 10)
+
+  private val zahl1 = 1
+  oddEvenInline(zahl1).tap(println)
+  oddEvenInlineArgument(zahl1).tap(println)
+  oddEvenInlineInlineMatch(zahl1).tap(println)
+  oddEvenTransparent(zahl1).tap(println)
+  oddEvenQuote(zahl1).tap(println)
+  println("-" * 10)
+
+  private val zahl2 = 2
+  oddEvenInline(zahl2).tap(println)
+  oddEvenInlineArgument(zahl2).tap(println)
+  oddEvenInlineInlineMatch(zahl2).tap(println)
+  oddEvenTransparent(zahl2).tap(println)
+  oddEvenQuote(zahl2).tap(println)
+  println("-" * 10)
+
+  private inline val zahl1Inline = 1
+  oddEvenInline(zahl1Inline).tap(println)
+  oddEvenInlineArgument(zahl1Inline).tap(println)
+  oddEvenInlineInlineMatch(zahl1Inline).tap(println)
+  oddEvenTransparent(zahl1Inline).tap(println)
+  oddEvenQuote(zahl1Inline).tap(println)
+  println("-" * 10)
+
+  private inline val zahl2Inline = 2
+  oddEvenInline(zahl2Inline).tap(println)
+  oddEvenInlineArgument(zahl2Inline).tap(println)
+  oddEvenInlineInlineMatch(zahl2Inline).tap(println)
+  oddEvenTransparent(zahl2Inline).tap(println)
+  oddEvenQuote(zahl2Inline).tap(println)
+  println("-" * 10)

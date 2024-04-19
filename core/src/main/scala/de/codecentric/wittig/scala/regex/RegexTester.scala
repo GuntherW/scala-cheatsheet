@@ -1,5 +1,6 @@
 package de.codecentric.wittig.scala.regex
 
+import scala.util.Try
 import scala.util.matching.Regex
 
 /** @author
@@ -26,12 +27,16 @@ object RegexTester extends App:
   assert(s3 == "2004-01-20")
 
   // Group names
+  private val yearGroupName         = "year"
   private val DatePatternWithGroup  = new Regex("""(\d{4})-(\d{2})-(\d{2})""", "year", "month", "day")
-  private val DatePatternWithGroup2 = """(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})""".r
-  private val s4                    = for m <- DatePatternWithGroup.findFirstMatchIn(dates) yield m.group("year")
+  private val DatePatternWithGroup2 = s"""(?<$yearGroupName>\\d{4})-(?<month>\\d{2})-(?<day>\\d{2})""".r
+  private val DatePatternWithGroup3 = """(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})""".r
+  private val s4                    = for m <- DatePatternWithGroup.findFirstMatchIn(dates) yield m.group(yearGroupName)
   assert(s4.contains("2004"))
   private val s4b                   = for m <- DatePatternWithGroup2.findFirstMatchIn(dates) yield m.group("year")
   assert(s4b.contains("2004"))
+  private val s4c                   = for m <- DatePatternWithGroup3.findFirstMatchIn(dates) yield m.group("year")
+  assert(s4c.contains("2004"))
 
   // Find all:
   private val s5 = for m <- Date findAllMatchIn dates yield m group 1

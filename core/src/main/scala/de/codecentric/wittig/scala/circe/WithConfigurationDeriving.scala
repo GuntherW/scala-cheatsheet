@@ -6,6 +6,7 @@ import io.circe.parser.*
 import io.circe.derivation.*
 import io.circe.syntax.*
 import io.circe.{Decoder, Json, ParsingFailure}
+import de.codecentric.wittig.scala.circe.WithConfiguration.Foo.given_Configuration
 
 object WithConfigurationDeriving extends App:
 

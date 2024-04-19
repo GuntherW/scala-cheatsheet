@@ -1,10 +1,9 @@
-//> using scala "3"
 //> using jvm "21"
 //> using repository "jitpack"
 //> using dep "com.github.lambdaspot:aws-lambda-scala-bridge:0.1.5"
 //> using dep "com.amazonaws:aws-lambda-java-core:1.2.3"
-//> using dep "com.github.plokhotnyuk.jsoniter-scala::jsoniter-scala-core:2.24.4"
-//> using dep "com.github.plokhotnyuk.jsoniter-scala::jsoniter-scala-macros:2.24.4"
+//> using dep "com.github.plokhotnyuk.jsoniter-scala::jsoniter-scala-core:2.28.4"
+//> using dep "com.github.plokhotnyuk.jsoniter-scala::jsoniter-scala-macros:2.28.4"
 
 import com.amazonaws.services.lambda.runtime.Context
 import com.github.plokhotnyuk.jsoniter_scala.core.JsonValueCodec
@@ -14,8 +13,8 @@ import dev.lambdaspot.aws.lambda.events.ApiGatewayProxiedResponse
 import scala.util.{Success, Try}
 
 object MyApp extends AwsLambdaEntryPoint:
-  override lazy val entryPoint = new AwsLambda[PersonDto, ApiGatewayProxiedResponse]:
 
+  override lazy val entryPoint = new AwsLambda[PersonDto, ApiGatewayProxiedResponse]:
     override def run(person: PersonDto, context: Context): Try[ApiGatewayProxiedResponse] =
       context.getLogger.log(s"Request received: $person\n")
       Success(

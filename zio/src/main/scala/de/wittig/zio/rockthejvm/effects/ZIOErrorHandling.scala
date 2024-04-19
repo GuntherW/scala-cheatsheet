@@ -95,8 +95,7 @@ object ZIOErrorHandling extends ZIOAppDefault:
 
   def callHttpEndpoint_v2(url: String): ZIO[Any, IOException, String] =
     callHTTPEndpointWideError(url).refineOrDie[IOException] {
-      case e: IOException            => e
-      case e: NoRouteToHostException => new IOException("no route")
+      case e: IOException => e
     }
 
   /* Example: Defects to Errors */

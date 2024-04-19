@@ -11,7 +11,7 @@ object OpenQuestion extends ZIOAppDefault {
   private def loop = for {
     question <- Console.readLine("Frage: ")
     result   <- Completions.createCompletion(
-                  model = Model.Predefined(Models.`Text-davinci-003`),
+                  model = Model.Predefined(Models.`Davinci-002`),
                   prompt = Prompt.String(question),
                   maxTokens = MaxTokens(640),
                   temperature = Temperature(0.9)
