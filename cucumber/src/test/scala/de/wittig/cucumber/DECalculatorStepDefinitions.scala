@@ -7,7 +7,7 @@ class DECalculatorStepDefinitions extends ScalaDsl, DE:
 
   var added: Int = 0
 
-  Wenn("""Ich addiere {} und {}""") { (a: Int, b: Int) =>
+  Wenn("""ich {} und {} addiere""") { (a: Int, b: Int) =>
     added = Calculator.add(a, b)
   }
 

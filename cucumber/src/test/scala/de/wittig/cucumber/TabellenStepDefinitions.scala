@@ -10,7 +10,7 @@ class TabellenStepDefinitions extends ScalaDsl, DE:
   var quellListe: List[Seq[Option[String]]] = Nil
   var istListe: List[Int]                   = Nil
 
-  Angenommen("""Ich habe die Wertetabelle""") { (table: DataTable) =>
+  Angenommen("""ich habe die Wertetabelle""") { (table: DataTable) =>
     quellListe = table.asScalaLists.toList
   }
 

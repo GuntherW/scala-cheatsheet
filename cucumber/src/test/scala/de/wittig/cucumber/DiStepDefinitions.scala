@@ -10,7 +10,7 @@ class Di1StepDefinitions extends ScalaDsl, DE:
   var a: Int = 0
   var b: Int = 0
 
-  Angenommen("""Ich habe die Werte {} und {}""") { (pa: Int, pb: Int) =>
+  Angenommen("""ich habe die Werte {} und {}""") { (pa: Int, pb: Int) =>
     a = pa
     b = pb
   }

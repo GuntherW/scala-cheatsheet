@@ -1,0 +1,13 @@
+query {
+    repository(owner: "GuntherW", name: "scala-cheatsheet") {
+        name,
+        owner {
+            login,
+            repositories(first: 10) {
+                nodes {
+                    name
+                }
+            }
+        }
+    }
+}
