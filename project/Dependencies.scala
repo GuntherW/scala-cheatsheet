@@ -25,7 +25,7 @@ object Version {
   val magnolia                = "1.3.5"
   val mongo                   = "5.0.1"
   val monocle                 = "3.2.0"
-  val neotype                 = "0.2.5"
+  val neotype                 = "0.2.6"
   val osLib                   = "0.10.0"
   val postgres                = "42.7.3"
   val pureConfig              = "0.17.6"
