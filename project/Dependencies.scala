@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.5"
-  val aws                     = "2.138.0"
+  val aws                     = "2.139.0"
   val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.10.0"
   val catsConsole             = "0.8.1"
@@ -11,7 +11,7 @@ object Version {
   val doobie                  = "1.0.0-RC5"
   val ducktape                = "0.2.0"
   val fs2                     = "3.10.2"
-  val gatling                 = "3.10.5"
+  val gatling                 = "3.11.1"
   val h2                      = "2.2.224"
   val http4s                  = "0.23.26"
   val jackson                 = "2.17.0"
@@ -48,7 +48,7 @@ object Version {
   val zioJson                 = "0.6.2"
   val zioKafka                = "2.7.4"
   val zioHttp                 = "0.0.5"
-  val zioPrelude              = "1.0.0-RC23"
+  val zioPrelude              = "1.0.0-RC24"
   val zioSchema               = "1.1.1"
   val zioCli                  = "0.5.0"
   val zioOpenAI               = "0.4.1"
