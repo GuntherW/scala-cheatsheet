@@ -1,0 +1,18 @@
+
+
+enum Origin {
+  BELT
+  EARTH
+  MARS
+}
+
+type Character {
+  name: String!
+  nicknames: [String!]!
+  origin: Origin!
+}
+
+type Query {
+  characters(origin: Origin): [Character!]!
+  character(name: String!): Character
+}
