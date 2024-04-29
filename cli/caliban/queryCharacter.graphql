@@ -1,8 +1,0 @@
-query {
-    character(name: "James Holden") {
-        name,
-        nicknames,
-        origin
-    }
-}
-

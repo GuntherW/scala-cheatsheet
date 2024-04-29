@@ -36,7 +36,7 @@ lazy val `scala-cheatsheet` = (project in file("."))
     gatling,
     grpcFs2,
     kafka,
-    kyo,
+    direct,
     macros,
     magnolia,
     mongo,
@@ -55,6 +55,17 @@ lazy val `scala-cheatsheet` = (project in file("."))
     zioSchema,
     openAI,
   )
+
+lazy val caliban = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      "com.github.ghostdogpr" %%% "caliban-quick"  % "2.6.0",
+      "com.github.ghostdogpr" %%% "caliban-client" % "2.6.0",
+      Library.osLib,
+      Library.sttpCore
+    )
+  ).enablePlugins(CalibanPlugin)
 
 lazy val core = project
   .settings(
@@ -116,7 +127,7 @@ lazy val quill = project
     )
   )
 
-lazy val kyo = project
+lazy val direct = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(
@@ -126,6 +137,7 @@ lazy val kyo = project
       Library.kyoStat,
       Library.kyoSttp,
       Library.kyoTapir,
+      Library.ox,
     )
   )
 

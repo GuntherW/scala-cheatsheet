@@ -22,11 +22,12 @@ object Version {
   val kyo                     = "0.9.2"
   val logback                 = "1.5.6"
   val log4j                   = "2.23.1"
-  val magnolia                = "1.3.5"
+  val magnolia                = "1.3.6"
   val mongo                   = "5.0.1"
   val monocle                 = "3.2.0"
   val neotype                 = "0.2.6"
   val osLib                   = "0.10.0"
+  val ox                      = "0.1.0"
   val postgres                = "42.7.3"
   val pureConfig              = "0.17.6"
   val quill                   = "4.8.3"
@@ -118,6 +119,7 @@ object Library {
   val monocle                 = "dev.optics"                    %% "monocle-core"                     % Version.monocle
   val neotype                 = "io.github.kitlangton"          %% "neotype"                          % Version.neotype
   val osLib                   = "com.lihaoyi"                   %% "os-lib"                           % Version.osLib
+  val ox                      = "com.softwaremill.ox"           %% "core"                             % Version.ox
   val postgres                = "org.postgresql"                 % "postgresql"                       % Version.postgres
   val pureConfig              = "com.github.pureconfig"         %% "pureconfig-core"                  % Version.pureConfig
   val quillJdbc               = "io.getquill"                   %% "quill-jdbc"                       % Version.quill

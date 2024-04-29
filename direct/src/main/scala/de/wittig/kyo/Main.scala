@@ -1,6 +1,8 @@
-package de.wittig
-import kyo.*
+package de.wittig.kyo
+
 import scala.concurrent.duration.*
+
+import kyo.*
 
 object Main extends App {
 
