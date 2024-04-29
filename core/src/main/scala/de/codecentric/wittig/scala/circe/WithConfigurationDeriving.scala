@@ -10,7 +10,7 @@ import de.codecentric.wittig.scala.circe.WithConfiguration.Foo.given_Configurati
 
 object WithConfigurationDeriving extends App:
 
-  case class Address(cityName: String = "Kölle")
+  case class Address(cityName: String = "Kölle") derives ConfiguredCodec
   case class Person(givenName: String, age: Int = 123, recentAddress: Address = Address()) derives ConfiguredCodec
   object Person:
     given Configuration = Configuration.default.withDefaults.withKebabCaseMemberNames

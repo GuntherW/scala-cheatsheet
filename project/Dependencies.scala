@@ -6,7 +6,7 @@ object Version {
   val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.10.0"
   val catsConsole             = "0.8.1"
-  val circeVersion            = "0.14.6"
+  val circeVersion            = "0.14.7"
   val cirisVersion            = "3.5.0"
   val doobie                  = "1.0.0-RC5"
   val ducktape                = "0.2.0"
