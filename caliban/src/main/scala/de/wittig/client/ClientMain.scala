@@ -1,5 +1,7 @@
 package de.wittig.client
 
+import scala.concurrent.duration.DurationInt
+
 import caliban.*
 import caliban.client.Operations.RootQuery
 import caliban.client.SelectionBuilder
@@ -23,10 +25,14 @@ object ClientMain extends App {
     selection.mapN(CharacterView.apply)
   }
 
-  query
+  println("LKJLKJLKJ")
+  val request = query
     .toRequest(serverUrl)
+    .readTimeout(2.seconds)
     .send(backend)
+  println(request)
+  request
     .body
     .tap(println)
-
+  println("LKJLKJLKJ2")
 }

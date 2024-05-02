@@ -321,7 +321,9 @@ lazy val doobie = project
     libraryDependencies ++= Seq(
       Library.doobieCore,
       Library.doobiePostgres,
-      Library.doobieHirari
+      Library.doobieHirari,
+      "org.tpolecat" %% "skunk-core" % "0.6.3",
+      Library.pureConfig,
     )
   )
 

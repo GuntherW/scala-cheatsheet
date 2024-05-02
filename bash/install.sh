@@ -11,6 +11,7 @@ sudo apt-get install \
  tre-command `# tre, better tree https://github.com/dduan/tre` \
  figlet `# Output text as big ASCII art text http://www.figlet.org/` \
  lolcat `# rainbow https://github.com/busyloop/lolcat`
+ pgcli
 
 
 sudo snap install \
