@@ -1,0 +1,13 @@
+GET localhost:8088/api/graphql?query={characters{name}}
+
+
+###
+
+POST localhost:8088/api/graphql
+Content-Type: application/json
+
+{
+  "query" : "query { characters { name } }"
+}
+
+###

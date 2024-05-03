@@ -1,38 +1,32 @@
 package de.wittig.client
 
 import scala.concurrent.duration.DurationInt
+import scala.util.chaining.*
 
 import caliban.*
 import caliban.client.Operations.RootQuery
-import caliban.client.SelectionBuilder
 import caliban.schema.Schema.auto.*
-import generated.Client.*
-import generated.Client.Character.*
-import generated.Client.Query.*
+import de.wittig.client.generated.Client.*
+import de.wittig.client.generated.Client.Character.*
+import de.wittig.client.generated.Client.Query.*
 import sttp.client3.*
-import scala.util.chaining.*
+
+case class CharacterView(name: String, nickname: List[String], origin: Origin)
 
 object ClientMain extends App {
-  private val serverUrl = uri"http://localhost:8088/api/graphql"
-  private val backend   = HttpClientSyncBackend()
 
-  case class CharacterView(name: String, nickname: List[String], origin: Origin)
+  private val backend = HttpClientSyncBackend()
 
-  val selection: SelectionBuilder[Character, (String, List[String], Origin)] =
-    Character.name ~ Character.nicknames ~ Character.origin
+  private val selection = Character.name ~ Character.nicknames ~ Character.origin
 
-  val query = Query.character("James Holden") {
+  private val query = Query.character("James Holden") {
     selection.mapN(CharacterView.apply)
   }
 
-  println("LKJLKJLKJ")
-  val request = query
-    .toRequest(serverUrl)
+  query
+    .toRequest(uri"http://localhost:8088/api/graphql")
     .readTimeout(2.seconds)
     .send(backend)
-  println(request)
-  request
     .body
     .tap(println)
-  println("LKJLKJLKJ2")
 }

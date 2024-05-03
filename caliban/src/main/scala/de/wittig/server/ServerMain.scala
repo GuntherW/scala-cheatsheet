@@ -1,6 +1,7 @@
 package de.wittig.server
 
 import caliban.*
+import caliban.quick.*
 import caliban.schema.ArgBuilder.auto.*
 import caliban.schema.Schema.auto.*
 import os.*
@@ -8,9 +9,8 @@ import os.*
 object ServerMain extends App {
 
   // 1. Defining the schema
-  enum Origin {
+  enum Origin:
     case EARTH, MARS, BELT
-  }
 
   case class Character(name: String, nicknames: List[String], origin: Origin)
   case class CharactersArgs(origin: Option[Origin])
@@ -53,9 +53,5 @@ object ServerMain extends App {
   val api = graphQL(RootResolver(queryResolver))
 
   // 5. Start a server for our API
-
-  import caliban.quick.*
-
   api.unsafe.runServer(8088, "/api/graphql")
-
 }

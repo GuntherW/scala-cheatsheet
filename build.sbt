@@ -28,6 +28,7 @@ Global / onChangedBuildSource      := ReloadOnSourceChanges
 lazy val `scala-cheatsheet` = (project in file("."))
   .aggregate(
     akka,
+    caliban,
     core,
     cdk,
     cucumber,
