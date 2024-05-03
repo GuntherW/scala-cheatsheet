@@ -322,7 +322,7 @@ lazy val doobie = project
       Library.doobieCore,
       Library.doobiePostgres,
       Library.doobieHirari,
-      "org.tpolecat" %% "skunk-core" % "0.6.3",
+      Library.skunk,
       Library.pureConfig,
     )
   )

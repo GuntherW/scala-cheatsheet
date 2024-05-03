@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.5"
-  val aws                     = "2.139.1"
+  val aws                     = "2.140.0"
   val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.10.0"
   val catsConsole             = "0.8.1"
@@ -37,6 +37,7 @@ object Version {
   val scala                   = "3.4.1"
   val scalaParallelCollection = "1.0.4"
   val scodec                  = "2.2.2"
+  val skunk                   = "0.6.3"
   val sttp                    = "4.0.0-M13"
   val sttpOAuth               = "0.16.0"
   val sttpOpenAi              = "0.0.12"
@@ -130,6 +131,7 @@ object Library {
   val scalaParallelCollection = "org.scala-lang.modules"        %% "scala-parallel-collections"       % Version.scalaParallelCollection
   val scalaReflect            = "org.scala-lang"                 % "scala-reflect"                    % Version.scala % "provided"
   val scodec                  = "org.scodec"                    %% "scodec-core"                      % Version.scodec
+  val skunk                   = "org.tpolecat"                  %% "skunk-core"                       % Version.skunk
   val sttpCore                = "com.softwaremill.sttp.client4" %% "core"                             % Version.sttp
   val sttpCirce               = "com.softwaremill.sttp.client4" %% "circe"                            % Version.sttp
   val sttpBEAsync             = "com.softwaremill.sttp.client4" %% "async-http-client-backend-future" % Version.sttp
