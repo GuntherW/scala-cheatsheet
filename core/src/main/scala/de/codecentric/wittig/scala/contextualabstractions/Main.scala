@@ -9,10 +9,9 @@ object Main extends App:
   println(add(1)) // 11
 
   // more complex
-  trait Combiner[A] {
+  trait Combiner[A]:
     def combine(x: A, y: A): A
     def empty: A
-  }
 
   given intCombiner: Combiner[Int] with {
     override def combine(x: Int, y: Int): Int = x + y

@@ -1,7 +1,5 @@
 package de.codecentric.wittig.scala.contextualabstractions
 
-import de.codecentric.wittig.scala.contextualabstractions.ContextFunctions.TimeProvider
-
 object ContextFunctions extends App:
 
   class TimeProvider():

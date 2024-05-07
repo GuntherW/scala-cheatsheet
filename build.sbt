@@ -372,6 +372,13 @@ lazy val tapir = project
       Library.tapirJsonCirce,
       Library.tapirJdkHttp,
       Library.tapirNettyFuture,
+      Library.ox,
+      Library.tapirNettyServerSync,
+      Library.tapirSwaggerUiBundle,
+      Library.tapirPrometheusMetrics,
+      Library.tapirSttpStubServer % Test,
+      Library.sttpCirce           % Test,
+      Library.scalatest           % Test,
     )
   )
 lazy val tyqu  = project

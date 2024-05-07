@@ -13,19 +13,19 @@ object Version {
   val fs2                     = "3.10.2"
   val gatling                 = "3.11.2"
   val h2                      = "2.2.224"
-  val http4s                  = "0.23.26"
-  val jackson                 = "2.17.0"
+  val http4s                  = "0.23.27"
+  val jackson                 = "2.17.1"
   val jwtHttp4s               = "1.2.2"
   val jwtScala                = "9.4.6"
   val jsonSchemaValidator     = "1.4.0"
   val kafka                   = "3.7.0"
-  val kyo                     = "0.9.2"
+  val kyo                     = "0.9.3"
   val logback                 = "1.5.6"
   val log4j                   = "2.23.1"
   val magnolia                = "1.3.6"
   val mongo                   = "5.1.0"
   val monocle                 = "3.2.0"
-  val neotype                 = "0.2.6"
+  val neotype                 = "0.2.11"
   val osLib                   = "0.10.0"
   val ox                      = "0.1.0"
   val postgres                = "42.7.3"
@@ -146,6 +146,9 @@ object Library {
   val tapirJsonCirce          = "com.softwaremill.sttp.tapir"   %% "tapir-json-circe"                 % Version.tapir
   val tapirJdkHttp            = "com.softwaremill.sttp.tapir"   %% "tapir-jdkhttp-server"             % Version.tapir
   val tapirNettyFuture        = "com.softwaremill.sttp.tapir"   %% "tapir-netty-server"               % Version.tapir
+  val tapirNettyServerSync    = "com.softwaremill.sttp.tapir"   %% "tapir-netty-server-sync"          % Version.tapir
+  val tapirSwaggerUiBundle    = "com.softwaremill.sttp.tapir"   %% "tapir-swagger-ui-bundle"          % Version.tapir
+  val tapirPrometheusMetrics  = "com.softwaremill.sttp.tapir"   %% "tapir-prometheus-metrics"         % Version.tapir
   val tyqu                    = "ch.epfl.tyqu"                  %% "tyqu"                             % Version.tyqu
   val xstream                 = "com.thoughtworks.xstream"       % "xstream"                          % Version.xstream
   val xml                     = "org.scala-lang.modules"        %% "scala-xml"                        % Version.xml
@@ -164,23 +167,24 @@ object Library {
   val zioOpenAI               = "dev.zio"                       %% "zio-openai"                       % Version.zioOpenAI
 
   // test
-  val cucumberScala   = "io.cucumber"          %% "cucumber-scala"                 % Version.cucumberScala
-  val cucumberJunit   = "io.cucumber"           % "cucumber-junit"                 % Version.cucumber
-  val cucumberPico    = "io.cucumber"           % "cucumber-picocontainer"         % Version.cucumber
-  val junitInterface  = "com.github.sbt"        % "junit-interface"                % Version.junitInterface
-  val junit           = "junit"                 % "junit"                          % Version.junit
-  val gatlingCharts   = "io.gatling.highcharts" % "gatling-charts-highcharts"      % Version.gatling
-  val gatling         = "io.gatling"            % "gatling-test-framework"         % Version.gatling
-  val mockito         = "org.mockito"           % "mockito-core"                   % Version.mockito
-  val munit           = "org.scalameta"        %% "munit"                          % Version.munit
-  val munitScalaCheck = "org.scalameta"        %% "munit-scalacheck"               % Version.munit
-  val scalatest       = "org.scalatest"        %% "scalatest"                      % Version.scalaTest
-  val scalaCheck      = "org.scalacheck"       %% "scalacheck"                     % Version.scalaCheck
-  val testContainer   = "com.dimafeng"         %% "testcontainers-scala-scalatest" % Version.testContainer
-  val weaverCats      = "com.disneystreaming"  %% "weaver-cats"                    % Version.weaverCats
-  val zioTest         = "dev.zio"              %% "zio-test"                       % Version.zio
-  val zioTestSbt      = "dev.zio"              %% "zio-test-sbt"                   % Version.zio
-  val zioTestJUnit    = "dev.zio"              %% "zio-test-junit"                 % Version.zio
+  val cucumberScala       = "io.cucumber"                 %% "cucumber-scala"                 % Version.cucumberScala
+  val cucumberJunit       = "io.cucumber"                  % "cucumber-junit"                 % Version.cucumber
+  val cucumberPico        = "io.cucumber"                  % "cucumber-picocontainer"         % Version.cucumber
+  val junitInterface      = "com.github.sbt"               % "junit-interface"                % Version.junitInterface
+  val junit               = "junit"                        % "junit"                          % Version.junit
+  val gatlingCharts       = "io.gatling.highcharts"        % "gatling-charts-highcharts"      % Version.gatling
+  val gatling             = "io.gatling"                   % "gatling-test-framework"         % Version.gatling
+  val mockito             = "org.mockito"                  % "mockito-core"                   % Version.mockito
+  val munit               = "org.scalameta"               %% "munit"                          % Version.munit
+  val munitScalaCheck     = "org.scalameta"               %% "munit-scalacheck"               % Version.munit
+  val scalatest           = "org.scalatest"               %% "scalatest"                      % Version.scalaTest
+  val scalaCheck          = "org.scalacheck"              %% "scalacheck"                     % Version.scalaCheck
+  val tapirSttpStubServer = "com.softwaremill.sttp.tapir" %% "tapir-sttp-stub-server"         % Version.tapir
+  val testContainer       = "com.dimafeng"                %% "testcontainers-scala-scalatest" % Version.testContainer
+  val weaverCats          = "com.disneystreaming"         %% "weaver-cats"                    % Version.weaverCats
+  val zioTest             = "dev.zio"                     %% "zio-test"                       % Version.zio
+  val zioTestSbt          = "dev.zio"                     %% "zio-test-sbt"                   % Version.zio
+  val zioTestJUnit        = "dev.zio"                     %% "zio-test-junit"                 % Version.zio
 }
 
 object Dependencies {
