@@ -117,6 +117,14 @@ services:
 
     command: ["postgres", "-c", "log_statement=all", "-c", "log_destination=stderr"]
 
+  pulsar:
+    image: apachepulsar/pulsar
+    container_name: pulsar
+    ports:
+      - "6650:6650"
+      - "8050:8080"
+    entrypoint: "bin/pulsar standalone"
+
 volumes:
   data:
     driver: local

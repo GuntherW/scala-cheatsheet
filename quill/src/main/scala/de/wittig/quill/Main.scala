@@ -6,9 +6,9 @@ import DBContext.*
 
 import scala.util.chaining.scalaUtilChainingOps
 
-enum DBContext {
+enum DBContext:
   case PostgresContext, H2Context
-}
+
 case class Person(id: Int, firstName: String, lastName: String, age: Int)
 case class Book(id: Int, ownerId: Int, title: String)
 

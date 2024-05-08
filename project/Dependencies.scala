@@ -7,7 +7,7 @@ object Version {
   val catsVersion             = "2.10.0"
   val catsConsole             = "0.8.1"
   val circeVersion            = "0.14.7"
-  val cirisVersion            = "3.5.0"
+  val cirisVersion            = "3.6.0"
   val doobie                  = "1.0.0-RC5"
   val ducktape                = "0.2.0"
   val fs2                     = "3.10.2"
@@ -30,7 +30,8 @@ object Version {
   val ox                      = "0.1.0"
   val postgres                = "42.7.3"
   val pureConfig              = "0.17.6"
-  val quill                   = "4.8.3"
+  val pulsar4s                = "2.9.1"
+  val quill                   = "4.8.4"
   val reactiveMongo           = "1.1.0.noshaded-RC12"
   val refined                 = "0.11.1"
   val resilience4j            = "2.2.0"
@@ -40,7 +41,7 @@ object Version {
   val skunk                   = "0.6.3"
   val sttp                    = "4.0.0-M13"
   val sttpOAuth               = "0.16.0"
-  val sttpOpenAi              = "0.0.12"
+  val sttpOpenAi              = "0.1.0"
   val squants                 = "1.8.3"
   val tapir                   = "1.10.6"
   val tyqu                    = "0.1.0"
@@ -50,7 +51,7 @@ object Version {
   val zioJson                 = "0.6.2"
   val zioKafka                = "2.7.4"
   val zioHttp                 = "0.0.5"
-  val zioPrelude              = "1.0.0-RC24"
+  val zioPrelude              = "1.0.0-RC25"
   val zioSchema               = "1.1.1"
   val zioCli                  = "0.5.0"
   val zioOpenAI               = "0.4.1"
@@ -123,6 +124,8 @@ object Library {
   val ox                      = "com.softwaremill.ox"           %% "core"                             % Version.ox
   val postgres                = "org.postgresql"                 % "postgresql"                       % Version.postgres
   val pureConfig              = "com.github.pureconfig"         %% "pureconfig-core"                  % Version.pureConfig
+  val pulsar4s                = "com.clever-cloud.pulsar4s"     %% "pulsar4s-core"                    % Version.pulsar4s
+  val pulsar4sCirce           = "com.clever-cloud.pulsar4s"     %% "pulsar4s-circe"                   % Version.pulsar4s
   val quillJdbc               = "io.getquill"                   %% "quill-jdbc"                       % Version.quill
   val quillJdbcZio            = "io.getquill"                   %% "quill-jdbc-zio"                   % Version.quill
   val reactiveMongo           = "org.reactivemongo"             %% "reactivemongo"                    % Version.reactiveMongo

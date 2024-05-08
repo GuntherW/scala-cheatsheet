@@ -12,6 +12,8 @@ lazy val commonSettings = Seq(
     "-language:higherKinds",
     "-deprecation",
     "-source:future-migration",
+    "-Ybackend-parallelism:16",
+    "-release:21",
 //    "-language:strictEquality"
     // "-Vprofile"
   ),
@@ -275,6 +277,8 @@ lazy val kafka = project
       Library.circeCore,
       Library.circeParser,
       Library.circeGeneric,
+      Library.pulsar4s,
+      Library.pulsar4sCirce,
     )
   )
 
