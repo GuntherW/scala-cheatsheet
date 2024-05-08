@@ -1,12 +1,11 @@
 package de.wittig.server
 
 import caliban.*
-import caliban.quick.*
 import caliban.schema.ArgBuilder.auto.*
 import caliban.schema.Schema.auto.*
 import os.*
 
-object ServerMain extends App {
+object CharacterDomain:
 
   // 1. Defining the schema
   enum Origin:
@@ -16,17 +15,8 @@ object ServerMain extends App {
   case class CharactersArgs(origin: Option[Origin])
   case class CharacterArgs(name: String)
 
-  case class Query(
-      characters: CharactersArgs => List[Character],
-      character: CharacterArgs => Option[Character]
-  )
-
-  val schema = render[Query]
-  os.write.over(os.pwd / "caliban" / "schema.graphql", schema)
-  println(schema)
-
   // 2. Some data and business logic for our example
-  val sampleCharacters = List(
+  private var sampleCharacters = List(
     Character("James Holden", List("Jim", "Hoss"), Origin.EARTH),
     Character("Naomi Nagata", Nil, Origin.BELT),
     Character("Amos Burton", Nil, Origin.EARTH),
@@ -36,22 +26,54 @@ object ServerMain extends App {
     Character("Roberta Draper", List("Bobbie", "Gunny"), Origin.MARS)
   )
 
-  def charactersByOrigin(origin: Option[Origin]): List[Character] =
+  private val schema = render[Query]
+  os.write.over(os.pwd / "caliban" / "schema.graphql", schema)
+  println(schema)
+
+  // Queries
+  case class Query(
+      characters: CharactersArgs => List[Character],
+      character: CharacterArgs => Option[Character]
+  )
+
+  private def charactersByOrigin(origin: Option[Origin]): List[Character] =
     sampleCharacters.filter(c => origin.forall(_ == c.origin))
 
-  def characterByName(name: String): Option[Character] =
+  private def characterByName(name: String): Option[Character] =
     sampleCharacters.find(_.name == name)
 
   // 3. Creating the resolver
-  val queryResolver =
+  val characterQueryResolver: Query =
     Query(
       characters = args => charactersByOrigin(args.origin),
       character = args => characterByName(args.name)
     )
 
+  // Mutations
+  case class Mutations(
+      deleteCharacter: CharacterArgs => Boolean,
+      upperCaseCharacter: CharacterArgs => Boolean
+  )
+
+  val mutations = Mutations(
+    deleteCharacter = args =>
+      sampleCharacters = sampleCharacters.filterNot(_.name == args.name)
+      true
+    ,
+    upperCaseCharacter = args =>
+      sampleCharacters = sampleCharacters.map {
+        case character if character.name == args.name => character.copy(name = character.name.toUpperCase)
+        case c                                        => c
+      }
+      true
+  )
+
+object ServerMain extends App:
+  import CharacterDomain.*
+  import caliban.quick.*
+
   // 4. Turn the resolver into an API
-  val api = graphQL(RootResolver(queryResolver))
+  val api = graphQL(RootResolver(characterQueryResolver, mutations))
 
   // 5. Start a server for our API
   api.unsafe.runServer(8088, "/api/graphql")
-}

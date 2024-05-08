@@ -14,7 +14,12 @@ object SensorDomain:
   private val offSensors  = sensorIds.toSet
   private val onSensors   = Set.empty[String]
 
-  def generate(ids: List[String] = sensorIds, off: Set[String] = offSensors, on: Set[String] = onSensors): Iterator[SensorEvent] =
+  def generate(
+      ids: List[String] = sensorIds,
+      off: Set[String] = offSensors,
+      on: Set[String] = onSensors
+  ): Iterator[SensorEvent] =
+
     Thread.sleep(Random.nextInt(500) + 200)
     val index    = Random.nextInt(sensorIds.size)
     val sensorId = sensorIds(index)

@@ -67,7 +67,7 @@ lazy val caliban = project
       "com.github.ghostdogpr" %%% "caliban-client" % "2.6.0",
       Library.osLib,
       Library.sttpCore
-    )
+    ),
   ).enablePlugins(CalibanPlugin)
 
 lazy val core = project
