@@ -11,7 +11,8 @@ object Image extends App {
 
   private val imageRequestBody = ImageCreationBody(
     prompt = "cute fish",
-    n = Some(2),
+    model = "dall-e-3",
+    n = Some(1),
     size = Some(Size.Custom("1024x1024")),
     responseFormat = Some(ResponseFormat.URL),
     user = Some("Gunther")
