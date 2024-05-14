@@ -1,14 +1,10 @@
 package de.wittig.kyo
 
-import scala.concurrent.duration.*
-
 import kyo.*
 
 object Main extends App {
 
   val programm = defer {
-    // Pure expression
-    val a: Int = 5
 
     // Effectful value
     val b: Int = await(IOs(10_000))
@@ -25,15 +21,13 @@ object Main extends App {
     // Loop (for demonstration; this loop
     // won't execute its body)
     while (await(IOs(false)))
-      "Looping"
-      ()
+      println("looping")
 
     // Pattern matching
     val matchResult: String =
-      await(IOs(1)) match {
+      await(IOs(1)) match
         case 1 => "One"
         case _ => "Other"
-      }
 
     println(matchResult)
   }

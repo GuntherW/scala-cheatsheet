@@ -60,7 +60,7 @@ object KafkaStreams extends App:
   ordersStream.to(DebugOrdersTopic.value)
 
   // Join Window
-  private val joinWindow        = JoinWindows.of(Duration.of(5, ChronoUnit.MINUTES))
+  private val joinWindow        = JoinWindows.ofTimeDifferenceWithNoGrace(Duration.of(5, ChronoUnit.MINUTES))
   private val joinOrderPayments = (order: Order, payments: Payment) => if payments.status == "PAID" then Option(order) else Option.empty[Order]
   private val ordersPaid        = ordersStream.join[Payment, Option[Order]](paymentsStream)(joinOrderPayments, joinWindow)
     .flatMapValues(maybeOrder => maybeOrder.toList)

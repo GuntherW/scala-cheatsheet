@@ -1,6 +1,6 @@
 package de.codecentric.wittig.scala.testContainer
 
-import java.net.URL
+import java.net.{URI, URL}
 
 import scala.io.Source
 
@@ -26,9 +26,9 @@ class TestNginxViaTestContainer extends AnyFunSuite, ForAllTestContainer:
   )
 
   ignore("GenericContainer should start nginx and expose 80 port", Slow) {
-    val nginxUrl      = new URL(s"http://${container.containerIpAddress}:${container.mappedPort(80)}/")
+    val nginxUri      = new URI(s"http://${container.containerIpAddress}:${container.mappedPort(80)}/")
     val nginxResponse = Source
-      .fromInputStream(nginxUrl.openConnection().getInputStream)
+      .fromInputStream(nginxUri.toURL.openConnection().getInputStream)
       .mkString
     assert(nginxResponse.contains("If you see this page, the nginx web server is successfully installed"))
   }

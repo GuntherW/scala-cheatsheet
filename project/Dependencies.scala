@@ -37,7 +37,7 @@ object Version {
   val resilience4j            = "2.2.0"
   val scala                   = "3.4.1"
   val scalaParallelCollection = "1.0.4"
-  val scodec                  = "2.2.2"
+  val scodec                  = "2.3.0"
   val skunk                   = "0.6.4"
   val sttp                    = "4.0.0-M14"
   val sttpOAuth               = "0.18.0"

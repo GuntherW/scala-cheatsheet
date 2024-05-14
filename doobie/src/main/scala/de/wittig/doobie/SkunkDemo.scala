@@ -15,6 +15,7 @@ import pureconfig.generic.derivation.default.*
 import skunk.*
 import skunk.codec.all.*
 import skunk.syntax.all.*
+import org.typelevel.twiddles.syntax.toTwiddleOpTwo
 
 final case class User(
     id: UUID,
@@ -35,15 +36,10 @@ trait UserRepository[F[_]]:
   def findByName(name: String): F[List[User]]
 
 class UserRepositoryLive[F[_]: Concurrent: Console](session: Session[F]) extends UserRepository[F]:
-  val codec: Codec[User]  = (uuid, varchar, varchar).tupled.imap {
+  val codec: Codec[User] = (uuid, varchar, varchar).tupled.imap {
     case (id, name, email) => User(id, name, email)
   } {
     case User(id, name, email) => (id, name, email)
-  }
-  val codec2: Codec[User] = (uuid ~ varchar ~ varchar).imap {
-    case id ~ name ~ email => User(id, name, email)
-  } {
-    case User(id, name, email) => id ~ name ~ email
   }
 
   override def createUser(user: User): F[Unit] =
