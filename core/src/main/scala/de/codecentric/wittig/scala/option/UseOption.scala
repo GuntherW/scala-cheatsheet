@@ -139,7 +139,7 @@ object A extends App {
       if (value.isEmpty) println("Llkjlkj")
       variationId -> value
     }
-    .tapEach{ case (variationId, a)  => if a.isEmpty  then println(s"Empty $variationId") }
+    .tapEach { case (variationId, a) => if a.isEmpty then println(s"Empty $variationId") }
     .collect { case (variationId, Some(value)) => variationId -> value }
     .toMap
   println(a)
