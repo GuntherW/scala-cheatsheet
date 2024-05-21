@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.5"
-  val aws                     = "2.141.0"
+  val aws                     = "2.142.1"
   val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.10.0"
   val catsConsole             = "0.8.1"
@@ -12,6 +12,7 @@ object Version {
   val ducktape                = "0.2.0"
   val fs2                     = "3.10.2"
   val gatling                 = "3.11.2"
+  val gears                   = "0.2.0"
   val h2                      = "2.2.224"
   val http4s                  = "0.23.27"
   val jackson                 = "2.17.1"
@@ -27,7 +28,7 @@ object Version {
   val monocle                 = "3.2.0"
   val neotype                 = "0.2.12"
   val osLib                   = "0.10.0"
-  val ox                      = "0.1.0"
+  val ox                      = "0.1.1"
   val postgres                = "42.7.3"
   val pureConfig              = "0.17.6"
   val pulsar4s                = "2.9.1"
@@ -35,7 +36,7 @@ object Version {
   val reactiveMongo           = "1.1.0.noshaded-RC12"
   val refined                 = "0.11.1"
   val resilience4j            = "2.2.0"
-  val scala                   = "3.4.1"
+  val scala                   = "3.4.2"
   val scalaParallelCollection = "1.0.4"
   val scodec                  = "2.3.0"
   val skunk                   = "0.6.4"
@@ -91,6 +92,7 @@ object Library {
   val ducktape                = "io.github.arainko"             %% "ducktape"                         % Version.ducktape
   val fs2IO                   = "co.fs2"                        %% "fs2-io"                           % Version.fs2
   val fs2ReactiveStreams      = "co.fs2"                        %% "fs2-reactive-streams"             % Version.fs2
+  val gears                   = "ch.epfl.lamp"                  %% "gears"                            % Version.gears
   val h2                      = "com.h2database"                 % "h2"                               % Version.h2
   val http4s                  = "org.http4s"                    %% "http4s-dsl"                       % Version.http4s
   val http4sEmberServer       = "org.http4s"                    %% "http4s-ember-server"              % Version.http4s

@@ -134,6 +134,7 @@ lazy val direct = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(
+      Library.gears,
       Library.kyoCore,
       Library.kyoDirect,
       Library.kyoCache,
