@@ -63,8 +63,8 @@ lazy val caliban = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(
-      "com.github.ghostdogpr" %%% "caliban-quick"  % "2.6.0",
-      "com.github.ghostdogpr" %%% "caliban-client" % "2.6.0",
+      Library.calibanQuick,
+      Library.calibanClient,
       Library.osLib,
       Library.sttpCore
     ),

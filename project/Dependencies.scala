@@ -2,9 +2,10 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.5"
-  val aws                     = "2.143.0"
+  val aws                     = "2.143.1"
+  val caliban                 = "2.7.0"
   val catsEffectCps           = "0.4.0"
-  val catsVersion             = "2.10.0"
+  val catsVersion             = "2.12.0"
   val catsConsole             = "0.8.1"
   val circeVersion            = "0.14.7"
   val cirisVersion            = "3.6.0"
@@ -26,8 +27,8 @@ object Version {
   val magnolia                = "1.3.7"
   val mongo                   = "5.1.0"
   val monocle                 = "3.2.0"
-  val neotype                 = "0.2.14"
-  val osLib                   = "0.10.1"
+  val neotype                 = "0.2.16"
+  val osLib                   = "0.10.2"
   val ox                      = "0.2.0"
   val postgres                = "42.7.3"
   val pureConfig              = "0.17.6"
@@ -77,6 +78,8 @@ object Version {
 object Library {
   val akka                    = "com.typesafe.akka"             %% "akka-actor-typed"                 % Version.akka
   val awsCdk                  = "software.amazon.awscdk"         % "aws-cdk-lib"                      % Version.aws
+  val calibanQuick            = "com.github.ghostdogpr"         %% "caliban-quick"                    % Version.caliban
+  val calibanClient           = "com.github.ghostdogpr"         %% "caliban-client"                   % Version.caliban
   val catsCore                = "org.typelevel"                 %% "cats-core"                        % Version.catsVersion
   val catsEffectCps           = "org.typelevel"                 %% "cats-effect-cps"                  % Version.catsEffectCps
   val catsFree                = "org.typelevel"                 %% "cats-free"                        % Version.catsVersion

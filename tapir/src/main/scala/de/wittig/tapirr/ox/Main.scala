@@ -3,7 +3,8 @@ package de.wittig.tapirr.ox
 import ox.*
 import sttp.tapir.server.netty.sync.{NettySyncServer, NettySyncServerOptions}
 
-@main def run(): Unit =
+@main
+def run(): Unit =
 
   val serverOptions = NettySyncServerOptions
     .customiseInterceptors
