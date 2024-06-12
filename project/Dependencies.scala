@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.5"
-  val aws                     = "2.144.0"
+  val aws                     = "2.145.0"
   val caliban                 = "2.7.1"
   val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.12.0"
@@ -31,7 +31,7 @@ object Version {
   val osLib                   = "0.10.2"
   val ox                      = "0.2.1"
   val postgres                = "42.7.3"
-  val pureConfig              = "0.17.6"
+  val pureConfig              = "0.17.7"
   val pulsar4s                = "2.9.1"
   val quill                   = "4.8.5"
   val reactiveMongo           = "1.1.0.noshaded-RC12"
@@ -49,12 +49,12 @@ object Version {
   val tyqu                    = "0.1.0"
   val xstream                 = "1.4.20"
   val xml                     = "2.3.0"
-  val zio                     = "2.1.2"
+  val zio                     = "2.1.3"
   val zioJson                 = "0.7.0"
-  val zioKafka                = "2.7.4"
+  val zioKafka                = "2.7.5"
   val zioHttp                 = "0.0.5"
   val zioPrelude              = "1.0.0-RC27"
-  val zioSchema               = "1.2.0"
+  val zioSchema               = "1.2.1"
   val zioCli                  = "0.5.0"
   val zioOpenAI               = "0.4.1"
 
