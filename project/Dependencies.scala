@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.5"
-  val aws                     = "2.145.0"
+  val aws                     = "2.146.0"
   val caliban                 = "2.7.1"
   val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.12.0"
@@ -25,7 +25,7 @@ object Version {
   val logback                 = "1.5.6"
   val log4j                   = "2.23.1"
   val magnolia                = "1.3.7"
-  val mongo                   = "5.1.0"
+  val mongo                   = "5.1.1"
   val monocle                 = "3.2.0"
   val neotype                 = "0.3.0"
   val osLib                   = "0.10.2"
@@ -45,7 +45,7 @@ object Version {
   val sttpOAuth               = "0.18.0"
   val sttpOpenAi              = "0.2.0"
   val squants                 = "1.8.3"
-  val tapir                   = "1.10.8"
+  val tapir                   = "1.10.9"
   val tyqu                    = "0.1.0"
   val xstream                 = "1.4.20"
   val xml                     = "2.3.0"
@@ -71,7 +71,7 @@ object Version {
   val munit          = "1.0.0"
   val scalaTest      = "3.2.18"
   val scalaCheck     = "1.18.0"
-  val testContainer  = "0.41.3"
+  val testContainer  = "0.41.4"
   val weaverCats     = "0.8.4"
 }
 
