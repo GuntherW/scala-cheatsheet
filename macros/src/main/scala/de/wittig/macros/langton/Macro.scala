@@ -1,4 +1,4 @@
-package de.wittig.macros.langton
+        package de.wittig.macros.langton
 
 import scala.collection.immutable.List
 import scala.quoted.*
