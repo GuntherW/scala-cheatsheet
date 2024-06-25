@@ -1,10 +1,6 @@
 package de.codecentric.wittig.scala.streams
 
-import java.util.zip.ZipEntry
-
-import cats.implicits.*
 import cats.effect.{IO, IOApp}
-import de.codecentric.wittig.scala.streams.ConverterAndZipper.{fahrenheitToCelsius, zipToFile}
 import fs2.{text, Pipe, Stream}
 import fs2.compression.Compression
 import fs2.io.file.{Files, Path}
