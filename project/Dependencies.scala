@@ -1,9 +1,9 @@
 import sbt.*
 
 object Version {
-  val akka                    = "2.8.6"
-  val aws                     = "2.147.1"
-  val caliban                 = "2.7.2"
+  val akka                    = "2.8.5"
+  val aws                     = "2.147.2"
+  val caliban                 = "2.8.0"
   val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.12.0"
   val catsConsole             = "0.8.1"
@@ -49,8 +49,8 @@ object Version {
   val tyqu                    = "0.1.0"
   val xstream                 = "1.4.20"
   val xml                     = "2.3.0"
-  val zio                     = "2.1.4"
-  val zioJson                 = "0.7.0"
+  val zio                     = "2.1.5"
+  val zioJson                 = "0.7.1"
   val zioKafka                = "2.7.5"
   val zioHttp                 = "0.0.5"
   val zioPrelude              = "1.0.0-RC27"

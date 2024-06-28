@@ -11,7 +11,7 @@ object Main extends App:
 
   println(f3.get())
 
-  val completableFuture = CompletableFuture.completedFuture("Hello");
+  val completableFuture = CompletableFuture.completedFuture("Moin completedFuture!");
   println(completableFuture.get())
 
   @throws[InterruptedException]
