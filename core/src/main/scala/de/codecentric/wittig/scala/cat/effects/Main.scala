@@ -1,4 +1,4 @@
-package de.codecentric.wittig.scala.cat.effect
+package de.codecentric.wittig.scala.cat.effects
 
 import cats.effect.{IO, IOApp}
 
