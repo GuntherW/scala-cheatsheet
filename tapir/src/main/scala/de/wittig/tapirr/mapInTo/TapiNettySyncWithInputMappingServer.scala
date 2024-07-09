@@ -18,7 +18,7 @@ object TapiNettySyncWithInputMappingServer extends App {
   case class Result(res: Int)
   case class Error(description: String)
 
-  def hash(result: Int) = Output(Result(result), MurmurHash3.stringHash(result.toString).toString)
+  def hash(result: Int) = Output(Result(result        ), MurmurHash3.stringHash(result.toString).toString)
 
   val maybeErrorEndpoint =
     endpoint

@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.5"
-  val aws                     = "2.147.3"
+  val aws                     = "2.148.0"
   val caliban                 = "2.8.1"
   val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.12.0"
@@ -16,10 +16,10 @@ object Version {
   val gears                   = "0.2.0"
   val h2                      = "2.2.224"
   val http4s                  = "0.23.27"
-  val jackson                 = "2.17.1"
+  val jackson                 = "2.17.2"
   val jwtHttp4s               = "1.2.2"
   val jwtScala                = "9.4.6"
-  val jsonSchemaValidator     = "1.4.3"
+  val jsonSchemaValidator     = "1.5.0"
   val kafka                   = "3.7.1"
   val kyo                     = "0.10.2"
   val logback                 = "1.5.6"
