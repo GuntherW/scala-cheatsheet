@@ -28,9 +28,6 @@ object Main extends App {
     sleep(2.seconds)
     1
 
-  val result2: Either[Throwable, Int] = catching(timeout(1.second)(computation))
-  println(result2)
-
   // retry a computation
   def computationR: Int = Random.nextBoolean match
     case true  => throw new RuntimeException("boom!")
