@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.5"
-  val aws                     = "2.148.0"
+  val aws                     = "2.149.0"
   val caliban                 = "2.8.1"
   val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.12.0"
@@ -37,7 +37,7 @@ object Version {
   val reactiveMongo           = "1.1.0.noshaded-RC12"
   val refined                 = "0.11.2"
   val resilience4j            = "2.2.0"
-  val scala                   = "3.5.0-RC2"
+  val scala                   = "3.5.0-RC4"
   val scalaParallelCollection = "1.0.4"
   val scodec                  = "2.3.0"
   val skunk                   = "0.6.4"
@@ -45,7 +45,7 @@ object Version {
   val sttpOAuth               = "0.18.0"
   val sttpOpenAi              = "0.2.0"
   val squants                 = "1.8.3"
-  val tapir                   = "1.10.12"
+  val tapir                   = "1.10.14"
   val tyqu                    = "0.1.0"
   val xstream                 = "1.4.20"
   val xml                     = "2.3.0"
@@ -54,7 +54,7 @@ object Version {
   val zioKafka                = "2.7.5"
   val zioHttp                 = "0.0.5"
   val zioPrelude              = "1.0.0-RC27"
-  val zioSchema               = "1.2.2"
+  val zioSchema               = "1.3.0"
   val zioCli                  = "0.5.0"
   val zioOpenAI               = "0.4.1"
 
