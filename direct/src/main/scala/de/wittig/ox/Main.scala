@@ -1,11 +1,13 @@
 package de.wittig.ox
 
-import ox.*
-import ox.either.ok
-import ox.channels.*
-import ox.resilience.*
 import scala.concurrent.duration.*
 import scala.util.Random
+
+import ox.*
+import ox.channels.*
+import ox.either.ok
+import ox.resilience.*
+import ox.scheduling.Jitter
 
 object Main extends App {
 
@@ -33,7 +35,7 @@ object Main extends App {
     case true  => throw new RuntimeException("boom!")
     case false => Random.nextInt
 
-  val resultRetry = retry(RetryPolicy.backoff(3, 100.millis, 5.minutes, Jitter.Equal))(computationR)
+  val resultRetry = retry(RetryConfig.backoff(3, 100.millis, 5.minutes, Jitter.Equal))(computationR)
   println(resultRetry)
 
   // create channels & transform them using high-level operations

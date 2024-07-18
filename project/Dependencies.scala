@@ -29,7 +29,7 @@ object Version {
   val monocle                 = "3.2.0"
   val neotype                 = "0.3.0"
   val osLib                   = "0.10.2"
-  val ox                      = "0.3.0"
+  val ox                      = "0.3.1"
   val postgres                = "42.7.3"
   val pureConfig              = "0.17.7"
   val pulsar4s                = "2.9.1"
