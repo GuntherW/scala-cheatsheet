@@ -19,8 +19,8 @@ lazy val commonSettings = Seq(
   ),
   Test / fork       := true, // subprojects won't run in parallel then
   Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oF"), // Showing full stack trace
-  turbo         := true,
-  usePipelining := true
+  turbo             := true,
+  usePipelining     := true
 )
 
 ThisBuild / concurrentRestrictions := Seq(Tags.limit(Tags.ForkedTestGroup, 2))
@@ -371,9 +371,11 @@ lazy val tapir = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(
+      Library.http4sBlazeServer,
       Library.tapirAwsLambda,
       Library.tapirAwsCdk,
       Library.tapirAwsSam,
+      Library.tapirHttp4sServer,
       Library.tapirJsonCirce,
       Library.tapirJdkHttp,
       Library.tapirNettyFuture,

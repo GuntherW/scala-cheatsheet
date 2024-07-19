@@ -37,7 +37,7 @@ object Version {
   val reactiveMongo           = "1.1.0.noshaded-RC12"
   val refined                 = "0.11.2"
   val resilience4j            = "2.2.0"
-  val scala                   = "3.5.0-RC4"
+  val scala                   = "3.4.2"
   val scalaParallelCollection = "1.0.4"
   val scodec                  = "2.3.0"
   val skunk                   = "0.6.4"
@@ -99,6 +99,7 @@ object Library {
   val h2                      = "com.h2database"                 % "h2"                               % Version.h2
   val http4s                  = "org.http4s"                    %% "http4s-dsl"                       % Version.http4s
   val http4sEmberServer       = "org.http4s"                    %% "http4s-ember-server"              % Version.http4s
+  val http4sBlazeServer       = "org.http4s"                    %% "http4s-blaze-server"              % "0.23.16"
   val http4sEmberClient       = "org.http4s"                    %% "http4s-ember-client"              % Version.http4s
   val http4sCirce             = "org.http4s"                    %% "http4s-circe"                     % Version.http4s
   val http4sDsl               = "org.http4s"                    %% "http4s-dsl"                       % Version.http4s
@@ -151,6 +152,7 @@ object Library {
   val tapirAwsLambda          = "com.softwaremill.sttp.tapir"   %% "tapir-aws-lambda"                 % Version.tapir
   val tapirAwsCdk             = "com.softwaremill.sttp.tapir"   %% "tapir-aws-cdk"                    % Version.tapir
   val tapirAwsSam             = "com.softwaremill.sttp.tapir"   %% "tapir-aws-sam"                    % Version.tapir
+  val tapirHttp4sServer       = "com.softwaremill.sttp.tapir"   %% "tapir-http4s-server"              % Version.tapir
   val tapirJsonCirce          = "com.softwaremill.sttp.tapir"   %% "tapir-json-circe"                 % Version.tapir
   val tapirJdkHttp            = "com.softwaremill.sttp.tapir"   %% "tapir-jdkhttp-server"             % Version.tapir
   val tapirNettyFuture        = "com.softwaremill.sttp.tapir"   %% "tapir-netty-server"               % Version.tapir

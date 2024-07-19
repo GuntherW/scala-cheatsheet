@@ -1,0 +1,32 @@
+#### InputMapping
+### add
+GET localhost:8080/operation/add?value1=5&value2=3
+
+### sub
+GET localhost:8080/operation/sub?value1=5&value2=3
+
+### mult
+GET localhost:8080/operation/mult?value1=5&value2=3
+
+#### MultipleOutput
+### Found
+GET localhost:8082/user/avatar?id=1
+
+### Redirect
+GET localhost:8082/user/avatar?id=2
+
+### Unauthorized
+GET localhost:8082/user/avatar?id=3
+
+### NotFound
+GET localhost:8082/user/avatar?id=4
+
+### Other
+GET localhost:8082/user/avatar?id=5
+
+#### Http4s
+### endpoint
+GET localhost:8083/hello/world?name=Gunther
+
+### swagger-ui
+GET http://localhost:8083/docs/

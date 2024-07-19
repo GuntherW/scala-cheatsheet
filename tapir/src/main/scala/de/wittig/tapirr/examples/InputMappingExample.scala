@@ -1,4 +1,4 @@
-package de.wittig.tapirr.mapInTo
+package de.wittig.tapirr.examples
 
 import scala.util.hashing.MurmurHash3
 
@@ -11,14 +11,14 @@ import sttp.tapir.json.circe.*
 import sttp.tapir.server.netty.sync.NettySyncServer
 import sttp.tapir.swagger.bundle.SwaggerInterpreter
 
-object TapiNettySyncWithInputMappingServer extends App {
+object InputMappingExample extends App {
 
   case class Input(operation: String, value1: Int, value2: Int)
   case class Output(result: Result, hash: String)
   case class Result(res: Int)
   case class Error(description: String)
 
-  def hash(result: Int) = Output(Result(result        ), MurmurHash3.stringHash(result.toString).toString)
+  def hash(result: Int) = Output(Result(result), MurmurHash3.stringHash(result.toString).toString)
 
   val maybeErrorEndpoint =
     endpoint
@@ -44,5 +44,4 @@ object TapiNettySyncWithInputMappingServer extends App {
     .addEndpoint(maybeErrorEndpoint)
     .addEndpoints(swaggerEndpoints)
     .startAndWait()
-
 }
