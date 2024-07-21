@@ -28,7 +28,7 @@ object Version {
   val mongo                   = "5.1.2"
   val monocle                 = "3.2.0"
   val neotype                 = "0.3.0"
-  val osLib                   = "0.10.2"
+  val osLib                   = "0.10.3"
   val ox                      = "0.3.1"
   val postgres                = "42.7.3"
   val pureConfig              = "0.17.7"
@@ -64,7 +64,7 @@ object Version {
 
   // Test
   val cucumber       = "7.18.1"
-  val cucumberScala  = "8.23.0"
+  val cucumberScala  = "8.23.1"
   val junit          = "4.13.2"
   val junitInterface = "0.13.3"
   val mockito        = "5.12.0"
@@ -129,7 +129,7 @@ object Library {
   val osLib                   = "com.lihaoyi"                   %% "os-lib"                           % Version.osLib
   val ox                      = "com.softwaremill.ox"           %% "core"                             % Version.ox
   val postgres                = "org.postgresql"                 % "postgresql"                       % Version.postgres
-  val pureConfig              = "com.github.pureconfig"         %% "pureconfig-core"                  % Version.pureConfig
+  val pureConfig              = "com.github.pureconfig"         %% "pureconfig-generic-scala3"        % Version.pureConfig
   val pulsar4s                = "com.clever-cloud.pulsar4s"     %% "pulsar4s-core"                    % Version.pulsar4s
   val pulsar4sCirce           = "com.clever-cloud.pulsar4s"     %% "pulsar4s-circe"                   % Version.pulsar4s
   val quillJdbc               = "io.getquill"                   %% "quill-jdbc"                       % Version.quill

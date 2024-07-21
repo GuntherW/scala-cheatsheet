@@ -32,6 +32,7 @@ lazy val `scala-cheatsheet` = (project in file("."))
     akka,
     caliban,
     core,
+    config,
     cdk,
     cucumber,
     doobie,
@@ -83,6 +84,15 @@ lazy val cdk = project
     libraryDependencies ++= Seq(
       Library.awsCdk,
       "software.constructs" % "constructs" % "10.3.0"
+    )
+  )
+
+lazy val config = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.pureConfig,
+      Library.ciris,
     )
   )
 
