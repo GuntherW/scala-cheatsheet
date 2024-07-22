@@ -12,7 +12,7 @@ lazy val commonSettings = Seq(
     "-language:higherKinds",
     "-deprecation",
     "-source:future-migration",
-    "-Ybackend-parallelism:16",
+    "-Ybackend-parallelism:8",
     "-release:21",
 //    "-language:strictEquality"
     // "-Vprofile"
@@ -177,6 +177,21 @@ lazy val macros = project
 lazy val munit = project
   .settings(
     commonSettings,
+    scalacOptions ++= Seq(
+      "-Xcheck-macros",
+      "-Ycheck:all",   // also for checking macros,
+      "-Ycheck-mods",
+      "-Ydebug-type-error",
+      "-Xprint-types", // Without this flag, we will not see error messages for exceptions during given-macro expansion!
+      "-Yshow-print-errors",
+      "-language:experimental.macros",
+      "-language:implicitConversions",
+      "-language:higherKinds",
+      "-language:namedTypeArguments",
+      "-language:dynamics",
+      "-Ykind-projector:underscores",
+      "-unchecked",
+    ),
     libraryDependencies ++= Seq(
       Library.munit           % Test,
       Library.scalatest       % Test,
