@@ -137,6 +137,7 @@ lazy val quill = project
       Library.h2,
       Library.quillJdbc,
       Library.quillJdbcZio,
+      Library.logback
     )
   )
 

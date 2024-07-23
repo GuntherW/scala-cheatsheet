@@ -8,7 +8,8 @@ import scala.util.chaining.scalaUtilChainingOps
 
 object Main extends App:
 
-  val dbContext: DBContext = H2Context
+//  val dbContext: DBContext = H2Context
+  val dbContext: DBContext = PostgresContext
 
   private val ctx = dbContext match {
     case PostgresContext => new PostgresJdbcContext(SnakeCase, "ctxpg")
@@ -22,6 +23,9 @@ object Main extends App:
   inline def allBooks             = quote(books)
   inline def hans                 = quote(persons.filter(_.firstName == "Hans"))
   inline def updateHans(age: Int) = hans.update(_.age -> age)
+
+  // clean up
+  run(persons.delete)
 
   val p1    = Person(0, "Peter", "Pan", 88)
   val book1 = Book(0, 0, "Titel 1")
