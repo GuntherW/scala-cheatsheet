@@ -7,25 +7,25 @@ object Main extends App {
   val programm = defer {
 
     // Effectful value
-    val b: Int = await(IOs(10_000))
+    val b: Int = await(IO(10_000))
     println(b)
 
     // Control flow
-    val c: String = if await(IOs(true)) then "True branch" else "False branch"
+    val c: String = if await(IO(true)) then "True branch" else "False branch"
 
     // Logical operations
-    val d: Boolean = await(IOs(true)) && await(IOs(false))
+    val d: Boolean = await(IO(true)) && await(IO(false))
 
-    val e: Boolean = await(IOs(true)) || await(IOs(true))
+    val e: Boolean = await(IO(true)) || await(IO(true))
 
     // Loop (for demonstration; this loop
     // won't execute its body)
-    while (await(IOs(false)))
+    while (await(IO(false)))
       println("looping")
 
     // Pattern matching
     val matchResult: String =
-      await(IOs(1)) match
+      await(IO(1)) match
         case 1 => "One"
         case _ => "Other"
 
