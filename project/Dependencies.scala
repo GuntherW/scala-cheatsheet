@@ -45,7 +45,7 @@ object Version {
   val sttpOAuth               = "0.18.0"
   val sttpOpenAi              = "0.2.2"
   val squants                 = "1.8.3"
-  val tapir                   = "1.11.3"
+  val tapir                   = "1.11.4"
   val tyqu                    = "0.1.0"
   val xstream                 = "1.4.20"
   val xml                     = "2.3.0"
@@ -70,7 +70,7 @@ object Version {
   val mockito        = "5.13.0"
   val munit          = "1.0.0"
   val scalaTest      = "3.2.19"
-  val scalaCheck     = "1.18.0"
+  val scalaCheck     = "1.18.1"
   val testContainer  = "0.41.4"
   val weaverCats     = "0.8.4"
 }
