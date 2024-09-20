@@ -42,6 +42,7 @@ lazy val `scala-cheatsheet` = (project in file("."))
     kafka,
     direct,
     macros,
+    macwire,
     magnolia,
     mongo,
     munit,
@@ -370,6 +371,14 @@ lazy val gatling = project
 lazy val metaprogramming = project
   .settings(
     commonSettings
+  )
+
+lazy val macwire = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.macwire,
+    )
   )
 
 lazy val http4s = project

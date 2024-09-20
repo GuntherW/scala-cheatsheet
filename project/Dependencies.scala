@@ -24,6 +24,7 @@ object Version {
   val kyo                     = "0.12.0"
   val logback                 = "1.5.8"
   val log4j                   = "2.24.0"
+  val macwire                 = "2.6.2"
   val magnolia                = "1.3.7"
   val mongo                   = "5.1.4"
   val monocle                 = "3.3.0"
@@ -52,7 +53,7 @@ object Version {
   val zio                     = "2.1.9"
   val zioJson                 = "0.7.3"
   val zioKafka                = "2.8.2"
-  val zioHttp                 = "0.0.5"
+  val zioHttp                 = "3.0.1"
   val zioPrelude              = "1.0.0-RC31"
   val zioSchema               = "1.5.0"
   val zioCli                  = "0.5.0"
@@ -122,6 +123,7 @@ object Library {
   val log4jApi                = "org.apache.logging.log4j"       % "log4j-api"                        % Version.log4j
   val log4jCore               = "org.apache.logging.log4j"       % "log4j-core"                       % Version.log4j
   val log4jSlf4jImpl          = "org.apache.logging.log4j"       % "log4j-slf4j-impl"                 % Version.log4j
+  val macwire                 = "com.softwaremill.macwire"      %% "macros"                           % Version.macwire
   val magnolia                = "com.softwaremill.magnolia1_3"  %% "magnolia"                         % Version.magnolia
   val mongoDriverJava         = "org.mongodb"                    % "mongodb-driver-sync"              % Version.mongo
   val monocle                 = "dev.optics"                    %% "monocle-core"                     % Version.monocle
