@@ -57,3 +57,12 @@ class MockingTest extends AnyFunSuite, BeforeAndAfterEach:
 
     val captured = varargs.getValue
     assert(captured == Seq("eins", "zwei", "drei"))
+
+  test("capturing param and varargs"):
+    m.m2("eins", "zwei", "drei")
+    val varargs: ArgumentCaptor[Seq[String]] = ArgumentCaptor.forClass(classOf[Seq[String]])
+    verify(m).m2(any, varargs.capture()*)
+    verify(m).m2(ArgumentMatchers.eq("eins"), varargs.capture()*)
+
+    val captured = varargs.getValue
+    assert(captured == Seq("zwei", "drei"))

@@ -188,9 +188,7 @@ lazy val munit = project
       "-language:experimental.macros",
       "-language:implicitConversions",
       "-language:higherKinds",
-      "-language:namedTypeArguments",
       "-language:dynamics",
-      "-Ykind-projector:underscores",
       "-unchecked",
     ),
     libraryDependencies ++= Seq(
