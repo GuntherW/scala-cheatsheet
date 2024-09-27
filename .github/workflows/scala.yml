@@ -11,11 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Set up JDK 21
+    - name: Set up GraalVM for JDK 23
       uses: actions/setup-java@v4
       with:
-        java-version: 21
-        distribution: temurin
+        java-version: 23
+        distribution: graalvm
         cache: sbt
     - uses: actions/setup-node@v4
       with:
