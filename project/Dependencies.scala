@@ -1,8 +1,8 @@
 import sbt.*
 
 object Version {
-  val akka                    = "2.8.6"
-  val aws                     = "2.160.0"
+  val akka                    = "2.8.7"
+  val aws                     = "2.162.0"
   val caliban                 = "2.9.0"
   val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.12.0"
@@ -16,21 +16,21 @@ object Version {
   val gears                   = "0.2.0"
   val h2                      = "2.3.232"
   val http4s                  = "0.23.28"
-  val jackson                 = "2.17.2"
+  val jackson                 = "2.18.0"
   val jwtHttp4s               = "1.2.3"
   val jwtScala                = "10.0.1"
   val jsonSchemaValidator     = "1.5.2"
   val kafka                   = "3.8.0"
-  val kyo                     = "0.12.1"
-  val logback                 = "1.5.8"
-  val log4j                   = "2.24.0"
-  val macwire                 = "2.6.2"
+  val kyo                     = "0.12.2"
+  val logback                 = "1.5.9"
+  val log4j                   = "2.24.1"
+  val macwire                 = "2.6.4"
   val magnolia                = "1.3.7"
-  val mongo                   = "5.2.0"
+  val mongo                   = "4.10.0"
   val monocle                 = "3.3.0"
-  val neotype                 = "0.3.5"
-  val osLib                   = "0.10.7"
-  val ox                      = "0.4.0"
+  val neotype                 = "0.3.6"
+  val osLib                   = "0.11.1"
+  val ox                      = "0.5.1"
   val postgres                = "42.7.4"
   val pureConfig              = "0.17.7"
   val pulsar4s                = "2.10.0"
@@ -40,17 +40,17 @@ object Version {
   val resilience4j            = "2.2.0"
   val scala                   = "3.5.1"
   val scalaParallelCollection = "1.0.4"
-  val scodec                  = "2.3.1"
+  val scodec                  = "2.3.2"
   val skunk                   = "0.6.4"
   val sttp                    = "4.0.0-M18"
   val sttpOAuth               = "0.18.0"
   val sttpOpenAi              = "0.2.3"
   val squants                 = "1.8.3"
-  val tapir                   = "1.11.5"
+  val tapir                   = "1.11.7"
   val tyqu                    = "0.1.0"
   val xstream                 = "1.4.20"
   val xml                     = "2.3.0"
-  val zio                     = "2.1.9"
+  val zio                     = "2.1.11"
   val zioJson                 = "0.7.3"
   val zioKafka                = "2.8.2"
   val zioHttp                 = "3.0.1"
@@ -64,11 +64,11 @@ object Version {
   val uTest      = "0.8.4"
 
   // Test
-  val cucumber       = "7.19.0"
-  val cucumberScala  = "8.24.0"
+  val cucumber       = "7.20.1"
+  val cucumberScala  = "8.25.1"
   val junit          = "4.13.2"
   val junitInterface = "0.13.3"
-  val mockito        = "5.13.0"
+  val mockito        = "5.14.1"
   val munit          = "1.0.0"
   val scalaTest      = "3.2.19"
   val scalaCheck     = "1.18.1"
@@ -193,6 +193,7 @@ object Library {
   val scalaCheck          = "org.scalacheck"              %% "scalacheck"                     % Version.scalaCheck
   val tapirSttpStubServer = "com.softwaremill.sttp.tapir" %% "tapir-sttp-stub-server"         % Version.tapir
   val testContainer       = "com.dimafeng"                %% "testcontainers-scala-scalatest" % Version.testContainer
+  val testContainerMongo  = "com.dimafeng"                %% "testcontainers-scala-mongodb"   % Version.testContainer
   val weaverCats          = "com.disneystreaming"         %% "weaver-cats"                    % Version.weaverCats
   val zioTest             = "dev.zio"                     %% "zio-test"                       % Version.zio
   val zioTestSbt          = "dev.zio"                     %% "zio-test-sbt"                   % Version.zio

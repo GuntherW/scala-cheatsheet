@@ -84,7 +84,7 @@ lazy val cdk = project
     commonSettings,
     libraryDependencies ++= Seq(
       Library.awsCdk,
-      "software.constructs" % "constructs" % "10.3.0"
+      "software.constructs" % "constructs" % "10.3.1"
     )
   )
 
@@ -258,7 +258,11 @@ lazy val mongo = project
     libraryDependencies ++= Seq(
       Library.mongoDriverJava,
       Library.logback,
-      Library.reactiveMongo
+      Library.reactiveMongo,
+      "io.github.greenleafoss"  %% "green-leaf-mongo-circe" % "3.1",
+      Library.testContainerMongo % Test,
+      Library.testContainer      % Test,
+      Library.scalatest          % Test,
     )
   )
 

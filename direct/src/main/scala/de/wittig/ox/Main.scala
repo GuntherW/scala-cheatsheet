@@ -6,6 +6,7 @@ import scala.util.Random
 import ox.*
 import ox.channels.*
 import ox.either.ok
+import ox.flow.Flow
 import ox.resilience.*
 import ox.scheduling.Jitter
 
@@ -40,9 +41,11 @@ object Main extends App {
 
   // create channels & transform them using high-level operations
   supervised {
-    Source.iterate(0)(_ + 1) // natural numbers
-      .transform(_.filter(_ % 2 == 0).map(_ + 1).take(10))
-      .foreach(n => println(n.toString))
+    Flow.iterate(0)(_ + 1) // natural numbers
+      .filter(_ % 2 == 0)
+      .map(_ + 1)
+      .take(10)
+      .runForeach(n => println(n.toString))
   }
 
   // select from a number of channels
