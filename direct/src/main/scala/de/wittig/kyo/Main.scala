@@ -2,7 +2,7 @@ package de.wittig.kyo
 
 import kyo.*
 
-object Main extends App {
+object Main extends KyoApp {
 
   val programm = defer {
 
@@ -32,6 +32,5 @@ object Main extends App {
     println(matchResult)
   }
 
-  KyoApp.run(programm)
-  KyoApp.run(2.minutes)(programm)
+  run(programm)
 }

@@ -1,8 +1,8 @@
 import sbt.*
 
 object Version {
-  val akka                    = "2.8.7"
-  val aws                     = "2.162.1"
+  val akka                    = "2.8.8"
+  val aws                     = "2.164.1"
   val caliban                 = "2.9.0"
   val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.12.0"
@@ -10,35 +10,35 @@ object Version {
   val circeVersion            = "0.14.10"
   val cirisVersion            = "3.6.0"
   val doobie                  = "1.0.0-RC6"
-  val ducktape                = "0.2.5"
+  val ducktape                = "0.2.6"
   val fs2                     = "3.11.0"
   val gatling                 = "3.12.0"
   val gears                   = "0.2.0"
   val h2                      = "2.3.232"
-  val http4s                  = "0.23.28"
-  val jackson                 = "2.18.0"
+  val http4s                  = "0.23.29"
+  val jackson                 = "2.18.1"
   val jwtHttp4s               = "1.2.3"
   val jwtScala                = "10.0.1"
   val jsonSchemaValidator     = "1.5.2"
-  val kafka                   = "3.8.0"
-  val kyo                     = "0.12.2"
-  val logback                 = "1.5.11"
+  val kafka                   = "3.8.1"
+  val kyo                     = "0.13.2"
+  val logback                 = "1.5.12"
   val log4j                   = "2.24.1"
   val macwire                 = "2.6.4"
   val magnolia                = "1.3.7"
   val mongo                   = "4.11.4"
   val monocle                 = "3.3.0"
   val neotype                 = "0.3.7"
-  val osLib                   = "0.11.2"
+  val osLib                   = "0.11.3"
   val ox                      = "0.5.2"
   val postgres                = "42.7.4"
   val pureConfig              = "0.17.7"
   val pulsar4s                = "2.10.0"
-  val quill                   = "4.8.5"
+  val quill                   = "4.8.6"
   val reactiveMongo           = "1.1.0-pekko.noshaded.RC13"
   val refined                 = "0.11.2"
   val resilience4j            = "2.2.0"
-  val scala                   = "3.5.1"
+  val scala                   = "3.6.1"
   val scalaParallelCollection = "1.0.4"
   val scodec                  = "2.3.2"
   val skunk                   = "0.6.4"
@@ -64,16 +64,17 @@ object Version {
   val uTest      = "0.8.4"
 
   // Test
-  val cucumber       = "7.20.1"
-  val cucumberScala  = "8.25.1"
-  val junit          = "4.13.2"
-  val junitInterface = "0.13.3"
-  val mockito        = "5.14.2"
-  val munit          = "1.0.0"
-  val scalaTest      = "3.2.19"
-  val scalaCheck     = "1.18.1"
-  val testContainer  = "0.41.4"
-  val weaverCats     = "0.8.4"
+  val cucumber        = "7.20.1"
+  val cucumberScala   = "8.25.1"
+  val junit           = "4.13.2"
+  val junitInterface  = "0.13.3"
+  val mockito         = "5.14.2"
+  val munit           = "1.0.2"
+  val munitScalaCheck = "1.0.0"
+  val scalaTest       = "3.2.19"
+  val scalaCheck      = "1.18.1"
+  val testContainer   = "0.41.4"
+  val weaverCats      = "0.8.4"
 }
 
 object Library {
@@ -188,7 +189,7 @@ object Library {
   val gatling             = "io.gatling"                   % "gatling-test-framework"         % Version.gatling
   val mockito             = "org.mockito"                  % "mockito-core"                   % Version.mockito
   val munit               = "org.scalameta"               %% "munit"                          % Version.munit
-  val munitScalaCheck     = "org.scalameta"               %% "munit-scalacheck"               % Version.munit
+  val munitScalaCheck     = "org.scalameta"               %% "munit-scalacheck"               % Version.munitScalaCheck
   val scalatest           = "org.scalatest"               %% "scalatest"                      % Version.scalaTest
   val scalaCheck          = "org.scalacheck"              %% "scalacheck"                     % Version.scalaCheck
   val tapirSttpStubServer = "com.softwaremill.sttp.tapir" %% "tapir-sttp-stub-server"         % Version.tapir
