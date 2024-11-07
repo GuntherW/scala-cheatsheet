@@ -1,6 +1,5 @@
 package de.codecentric.wittig.scala.regex
 
-import scala.util.Try
 import scala.util.matching.Regex
 
 /** @author

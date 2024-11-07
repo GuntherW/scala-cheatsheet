@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.8"
-  val aws                     = "2.164.1"
+  val aws                     = "2.165.0"
   val caliban                 = "2.9.0"
   val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.12.0"
@@ -19,9 +19,9 @@ object Version {
   val jackson                 = "2.18.1"
   val jwtHttp4s               = "1.2.3"
   val jwtScala                = "10.0.1"
-  val jsonSchemaValidator     = "1.5.2"
-  val kafka                   = "3.8.1"
-  val kyo                     = "0.13.2"
+  val jsonSchemaValidator     = "1.5.3"
+  val kafka                   = "3.9.0"
+  val kyo                     = "0.14.0"
   val logback                 = "1.5.12"
   val log4j                   = "2.24.1"
   val macwire                 = "2.6.4"
@@ -46,13 +46,13 @@ object Version {
   val sttpOAuth               = "0.18.0"
   val sttpOpenAi              = "0.2.5"
   val squants                 = "1.8.3"
-  val tapir                   = "1.11.7"
+  val tapir                   = "1.11.8"
   val tyqu                    = "0.1.0"
   val xstream                 = "1.4.20"
   val xml                     = "2.3.0"
   val zio                     = "2.1.11"
   val zioJson                 = "0.7.3"
-  val zioKafka                = "2.8.2"
+  val zioKafka                = "2.8.3"
   val zioHttp                 = "3.0.1"
   val zioPrelude              = "1.0.0-RC31"
   val zioSchema               = "1.5.0"
@@ -101,7 +101,7 @@ object Library {
   val h2                      = "com.h2database"                 % "h2"                               % Version.h2
   val http4s                  = "org.http4s"                    %% "http4s-dsl"                       % Version.http4s
   val http4sEmberServer       = "org.http4s"                    %% "http4s-ember-server"              % Version.http4s
-  val http4sBlazeServer       = "org.http4s"                    %% "http4s-blaze-server"              % "0.23.16"
+  val http4sBlazeServer       = "org.http4s"                    %% "http4s-blaze-server"              % "0.23.17"
   val http4sEmberClient       = "org.http4s"                    %% "http4s-ember-client"              % Version.http4s
   val http4sCirce             = "org.http4s"                    %% "http4s-circe"                     % Version.http4s
   val http4sDsl               = "org.http4s"                    %% "http4s-dsl"                       % Version.http4s
