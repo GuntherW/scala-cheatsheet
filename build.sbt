@@ -258,7 +258,6 @@ lazy val mongo = project
     libraryDependencies ++= Seq(
       Library.mongoDriverJava,
       Library.logback,
-      Library.reactiveMongo,
       "io.github.greenleafoss"  %% "green-leaf-mongo-circe" % "3.1",
       Library.testContainerMongo % Test,
       Library.testContainer      % Test,

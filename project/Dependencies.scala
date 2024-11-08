@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.8"
-  val aws                     = "2.165.0"
+  val aws                     = "2.166.0"
   val caliban                 = "2.9.0"
   val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.12.0"
@@ -17,7 +17,7 @@ object Version {
   val h2                      = "2.3.232"
   val http4s                  = "0.23.29"
   val jackson                 = "2.18.1"
-  val jwtHttp4s               = "1.2.3"
+  val jwtHttp4s               = "2.0.0"
   val jwtScala                = "10.0.1"
   val jsonSchemaValidator     = "1.5.3"
   val kafka                   = "3.9.0"
@@ -26,7 +26,7 @@ object Version {
   val log4j                   = "2.24.1"
   val macwire                 = "2.6.4"
   val magnolia                = "1.3.7"
-  val mongo                   = "4.11.4"
+  val mongo                   = "5.2.1"
   val monocle                 = "3.3.0"
   val neotype                 = "0.3.7"
   val osLib                   = "0.11.3"
@@ -35,7 +35,6 @@ object Version {
   val pureConfig              = "0.17.7"
   val pulsar4s                = "2.10.0"
   val quill                   = "4.8.6"
-  val reactiveMongo           = "1.1.0-pekko.noshaded.RC13"
   val refined                 = "0.11.2"
   val resilience4j            = "2.2.0"
   val scala                   = "3.6.1"
@@ -48,9 +47,9 @@ object Version {
   val squants                 = "1.8.3"
   val tapir                   = "1.11.8"
   val tyqu                    = "0.1.0"
-  val xstream                 = "1.4.20"
+  val xstream                 = "1.4.21"
   val xml                     = "2.3.0"
-  val zio                     = "2.1.11"
+  val zio                     = "2.1.12"
   val zioJson                 = "0.7.3"
   val zioKafka                = "2.8.3"
   val zioHttp                 = "3.0.1"
@@ -137,7 +136,6 @@ object Library {
   val pulsar4sCirce           = "com.clever-cloud.pulsar4s"     %% "pulsar4s-circe"                   % Version.pulsar4s
   val quillJdbc               = "io.getquill"                   %% "quill-jdbc"                       % Version.quill
   val quillJdbcZio            = "io.getquill"                   %% "quill-jdbc-zio"                   % Version.quill
-  val reactiveMongo           = "org.reactivemongo"             %% "reactivemongo"                    % Version.reactiveMongo
   val refined                 = "eu.timepit"                    %% "refined"                          % Version.refined
   val resilience4j            = "io.github.resilience4j"         % "resilience4j-all"                 % Version.resilience4j
   val scalaParallelCollection = "org.scala-lang.modules"        %% "scala-parallel-collections"       % Version.scalaParallelCollection
