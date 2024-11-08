@@ -39,7 +39,7 @@ object Jwt extends IOApp:
   }
 
   private val loginRoutes: HttpRoutes[IO] = HttpRoutes.of[IO] {
-    case GET -> Root / "login" => Ok(s"Logged In").map(_.addCookie(ResponseCookie("token", token)))
+    case GET -> Root / "login" => Ok("Logged In").map(_.addCookie(ResponseCookie("token", token)))
   }
 
   private val securedRoutes: HttpRoutes[IO] = middleware(authedRoutes)

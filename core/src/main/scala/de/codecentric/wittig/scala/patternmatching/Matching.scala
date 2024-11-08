@@ -50,7 +50,7 @@ object Matching extends App:
 
   val p2 = premiumUser match
     case asScore(score) => s"Score ist $score"
-    case _              => s"no match"
+    case _              => "no match"
   println(p2)
 
   val list1           = List(1, 2, 3, 4)

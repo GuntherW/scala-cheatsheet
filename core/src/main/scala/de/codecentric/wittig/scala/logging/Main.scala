@@ -15,7 +15,7 @@ class MeineTestKlasse1:
       logger.warn("Hallo warn") // wird nur drei mal geloggt, wegen <AllowedRepetitions> in logback.xml
     }
     (1 to 100).foreach { i =>
-      logger.warn(s"Hallo {}", i) // wird nur drei mal geloggt, wegen <AllowedRepetitions> in logback.xml
+      logger.warn("Hallo {}", i) // wird nur drei mal geloggt, wegen <AllowedRepetitions> in logback.xml
     }
     (1 to cachedSize).foreach { i =>
       logger.warn(s"Hallo $i") // wird komplett geloggt

@@ -10,7 +10,7 @@ object ContravarianzApp extends App:
 
   def holeTierarzt: Tierarzt[Dog] = new Tierarzt[Animal] {
     override def heilen(animal: Animal): Boolean =
-      println(s"Tier ist geheilt")
+      println("Tier ist geheilt")
       true
   }
   val dog                         = new Dog("Lassie")
