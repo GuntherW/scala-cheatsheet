@@ -1,14 +1,13 @@
 package de.wittig.akka.discovery
 
 import scala.collection.immutable.SortedMap
-
-import akka.actor.typed.Behavior
-import akka.NotUsed
-import akka.actor.typed.receptionist.{Receptionist, ServiceKey}
-import akka.actor.typed.{ActorRef, ActorSystem, Behavior}
-import akka.actor.typed.scaladsl.Behaviors
 import scala.concurrent.duration.*
 import scala.util.Random
+
+import akka.NotUsed
+import akka.actor.typed.{ActorRef, ActorSystem, Behavior}
+import akka.actor.typed.receptionist.{Receptionist, ServiceKey}
+import akka.actor.typed.scaladsl.Behaviors
 
 /** Discovery mit dem Pattern "Receptionist"
   * @see

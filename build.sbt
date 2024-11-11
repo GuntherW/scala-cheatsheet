@@ -21,7 +21,8 @@ lazy val commonSettings = Seq(
   Test / fork       := true, // subprojects won't run in parallel then
   Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oF"), // Showing full stack trace
   turbo             := true,
-  usePipelining     := true
+  usePipelining     := true,
+  scalafixOnCompile := true,
 )
 
 ThisBuild / concurrentRestrictions := Seq(Tags.limit(Tags.ForkedTestGroup, 2))
@@ -155,6 +156,8 @@ lazy val direct = project
       Library.kyoSttp,
       Library.kyoTapir,
       Library.ox,
+      Library.tapirNettyServerSync,
+      Library.sttpCore
     )
   )
 

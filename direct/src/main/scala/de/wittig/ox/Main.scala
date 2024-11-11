@@ -6,7 +6,6 @@ import scala.util.Random
 import ox.*
 import ox.channels.*
 import ox.either.ok
-import ox.flow.Flow
 import ox.resilience.*
 import ox.scheduling.Jitter
 
@@ -38,15 +37,6 @@ object Main extends App {
 
   val resultRetry = retry(RetryConfig.backoff(3, 100.millis, 5.minutes, Jitter.Equal))(computationR)
   println(resultRetry)
-
-  // create channels & transform them using high-level operations
-  supervised {
-    Flow.iterate(0)(_ + 1) // natural numbers
-      .filter(_ % 2 == 0)
-      .map(_ + 1)
-      .take(10)
-      .runForeach(n => println(n.toString))
-  }
 
   // select from a number of channels
   val c = Channel.rendezvous[Int]
