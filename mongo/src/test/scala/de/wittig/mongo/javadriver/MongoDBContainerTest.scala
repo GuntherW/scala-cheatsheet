@@ -1,8 +1,5 @@
 package de.wittig.mongo.javadriver
 
-import scala.concurrent.Await
-import scala.concurrent.duration.*
-
 import com.dimafeng.testcontainers.{ForAllTestContainer, MongoDBContainer}
 import com.mongodb.client.{MongoClient, MongoClients, MongoDatabase}
 import org.bson.Document

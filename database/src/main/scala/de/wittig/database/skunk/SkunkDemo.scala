@@ -1,4 +1,4 @@
-package de.wittig.doobie
+package de.wittig.database.skunk
 
 import java.util.UUID
 
@@ -15,7 +15,6 @@ import pureconfig.generic.derivation.default.*
 import skunk.*
 import skunk.codec.all.*
 import skunk.syntax.all.*
-import org.typelevel.twiddles.syntax.toTwiddleOpTwo
 
 final case class User(
     id: UUID,

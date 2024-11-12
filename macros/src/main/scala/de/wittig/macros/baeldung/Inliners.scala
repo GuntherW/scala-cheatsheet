@@ -1,7 +1,5 @@
 package de.wittig.macros.baeldung
 
-import scala.quoted.{Expr, Quotes}
-
 /** https://www.baeldung.com/scala/macros-scala-3
   */
 object Inliners:

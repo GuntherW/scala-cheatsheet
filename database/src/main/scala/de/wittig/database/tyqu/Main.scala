@@ -1,18 +1,16 @@
-package de.wittig.tyqu
-
-import tyqu.given
-import tyqu.*
-
-import scala.language.implicitConversions
-import scala.language.adhocExtensions
-import BookDatabase.*
-import tyqu.execution.PostgreSqlQueryExecutor
+package de.wittig.database.tyqu
 
 import java.sql.DriverManager
 
+import scala.language.{adhocExtensions, implicitConversions}
+
+import de.wittig.database.tyqu.BookDatabase.*
+import tyqu.execution.PostgreSqlQueryExecutor
+import tyqu.{*, given}
+
 object Main extends App:
 
-  val connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/booksdb?user=postgres&password=postgres&ssl=false")
+  private val connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/booksdb?user=postgres&password=postgres&ssl=false")
   given PostgreSqlQueryExecutor(connection)
 
   val results1 =

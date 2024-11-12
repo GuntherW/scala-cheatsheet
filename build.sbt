@@ -37,7 +37,7 @@ lazy val `scala-cheatsheet` = (project in file("."))
     config,
     cdk,
     cucumber,
-    doobie,
+    database,
     http4s,
     gatling,
     grpcFs2,
@@ -54,7 +54,6 @@ lazy val `scala-cheatsheet` = (project in file("."))
     scalajs,
     sttp,
     tapir,
-    tyqu,
     zio,
     ziocli,
     zioHttp,
@@ -169,16 +168,17 @@ lazy val osLib = project
     )
   )
 
-lazy val tess4j = project
+lazy val macros = project
+  .settings(commonSettings)
+
+lazy val magnum = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(
-      "net.sourceforge.tess4j" % "tess4j" % "5.8.0"
+      Library.magnum,
+      Library.postgres
     )
   )
-
-lazy val macros = project
-  .settings(commonSettings)
 
 lazy val munit = project
   .settings(
@@ -353,15 +353,17 @@ lazy val openAI = project
     )
   )
 
-lazy val doobie = project
+lazy val database = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(
       Library.doobieCore,
       Library.doobiePostgres,
       Library.doobieHirari,
-      Library.skunk,
+      Library.magnum,
       Library.pureConfig,
+      Library.skunk,
+      Library.tyqu
     )
   )
 
@@ -426,13 +428,5 @@ lazy val tapir = project
       Library.tapirSttpStubServer % Test,
       Library.sttpCirce           % Test,
       Library.scalatest           % Test,
-    )
-  )
-lazy val tyqu  = project
-  .settings(
-    commonSettings,
-    libraryDependencies ++= Seq(
-      Library.tyqu,
-      Library.postgres
     )
   )

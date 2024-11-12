@@ -1,12 +1,12 @@
 package de.wittig.scala.kafka.producerconsumer
 
+import java.time.Duration
+import java.util.Properties
+
+import scala.jdk.CollectionConverters.*
+
 import de.wittig.scala.kafka.producerconsumer.Constants.*
 import org.apache.kafka.clients.consumer.KafkaConsumer
-
-import java.time.Duration
-import java.util.regex.Pattern
-import java.util.{Collections, Properties}
-import scala.jdk.CollectionConverters.*
 
 object KafkaConsumer2App extends App {
 

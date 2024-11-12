@@ -3,7 +3,6 @@ package de.codecentric.wittig.scala.cat
 import cats.data.NonEmptyList
 import cats.implicits.*
 import cats.kernel.Eq
-import cats.Eq
 
 case class Person(name: String, alter: Int)
 

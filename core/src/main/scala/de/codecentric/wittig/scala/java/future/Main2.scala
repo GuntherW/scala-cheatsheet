@@ -1,6 +1,6 @@
 package de.codecentric.wittig.scala.java.future
 
-import java.util.concurrent.{CompletableFuture, Executors, Future}
+import java.util.concurrent.CompletableFuture
 
 import de.codecentric.wittig.scala.Ops.time
 

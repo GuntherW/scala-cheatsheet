@@ -4,16 +4,15 @@ import scala.concurrent.duration.*
 
 object StructuredConcurrency extends App {
 
-  println("Start")
   val (f1, f2) = supervised {
     val f1 = fork {
       sleep(3.seconds)
-      1
+      "f1"
     }
 
     val f2 = fork {
       sleep(2.second)
-      2
+      "f2"
     }
 
     (f1.join(), f2.join())

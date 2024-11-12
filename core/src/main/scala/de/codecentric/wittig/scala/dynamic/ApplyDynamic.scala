@@ -1,6 +1,5 @@
 package de.codecentric.wittig.scala.dynamic
 
-import scala.collection.mutable
 import scala.language.dynamics
 
 object ApplyDynamic extends App:

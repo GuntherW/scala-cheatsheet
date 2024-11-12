@@ -1,11 +1,10 @@
 package de.wittig.zio.rockthejvm.effects
 
-import de.wittig.zio.rockthejvm.effects.ZIOErrorHandling.{QueryError, UserProfile}
-import zio.*
-
 import java.io.IOException
-import java.net.NoRouteToHostException
+
 import scala.util.Try
+
+import zio.*
 
 object ZIOErrorHandling extends ZIOAppDefault:
 

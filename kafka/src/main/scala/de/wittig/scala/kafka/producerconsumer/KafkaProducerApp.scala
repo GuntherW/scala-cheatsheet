@@ -1,9 +1,7 @@
 package de.wittig.scala.kafka.producerconsumer
 
-import java.time.{LocalDate, LocalDateTime}
+import java.time.LocalDateTime
 import java.util.{Properties, UUID}
-
-import scala.util.{Failure, Success, Try}
 
 import de.wittig.scala.kafka.producerconsumer.Constants.*
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}

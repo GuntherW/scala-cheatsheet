@@ -1,7 +1,7 @@
 package de.wittig.cucumber
 
 import io.cucumber.datatable.DataTable
-import io.cucumber.scala.{DE, EN, ScalaDsl, Scenario}
+import io.cucumber.scala.{DE, ScalaDsl}
 import io.cucumber.scala.Implicits.ScalaDataTable
 import org.junit.Assert.*
 

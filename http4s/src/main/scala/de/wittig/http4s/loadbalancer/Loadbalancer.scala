@@ -1,16 +1,14 @@
 package de.wittig.http4s.loadbalancer
 
-import org.http4s.*
 import cats.effect.*
 import cats.syntax.all.*
 import com.comcast.ip4s.{host, port, Host, Port}
+import org.http4s.*
 import org.http4s.client.Client
 import org.http4s.dsl.Http4sDsl
 import org.http4s.ember.client.EmberClientBuilder
 import org.http4s.ember.server.EmberServerBuilder
-import pureconfig.ConfigReader
 import pureconfig.*
-import pureconfig.generic.derivation.default.*
 
 opaque type Urls = Vector[Uri]
 object Urls:

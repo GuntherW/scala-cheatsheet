@@ -1,11 +1,8 @@
 package de.codecentric.wittig.scala.migration
 
 import de.codecentric.wittig.scala.migration.Issue.{BILLABLE, Types}
-import io.circe.{Decoder, Encoder, Json}
-import io.circe.syntax.EncoderOps
-import io.circe.generic.semiauto.*
 import io.circe.*
-import cats.implicits.*
+import io.circe.generic.semiauto.*
 import io.circe.jawn.decode
 import io.circe.syntax.*
 

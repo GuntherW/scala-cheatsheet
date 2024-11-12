@@ -1,10 +1,10 @@
 package de.wittig.scala.pulsar
 
-import de.wittig.scala.pulsar.SensorDomain.{generate, SensorEvent}
 import com.sksamuel.pulsar4s.*
 import com.sksamuel.pulsar4s.circe.*
+import de.wittig.scala.pulsar.PulsarConf.*
+import de.wittig.scala.pulsar.SensorDomain.SensorEvent
 import io.circe.generic.auto.*
-import PulsarConf.*
 
 object PulsarProducer extends App:
 

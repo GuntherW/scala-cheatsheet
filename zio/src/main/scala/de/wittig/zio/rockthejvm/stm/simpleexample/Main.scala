@@ -1,8 +1,6 @@
 package de.wittig.zio.rockthejvm.stm.simpleexample
 
-import de.wittig.zio.rockthejvm.util.debugThread
 import zio.*
-import zio.stm.*
 
 // STM - Software Transactional Memory (atomic effect)
 // TRef, TArray, TSet, TMap, TQueue, TPriorityQueue, TPromise, TSemaphore

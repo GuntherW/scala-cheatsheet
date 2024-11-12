@@ -1,8 +1,6 @@
 package de.wittig
 
-import io.circe.Codec
 import io.circe.generic.semiauto.deriveCodec
-import io.circe.parser.decode
 import io.circe.syntax.EncoderOps
 import munit.FunSuite
 import cats.syntax.either.*

@@ -1,7 +1,5 @@
 package de.codecentric.wittig.scala.enums
 
-import de.codecentric.wittig.scala.enums.Main.Color
-
 object Main extends App:
 
   enum Color(val value: Int):

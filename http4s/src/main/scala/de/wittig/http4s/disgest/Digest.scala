@@ -1,14 +1,12 @@
 package de.wittig.http4s.disgest
 
 import cats.effect.*
+import com.comcast.ip4s.*
 import org.http4s.*
 import org.http4s.dsl.io.*
-import org.http4s.server.*
-import org.http4s.implicits.*
 import org.http4s.ember.server.*
-import com.comcast.ip4s.*
-import cats.data.*
-import org.http4s.headers.Authorization
+import org.http4s.implicits.*
+import org.http4s.server.*
 import org.http4s.server.middleware.authentication.DigestAuth
 import org.http4s.server.middleware.authentication.DigestAuth.Md5HashedAuthStore
 

@@ -1,6 +1,5 @@
 package de.wittig.zio.rockthejvm.stm.simpleexample
 import de.wittig.zio.rockthejvm.util.debugThread
-import zio.stm.{STM, TRef}
 import zio.*
 
 object NotTransactional:

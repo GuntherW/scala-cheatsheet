@@ -1,6 +1,4 @@
 package de.codecentric.wittig.scala.neotype
-import io.circe.Codec
-import io.circe.derivation.Configuration
 import neotype.*
 
 object Main extends App:

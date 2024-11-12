@@ -1,22 +1,21 @@
 package de.wittig.http4s.session
 
-import cats.effect.*
-import org.http4s.*
-import org.http4s.dsl.io.*
-import org.http4s.server.*
-import org.http4s.implicits.*
-import org.http4s.ember.server.*
-import com.comcast.ip4s.*
-import cats.data.*
-import org.http4s.headers.Authorization
-import org.http4s.server.middleware.authentication.DigestAuth
-import org.http4s.server.middleware.authentication.DigestAuth.Md5HashedAuthStore
+import java.nio.charset.StandardCharsets
 import java.time.LocalDateTime
 import java.util.Base64
-import java.nio.charset.StandardCharsets
+
 import scala.util.*
+
 import cats.data.*
+import cats.effect.*
+import com.comcast.ip4s.*
+import org.http4s.*
+import org.http4s.dsl.io.*
+import org.http4s.ember.server.*
 import org.http4s.headers.Cookie
+import org.http4s.implicits.*
+import org.http4s.server.*
+import org.http4s.server.middleware.authentication.DigestAuth
 
 object Session extends IOApp:
 

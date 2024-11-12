@@ -1,10 +1,9 @@
 package de.wittig.quill
 
-import io.getquill.*
-import io.getquill.context.jdbc.JdbcContext
-import DBContext.*
-
 import scala.util.chaining.scalaUtilChainingOps
+
+import de.wittig.quill.DBContext.*
+import io.getquill.*
 
 object Main extends App:
 

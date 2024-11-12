@@ -1,7 +1,6 @@
 package de.wittig.mongo.java
 
-import com.mongodb.client.{MongoClient, MongoClients, MongoCollection, MongoDatabase}
-import com.mongodb.client.model.Filters.eq
+import com.mongodb.client.MongoClients
 
 object Main extends App {
 

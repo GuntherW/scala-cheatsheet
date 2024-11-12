@@ -1,16 +1,16 @@
 package de.wittig.tapirr
 
+import scala.concurrent.{Await, Future}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.Duration
+
 import de.wittig.tapirr.TapiNettyFutureServer2.Kitten
-import io.circe.derivation.{Configuration, ConfiguredCodec, ConfiguredEncoder}
+import io.circe.derivation.{Configuration, ConfiguredCodec}
 import sttp.model.StatusCode
 import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.netty.{NettyFutureServer, NettyFutureServerBinding}
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Future}
 
 object TapiNettyFutureServer2 extends App {
 

@@ -1,7 +1,6 @@
 package de.wittig.zio.rockthejvm.interruptions
 
 import de.wittig.zio.rockthejvm.util.debugThread
-import zio.ZIOAppDefault
 import zio.*
 
 object Interruptions extends ZIOAppDefault:

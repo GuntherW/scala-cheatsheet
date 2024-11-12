@@ -13,10 +13,9 @@ object Main extends App:
     def combine(x: A, y: A): A
     def empty: A
 
-  given intCombiner: Combiner[Int] with {
+  given intCombiner: Combiner[Int] = new Combiner[Int]:
     override def combine(x: Int, y: Int): Int = x + y
     override def empty: Int                   = 0
-  }
 
   def combineAll[A](l: List[A])(using combiner: Combiner[A]) = l.foldLeft(combiner.empty)(combiner.combine)
 
@@ -24,12 +23,14 @@ object Main extends App:
   println(combineAll(numbers))
 
   // syntesize given instances
-  given optionCombiner[T](using combiner: Combiner[T]): Combiner[Option[T]] with {
-    override def combine(x: Option[T], y: Option[T]): Option[T] = for {
-      vx <- x
-      vy <- y
-    } yield combiner.combine(vx, vy)
-    override def empty: Option[T]                               = Some(combiner.empty)
+  given optionCombiner[T](using combiner: Combiner[T]): Combiner[Option[T]] = new Combiner[Option[T]] {
+    override def combine(x: Option[T], y: Option[T]): Option[T] =
+      for
+        vx <- x
+        vy <- y
+      yield combiner.combine(vx, vy)
+
+    override def empty: Option[T] = Some(combiner.empty)
   }
 
   println(combineAll(List(Option(1), Option(2))))   // Some(3)

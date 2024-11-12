@@ -1,10 +1,11 @@
 package de.codecentric.wittig.scala.circuitbreaker
 
+import java.util.function.*
+
 import io.github.resilience4j.bulkhead.Bulkhead
-import io.github.resilience4j.circuitbreaker.{CircuitBreaker, CircuitBreakerConfig, CircuitBreakerRegistry}
+import io.github.resilience4j.circuitbreaker.CircuitBreaker
 import io.github.resilience4j.decorators.Decorators
 import io.github.resilience4j.retry.Retry
-import java.util.function.*
 
 object Main extends App:
 

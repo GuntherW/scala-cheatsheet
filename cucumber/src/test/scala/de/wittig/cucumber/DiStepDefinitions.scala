@@ -2,7 +2,7 @@ package de.wittig.cucumber
 
 import scala.compiletime.uninitialized
 
-import io.cucumber.scala.{DE, EN, ScalaDsl, Scenario}
+import io.cucumber.scala.{DE, ScalaDsl}
 import org.junit.Assert.*
 
 class Di1StepDefinitions extends ScalaDsl, DE:

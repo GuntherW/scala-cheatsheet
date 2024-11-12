@@ -1,16 +1,11 @@
 package de.wittig.http4s
 
 import cats.effect.*
-import cats.effect.std.Random
+import com.comcast.ip4s.*
 import org.http4s.*
 import org.http4s.dsl.io.*
-import org.http4s.server.*
-import org.http4s.implicits.*
 import org.http4s.ember.server.*
-import com.comcast.ip4s.*
-import io.circe.Encoder
-import io.circe.syntax.*
-import io.circe.Encoder
+import org.http4s.implicits.*
 
 object SimpleRoutes extends IOApp:
 

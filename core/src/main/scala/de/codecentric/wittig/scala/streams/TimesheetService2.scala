@@ -3,10 +3,8 @@ package de.codecentric.wittig.scala.streams
 import scala.concurrent.duration.DurationInt
 
 import cats.effect.{IO, IOApp}
-import cats.syntax.applicative.catsSyntaxApplicativeId
-import fs2.io.file.{Files, Path}
-import fs2.{text, Stream}
-import fs2.concurrent.{SignallingRef, Topic}
+import fs2.Stream
+import fs2.concurrent.Topic
 
 object TimesheetService2 extends IOApp.Simple:
 

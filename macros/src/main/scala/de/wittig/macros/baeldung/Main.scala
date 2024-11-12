@@ -1,9 +1,9 @@
 package de.wittig.macros.baeldung
 
-import scala.quoted.{Expr, Quotes}
 import scala.util.chaining.scalaUtilChainingOps
-import Inliners.*
-import Macros.*
+
+import de.wittig.macros.baeldung.Inliners.*
+import de.wittig.macros.baeldung.Macros.*
 
 object Main extends App:
 

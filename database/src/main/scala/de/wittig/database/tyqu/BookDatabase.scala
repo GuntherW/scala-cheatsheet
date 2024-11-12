@@ -1,4 +1,4 @@
-package de.wittig.tyqu
+package de.wittig.database.tyqu
 
 import tyqu.*
 

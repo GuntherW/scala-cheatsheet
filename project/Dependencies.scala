@@ -26,6 +26,7 @@ object Version {
   val log4j                   = "2.24.1"
   val macwire                 = "2.6.4"
   val magnolia                = "1.3.7"
+  val magnum                  = "1.3.0"
   val mongo                   = "5.2.1"
   val monocle                 = "3.3.0"
   val neotype                 = "0.3.7"
@@ -53,7 +54,7 @@ object Version {
   val zioJson                 = "0.7.3"
   val zioKafka                = "2.8.3"
   val zioHttp                 = "3.0.1"
-  val zioPrelude              = "1.0.0-RC32"
+  val zioPrelude              = "1.0.0-RC33"
   val zioSchema               = "1.5.0"
   val zioCli                  = "0.5.0"
   val zioOpenAI               = "0.4.1"
@@ -125,6 +126,7 @@ object Library {
   val log4jSlf4jImpl          = "org.apache.logging.log4j"       % "log4j-slf4j-impl"                 % Version.log4j
   val macwire                 = "com.softwaremill.macwire"      %% "macros"                           % Version.macwire
   val magnolia                = "com.softwaremill.magnolia1_3"  %% "magnolia"                         % Version.magnolia
+  val magnum                  = "com.augustnagro"               %% "magnum"                           % Version.magnum
   val mongoDriverJava         = "org.mongodb"                    % "mongodb-driver-sync"              % Version.mongo
   val monocle                 = "dev.optics"                    %% "monocle-core"                     % Version.monocle
   val neotype                 = "io.github.kitlangton"          %% "neotype"                          % Version.neotype

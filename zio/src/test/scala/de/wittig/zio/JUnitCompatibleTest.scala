@@ -1,6 +1,5 @@
 package de.wittig.zio
 
-import org.junit.runner.RunWith
 import zio.*
 import zio.test.*
 import zio.test.junit.JUnitRunnableSpec

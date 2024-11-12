@@ -1,9 +1,9 @@
-package de.wittig.doobie
+package de.wittig.database.doobie
 
 import java.util.UUID
 import cats.effect.*
 import cats.implicits.*
-import de.wittig.doobie.CustomSupport.ActorName
+import CustomSupport.ActorName
 import doobie.util.transactor.Transactor
 import doobie.implicits.*
 import doobie.*

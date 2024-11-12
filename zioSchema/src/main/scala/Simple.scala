@@ -1,8 +1,7 @@
-import JsonBson.Person
-import zio.Chunk
-import zio.schema.syntax.*
-import zio.schema.{DeriveSchema, Schema}
 import scala.util.chaining.*
+
+import zio.schema.{DeriveSchema, Schema}
+import zio.schema.syntax.*
 
 object Simple extends App:
 

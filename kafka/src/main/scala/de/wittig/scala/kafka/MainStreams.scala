@@ -1,33 +1,32 @@
 package de.wittig.scala.kafka
-import io.circe.generic.auto.*
-import io.circe.parser.*
-import io.circe.syntax.*
-import io.circe.{Decoder, Encoder}
-import org.apache.kafka.common.serialization.Serde
-import org.apache.kafka.streams.kstream.{GlobalKTable, JoinWindows, TimeWindows, Windowed}
-import org.apache.kafka.streams.scala.ImplicitConversions.*
-import org.apache.kafka.streams.scala.*
-import org.apache.kafka.streams.scala.kstream.{KGroupedStream, KStream, KTable}
-import org.apache.kafka.streams.scala.serialization.Serdes
-import org.apache.kafka.streams.scala.serialization.Serdes.*
-import org.apache.kafka.streams.{KafkaStreams, StreamsConfig, Topology}
-
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 import java.util.Properties
-import scala.concurrent.duration.*
-import Domain.*
-import Topics.*
-import scala.util.Random
+
+import de.wittig.scala.kafka.Domain.*
+import de.wittig.scala.kafka.Topics.*
+import io.circe.{Decoder, Encoder}
+import io.circe.generic.auto.*
+import io.circe.parser.*
+import io.circe.syntax.*
+import org.apache.kafka.common.serialization.Serde
+import org.apache.kafka.streams.{KafkaStreams, StreamsConfig}
+import org.apache.kafka.streams.kstream.{GlobalKTable, JoinWindows}
+import org.apache.kafka.streams.scala.*
+import org.apache.kafka.streams.scala.ImplicitConversions.*
+import org.apache.kafka.streams.scala.kstream.{KStream, KTable}
+import org.apache.kafka.streams.scala.serialization.Serdes
+import org.apache.kafka.streams.scala.serialization.Serdes.*
 
 /** https://www.youtube.com/watch?v=MYTFPTtOoLs&t=156s https://blog.rockthejvm.com/kafka-streams/
   */
 object KafkaStreams extends App:
 
-  implicit private def serde[A >: Null: Decoder: Encoder]: Serde[A] =
+  given serde[A >: Null: Decoder: Encoder]: Serde[A] = {
     val serializer   = (a: A) => a.asJson.noSpaces.getBytes()
     val deserializer = (bs: Array[Byte]) => decode[A](new String(bs)).toOption
     Serdes.fromFn[A](serializer, deserializer)
+  }
 
   private val builder = new StreamsBuilder()
 

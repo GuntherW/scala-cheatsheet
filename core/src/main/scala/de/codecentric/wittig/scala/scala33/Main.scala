@@ -1,7 +1,5 @@
 package de.codecentric.wittig.scala.scala33
 
-import java.net.URI
-
 object Main extends App:
 
   private val l  = List.tabulate(5)(identity)

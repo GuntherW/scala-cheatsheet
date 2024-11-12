@@ -1,15 +1,14 @@
 package de.codecentric.wittig.scala.testContainer
 
-import java.net.{URI, URL}
+import java.net.URI
 
 import scala.io.Source
+import scala.language.adhocExtensions
 
 import com.dimafeng.testcontainers.{ForAllTestContainer, GenericContainer}
 import org.scalatest.funsuite.AnyFunSuite
-import org.testcontainers.containers.wait.strategy.Wait
-import scala.language.adhocExtensions
-
 import org.scalatest.tagobjects.Slow
+import org.testcontainers.containers.wait.strategy.Wait
 
 /** @see
   *   https://github.com/testcontainers/testcontainers-scala

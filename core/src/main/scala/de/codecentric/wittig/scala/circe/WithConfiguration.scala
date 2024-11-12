@@ -3,8 +3,7 @@ package de.codecentric.wittig.scala.circe
 import io.circe.derivation.Configuration
 import io.circe.generic.semiauto.*
 import io.circe.parser.*
-import io.circe.syntax.*
-import io.circe.{Decoder, Json, ParsingFailure}
+import io.circe.Decoder
 
 object WithConfiguration extends App:
 

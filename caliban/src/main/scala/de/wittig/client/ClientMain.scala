@@ -5,9 +5,7 @@ import scala.util.chaining.*
 
 import caliban.*
 import caliban.client.Operations.RootQuery
-import caliban.schema.Schema.auto.*
 import de.wittig.client.generated.Client.*
-import de.wittig.client.generated.Client.Character.*
 import de.wittig.client.generated.Client.Query.*
 import sttp.client3.*
 

@@ -1,7 +1,5 @@
 package de.wittig.gatling
 
-import scala.concurrent.duration.*
-
 import io.gatling.core.Predef.*
 import io.gatling.http.Predef.*
 
