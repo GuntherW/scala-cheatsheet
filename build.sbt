@@ -363,7 +363,8 @@ lazy val database = project
       Library.magnum,
       Library.pureConfig,
       Library.skunk,
-      Library.tyqu
+      Library.tyqu,
+      Library.logback
     )
   )
 
