@@ -14,27 +14,25 @@ import de.wittig.database.DatabaseName.MagnumDb
 object MainSimple extends App {
 
   // Transactor lets you customize the transaction (or connection) behavior.
-  val xa = Transactor(
+  private val xa = Transactor(
     dataSource(MagnumDb),
     sqlLogger = SqlLogger.logSlowQueries(5.milliseconds),
     connectionConfig = con => con.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ)
   )
 
   // Simple Query
-  val users: Vector[Person]  = connect(xa):
+  private val persons: Vector[Person] = connect(xa):
     sql"SELECT * FROM person".query[Person].run()
-  users.foreach(println)
-
-  
+  persons.foreach(println)
 
   // Transaction
-  val randomString = Random.nextString(10)
+  private val randomString = Random.nextString(10)
   transact(xa):
     sql"UPDATE person SET name = $randomString WHERE email = 'a@b.c'".update.run()
 //    throw new RuntimeException("Boom")
 
   // Returning Id
-  val updateId: Vector[UUID] = connect(xa):
+  private val updateId: Vector[UUID] = connect(xa):
     sql"""UPDATE person
          SET name = $randomString
          WHERE email = 'a@b.c'

@@ -1,4 +1,4 @@
-//> using dep "com.lihaoyi::pprint::0.8.1"
+//> using dep "com.lihaoyi::pprint::0.9.0"
 
 import pprint.*
 

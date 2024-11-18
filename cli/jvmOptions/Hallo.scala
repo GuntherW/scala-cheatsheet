@@ -1,5 +1,5 @@
 //> using javaOpt -Djava.net.preferIPv6Addresses=true
-//> using toolkit default
+//> using toolkit 0.6.0
 
 import sttp.client4.quick.*
 import sttp.client4.Response

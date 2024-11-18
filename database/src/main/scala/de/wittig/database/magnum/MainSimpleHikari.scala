@@ -1,14 +1,12 @@
 package de.wittig.database.magnum
 
 import java.sql.Connection
-import java.util.UUID
 
 import scala.concurrent.duration.DurationInt
-import scala.util.Random
 
 import com.augustnagro.magnum
 import com.augustnagro.magnum.*
-import de.wittig.database.{dataSource, hikariDataSource}
+import de.wittig.database.hikariDataSource
 import de.wittig.database.DatabaseName.MagnumDb
 
 object MainSimpleHikari extends App {
@@ -21,8 +19,8 @@ object MainSimpleHikari extends App {
   )
 
   // Simple Query
-  val users: Vector[Person] = connect(xa):
+  val persons: Vector[Person] = connect(xa):
     sql"SELECT * FROM person".query[Person].run()
-  users.foreach(println)
+  persons.foreach(println)
 
 }

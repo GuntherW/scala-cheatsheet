@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.8"
-  val aws                     = "2.167.0"
+  val aws                     = "2.167.1"
   val caliban                 = "2.9.0"
   val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.12.0"
