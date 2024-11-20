@@ -12,3 +12,8 @@ CREATE TABLE IF NOT EXISTS person (
 );
 
 INSERT INTO person (id, name, email, color) VALUES ('5e195287-37ad-494d-a73e-c2bca6bb9bda', 'Magnum', 'a@b.c', 'red' );
+
+create table geotest (
+    id bigint primary key,
+    pnts point not null
+);

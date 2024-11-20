@@ -171,15 +171,6 @@ lazy val osLib = project
 lazy val macros = project
   .settings(commonSettings)
 
-lazy val magnum = project
-  .settings(
-    commonSettings,
-    libraryDependencies ++= Seq(
-      Library.magnum,
-      Library.postgres
-    )
-  )
-
 lazy val munit = project
   .settings(
     commonSettings,
@@ -361,6 +352,7 @@ lazy val database = project
       Library.doobiePostgres,
       Library.doobieHirari,
       Library.magnum,
+      Library.magnumpg,
       Library.pureConfig,
       Library.skunk,
       Library.tyqu,

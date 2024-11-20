@@ -1,5 +1,5 @@
 ```shell
-pgcli -h localhost -p 5432 -u postgres -d persondb
+pgcli -h localhost -p 5433 -u postgres -d persondb
 ```
 
 ```sql

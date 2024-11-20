@@ -9,6 +9,7 @@ package object database:
   def dataSource(db: DatabaseName): DataSource =
     val dataSource = new PGSimpleDataSource()
     dataSource.setServerNames(Array("localhost"))
+    dataSource.setPortNumbers(Array(5433))
     dataSource.setDatabaseName(db.name)
     dataSource.setUser("postgres")
     dataSource.setPassword("postgres")

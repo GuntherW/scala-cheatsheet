@@ -28,7 +28,7 @@ object DoobieDemo extends IOApp.Simple:
 
   val xa: Transactor[IO] = Transactor.fromDriverManager[IO](
     driver = "org.postgresql.Driver",
-    url = "jdbc:postgresql://localhost:5432/myimdb",
+    url = "jdbc:postgresql://localhost:5433/myimdb",
     user = "postgres",
     password = "postgres",
     logHandler = None
@@ -39,7 +39,7 @@ object DoobieDemo extends IOApp.Simple:
       ec <- ExecutionContexts.fixedThreadPool[IO](16)
       xa <- HikariTransactor.newHikariTransactor[IO](
               "org.postgresql.Driver",
-              "jdbc:postgresql://localhost:5432/myimdb",
+              "jdbc:postgresql://localhost:5433/myimdb",
               "postgres",
               "test",
               ec

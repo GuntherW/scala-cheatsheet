@@ -10,7 +10,7 @@ import tyqu.{*, given}
 
 object Main extends App:
 
-  private val connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/booksdb?user=postgres&password=postgres&ssl=false")
+  private val connection = DriverManager.getConnection("jdbc:postgresql://localhost:5433/booksdb?user=postgres&password=postgres&ssl=false")
   given PostgreSqlQueryExecutor(connection)
 
   val results1 =

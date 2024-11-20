@@ -127,6 +127,7 @@ object Library {
   val macwire                 = "com.softwaremill.macwire"      %% "macros"                           % Version.macwire
   val magnolia                = "com.softwaremill.magnolia1_3"  %% "magnolia"                         % Version.magnolia
   val magnum                  = "com.augustnagro"               %% "magnum"                           % Version.magnum
+  val magnumpg                = "com.augustnagro"               %% "magnumpg"                         % Version.magnum
   val mongoDriverJava         = "org.mongodb"                    % "mongodb-driver-sync"              % Version.mongo
   val monocle                 = "dev.optics"                    %% "monocle-core"                     % Version.monocle
   val neotype                 = "io.github.kitlangton"          %% "neotype"                          % Version.neotype
