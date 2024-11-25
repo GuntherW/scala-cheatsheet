@@ -1,17 +1,20 @@
 package de.wittig.mongo.java
 
-import com.mongodb.client.MongoClients
+import org.bson.Document
+import de.wittig.MongoUtil.*
 
 object Main extends App {
 
-  private val uri         = "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false"
-  private val mongoClient = MongoClients.create(uri)
-
   try {
-    val database   = mongoClient.getDatabase("dad")
-    val collection = database.getCollection("togglz")
+    val database   = mongoClient.getDatabase("test1")
+    val collection = database.getCollection("gunther")
+    collection.drop()
 
-    val doc = collection.find().first()
-    System.out.println(doc.toJson)
+    val document = Document()
+      .append("aKey", "aWert")
+      .append("bKey", 2)
+    collection.insertOne(document)
+    val doc      = collection.find().first()
+    println(doc.toJson)
   } finally if (mongoClient != null) mongoClient.close()
 }

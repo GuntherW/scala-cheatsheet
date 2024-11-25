@@ -4,7 +4,6 @@ import scala.util.chaining.scalaUtilChainingOps
 
 import pureconfig.*
 import pureconfig.generic.semiauto.*
-import pureconfig.generic.derivation.default.*
 
 object Main extends App {
 

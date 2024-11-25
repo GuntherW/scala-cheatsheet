@@ -4,7 +4,6 @@ import scala.util.chaining.scalaUtilChainingOps
 
 import com.typesafe.config.ConfigFactory
 import pureconfig.*
-import pureconfig.generic.derivation.default.*
 import pureconfig.generic.semiauto.*
 
 object MainRuntime extends App {
