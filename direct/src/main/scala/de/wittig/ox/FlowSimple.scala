@@ -18,7 +18,7 @@ object FlowSimple extends App {
     .map(_ + 1)
 //    .filter(_ % 2 == 0)
     .intersperse(1)
-    .mapStateful(() => 0) { (state, value) =>
+    .mapStateful(0) { (state, value) =>
       val newState = state + value
       (newState, newState)
     }
