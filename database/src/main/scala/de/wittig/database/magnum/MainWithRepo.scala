@@ -17,25 +17,32 @@ object MainWithRepo extends App {
     personRepo.count
   println(count)
 
-  def withSpecifications = {
-    // Specifications:
+  val all = connect(xa):
+    personRepo.findAll
+  println(all)
+
+  val abc = connect(xa):
+    personRepo.findByEmail("a@b.c")
+  println(abc)
+
+  withSpecifications()
+
+  def withSpecifications() =
     val partialEmail            = "a"
     val nameOpt: Option[String] = None
-    val searchDate              = OffsetDateTime.now.minusDays(2)
+    val searchDate              = OffsetDateTime.now.minusYears(2)
     val idPosition              = 42L
 
     // TODO: Tuts nicht, wenn ich die anderen Klauseln auch aktiviere.
     val spec = Spec[Person]
       .where(sql"email ILIKE 'a%'")
-      //    .where(nameOpt.map(ln => sql"name = $ln").getOrElse(sql""))
-      //    .where(sql"created >= $searchDate")
-      //    .seek("id", SeekDir.Gt, idPosition, SortOrder.Asc)
+      .where(nameOpt.map(ln => sql"name = $ln").getOrElse(sql""))
+      .where(sql"created >= $searchDate")
       .limit(10)
 
-    connect(xa):
-      val users: Vector[Person] = personRepo.findAll(spec)
-      users.foreach(println)
-  }
+    val users = connect(xa):
+      personRepo.findAll(spec)
+    users.foreach(println)
 }
 
 /* Generates:
@@ -58,4 +65,7 @@ object MainWithRepo extends App {
  * def update(entity: E)(using DbCon): Unit
  * def updateAll(entities: Iterable[E])(using DbCon): BatchUpdateResult
  */
-class PersonRepository extends Repo[Person, Person, Long]
+class PersonRepository extends Repo[Person, Person, Long]:
+
+  def findByEmail(email: String)(using DbCon) =
+    sql"SELECT * FROM person WHERE email=$email".query[Person].run()

@@ -1,12 +1,10 @@
 package de.codecentric.wittig.scala.cat.effects
 import cats.data.OptionT
 import cats.effect.{IO, IOApp}
-import scala.concurrent.duration.DurationInt
-import cats.syntax.all.toFunctorOps
 
 object OptionTWithBackgroundIO extends IOApp.Simple {
 
-  def run: IO[Unit] = run2
+  def run: IO[Unit] = run1
 
   def run1: IO[Unit] = {
     val optionT: OptionT[IO, String] = OptionT.some[IO]("Result from OptionT")
