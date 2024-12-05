@@ -1,5 +1,4 @@
-//> using dep "dev.zio::zio-cli::0.5.0"
-
+//> using dep "dev.zio::zio-cli::0.7.0"
 
 import zio.{NonEmptyChunk, *}
 import zio.cli.*
@@ -22,15 +21,15 @@ object StringUtil extends ZIOCliDefault {
   private val split =
     Command("split", firstOption ++ separatorOption, stringArg)
       .withHelp(p("Split a string into substrings and display as an array"))
-      .map {
-        case ((first, separator), string) => Subcommand.Split(string, first, separator)
+      .map { case ((first, separator), string) =>
+        Subcommand.Split(string, first, separator)
       }
 
   private val join =
     Command("join", separatorOption, stringsArg)
       .withHelp(p("Join the command-arguments into a single string"))
-      .map {
-        case (separator, strings) => Subcommand.Join(NonEmptyChunk.fromCons(strings), separator)
+      .map { case (separator, strings) =>
+        Subcommand.Join(NonEmptyChunk.fromCons(strings), separator)
       }
 
   private val stringUtil: Command[Subcommand] =
@@ -45,7 +44,10 @@ object StringUtil extends ZIOCliDefault {
   ) {
     case Subcommand.Split(string, first, separator) =>
       val elements = string.split(separator)
-      Console.printLine(if (first) elements.headOption.getOrElse("") else elements.mkString("[", ", ", "]"))
+      Console.printLine(
+        if (first) elements.headOption.getOrElse("")
+        else elements.mkString("[", ", ", "]")
+      )
     case Subcommand.Join(strings, separator)        =>
       Console.printLine(strings.mkString(separator))
   }

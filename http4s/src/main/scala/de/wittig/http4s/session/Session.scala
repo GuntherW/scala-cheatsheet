@@ -16,6 +16,7 @@ import org.http4s.headers.Cookie
 import org.http4s.implicits.*
 import org.http4s.server.*
 import org.http4s.server.middleware.authentication.DigestAuth
+import org.http4s.server.middleware.authentication.DigestAuth.Md5HashedAuthStore
 
 object Session extends IOApp:
 
