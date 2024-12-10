@@ -44,7 +44,7 @@ object Version {
   val skunk                   = "0.6.4"
   val sttp                    = "4.0.0-M19"
   val sttpOAuth               = "0.18.0"
-  val sttpOpenAi              = "0.2.5"
+  val sttpOpenAi              = "0.2.6"
   val squants                 = "1.8.3"
   val tapir                   = "1.11.10"
   val tyqu                    = "0.1.0"
