@@ -16,7 +16,7 @@ object BoundaryAndBreak extends App:
     boundary:
       for (x, i) <- xs.zipWithIndex do
         if x == elem then break(i) // return first index
-      -1                           // return -1 if elem not found
+      -1 // return -1 if elem not found
 
   private def firstIndex[T](xs: List[T], elem: T): Int =
     xs.zipWithIndex

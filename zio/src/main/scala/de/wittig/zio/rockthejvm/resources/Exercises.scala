@@ -26,7 +26,8 @@ object Exercises extends ZIOAppDefault:
     ZIO.succeed(s"opening file at $path").debugThread *>
       ZIO.acquireReleaseWith(
         openFileScanner(path) // acquire
-      )(scanner => ZIO.succeed(s"closing file at $path").debugThread *> ZIO.succeed(scanner.close()) // close
+      )(scanner =>
+        ZIO.succeed(s"closing file at $path").debugThread *> ZIO.succeed(scanner.close()) // close
       )(readLineByLine)
 
   val testInterruptFileDisplay = for {

@@ -22,4 +22,4 @@ object Transform extends App:
   println(f1Map)           // Future(Success(2))
   println(f1Transform)     // Future(Success(2))
   println(f1TransformWith) // Future(Success(2))
-  println(f2)              // Future(Success(2))
+  println(f2) // Future(Success(2))

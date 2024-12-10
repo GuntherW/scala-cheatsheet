@@ -53,8 +53,7 @@ object Session extends IOApp:
               case Success(user) => service.orNotFound.run(req.withPathInfo(Uri.Path.unsafeFromString(s"/statement/$user")))
               case Failure(_)    => Ok("Invalid token")
           case None        => Ok("No token")
-      case None         => Ok("No cookies")
-    )
+      case None         => Ok("No cookies"))
   }
 
   val middleware: AuthMiddleware[IO, User] = DigestAuth[IO, User]("http://localhost:8080/welcome", funcPass)

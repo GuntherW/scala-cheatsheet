@@ -1,4 +1,4 @@
-        package de.wittig.macros.langton
+package de.wittig.macros.langton
 
 import scala.collection.immutable.List
 import scala.quoted.*
@@ -37,7 +37,9 @@ def getFields[A: Type](using Quotes): List[quotes.reflect.Symbol] =
   import quotes.reflect.*
   TypeRepr.of[A].typeSymbol.caseFields
 
-def projectField[A: Type](using Quotes)(
+def projectField[A: Type](using
+    Quotes
+)(
     expr: Expr[A],
     fieldSymbol: quotes.reflect.Symbol
 ): Expr[Any] =

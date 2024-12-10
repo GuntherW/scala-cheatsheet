@@ -3,8 +3,8 @@ package de.codecentric.wittig.scala.playground
 object StringUtil extends App:
 
   println(camelcase("ab_dr_lkj"))
-  println("["+padLeft("a", 5)+"]")
-  println("["+padLeft("dfa", 5)+"]")
+  println("[" + padLeft("a", 5) + "]")
+  println("[" + padLeft("dfa", 5) + "]")
 
   def camelcase(s: String): String =
     (s.split("_").toList match
