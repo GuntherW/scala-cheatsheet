@@ -13,7 +13,7 @@ lazy val commonSettings = Seq(
     "-deprecation",
     "-source:future-migration",
     "-Ybackend-parallelism:8",
-    "-release:21",
+    "-release:23",
     "-Wunused:imports", // for scalafix
 //    "-language:strictEquality"
     // "-Vprofile"

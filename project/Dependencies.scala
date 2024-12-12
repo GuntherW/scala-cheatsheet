@@ -38,7 +38,7 @@ object Version {
   val quill                   = "4.8.6"
   val refined                 = "0.11.2"
   val resilience4j            = "2.2.0"
-  val scala                   = "3.6.1"
+  val scala                   = "3.6.2"
   val scalaParallelCollection = "1.0.4"
   val scodec                  = "2.3.2"
   val skunk                   = "0.6.4"

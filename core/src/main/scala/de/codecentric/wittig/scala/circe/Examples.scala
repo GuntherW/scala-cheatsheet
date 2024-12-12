@@ -15,6 +15,7 @@ object Examples extends App:
       dauer: FiniteDuration,
       year: Year,
       yearMonth: YearMonth,
+      numbers: List[Int]
   ) derives Encoder, Decoder
 
   object Person:
@@ -28,6 +29,7 @@ object Examples extends App:
       c.as[BigDecimal].map(bd => (bd * 60).toLong.seconds)
     }
 
-  val p = Person("lkj", 234, 5.seconds, Year.now, YearMonth.now)
+  val p = Person("lkj", 234, 5.seconds, Year.now, YearMonth.now, List(1, 2))
 
   println(p.asJson.toString)
+
