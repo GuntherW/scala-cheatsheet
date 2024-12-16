@@ -1,13 +1,14 @@
-package de.codecentric.wittig.scala.ducktape
+package de.wittig.datatransformation.ducktape
+
 import io.github.arainko.ducktape.*
 
 object Main extends App:
 
-  case class Person(firstName: String, lastName: String, age: Int)
-  case class PersonExt(firstName: String, lastName: String, age: Int, nr: String)
+  private case class Person(firstName: String, lastName: String, age: Int)
+  private case class PersonExt(firstName: String, lastName: String, age: Int, nr: String)
 
   private val person    = Person("John", "Doe", 30)
-  private val personExt = PersonExt("John", "Doe", 30, "a5")
+  private val personExt = PersonExt("John", "DoeExt", 30, "a5")
 
   private val transformed = personExt.to[Person]
 

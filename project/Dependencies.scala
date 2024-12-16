@@ -2,13 +2,14 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.8"
-  val aws                     = "2.172.0"
+  val aws                     = "2.173.1"
   val caliban                 = "2.9.0"
   val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.12.0"
   val catsConsole             = "0.8.1"
   val circeVersion            = "0.14.10"
   val cirisVersion            = "3.7.0"
+  val chimney                 = "1.5.0"
   val doobie                  = "1.0.0-RC6"
   val ducktape                = "0.2.6"
   val fs2                     = "3.11.0"
@@ -23,7 +24,7 @@ object Version {
   val kafka                   = "3.9.0"
   val kyo                     = "0.15.1"
   val logback                 = "1.5.12"
-  val log4j                   = "2.24.2"
+  val log4j                   = "2.24.3"
   val macwire                 = "2.6.4"
   val magnolia                = "1.3.8"
   val magnum                  = "1.3.1"
@@ -90,6 +91,7 @@ object Library {
   val circeParser             = "io.circe"                      %% "circe-parser"                     % Version.circeVersion
   val ciris                   = "is.cir"                        %% "ciris"                            % Version.cirisVersion
   val cirisCirce              = "is.cir"                        %% "ciris-circe"                      % Version.cirisVersion
+  val chimney                 = "io.scalaland"                  %% "chimney"                          % Version.chimney
   val doobieCore              = "org.tpolecat"                  %% "doobie-core"                      % Version.doobie
   val doobiePostgres          = "org.tpolecat"                  %% "doobie-postgres"                  % Version.doobie
   val doobieHirari            = "org.tpolecat"                  %% "doobie-hikari"                    % Version.doobie
@@ -211,7 +213,6 @@ object Dependencies {
     circeCore,
     circeGeneric,
     circeParser,
-    ducktape,
     fs2Core,
     fs2IO,
     fs2ReactiveStreams,

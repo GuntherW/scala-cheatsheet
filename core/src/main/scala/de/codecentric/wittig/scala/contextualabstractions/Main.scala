@@ -13,7 +13,7 @@ object Main extends App:
     def combine(x: A, y: A): A
     def empty: A
 
-  given intCombiner: Combiner[Int] = new Combiner[Int]:
+  given Combiner[Int] = new Combiner[Int]:
     override def combine(x: Int, y: Int): Int = x + y
     override def empty: Int                   = 0
 

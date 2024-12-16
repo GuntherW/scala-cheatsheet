@@ -11,8 +11,10 @@ lazy val commonSettings = Seq(
     "-feature",
     "-language:higherKinds",
     "-deprecation",
-    "-source:future-migration",
+//    "-source:future",
     "-Ybackend-parallelism:8",
+    "-Xlint",
+    "-unchecked",
     "-release:23",
     "-Wunused:imports", // for scalafix
 //    "-language:strictEquality"
@@ -38,6 +40,7 @@ lazy val `scala-cheatsheet` = (project in file("."))
     cdk,
     cucumber,
     database,
+    datatransformation,
     http4s,
     gatling,
     grpcFs2,
@@ -128,6 +131,15 @@ lazy val cucumber = project
       Library.cucumberPico   % Test,
       Library.junitInterface % Test,
       Library.junit          % Test
+    )
+  )
+
+lazy val datatransformation = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.ducktape,
+      Library.chimney,
     )
   )
 

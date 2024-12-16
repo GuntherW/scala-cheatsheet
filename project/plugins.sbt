@@ -1,6 +1,6 @@
 addSbtPlugin("com.github.sbt"        % "sbt-native-packager" % "1.10.4")
 addSbtPlugin("org.scalameta"         % "sbt-scalafmt"        % "2.5.2")
-addSbtPlugin("org.scalameta"         % "sbt-mdoc"            % "2.6.1")
+addSbtPlugin("org.scalameta"         % "sbt-mdoc"            % "2.6.2")
 addSbtPlugin("com.typesafe.sbt"      % "sbt-git"             % "1.0.2")
 addSbtPlugin("org.scala-js"          % "sbt-scalajs"         % "1.17.0")
 addSbtPlugin("ch.epfl.scala"         % "sbt-scalafix"        % "0.13.0")
