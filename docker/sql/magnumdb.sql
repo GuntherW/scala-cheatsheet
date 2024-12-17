@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS person (
      name    VARCHAR        NOT NULL,
      email   VARCHAR UNIQUE NOT NULL,
      color   VARCHAR NOT NULL,
-     created timestamptz NOT NULL default NOW()
+     created timestamptz NOT NULL default NOW(),
+     date timestamp
 );
 
 INSERT INTO person (id, name, email, color) VALUES ('5e195287-37ad-494d-a73e-c2bca6bb9bda', 'Magnum', 'a@b.c', 'red' );

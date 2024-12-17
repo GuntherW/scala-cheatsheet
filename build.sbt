@@ -114,7 +114,7 @@ lazy val grpcFs2 = project
   ).enablePlugins(Fs2Grpc)
 
 lazy val docs = project // new documentation project
-  .in(file("cheatsheet-docs")) // important: it must not be docs/
+  .in(file("mdocs")) // important: it must not be docs/
   .settings(
     commonSettings,
     mdocVariables := Map( // Update mdocVariables to include site variables like @VERSION@.

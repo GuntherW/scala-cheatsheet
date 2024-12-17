@@ -33,7 +33,6 @@ object MainWithRepo extends App {
     val searchDate              = OffsetDateTime.now.minusYears(2)
     val idPosition              = 42L
 
-    // TODO: Tuts nicht, wenn ich die anderen Klauseln auch aktiviere.
     val spec = Spec[Person]
       .where(sql"email ILIKE 'a%'")
       .where(nameOpt.map(ln => sql"name = $ln").getOrElse(sql""))
