@@ -1,12 +1,12 @@
 package de.wittig.database.magnum
 
-import java.time.OffsetDateTime
-
+import java.time.{LocalDate, LocalDateTime, OffsetDateTime}
 import scala.concurrent.duration.DurationInt
-
 import com.augustnagro.magnum.*
 import de.wittig.database.dataSource
 import de.wittig.database.DatabaseName.MagnumDb
+
+import java.util.UUID
 
 object MainWithRepo extends App {
 
@@ -17,13 +17,17 @@ object MainWithRepo extends App {
     personRepo.count
   println(count)
 
-  val all = connect(xa):
-    personRepo.findAll
-  println(all)
-
   val abc = connect(xa):
     personRepo.findByEmail("a@b.c")
   println(abc)
+
+  val insert = connect(xa):
+    personRepo.insert(Persons(UUID.randomUUID, "HannesMin", s"${UUID.randomUUID}.h.de", Color.Red, LocalDateTime.now, Some(LocalDateTime.now), Some(LocalDate.of(1970, 1, 1))))
+    personRepo.insert(Persons(UUID.randomUUID, "HannesMax", s"${UUID.randomUUID}.h.de", Color.Red, LocalDateTime.now, Some(LocalDateTime.now), Some(LocalDate.of(9999, 1, 1))))
+
+  val all = connect(xa):
+    personRepo.findAll
+  println(all)
 
   withSpecifications()
 
@@ -33,7 +37,7 @@ object MainWithRepo extends App {
     val searchDate              = OffsetDateTime.now.minusYears(2)
     val idPosition              = 42L
 
-    val spec = Spec[Person]
+    val spec = Spec[Persons]
       .where(sql"email ILIKE 'a%'")
       .where(nameOpt.map(ln => sql"name = $ln").getOrElse(sql""))
       .where(sql"created >= $searchDate")
@@ -64,7 +68,7 @@ object MainWithRepo extends App {
  * def update(entity: E)(using DbCon): Unit
  * def updateAll(entities: Iterable[E])(using DbCon): BatchUpdateResult
  */
-class PersonRepository extends Repo[Person, Person, Long]:
+class PersonRepository extends Repo[Persons, Persons, Long]:
 
   def findByEmail(email: String)(using DbCon) =
-    sql"SELECT * FROM person WHERE email=$email".query[Person].run()
+    sql"SELECT * FROM person WHERE email=$email".query[Persons].run()

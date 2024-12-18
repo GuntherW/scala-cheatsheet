@@ -21,8 +21,8 @@ object MainSimple extends App {
   )
 
   // Simple Query
-  private val persons: Vector[Person] = connect(xa):
-    sql"SELECT * FROM person".query[Person].run()
+  private val persons: Vector[Persons] = connect(xa):
+    sql"SELECT * FROM person".query[Persons].run()
   persons.foreach(println)
 
   // Transaction
@@ -42,7 +42,7 @@ object MainSimple extends App {
 
   // Batch update
   connect(xa):
-    val persons: Iterable[Person]       = List(Person(UUID.randomUUID, "Gunner", "a@b.c", Color.BlueOrange))
+    val persons: Iterable[Persons]       = List(Persons(UUID.randomUUID, "Gunner", "a@b.c", Color.BlueOrange))
     val updateResult: BatchUpdateResult =
       batchUpdate(persons): user =>
         sql"UPDATE person SET name = $randomString, color = ${user.color} WHERE email = 'a@b.c'".update

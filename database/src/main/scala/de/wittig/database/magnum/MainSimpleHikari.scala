@@ -19,8 +19,8 @@ object MainSimpleHikari extends App {
   )
 
   // Simple Query
-  val persons: Vector[Person] = connect(xa):
-    sql"SELECT * FROM person".query[Person].run()
+  val persons: Vector[Persons] = connect(xa):
+    sql"SELECT * FROM person".query[Persons].run()
   persons.foreach(println)
 
 }
