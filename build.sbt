@@ -44,6 +44,7 @@ lazy val `scala-cheatsheet` = (project in file("."))
     http4s,
     gatling,
     grpcFs2,
+    json,
     kafka,
     direct,
     macros,
@@ -98,6 +99,20 @@ lazy val config = project
     libraryDependencies ++= Seq(
       Library.pureConfig,
       Library.ciris,
+    )
+  )
+
+lazy val json = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.circeCore,
+      Library.circeGeneric,
+      Library.circeParser,
+      Library.jsoniter,
+      Library.jsoniterMacros,
+      Library.upickle,
+      Library.zioJson,
     )
   )
 

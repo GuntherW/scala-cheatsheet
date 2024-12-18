@@ -1,6 +1,6 @@
-package de.codecentric.wittig.scala.circe
+package de.wittig.json.circe
 
-import de.codecentric.wittig.scala.circe.WithConfiguration.Foo.given_Configuration
+import WithConfiguration.Foo.given_Configuration
 import io.circe.derivation.*
 import io.circe.generic.semiauto.*
 import io.circe.parser.*
