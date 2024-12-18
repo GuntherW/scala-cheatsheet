@@ -1,5 +1,5 @@
-//> using dep com.github.ghostdogpr::caliban-quick:2.6.0
-//> using toolkit default
+//> using dep com.github.ghostdogpr::caliban-quick:2.9.0
+//> using toolkit 0.6.0
 //> using jvm 21
 
 import caliban.*

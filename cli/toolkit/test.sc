@@ -1,4 +1,4 @@
-//> using toolkit latest
+//> using toolkit default
 
 println("#" * 100)
 println(os.pwd)

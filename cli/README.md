@@ -8,6 +8,11 @@ scala-cli native.scala
 scala-cli https://gist.github.com/GuntherW/765efaeaaaa55d43e91f23dc6795e462
 ```
 
+### Update all
+```shell
+scala-cli dependency-update . --all
+```
+
 ### Package js app
 ```shell
 scala-cli package js.scala
