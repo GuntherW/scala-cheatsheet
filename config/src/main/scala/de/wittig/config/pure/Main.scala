@@ -13,8 +13,8 @@ object Main extends App {
     case Pepperoni(tomatoes: Boolean = true)
     case Margherita(vege: Boolean)
 
-  given ConfigReader[Pizza] = deriveReader
-  given ConfigWriter[Pizza] = deriveWriter
+//  given ConfigReader[Pizza] = deriveReader
+//  given ConfigWriter[Pizza] = deriveWriter
 
   given ConfigConvert[Pizza] = deriveConvert // instead of deriving Reader and Writer separately
 

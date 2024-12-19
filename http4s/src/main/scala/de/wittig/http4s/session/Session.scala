@@ -1,11 +1,5 @@
 package de.wittig.http4s.session
 
-import java.nio.charset.StandardCharsets
-import java.time.LocalDateTime
-import java.util.Base64
-
-import scala.util.*
-
 import cats.data.*
 import cats.effect.*
 import com.comcast.ip4s.*
@@ -16,7 +10,11 @@ import org.http4s.headers.Cookie
 import org.http4s.implicits.*
 import org.http4s.server.*
 import org.http4s.server.middleware.authentication.DigestAuth
-import org.http4s.server.middleware.authentication.DigestAuth.Md5HashedAuthStore
+
+import java.nio.charset.StandardCharsets
+import java.time.LocalDateTime
+import java.util.Base64
+import scala.util.*
 
 object Session extends IOApp:
 

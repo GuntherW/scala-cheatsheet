@@ -1,7 +1,5 @@
 package de.wittig.mongo.greanleafMongo
 
-import java.time.ZonedDateTime
-
 import de.wittig.MongoUtil.mongoClient
 import io.circe.Codec
 import io.circe.generic.semiauto.deriveCodec
@@ -9,6 +7,9 @@ import io.github.greenleafoss.mongo.circe.bson.CirceBsonProtocol
 import io.github.greenleafoss.mongo.circe.json.CirceJsonProtocol
 import io.github.greenleafoss.mongo.core.util.ZonedDateTimeOps.parseZonedDateTime
 import org.mongodb.scala.bsonDocumentToUntypedDocument
+
+import java.time.ZonedDateTime
+import scala.language.implicitConversions
 
 object Main extends App:
   import TestBsonProtocol.given

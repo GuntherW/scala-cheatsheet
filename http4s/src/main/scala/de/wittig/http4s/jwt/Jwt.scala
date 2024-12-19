@@ -32,7 +32,7 @@ object Jwt extends IOApp:
           case Right(payload) => IO(database.get(payload.user))
           case Left(_)        => IO(None)
 
-  private val middleware = JwtAuthMiddleware[IO, AuthUser](JwtAuth.hmac(key, algo), authenticate)
+  private val middleware = JwtAuthMiddleware[IO, AuthUser](JwtAuth.hmac(key.toCharArray, List(algo)), authenticate)
 
   private val authedRoutes: AuthedRoutes[AuthUser, IO] = AuthedRoutes.of {
     case GET -> Root / "welcome" as user => Ok(s"Welcome, ${user.name}")

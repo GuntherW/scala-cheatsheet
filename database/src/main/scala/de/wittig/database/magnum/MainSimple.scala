@@ -1,15 +1,14 @@
 package de.wittig.database.magnum
 
-import java.sql.Connection
-import java.util.UUID
-
-import scala.concurrent.duration.DurationInt
-import scala.util.Random
-
 import com.augustnagro.magnum
 import com.augustnagro.magnum.*
-import de.wittig.database.dataSource
 import de.wittig.database.DatabaseName.MagnumDb
+import de.wittig.database.dataSource
+
+import java.sql.Connection
+import java.util.UUID
+import scala.concurrent.duration.DurationInt
+import scala.util.Random
 
 object MainSimple extends App {
 
@@ -42,7 +41,7 @@ object MainSimple extends App {
 
   // Batch update
   connect(xa):
-    val persons: Iterable[Persons]       = List(Persons(UUID.randomUUID, "Gunner", "a@b.c", Color.BlueOrange))
+    val persons: Iterable[Persons]      = List(Persons(UUID.randomUUID, "Gunner", "a@b.c", Color.BlueOrange))
     val updateResult: BatchUpdateResult =
       batchUpdate(persons): user =>
         sql"UPDATE person SET name = $randomString, color = ${user.color} WHERE email = 'a@b.c'".update

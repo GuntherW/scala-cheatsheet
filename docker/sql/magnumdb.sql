@@ -4,18 +4,25 @@ CREATE DATABASE magnumdb;
 
 
 CREATE TABLE IF NOT EXISTS person (
-     id      UUID    PRIMARY KEY,
+     id      UUID           PRIMARY KEY,
      name    VARCHAR        NOT NULL,
      email   VARCHAR UNIQUE NOT NULL,
-     color   VARCHAR NOT NULL,
-     created timestamptz NOT NULL default NOW(),
+     color   VARCHAR        NOT NULL,
+     created timestamptz    NOT NULL default NOW(),
      ts timestamp,
      date date
 );
-
 INSERT INTO person (id, name, email, color) VALUES ('5e195287-37ad-494d-a73e-c2bca6bb9bda', 'Magnum', 'a@b.c', 'red' );
 
-create table geotest (
-    id bigint primary key,
+CREATE TABLE geotest (
+    id bigint  primary key,
     pnts point not null
 );
+
+CREATE TABLE IF NOT EXISTS mult_id (
+      id      UUID           NOT NULL,
+      name    VARCHAR        NOT NULL,
+      email   VARCHAR UNIQUE NOT NULL,
+      primary key (id, name)
+);
+INSERT INTO mult_id (id, name, email) VALUES ('5e195287-37ad-494d-a73e-c2bca6bb9bda', 'Magnum', 'a@b.c');

@@ -1,14 +1,10 @@
 package de.wittig.database.magnum.geo
 
-import java.sql.Connection
-
-import scala.concurrent.duration.DurationInt
-
 import com.augustnagro.magnum
 import com.augustnagro.magnum.*
 import com.augustnagro.magnum.pg.PgCodec.given
-import de.wittig.database.dataSource
 import de.wittig.database.DatabaseName.MagnumDb
+import de.wittig.database.dataSource
 import org.postgresql.geometric.*
 
 object MainPg extends App {

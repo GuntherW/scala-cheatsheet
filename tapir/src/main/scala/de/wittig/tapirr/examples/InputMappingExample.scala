@@ -21,8 +21,7 @@ object InputMappingExample extends App {
   def hash(result: Int) = Output(Result(result), MurmurHash3.stringHash(result.toString).toString)
 
   val maybeErrorEndpoint =
-    endpoint
-      .get
+    endpoint.get
       .in("operation" / path[String]("opName"))
       .in(query[Int]("value1"))
       .in(query[Int]("value2"))

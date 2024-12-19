@@ -11,7 +11,6 @@ import fs2.io.net.Network
 import natchez.Trace
 import natchez.Trace.Implicits.noop
 import pureconfig.{ConfigReader, ConfigSource}
-import pureconfig.generic.derivation.default.*
 import skunk.*
 import skunk.codec.all.*
 import skunk.syntax.all.*
@@ -64,7 +63,7 @@ object UserRepositoryLive:
 
 object SkunkDemo extends IOApp.Simple:
 
-  def getSession[F[_]: Temporal: Trace: Network: Console](config: Config) =
+  private def getSession[F[_]: Temporal: Trace: Network: Console](config: Config): Resource[F, Session[F]] =
     Session.single(
       host = config.host,
       port = config.port,

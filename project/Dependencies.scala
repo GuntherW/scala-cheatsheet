@@ -24,7 +24,7 @@ object Version {
   val jsoniter                = "2.32.0"
   val kafka                   = "3.9.0"
   val kyo                     = "0.15.1"
-  val logback                 = "1.5.12"
+  val logback                 = "1.5.13"
   val log4j                   = "2.24.3"
   val macwire                 = "2.6.4"
   val magnolia                = "1.3.8"
@@ -76,7 +76,7 @@ object Version {
   val munitScalaCheck = "1.0.0"
   val scalaTest       = "3.2.19"
   val scalaCheck      = "1.18.1"
-  val testContainer   = "0.41.4"
+  val testContainer   = "0.41.5"
   val weaverCats      = "0.8.4"
 }
 

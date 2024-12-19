@@ -14,6 +14,7 @@ lazy val commonSettings = Seq(
 //    "-source:future",
     "-Ybackend-parallelism:8",
     "-Xlint",
+    "-experimental",
     "-unchecked",
     "-release:23",
     "-Wunused:imports", // for scalafix

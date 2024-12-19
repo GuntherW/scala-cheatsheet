@@ -4,61 +4,40 @@ import com.augustnagro.magnum.*
 import de.wittig.database.DatabaseName.MagnumDb
 import de.wittig.database.dataSource
 
-import java.time.{LocalDate, LocalDateTime, OffsetDateTime}
 import java.util.UUID
 import scala.concurrent.duration.DurationInt
 
-object MainWithRepo extends App {
+object MultiIdWithRepo extends App {
 
-  private val xa         = Transactor(dataSource(MagnumDb), sqlLogger = SqlLogger.logSlowQueries(3.milliseconds))
-  private val personRepo = PersonRepository()
+  private val xa       = Transactor(dataSource(MagnumDb), sqlLogger = SqlLogger.logSlowQueries(3.milliseconds))
+  private val multRepo = MultiIdRepository()
 
-  private val p1 = Persons(UUID.randomUUID, "HannesMin", s"${UUID.randomUUID}.h.de", Color.Red, LocalDateTime.now, Some(LocalDateTime.now), Some(LocalDate.of(1970, 1, 1)))
-  private val p2 = Persons(UUID.randomUUID, "HannesMax", s"${UUID.randomUUID}.h.de", Color.Red, LocalDateTime.now, Some(LocalDateTime.now), Some(LocalDate.of(9999, 1, 1)))
+  private val m1 = MultId(UUID.randomUUID, "name", "e@mail.de")
 
   val count = connect(xa):
-    personRepo.count
+    multRepo.count
   println(count)
 
   val abc = connect(xa):
-    personRepo.findByEmail("a@b.c")
+    multRepo.findByEmail("a@b.c")
   println(abc)
 
   val insert = connect(xa):
-    personRepo.insert(p1)
-    personRepo.insert(p2)
+    multRepo.insert(m1)
 
   val all = connect(xa):
-    personRepo.findAll
+    multRepo.findAll
   println(all)
-
-  withSpecifications()
 
   // does not work
   val delete = connect(xa):
-    personRepo.delete(p1)
-    personRepo.delete(p2)
+    multRepo.delete(m1)
 
   val all2 = connect(xa):
-    personRepo.findAll
-  println("After deletion")
+    multRepo.findAll
+  println("after delete:")
   println(all2)
 
-  def withSpecifications() =
-    val partialEmail            = "a"
-    val nameOpt: Option[String] = None
-    val searchDate              = OffsetDateTime.now.minusYears(2)
-    val idPosition              = 42L
-
-    val spec = Spec[Persons]
-      .where(sql"email ILIKE 'a%'")
-      .where(nameOpt.map(ln => sql"name = $ln").getOrElse(sql""))
-      .where(sql"created >= $searchDate")
-      .limit(10)
-
-    val users = connect(xa):
-      personRepo.findAll(spec)
-    users.foreach(println)
 }
 
 /* Generates:
@@ -81,7 +60,7 @@ object MainWithRepo extends App {
  * def update(entity: E)(using DbCon): Unit
  * def updateAll(entities: Iterable[E])(using DbCon): BatchUpdateResult
  */
-class PersonRepository extends Repo[Persons, Persons, Long]:
+class MultiIdRepository extends Repo[MultId, MultId, Long]:
 
   def findByEmail(email: String)(using DbCon) =
     sql"SELECT * FROM person WHERE email=$email".query[Persons].run()

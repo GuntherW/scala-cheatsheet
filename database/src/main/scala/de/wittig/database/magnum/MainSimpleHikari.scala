@@ -1,13 +1,12 @@
 package de.wittig.database.magnum
 
-import java.sql.Connection
-
-import scala.concurrent.duration.DurationInt
-
 import com.augustnagro.magnum
 import com.augustnagro.magnum.*
-import de.wittig.database.hikariDataSource
 import de.wittig.database.DatabaseName.MagnumDb
+import de.wittig.database.hikariDataSource
+
+import java.sql.Connection
+import scala.concurrent.duration.DurationInt
 
 object MainSimpleHikari extends App {
 
