@@ -1,7 +1,5 @@
 import sbt.*
 
-scalaVersion := Version.scala
-
 lazy val commonSettings = Seq(
   version           := "1.0",
   organization      := "de.wittig",
@@ -202,19 +200,6 @@ lazy val macros = project
 lazy val munit = project
   .settings(
     commonSettings,
-    scalacOptions ++= Seq(
-      "-Xcheck-macros",
-      "-Ycheck:all",   // also for checking macros,
-      "-Ycheck-mods",
-      "-Ydebug-type-error",
-      "-Xprint-types", // Without this flag, we will not see error messages for exceptions during given-macro expansion!
-      "-Yshow-print-errors",
-      "-language:experimental.macros",
-      "-language:implicitConversions",
-      "-language:higherKinds",
-      "-language:dynamics",
-      "-unchecked",
-    ),
     libraryDependencies ++= Seq(
       Library.munit           % Test,
       Library.scalatest       % Test,
@@ -241,7 +226,6 @@ lazy val sttp = project
     commonSettings,
     libraryDependencies ++= Seq(
       Library.sttpCore,
-      Library.sttpBEAsync,
       Library.sttpBEZio,
       Library.sttpCirce,
       Library.sttpsSlf4j,
