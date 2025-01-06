@@ -157,18 +157,6 @@ lazy val datatransformation = project
     )
   )
 
-lazy val quill = project
-  .settings(
-    commonSettings,
-    libraryDependencies ++= Seq(
-      Library.postgres,
-      Library.h2,
-      Library.quillJdbc,
-      Library.quillJdbcZio,
-      Library.logback
-    )
-  )
-
 lazy val direct = project
   .settings(
     commonSettings,
@@ -286,6 +274,18 @@ lazy val zioSchema = project
     libraryDependencies += Library.zioSchemaBson,
     libraryDependencies += Library.zioSchemaProtobuf,
     libraryDependencies += Library.zioSchemaDerivation,
+  )
+
+lazy val quill = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.postgres,
+      Library.h2,
+      Library.quillJdbc,
+      Library.quillJdbcZio,
+      Library.logback
+    )
   )
 
 lazy val scalajs = project
@@ -410,7 +410,7 @@ lazy val http4s = project
       Library.jwtHttp4s,
       Library.jwtScala,
       Library.jwtCirce,
-      Library.pureConfig
+      Library.pureConfig,
     )
   )
 

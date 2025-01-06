@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.8"
-  val aws                     = "2.173.4"
+  val aws                     = "2.174.0"
   val caliban                 = "2.9.1"
   val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.12.0"
@@ -24,7 +24,7 @@ object Version {
   val jsoniter                = "2.33.0"
   val kafka                   = "3.9.0"
   val kyo                     = "0.15.1"
-  val logback                 = "1.5.15"
+  val logback                 = "1.5.16"
   val log4j                   = "2.24.3"
   val macwire                 = "2.6.4"
   val magnolia                = "1.3.8"
@@ -39,7 +39,7 @@ object Version {
   val pulsar4s                = "2.10.0"
   val quill                   = "4.8.6"
   val refined                 = "0.11.3"
-  val resilience4j            = "2.2.0"
+  val resilience4j            = "2.3.0"
   val scala                   = "3.6.2"
   val scalaParallelCollection = "1.1.0"
   val scodec                  = "2.3.2"

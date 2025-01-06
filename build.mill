@@ -49,6 +49,41 @@ object config extends CommonSbtModule {
   )
 }
 
+object cucumber extends CommonSbtModule {
+  object test extends SbtTests {
+    def ivyDeps = Agg(
+      Dependency.cucumberScala,
+      Dependency.cucumberJunit,
+      Dependency.cucumberPico,
+      Dependency.junitInterface,
+      Dependency.junit,
+    )
+    def testFramework = "com.novocode.junit.JUnitFramework"
+  }
+}
+
+object datatransformation extends CommonSbtModule {
+  def ivyDeps = Agg(
+    Dependency.ducktape,
+    Dependency.chimney,
+  )
+}
+
+object direct extends CommonSbtModule {
+  def ivyDeps = Agg(
+    Dependency.gears,
+    Dependency.kyoCore,
+    Dependency.kyoDirect,
+    Dependency.kyoCache,
+    Dependency.kyoStat,
+    Dependency.kyoSttp,
+    Dependency.kyoTapir,
+    Dependency.ox,
+    Dependency.tapirNettyServerSync,
+    Dependency.sttpCore
+  )
+}
+
 object json extends CommonSbtModule {
   def ivyDeps = Agg(
     Dependency.circeCore,

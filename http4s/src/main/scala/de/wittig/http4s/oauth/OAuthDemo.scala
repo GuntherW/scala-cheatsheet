@@ -25,7 +25,15 @@ object OAuthDemo extends IOApp.Simple {
     case GET -> Root / "callback" :? GithubTokenQueryParamMatcher(code) => getOAuthResult(code, config).flatMap(result => Ok(result))
   }
 
-  def fetchToken(code: String, config: AppConfig): IO[Option[String]] = {
+  private def getOAuthResult(code: String, config: AppConfig): IO[String] =
+    for
+      token  <- fetchToken(code, config)
+      result <- token match
+                  case Some(token) => fetchUserInfo(token)
+                  case None        => IO.pure("Error")
+    yield result
+
+  private def fetchToken(code: String, config: AppConfig): IO[Option[String]] = {
     val urlForm = UrlForm("client_id" -> config.key, "client_secret" -> config.secret.value, "code" -> code)
     val request = Request[IO](
       Method.POST,
@@ -41,7 +49,7 @@ object OAuthDemo extends IOApp.Simple {
       }
   }
 
-  def fetchUserInfo(token: String): IO[String] = {
+  private def fetchUserInfo(token: String): IO[String] = {
     val req = Request[IO](
       Method.GET,
       uri"https://api.github.com/user/emails",
@@ -56,48 +64,39 @@ object OAuthDemo extends IOApp.Simple {
       .use(_.expect[String](req))
   }
 
-  def getOAuthResult(code: String, config: AppConfig): IO[String] = for {
-    token  <- fetchToken(code, config)
-    result <- token match {
-                case Some(token) => fetchUserInfo(token)
-                case None        => IO.pure("Error")
-              }
-  } yield result
-
-  override def run: IO[Unit] = for {
-    config <- AppConfig.conf.load[IO]
-    server <- EmberServerBuilder.default[IO]
-                .withHost(ipv4"0.0.0.0")
-                .withPort(port"8080")
-                .withHttpApp(routes(config).orNotFound)
-                .build
-                .use(_ => IO.println("Server started at http://localhost:8080/home") *> IO.never)
-  } yield ()
+  override def run: IO[Unit] =
+    for
+      config <- AppConfig.conf.load[IO]
+      server <- EmberServerBuilder.default[IO]
+                  .withHost(ipv4"0.0.0.0")
+                  .withPort(port"8080")
+                  .withHttpApp(routes(config).orNotFound)
+                  .build
+                  .use(_ => IO.println("Server started at http://localhost:8080/home") *> IO.never)
+    yield ()
 }
 
 object GithubTokenQueryParamMatcher extends QueryParamDecoderMatcher[String]("code")
 
 case class AppConfig(key: String, secret: Secret[String])
-object AppConfig {
-  val conf: ConfigValue[Effect, AppConfig] = file(Paths.get("http4s/src/main/resources/appConfig.json")).as[AppConfig]
+object AppConfig:
+
+  val conf: ConfigValue[Effect, AppConfig]                 = file(Paths.get("http4s/src/main/resources/appConfig.json")).as[AppConfig]
+  given appConfigDecoder: ConfigDecoder[String, AppConfig] = circeConfigDecoder("AppConfig")
 
   given appDecoder: Decoder[AppConfig] = Decoder.instance { h =>
-    for {
+    for
       key    <- h.get[String]("key")
       secret <- h.get[String]("secret")
-    } yield AppConfig(key, Secret(secret))
+    yield AppConfig(key, Secret(secret))
   }
 
-  given appConfigDecoder: ConfigDecoder[String, AppConfig] = circeConfigDecoder("AppConfig")
-}
-
 case class GithubTokenResponse(accessToken: String, scope: String, tokenType: String)
-object GithubTokenResponse {
+object GithubTokenResponse:
   given decoder: Decoder[GithubTokenResponse] = Decoder.instance { h =>
-    for {
+    for
       accessToken <- h.get[String]("access_token")
       scope       <- h.get[String]("scope")
       tokenType   <- h.get[String]("token_type")
-    } yield GithubTokenResponse(accessToken, scope, tokenType)
+    yield GithubTokenResponse(accessToken, scope, tokenType)
   }
-}
