@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.8"
-  val aws                     = "2.174.0"
+  val aws                     = "2.174.1"
   val caliban                 = "2.9.1"
   val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.12.0"
@@ -41,7 +41,7 @@ object Version {
   val refined                 = "0.11.3"
   val resilience4j            = "2.3.0"
   val scala                   = "3.6.2"
-  val scalaParallelCollection = "1.1.0"
+  val scalaParallelCollection = "1.2.0"
   val scodec                  = "2.3.2"
   val skunk                   = "0.6.4"
   val sttp                    = "4.0.0-M22"
@@ -54,7 +54,7 @@ object Version {
   val xstream                 = "1.4.21"
   val xml                     = "2.3.0"
   val zio                     = "2.1.14"
-  val zioJson                 = "0.7.3"
+  val zioJson                 = "0.7.4"
   val zioKafka                = "2.9.0"
   val zioHttp                 = "3.0.1"
   val zioPrelude              = "1.0.0-RC36"
@@ -72,7 +72,7 @@ object Version {
   val junit           = "4.13.2"
   val junitInterface  = "0.13.3"
   val mockito         = "5.15.2"
-  val munit           = "1.0.3"
+  val munit           = "1.0.4"
   val munitScalaCheck = "1.0.0"
   val scalaTest       = "3.2.19"
   val scalaCheck      = "1.18.1"
@@ -105,7 +105,6 @@ object Library {
   val h2                      = "com.h2database"                         % "h2"                         % Version.h2
   val http4s                  = "org.http4s"                            %% "http4s-dsl"                 % Version.http4s
   val http4sEmberServer       = "org.http4s"                            %% "http4s-ember-server"        % Version.http4s
-  val http4sBlazeServer       = "org.http4s"                            %% "http4s-blaze-server"        % "0.23.17"
   val http4sEmberClient       = "org.http4s"                            %% "http4s-ember-client"        % Version.http4s
   val http4sCirce             = "org.http4s"                            %% "http4s-circe"               % Version.http4s
   val http4sDsl               = "org.http4s"                            %% "http4s-dsl"                 % Version.http4s

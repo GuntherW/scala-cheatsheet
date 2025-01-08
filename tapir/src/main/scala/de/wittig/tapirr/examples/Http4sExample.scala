@@ -2,8 +2,9 @@ package de.wittig.tapirr.examples
 
 import cats.effect.{IO, IOApp}
 import cats.syntax.all.*
+import com.comcast.ip4s.{ipv4, port}
 import org.http4s.HttpRoutes
-import org.http4s.blaze.server.BlazeServerBuilder
+import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.server.Router
 import sttp.tapir.*
 import sttp.tapir.server.http4s.Http4sServerInterpreter
@@ -33,9 +34,10 @@ object Http4sExample extends IOApp.Simple {
   val allRoutes = helloWorldRoutes <+> swaggerRoutes
 
   override def run: IO[Unit] =
-    BlazeServerBuilder[IO]
-      .bindHttp(8083, "localhost")
+    EmberServerBuilder.default[IO]
+      .withHost(ipv4"0.0.0.0")
+      .withPort(port"8083")
       .withHttpApp(Router("/" -> allRoutes).orNotFound)
-      .resource
-      .use(_ => IO.never)
+      .build
+      .use(_ => IO.println("Server started at http://localhost:8083") *> IO.never)
 }

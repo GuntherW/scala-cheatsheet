@@ -53,10 +53,7 @@ object OAuthDemo extends IOApp.Simple {
     val req = Request[IO](
       Method.GET,
       uri"https://api.github.com/user/emails",
-      headers = Headers(
-        Accept(MediaType.application.json),
-        Authorization(Credentials.Token(AuthScheme.Bearer, token))
-      )
+      headers = Headers(Accept(MediaType.application.json), Authorization(Credentials.Token(AuthScheme.Bearer, token)))
     )
 
     EmberClientBuilder

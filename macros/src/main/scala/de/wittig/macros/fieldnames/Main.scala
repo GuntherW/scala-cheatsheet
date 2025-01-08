@@ -18,6 +18,4 @@ object Main extends App:
 
   fieldNames[Test].foreach(println)
 
-case class Test(x: Int, y: String):
-  val z: Int           = 5
-  def sayHallo: String = "hallo"
+case class Test(x: Int, y: String)

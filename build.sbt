@@ -418,7 +418,7 @@ lazy val tapir = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(
-      Library.http4sBlazeServer,
+      Library.http4sEmberServer,
       Library.tapirAwsLambda,
       Library.tapirAwsCdk,
       Library.tapirAwsSam,

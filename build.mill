@@ -261,7 +261,6 @@ object Dependency {
   val h2 = ivy"com.h2database:h2:${Version.h2}"
   val http4s = ivy"org.http4s::http4s-dsl:${Version.http4s}"
   val http4sEmberServer = ivy"org.http4s::http4s-ember-server:${Version.http4s}"
-  val http4sBlazeServer = ivy"org.http4s::http4s-blaze-server:0.23.17"
   val http4sEmberClient = ivy"org.http4s::http4s-ember-client:${Version.http4s}"
   val http4sCirce = ivy"org.http4s::http4s-circe:${Version.http4s}"
   val http4sDsl = ivy"org.http4s::http4s-dsl:${Version.http4s}"
