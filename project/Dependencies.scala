@@ -34,6 +34,7 @@ object Version {
   val neotype                 = "0.3.8"
   val osLib                   = "0.11.3"
   val ox                      = "0.5.8"
+  val parserCombinators       = "2.4.0"
   val postgres                = "42.7.4"
   val pureConfig              = "0.17.8"
   val pulsar4s                = "2.10.0"
@@ -138,6 +139,7 @@ object Library {
   val neotype                 = "io.github.kitlangton"                  %% "neotype"                    % Version.neotype
   val osLib                   = "com.lihaoyi"                           %% "os-lib"                     % Version.osLib
   val ox                      = "com.softwaremill.ox"                   %% "core"                       % Version.ox
+  val parserCombinators       = "org.scala-lang.modules"                %% "scala-parser-combinators"   % Version.parserCombinators
   val postgres                = "org.postgresql"                         % "postgresql"                 % Version.postgres
   val pureConfig              = "com.github.pureconfig"                 %% "pureconfig-generic-scala3"  % Version.pureConfig
   val pulsar4s                = "com.clever-cloud.pulsar4s"             %% "pulsar4s-core"              % Version.pulsar4s

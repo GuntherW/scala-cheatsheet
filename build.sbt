@@ -52,6 +52,7 @@ lazy val `scala-cheatsheet` = (project in file("."))
     mongo,
     munit,
     osLib,
+    parsers,
     quill,
     scalacheck,
     scalajs,
@@ -174,15 +175,22 @@ lazy val direct = project
     )
   )
 
-lazy val osLib = project
+lazy val osLib   = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(
       Library.osLib
     )
   )
-
-lazy val macros = project
+lazy val parsers = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.parserCombinators,
+      Library.munit % Test
+    )
+  )
+lazy val macros  = project
   .settings(commonSettings)
 
 lazy val munit = project
