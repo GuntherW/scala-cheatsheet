@@ -48,7 +48,6 @@ object MainWithRepo extends App {
     val partialEmail            = "a"
     val nameOpt: Option[String] = None
     val searchDate              = OffsetDateTime.now.minusYears(2)
-    val idPosition              = 42L
 
     val spec = Spec[Persons]
       .where(sql"email ILIKE 'a%'")

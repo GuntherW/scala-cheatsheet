@@ -1,6 +1,5 @@
 package de.wittig.database.magnum
 
-import com.augustnagro.magnum
 import com.augustnagro.magnum.*
 import de.wittig.database.DatabaseName.MagnumDb
 import de.wittig.database.hikariDataSource
@@ -8,7 +7,7 @@ import de.wittig.database.hikariDataSource
 import java.sql.Connection
 import scala.concurrent.duration.DurationInt
 
-object MainSimpleHikari extends App {
+object SimpleHikari extends App {
 
   // Transactor lets you customize the transaction (or connection) behavior.
   val xa = Transactor(

@@ -1,4 +1,4 @@
-//> using dep "com.softwaremill.ox::core::0.5.7"
+//> using dep "com.softwaremill.ox::core::0.5.8"
 
 import ox.*
 

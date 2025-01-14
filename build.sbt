@@ -16,7 +16,7 @@ lazy val commonSettings = Seq(
     "-unchecked",
     "-release:23",
     "-Wunused:imports", // for scalafix
-//    "-language:strictEquality"
+//    "-language:strictEquality",
     // "-Vprofile"
   ),
   Test / fork       := true, // subprojects won't run in parallel then

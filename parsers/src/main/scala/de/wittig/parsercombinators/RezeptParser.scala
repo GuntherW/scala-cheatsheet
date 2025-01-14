@@ -4,6 +4,8 @@ import java.text.NumberFormat
 import java.util.Locale
 import scala.util.parsing.combinator.JavaTokenParsers
 
+// https://www.codecentric.de/wissens-hub/blog/parserkombinatoren-scala-erste-schritte
+// https://www.codecentric.de/wissens-hub/blog/scala-parserkombinatoren-im-dienste-des-bieres
 object RezeptParser extends JavaTokenParsers {
 
   override val whiteSpace = """(\s|#.*#)+""".r
@@ -19,17 +21,17 @@ object RezeptParser extends JavaTokenParsers {
   def name          = "Name:" ~> string
   def menge         = "Menge:" ~> liter
   def schuett       = string ~ gramm ^^ { case malzname ~ menge => Schuettung(malzname.trim, menge) }
-  def schuettung    = "Schüttung:" ~> rep(schuett)
+  def schuettung    = "Schüttung:" ~> schuett.+
   def brauwasser    = "Brauwasser:" ~> liter ~ "Hauptguss" ~ liter <~ "Nachguss" ^^ { case hg ~ _ ~ ng => Brauwasser(hg, ng) }
-  def hopfen        = "Hopfen:" ~> rep(hops)
+  def hopfen        = "Hopfen:" ~> hops.*
   def hops          = string ~ alphasaeure ~ gramm ^^ { case name ~ alpha ~ menge => Hopfen(name.trim, alpha, menge) }
   def hefe          = "Hefe:" ~> """.*""".r
-  def maischvorgang = "Maischen:" ~> einmaischen ~ rep(rast) ~ ablaeutern ^^ { case ein ~ rast ~ abl => Maischvorgang(ein, rast, abl) }
-  def einmaischen   = "Einmaischen" ~ opt("bei") ~> grad
+  def maischvorgang = "Maischen:" ~> einmaischen ~ rast.* ~ ablaeutern ^^ { case ein ~ rast ~ abl => Maischvorgang(ein, rast, abl) }
+  def einmaischen   = "Einmaischen" ~ "bei".? ~> grad
   def rast          = index ~ "Rast bei" ~ grad ~ "für" ~ minuten ^^ { case nummer ~ _ ~ grad ~ _ ~ dauer => Rast(nummer, dauer, grad) }
-  def ablaeutern    = "Abläutern" ~ opt("bei") ~> grad
+  def ablaeutern    = "Abläutern" ~ "bei".? ~> grad
 
-  def rezept = name ~ opt(menge) ~ schuettung ~ brauwasser ~ hopfen ~ hefe ~ maischvorgang ^^ { case name ~ menge ~ schuettung ~ brauwasser ~ hopfen ~ hefe ~ maischen =>
+  def rezept = name ~ menge.? ~ schuettung ~ brauwasser ~ hopfen ~ hefe ~ maischvorgang ^^ { case name ~ menge ~ schuettung ~ brauwasser ~ hopfen ~ hefe ~ maischen =>
     Rezept(name, menge, schuettung, brauwasser, hopfen, hefe, maischen)
   }
 

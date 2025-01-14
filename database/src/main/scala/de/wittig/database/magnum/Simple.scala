@@ -10,7 +10,7 @@ import java.util.UUID
 import scala.concurrent.duration.DurationInt
 import scala.util.Random
 
-object MainSimple extends App {
+object Simple extends App {
 
   // Transactor lets you customize the transaction (or connection) behavior.
   private val xa = Transactor(
