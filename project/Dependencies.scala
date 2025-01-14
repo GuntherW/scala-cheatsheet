@@ -23,7 +23,7 @@ object Version {
   val jsonSchemaValidator     = "1.5.4"
   val jsoniter                = "2.33.0"
   val kafka                   = "3.9.0"
-  val kyo                     = "0.15.1"
+  val kyo                     = "0.16.1"
   val logback                 = "1.5.16"
   val log4j                   = "2.24.3"
   val macwire                 = "2.6.4"

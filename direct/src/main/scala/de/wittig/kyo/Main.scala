@@ -7,25 +7,25 @@ object Main extends KyoApp {
   val programm = defer {
 
     // Effectful value
-    val b: Int = await(IO(10_000))
+    val b: Int = IO(10_000).now
     println(b)
 
     // Control flow
-    val c: String = if await(IO(true)) then "True branch" else "False branch"
+    val c: String = if IO(true).now then "True branch" else "False branch"
 
     // Logical operations
-    val d: Boolean = await(IO(true)) && await(IO(false))
+    val d: Boolean = IO(true).now && IO(false).now
 
-    val e: Boolean = await(IO(true)) || await(IO(true))
+    val e: Boolean = IO(true).now || IO(true).now
 
     // Loop (for demonstration; this loop
     // won't execute its body)
-    while (await(IO(false)))
+    while (IO(false).now)
       println("looping")
 
     // Pattern matching
     val matchResult: String =
-      await(IO(1)) match
+      IO(1).now match
         case 1 => "One"
         case _ => "Other"
 
