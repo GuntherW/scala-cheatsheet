@@ -37,7 +37,7 @@ object MainWithRepo extends App {
   // does not work
   val delete = connect(xa):
     personRepo.delete(p1)
-    personRepo.delete(p2)
+//    personRepo.delete(p2)
 
   val all2 = connect(xa):
     personRepo.findAll

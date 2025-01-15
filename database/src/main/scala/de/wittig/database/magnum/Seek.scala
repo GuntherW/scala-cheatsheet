@@ -11,7 +11,7 @@ object Seek extends App {
 
   private val xa         = Transactor(dataSource(MagnumDb), sqlLogger = SqlLogger.logSlowQueries(3.milliseconds))
   private val personRepo = PersonRepository()
-  private val persons    = List.tabulate(99)(i => Persons(UUID.randomUUID, s"Gunner$i", s"a$i@b.c", Color.BlueOrange))
+  private val persons    = List.tabulate(30)(i => Persons(UUID.randomUUID, s"Gunner$i", s"a$i@b.c", Color.BlueOrange))
 
   // Setup
   connect(xa):
@@ -25,6 +25,7 @@ object Seek extends App {
 
   private val idPosition2 = persons(19)
   println(s"id position : ${idPosition2.name}, ${idPosition2.id}")
+  println("#" * 100)
 
   connect(xa):
     personRepo.findAll(
@@ -54,6 +55,7 @@ object Seek extends App {
     ).foreach(println)
 
   // clean up
+  println("#" * 100)
   connect(xa):
     println(s"before deletion count: ${personRepo.count}")
     sql"""DELETE from person WHERE name like 'Gunner%'""".update.run()
