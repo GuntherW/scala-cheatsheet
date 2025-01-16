@@ -6,61 +6,26 @@ import de.wittig.database.dataSource
 
 import java.util.UUID
 import scala.concurrent.duration.DurationInt
+import scala.util.Random
+import scala.util.chaining.*
 
 object MultiIdWithRepo extends App {
 
   private val xa       = Transactor(dataSource(MagnumDb), sqlLogger = SqlLogger.logSlowQueries(3.milliseconds))
   private val multRepo = MultiIdRepository()
 
-  private val m1 = MultId(UUID.randomUUID, "name", "e@mail.de")
+  private val uuid = UUID.randomUUID
+  private val m1   = MultId(uuid, s"name-${Random.nextString(3)}", s"multi-${Random.nextString(3)}@mail.de")
+  private val m2   = MultId(uuid, s"name-${Random.nextString(3)}", s"multi-${Random.nextString(3)}@mail.de")
 
-  val count = connect(xa):
-    multRepo.count
-  println(count)
-
-  val abc = connect(xa):
-    multRepo.findByEmail("a@b.c")
-  println(abc)
-
-  val insert = connect(xa):
+  transact(xa):
+    multRepo.count.tap(println)
     multRepo.insert(m1)
-
-  val all = connect(xa):
-    multRepo.findAll
-  println(all)
-
-  // does not work
-  val delete = connect(xa):
+    multRepo.insert(m2)
+    multRepo.findAll.tap(println)
     multRepo.delete(m1)
-
-  val all2 = connect(xa):
-    multRepo.findAll
-  println("after delete:")
-  println(all2)
-
+    println(s"delete $m1")
+    multRepo.findAll.tap(println)
 }
 
-/* Generates:
- * def count(using DbCon): Long
- * def existsById(id: ID)(using DbCon): Boolean
- * def findAll(using DbCon): Vector[E]
- * def findAll(spec: Spec[E])(using DbCon): Vector[E]
- * def findById(id: ID)(using DbCon): Option[E]
- * def findAllById(ids: Iterable[ID])(using DbCon): Vector[E]
- *
- * def delete(entity: E)(using DbCon): Unit
- * def deleteById(id: ID)(using DbCon): Unit
- * def truncate()(using DbCon): Unit
- * def deleteAll(entities: Iterable[E])(using DbCon): BatchUpdateResult
- * def deleteAllById(ids: Iterable[ID])(using DbCon): BatchUpdateResult
- * def insert(entityCreator: EC)(using DbCon): Unit
- * def insertAll(entityCreators: Iterable[EC])(using DbCon): Unit
- * def insertReturning(entityCreator: EC)(using DbCon): E
- * def insertAllReturning(entityCreators: Iterable[EC])(using DbCon): Vector[E]
- * def update(entity: E)(using DbCon): Unit
- * def updateAll(entities: Iterable[E])(using DbCon): BatchUpdateResult
- */
-class MultiIdRepository extends Repo[MultId, MultId, Long]:
-
-  def findByEmail(email: String)(using DbCon) =
-    sql"SELECT * FROM person WHERE email=$email".query[Persons].run()
+class MultiIdRepository extends Repo[MultId, MultId, UUID]

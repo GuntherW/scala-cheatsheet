@@ -24,8 +24,5 @@ case class Persons(
 
 object Persons:
 
-  // TODO: Nullabfrage in v2.0.0 nicht mehr nötig
-  given DbCodec[LocalDateTime] = DbCodec.SqlTimestampCodec.biMap(ts => if ts == null then null else ts.toLocalDateTime, Timestamp.valueOf)
-
-  // TODO: Nullabfrage in v2.0.0 nicht mehr nötig, Außerdem ist das "-infinity", "infinity" hier nicht gelöst. Wartet auf Standardcodec aus der Magnumlib.
-  given DbCodec[LocalDate] = DbCodec.SqlDateCodec.biMap(ts => if ts == null then null else ts.toLocalDate, Date.valueOf)
+  given DbCodec[LocalDateTime] = DbCodec.SqlTimestampCodec.biMap(ts => ts.toLocalDateTime, Timestamp.valueOf)
+  given DbCodec[LocalDate]     = DbCodec.SqlDateCodec.biMap(ts => ts.toLocalDate, Date.valueOf)

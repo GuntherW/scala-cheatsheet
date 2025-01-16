@@ -53,7 +53,6 @@ lazy val `scala-cheatsheet` = (project in file("."))
     munit,
     osLib,
     parsers,
-    quill,
     scalacheck,
     scalajs,
     sttp,
@@ -284,18 +283,6 @@ lazy val zioSchema = project
     libraryDependencies += Library.zioSchemaDerivation,
   )
 
-lazy val quill = project
-  .settings(
-    commonSettings,
-    libraryDependencies ++= Seq(
-      Library.postgres,
-      Library.h2,
-      Library.quillJdbc,
-      Library.quillJdbcZio,
-      Library.logback
-    )
-  )
-
 lazy val scalajs = project
   .enablePlugins(ScalaJSPlugin)
   .settings(
@@ -376,7 +363,11 @@ lazy val database = project
       Library.pureConfig,
       Library.skunk,
       Library.tyqu,
-      Library.logback
+      Library.logback,
+      Library.postgres,
+      Library.h2,
+      Library.quillJdbc,
+      Library.quillJdbcZio,
     )
   )
 

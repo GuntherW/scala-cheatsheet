@@ -7,6 +7,7 @@ import de.wittig.database.dataSource
 import java.time.{LocalDate, LocalDateTime, OffsetDateTime}
 import java.util.UUID
 import scala.concurrent.duration.DurationInt
+import scala.util.chaining.*
 
 object MainWithRepo extends App {
 
@@ -16,33 +17,23 @@ object MainWithRepo extends App {
   private val p1 = Persons(UUID.randomUUID, "HannesMin", s"${UUID.randomUUID}.h.de", Color.Red, LocalDateTime.now, Some(LocalDateTime.now), Some(LocalDate.of(1970, 1, 1)))
   private val p2 = Persons(UUID.randomUUID, "HannesMax", s"${UUID.randomUUID}.h.de", Color.Red, LocalDateTime.now, Some(LocalDateTime.now), Some(LocalDate.of(9999, 1, 1)))
 
-  val count = connect(xa):
-    personRepo.count
-  println(count)
-
-  val abc = connect(xa):
-    personRepo.findByEmail("a@b.c")
-  println(abc)
-
-  val insert = connect(xa):
+  val count = transact(xa):
+    personRepo.count.tap(println)
+    personRepo.findByEmail("a@b.c").tap(println)
     personRepo.insert(p1)
     personRepo.insert(p2)
-
-  val all = connect(xa):
-    personRepo.findAll
-  println(all)
+    personRepo.findAll.tap(println)
 
   withSpecifications()
 
-  // does not work
   val delete = connect(xa):
     personRepo.delete(p1)
-//    personRepo.delete(p2)
+    personRepo.delete(p2)
 
   val all2 = connect(xa):
-    personRepo.findAll
-  println("After deletion")
-  println(all2)
+    println("After deletion")
+    personRepo.findAll.tap(println)
+    personRepo.count.tap(println)
 
   def withSpecifications() =
     val partialEmail            = "a"
@@ -80,7 +71,7 @@ object MainWithRepo extends App {
  * def update(entity: E)(using DbCon): Unit
  * def updateAll(entities: Iterable[E])(using DbCon): BatchUpdateResult
  */
-class PersonRepository extends Repo[Persons, Persons, Long]:
+class PersonRepository extends Repo[Persons, Persons, UUID]:
 
   def findByEmail(email: String)(using DbCon) =
     sql"SELECT * FROM person WHERE email=$email".query[Persons].run()

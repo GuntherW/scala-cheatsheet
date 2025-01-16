@@ -28,7 +28,7 @@ object Version {
   val log4j                   = "2.24.3"
   val macwire                 = "2.6.4"
   val magnolia                = "1.3.9"
-  val magnum                  = "1.3.1"
+  val magnum                  = "2.0.0-M1"
   val mongo                   = "5.3.0"
   val monocle                 = "3.3.0"
   val neotype                 = "0.3.8"
