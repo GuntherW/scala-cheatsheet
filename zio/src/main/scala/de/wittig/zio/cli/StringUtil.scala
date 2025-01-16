@@ -1,4 +1,4 @@
-package cli
+package de.wittig.zio.cli
 
 import zio.{NonEmptyChunk, *}
 import zio.cli.*
@@ -7,11 +7,9 @@ import zio.cli.HelpDoc.p
 
 object StringUtil extends ZIOCliDefault {
 
-  sealed trait Subcommand
-  object Subcommand {
-    final case class Split(string: String, first: Boolean, separator: String) extends Subcommand
-    final case class Join(strings: NonEmptyChunk[String], separator: String)  extends Subcommand
-  }
+  private enum Subcommand:
+    case Split(string: String, first: Boolean, separator: String)
+    case Join(strings: NonEmptyChunk[String], separator: String)
 
   private val firstOption     = Options.boolean(name = "first").alias("f") ?? "Display just the first substring."
   private val separatorOption = Options.text("separator").alias("s").withDefault(",") ?? "Separator regex."

@@ -59,7 +59,6 @@ lazy val `scala-cheatsheet` = (project in file("."))
     sttp,
     tapir,
     zio,
-    ziocli,
     zioHttp,
     zioKafka,
     zioSchema,
@@ -356,37 +355,6 @@ lazy val tapir = project
     )
   )
 
-lazy val zio = project
-  .settings(
-    commonSettings,
-    libraryDependencies ++= Seq(
-      Library.zio,
-      Library.zioStreams,
-      Library.zioJson,
-      Library.zioPrelude,
-      Library.zioTest      % Test,
-      Library.zioTestSbt   % Test,
-      Library.zioTestJUnit % Test,
-    ),
-    testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
-  )
-
-lazy val ziocli = project
-  .settings(
-    commonSettings,
-    libraryDependencies += Library.zioCli,
-  )
-
-lazy val zioSchema = project
-  .settings(
-    commonSettings,
-    libraryDependencies += Library.zioSchema,
-    libraryDependencies += Library.zioSchemaJson,
-    libraryDependencies += Library.zioSchemaBson,
-    libraryDependencies += Library.zioSchemaProtobuf,
-    libraryDependencies += Library.zioSchemaDerivation,
-  )
-
 lazy val scalajs = project
   .enablePlugins(ScalaJSPlugin)
   .settings(
@@ -417,6 +385,22 @@ lazy val kafka = project
     )
   )
 
+lazy val zio = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.zio,
+      Library.zioStreams,
+      Library.zioJson,
+      Library.zioPrelude,
+      Library.zioCli,
+      Library.zioTest      % Test,
+      Library.zioTestSbt   % Test,
+      Library.zioTestJUnit % Test,
+    ),
+    testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
+  )
+
 lazy val zioKafka = project
   .settings(
     commonSettings,
@@ -435,4 +419,14 @@ lazy val zioHttp = project
       Library.zioHttp,
       Library.zioJson
     ),
+  )
+
+lazy val zioSchema = project
+  .settings(
+    commonSettings,
+    libraryDependencies += Library.zioSchema,
+    libraryDependencies += Library.zioSchemaJson,
+    libraryDependencies += Library.zioSchemaBson,
+    libraryDependencies += Library.zioSchemaProtobuf,
+    libraryDependencies += Library.zioSchemaDerivation,
   )
