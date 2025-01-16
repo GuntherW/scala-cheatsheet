@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.8"
-  val aws                     = "2.175.1"
+  val aws                     = "2.176.0"
   val caliban                 = "2.9.1"
   val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.12.0"
@@ -31,7 +31,7 @@ object Version {
   val magnum                  = "2.0.0-M1"
   val mongo                   = "5.3.0"
   val monocle                 = "3.3.0"
-  val neotype                 = "0.3.8"
+  val neotype                 = "0.3.9"
   val osLib                   = "0.11.3"
   val ox                      = "0.5.8"
   val parserCombinators       = "2.4.0"
