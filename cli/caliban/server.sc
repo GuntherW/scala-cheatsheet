@@ -1,4 +1,4 @@
-//> using dep com.github.ghostdogpr::caliban-quick:2.9.0
+//> using dep com.github.ghostdogpr::caliban-quick:2.9.1
 //> using toolkit 0.6.0
 //> using jvm 21
 
