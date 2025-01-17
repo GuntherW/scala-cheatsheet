@@ -9,9 +9,9 @@ import scala.concurrent.duration.DurationInt
 
 object Seek extends App {
 
-  private val xa          = Transactor(dataSource(MagnumDb), sqlLogger = SqlLogger.logSlowQueries(3.milliseconds))
-  private val personRepo  = PersonRepository()
-  private val persons     = List.tabulate(30)(i => Persons(UUID.randomUUID, s"Gunner$i", s"a$i@b.c", Color.BlueOrange))
+  private val xa         = Transactor(dataSource(MagnumDb), sqlLogger = SqlLogger.logSlowQueries(3.milliseconds))
+  private val personRepo = PersonRepository()
+  private val persons    = List.tabulate(30)(i => Persons(UUID.randomUUID, s"Gunner$i", s"a$i@b.c", Color.BlueOrange))
   private val idPosition = persons(19)
 
   // Setup
