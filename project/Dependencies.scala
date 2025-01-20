@@ -3,6 +3,8 @@ import sbt.*
 object Version {
   val akka                    = "2.8.8"
   val aws                     = "2.176.0"
+  val avro4s                  = "5.0.14"
+  val borer                   = "1.15.0"
   val caliban                 = "2.9.1"
   val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.12.0"
@@ -26,7 +28,7 @@ object Version {
   val kyo                     = "0.16.1"
   val logback                 = "1.5.16"
   val log4j                   = "2.24.3"
-  val macwire                 = "2.6.4"
+  val macwire                 = "2.6.5"
   val magnolia                = "1.3.9"
   val magnum                  = "2.0.0-M1"
   val mongo                   = "5.3.0"
@@ -49,16 +51,16 @@ object Version {
   val sttpOAuth               = "0.18.0"
   val sttpOpenAi              = "0.2.6"
   val squants                 = "1.8.3"
-  val tapir                   = "1.11.12"
+  val tapir                   = "1.11.13"
   val tyqu                    = "0.1.0"
   val upickle                 = "4.1.0"
   val xstream                 = "1.4.21"
   val xml                     = "2.3.0"
   val zio                     = "2.1.14"
   val zioJson                 = "0.7.4"
-  val zioKafka                = "2.9.1"
+  val zioKafka                = "2.10.0"
   val zioHttp                 = "3.0.1"
-  val zioPrelude              = "1.0.0-RC36"
+  val zioPrelude              = "1.0.0-RC37"
   val zioSchema               = "1.5.0"
   val zioCli                  = "0.7.0"
   val zioOpenAI               = "0.4.1"
@@ -84,6 +86,11 @@ object Version {
 object Library {
   val akka                    = "com.typesafe.akka"                     %% "akka-actor-typed"           % Version.akka
   val awsCdk                  = "software.amazon.awscdk"                 % "aws-cdk-lib"                % Version.aws
+  val avro4s                  = "com.sksamuel.avro4s"                   %% "avro4s-core"                % Version.avro4s
+  val borerCore               = "io.bullet"                             %% "borer-core"                 % Version.borer
+  val borerDerivation         = "io.bullet"                             %% "borer-derivation"           % Version.borer
+  val borerCirce              = "io.bullet"                             %% "borer-compat-circe"         % Version.borer
+  val borerScodec             = "io.bullet"                             %% "borer-compat-scodec"        % Version.borer
   val calibanQuick            = "com.github.ghostdogpr"                 %% "caliban-quick"              % Version.caliban
   val calibanClient           = "com.github.ghostdogpr"                 %% "caliban-client"             % Version.caliban
   val catsCore                = "org.typelevel"                         %% "cats-core"                  % Version.catsVersion

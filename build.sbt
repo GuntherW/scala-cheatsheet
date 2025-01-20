@@ -56,7 +56,6 @@ lazy val `scala-cheatsheet` = (project in file("."))
     parsers,
     scalacheck,
     scalajs,
-    stainless,
     sttp,
     tapir,
     zio,
@@ -222,6 +221,11 @@ lazy val json = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(
+      Library.avro4s,
+      Library.borerCore,
+      Library.borerDerivation,
+      Library.borerCirce,
+      Library.borerScodec,
       Library.circeCore,
       Library.circeGeneric,
       Library.circeParser,
@@ -316,12 +320,6 @@ lazy val scalacheck = project
     libraryDependencies += Library.scalaCheck % Test,
     Test / fork                              := true, //  subprojects tests will run parallel with other subprojects
   )
-
-lazy val stainless = project
-  .settings(
-    commonSettings,
-    scalaVersion := "3.5.2",
-  ).enablePlugins(StainlessPlugin)
 
 lazy val sttp = project
   .settings(
