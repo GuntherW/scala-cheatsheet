@@ -2,33 +2,29 @@ package de.wittig.parsercombinators
 
 import munit.FunSuite
 
-class RezeptParserTest extends FunSuite {
+class RezeptParserTest extends FunSuite:
 
-  test("Name") {
+  test("Name"):
     val name = RezeptParser.parse(RezeptParser.name, "Name: Maibock").get
     assert(name == "Maibock")
-  }
-  test("Liter") {
+
+  test("Liter"):
     val liter = RezeptParser.parse(RezeptParser.liter, " 33l").get
     assert(liter == 33)
-  }
 
-  test("Menge in l") {
+  test("Menge in l"):
     val menge = RezeptParser.parse(RezeptParser.menge, "Menge: 33l").get
     assert(menge == 33)
-  }
 
-  test("Menge in Liter") {
+  test("Menge in Liter"):
     val menge = RezeptParser.parse(RezeptParser.menge, "Menge: 33 Liter").get
     assert(menge == 33)
-  }
 
-  test("Alpha") {
+  test("Alpha"):
     val alpha = RezeptParser.parse(RezeptParser.alphasaeure, "13,5% Alpha").get
     assertEquals(alpha, 13.5)
-  }
 
-  test("Schüttung") {
+  test("Schüttung"):
     val alpha = RezeptParser.parse(
       RezeptParser.schuettung,
       """Schüttung:
@@ -42,7 +38,6 @@ class RezeptParserTest extends FunSuite {
         Schuettung(malzname = "Münchener Malz", menge = 2000)
       )
     )
-  }
 
   test("Maibock") {
     val maibockRezept = """
@@ -66,8 +61,7 @@ class RezeptParserTest extends FunSuite {
         2. Rast bei 63°C für 60 Min
         Abläutern 78°C"""
 
-    val maibock = RezeptParser(maibockRezept)
-    maibock match {
+    RezeptParser(maibockRezept) match
       case RezeptParser.Success(mb, _)    =>
         println(s"Success: $mb")
         assert(mb.name == "Maibock")
@@ -88,7 +82,5 @@ class RezeptParserTest extends FunSuite {
         assert(mb.maischvorgang.ablaeutern == 78)
       case RezeptParser.NoSuccess(msg, r) =>
         println(s"Fehler: $msg => $r")
-        assertEquals(msg, "Fehler")
-    }
+        fail(msg)
   }
-}
