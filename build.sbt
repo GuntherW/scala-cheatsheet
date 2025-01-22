@@ -11,7 +11,6 @@ lazy val commonSettings = Seq(
     "-deprecation",
 //    "-source:future",
     "-Ybackend-parallelism:8",
-    "-Xlint",
     "-experimental",
     "-unchecked",
     "-release:23",

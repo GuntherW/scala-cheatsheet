@@ -15,7 +15,7 @@ object RezeptParser extends JavaTokenParsers {
   def grad          = wholeNumber <~ "°|Grad".r ~ "C|Celsius".r ^^ (_.toInt)
   def minuten       = wholeNumber <~ "min|Min|Minuten".r ^^ (_.toInt)
   def index         = wholeNumber <~ "." ^^ (_.toInt)
-  def string        = """[a-zA-ZäÄüÜöÖß\s]*""".r
+  def string        = """[a-zA-ZäÄüÜöÖß ]*""".r
   def dezimal       = """(\d+(,\d*)?|\d*,\d+)""".r ^^ (d => NumberFormat.getInstance(Locale.GERMANY).parse(d).doubleValue)
   def alphasaeure   = dezimal <~ "% Alpha"
   def name          = "Name:" ~> string

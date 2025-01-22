@@ -4,6 +4,10 @@ import munit.FunSuite
 
 class RezeptParserTest extends FunSuite {
 
+  test("Name") {
+    val name = RezeptParser.parse(RezeptParser.name, "Name: Maibock").get
+    assert(name == "Maibock")
+  }
   test("Liter") {
     val liter = RezeptParser.parse(RezeptParser.liter, " 33l").get
     assert(liter == 33)
@@ -22,6 +26,22 @@ class RezeptParserTest extends FunSuite {
   test("Alpha") {
     val alpha = RezeptParser.parse(RezeptParser.alphasaeure, "13,5% Alpha").get
     assertEquals(alpha, 13.5)
+  }
+
+  test("Schüttung") {
+    val alpha = RezeptParser.parse(
+      RezeptParser.schuettung,
+      """Schüttung:
+           Pilsener Malz 4000g
+           Münchener Malz 2000g"""
+    ).get
+    assertEquals(
+      alpha,
+      List(
+        Schuettung(malzname = "Pilsener Malz", menge = 4000),
+        Schuettung(malzname = "Münchener Malz", menge = 2000)
+      )
+    )
   }
 
   test("Maibock") {
@@ -49,6 +69,7 @@ class RezeptParserTest extends FunSuite {
     val maibock = RezeptParser(maibockRezept)
     maibock match {
       case RezeptParser.Success(mb, _)    =>
+        println(s"Success: $mb")
         assert(mb.name == "Maibock")
         assert(mb.menge == Some(22))
         assert(mb.schuettung.size == 2)
@@ -65,8 +86,9 @@ class RezeptParserTest extends FunSuite {
         assert(mb.maischvorgang.rasten(0) == Rast(1, 10, 57))
         assert(mb.maischvorgang.rasten(1) == Rast(2, 60, 63))
         assert(mb.maischvorgang.ablaeutern == 78)
-      case RezeptParser.NoSuccess(msg, r) => println(s"Fehler: $msg => $r"); fail
+      case RezeptParser.NoSuccess(msg, r) =>
+        println(s"Fehler: $msg => $r")
+        assertEquals(msg, "Fehler")
     }
-
   }
 }

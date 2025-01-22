@@ -7,7 +7,7 @@ object Version {
   val borer                   = "1.15.0"
   val caliban                 = "2.9.1"
   val catsEffectCps           = "0.4.0"
-  val catsVersion             = "2.12.0"
+  val catsVersion             = "2.13.0"
   val catsConsole             = "0.8.1"
   val circeVersion            = "0.14.10"
   val cirisVersion            = "3.7.0"
@@ -15,7 +15,7 @@ object Version {
   val doobie                  = "1.0.0-RC6"
   val ducktape                = "0.2.7"
   val fs2                     = "3.11.0"
-  val gatling                 = "3.13.1"
+  val gatling                 = "3.13.2"
   val gears                   = "0.2.0"
   val h2                      = "2.3.232"
   val http4s                  = "0.23.30"
@@ -75,11 +75,12 @@ object Version {
   val junit           = "4.13.2"
   val junitInterface  = "0.13.3"
   val mockito         = "5.15.2"
-  val munit           = "1.0.4"
+  val munit           = "1.1.0"
   val munitScalaCheck = "1.0.0"
-  val scalaTest       = "3.2.19"
   val scalaCheck      = "1.18.1"
-  val testContainer   = "0.41.5"
+  val scalaMock       = "7.1.0"
+  val scalaTest       = "3.2.19"
+  val testContainer   = "0.41.8"
   val weaverCats      = "0.8.4"
 }
 
@@ -205,8 +206,9 @@ object Library {
   val mockito             = "org.mockito"                  % "mockito-core"                   % Version.mockito
   val munit               = "org.scalameta"               %% "munit"                          % Version.munit
   val munitScalaCheck     = "org.scalameta"               %% "munit-scalacheck"               % Version.munitScalaCheck
-  val scalatest           = "org.scalatest"               %% "scalatest"                      % Version.scalaTest
   val scalaCheck          = "org.scalacheck"              %% "scalacheck"                     % Version.scalaCheck
+  val scalaMock           = "org.scalamock"               %% "scalamock"                      % Version.scalaMock
+  val scalatest           = "org.scalatest"               %% "scalatest"                      % Version.scalaTest
   val tapirSttpStubServer = "com.softwaremill.sttp.tapir" %% "tapir-sttp-stub-server"         % Version.tapir
   val testContainer       = "com.dimafeng"                %% "testcontainers-scala-scalatest" % Version.testContainer
   val testContainerMongo  = "com.dimafeng"                %% "testcontainers-scala-mongodb"   % Version.testContainer
@@ -248,6 +250,7 @@ object Dependencies {
     mockito       % Test,
     scalatest     % Test,
     scalaCheck    % Test,
+    scalaMock     % Test,
     testContainer % Test,
   )
 }

@@ -1,6 +1,6 @@
 package de.wittig.datatransformation.ducktape
 
-import io.github.arainko.ducktape.{to, *}
+import io.github.arainko.ducktape.*
 
 object MainDeep extends App:
 
