@@ -16,7 +16,8 @@ lazy val commonSettings = Seq(
     "-release:23",
     "-Wunused:imports", // for scalafix
 //    "-language:strictEquality",
-    // "-Vprofile"
+//    "-Yprofile-enabled",
+//    "-Yprofile-trace:compiler.trace",
   ),
   Test / fork       := true, // subprojects won't run in parallel then
   Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oF"), // Showing full stack trace
