@@ -17,14 +17,11 @@ object Person:
   given JsonDecoder[FiniteDuration] =
     JsonDecoder.string.mapOrFail { str =>
       try
-        // Attempt to parse the duration string
-        Duration(str) match {
+        Duration(str) match // Attempt to parse the duration string
           case d: FiniteDuration => Right(d)
           case _                 => Left(s"Non-finite duration: $str")
-        }
-      catch {
+      catch
         case ex: Exception => Left(s"Invalid duration format: ${ex.getMessage}")
-      }
     }
 
   given JsonDecoder[Person] = DeriveJsonDecoder.gen[Person]

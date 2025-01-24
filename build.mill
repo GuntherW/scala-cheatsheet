@@ -2,6 +2,9 @@ import mill._, scalalib._
 
 trait CommonSbtModule extends SbtModule {
   def scalaVersion = Version.scala
+  def scalacOptions = Seq(
+    "-experimental"
+  )
 }
 
 object core extends CommonSbtModule {
@@ -36,6 +39,7 @@ object core extends CommonSbtModule {
       Dependency.mockito,
       Dependency.scalatest,
       Dependency.scalaCheck,
+      Dependency.scalaMock,
       Dependency.testContainer
     )
     def testFramework = "org.scalatest.tools.Framework"
@@ -86,6 +90,11 @@ object direct extends CommonSbtModule {
 
 object json extends CommonSbtModule {
   def ivyDeps = Agg(
+    Dependency.avro4s,
+    Dependency.borerCore,
+    Dependency.borerCirce,
+    Dependency.borerScodec,
+    Dependency.borerDerivation,
     Dependency.circeCore,
     Dependency.circeGeneric,
     Dependency.circeParser,
@@ -158,14 +167,16 @@ object sttp extends CommonSbtModule {
 
 object Version {
   val akka                    = "2.8.8"
+  val avro4s                  = "5.0.14"
   val aws                     = "2.173.4"
+  val borer                   = "1.15.0"
   val caliban                 = "2.9.1"
   val catsEffectCps           = "0.4.0"
-  val catsVersion             = "2.12.0"
+  val catsVersion             = "2.13.0"
   val catsConsole             = "0.8.1"
   val circeVersion            = "0.14.10"
   val cirisVersion            = "3.7.0"
-  val chimney                 = "1.6.0"
+  val chimney                 = "1.7.0"
   val doobie                  = "1.0.0-RC6"
   val ducktape                = "0.2.7"
   val fs2                     = "3.11.0"
@@ -179,7 +190,7 @@ object Version {
   val jsonSchemaValidator     = "1.5.5"
   val jsoniter                = "2.33.0"
   val kafka                   = "3.9.0"
-  val kyo                     = "0.16.1"
+  val kyo                     = "0.16.2"
   val logback                 = "1.5.16"
   val log4j                   = "2.24.3"
   val macwire                 = "2.6.4"
@@ -187,7 +198,7 @@ object Version {
   val magnum                  = "1.3.1"
   val mongo                   = "5.2.1"
   val monocle                 = "3.3.0"
-  val neotype                 = "0.3.8"
+  val neotype                 = "0.3.10"
   val osLib                   = "0.11.3"
   val ox                      = "0.5.8"
   val postgres                = "42.7.4"
@@ -204,13 +215,13 @@ object Version {
   val sttpOAuth               = "0.18.0"
   val sttpOpenAi              = "0.2.6"
   val squants                 = "1.8.3"
-  val tapir                   = "1.11.11"
+  val tapir                   = "1.11.13"
   val tyqu                    = "0.1.0"
   val upickle                 = "4.1.0"
   val xstream                 = "1.4.21"
   val xml                     = "2.3.0"
   val zio                     = "2.1.14"
-  val zioJson                 = "0.7.4"
+  val zioJson                 = "0.7.5"
   val zioKafka                = "2.9.0"
   val zioHttp                 = "3.0.1"
   val zioPrelude              = "1.0.0-RC36"
@@ -228,17 +239,23 @@ object Version {
   val junit           = "4.13.2"
   val junitInterface  = "0.13.3"
   val mockito         = "5.15.2"
-  val munit           = "1.0.4"
+  val munit           = "1.1.0"
   val munitScalaCheck = "1.0.0"
   val scalaTest       = "3.2.19"
   val scalaCheck      = "1.18.1"
-  val testContainer   = "0.41.5"
+  val scalaMock       = "7.1.0"
+  val testContainer   = "0.41.8"
   val weaverCats      = "0.8.4"
 }
 
 object Dependency {
   val akka = ivy"com.typesafe.akka::akka-actor-typed:${Version.akka}"
+  val avro4s = ivy"com.sksamuel.avro4s::avro4s-core:${Version.avro4s}"
   val awsCdk = ivy"software.amazon.awscdk:aws-cdk-lib:${Version.aws}"
+  val borerCore               = ivy"io.bullet::borer-core:${Version.borer}"
+  val borerDerivation         = ivy"io.bullet::borer-derivation:${Version.borer}"
+  val borerCirce              = ivy"io.bullet::borer-compat-circe:${Version.borer}"
+  val borerScodec             = ivy"io.bullet::borer-compat-scodec:${Version.borer}"
   val calibanQuick = ivy"com.github.ghostdogpr::caliban-quick:${Version.caliban}"
   val calibanClient = ivy"com.github.ghostdogpr::caliban-client:${Version.caliban}"
   val catsCore = ivy"org.typelevel::cats-core:${Version.catsVersion}"
@@ -354,6 +371,7 @@ object Dependency {
   val munitScalaCheck = ivy"org.scalameta::munit-scalacheck:${Version.munitScalaCheck}"
   val scalatest = ivy"org.scalatest::scalatest:${Version.scalaTest}"
   val scalaCheck = ivy"org.scalacheck::scalacheck:${Version.scalaCheck}"
+   val scalaMock           = ivy"org.scalamock::scalamock:${Version.scalaMock}"
   val tapirSttpStubServer = ivy"com.softwaremill.sttp.tapir::tapir-sttp-stub-server:${Version.tapir}"
   val testContainer = ivy"com.dimafeng::testcontainers-scala-scalatest:${Version.testContainer}"
   val testContainerMongo = ivy"com.dimafeng::testcontainers-scala-mongodb:${Version.testContainer}"
