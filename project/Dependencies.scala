@@ -6,12 +6,13 @@ object Version {
   val avro4s                  = "5.0.14"
   val borer                   = "1.15.0"
   val caliban                 = "2.9.1"
+  val catsEffect              = "3.5.7"
   val catsEffectCps           = "0.4.0"
   val catsVersion             = "2.13.0"
   val catsConsole             = "0.8.1"
   val circeVersion            = "0.14.10"
   val cirisVersion            = "3.7.0"
-  val chimney                 = "1.7.0"
+  val chimney                 = "1.7.1"
   val doobie                  = "1.0.0-RC6"
   val ducktape                = "0.2.7"
   val fs2                     = "3.11.0"
@@ -23,7 +24,7 @@ object Version {
   val jwtHttp4s               = "2.0.2"
   val jwtScala                = "10.0.1"
   val jsonSchemaValidator     = "1.5.5"
-  val jsoniter                = "2.33.0"
+  val jsoniter                = "2.33.1"
   val kafka                   = "3.9.0"
   val kyo                     = "0.16.2"
   val logback                 = "1.5.16"
@@ -35,7 +36,7 @@ object Version {
   val monocle                 = "3.3.0"
   val neotype                 = "0.3.11"
   val osLib                   = "0.11.3"
-  val ox                      = "0.5.8"
+  val ox                      = "0.5.10"
   val parserCombinators       = "2.4.0"
   val postgres                = "42.7.5"
   val pureConfig              = "0.17.8"
@@ -57,7 +58,7 @@ object Version {
   val xstream                 = "1.4.21"
   val xml                     = "2.3.0"
   val zio                     = "2.1.14"
-  val zioJson                 = "0.7.9"
+  val zioJson                 = "0.7.10"
   val zioKafka                = "2.10.0"
   val zioHttp                 = "3.0.1"
   val zioPrelude              = "1.0.0-RC37"
@@ -95,6 +96,7 @@ object Library {
   val calibanQuick            = "com.github.ghostdogpr"                 %% "caliban-quick"              % Version.caliban
   val calibanClient           = "com.github.ghostdogpr"                 %% "caliban-client"             % Version.caliban
   val catsCore                = "org.typelevel"                         %% "cats-core"                  % Version.catsVersion
+  val catsEffect              = "org.typelevel"                         %% "cats-effect"                % Version.catsEffect
   val catsEffectCps           = "org.typelevel"                         %% "cats-effect-cps"            % Version.catsEffectCps
   val catsFree                = "org.typelevel"                         %% "cats-free"                  % Version.catsVersion
   val circeCore               = "io.circe"                              %% "circe-core"                 % Version.circeVersion
@@ -222,6 +224,7 @@ object Dependencies {
   import Library.*
   val dependencies: Seq[ModuleID] = Seq(
     catsCore,
+    catsEffect,
     catsEffectCps,
     catsFree,
     circeCore,

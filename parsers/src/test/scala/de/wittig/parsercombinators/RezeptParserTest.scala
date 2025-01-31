@@ -83,4 +83,10 @@ class RezeptParserTest extends FunSuite:
       case RezeptParser.NoSuccess(msg, r) =>
         println(s"Fehler: $msg => $r")
         fail(msg)
+      case RezeptParser.Failure(msg, r)   =>
+        println(s"Fehler: $msg => $r")
+        fail(msg)
+      case RezeptParser.Error(msg, r)     =>
+        println(s"Fehler: $msg => $r")
+        fail(msg)
   }

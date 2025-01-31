@@ -1,5 +1,7 @@
 import sbt.*
 
+import scala.collection.immutable.Seq
+
 lazy val commonSettings = Seq(
   version           := "1.0",
   organization      := "de.wittig",
@@ -237,7 +239,13 @@ lazy val json = project
   )
 
 lazy val macros = project
-  .settings(commonSettings)
+  .settings(
+    commonSettings,
+    scalacOptions ++= Seq(
+      "-Xprint:postInlining", // Wichtiger output bei "compile", um zu sehen, ob/wie Inline funktioniert
+      "-Xmax-inlines:100000"
+    )
+  )
 
 lazy val macwire = project
   .settings(
