@@ -7,5 +7,5 @@ object JdbcNullability:
 
   sealed trait TL
   object TL:
-    sealed trait Nullable    extends JdbcNullability.TL
-    sealed trait NonNullable extends JdbcNullability.TL
+    trait Nullable    extends JdbcNullability.TL
+    trait NonNullable extends JdbcNullability.TL

@@ -2,7 +2,6 @@ package de.wittig.macros.typesafejdbc
 
 trait ColumnMapping[T <: JdbcType.TL, N <: JdbcNullability.TL, C <: String]:
   type Result // left abstract, will be inferred by the compiler
-
   def reader: JdbcReader[Result]
 
 object ColumnMapping:

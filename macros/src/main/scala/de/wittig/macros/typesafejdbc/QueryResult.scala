@@ -1,6 +1,7 @@
 package de.wittig.macros.typesafejdbc
 
 class QueryResult(colReaders: List[(String, JdbcReader[?])])(row: Row) extends Selectable:
+
   private val namedReaders: Map[String, JdbcReader[?]] = colReaders.toMap
 
   def selectDynamic(name: String): Any =

@@ -48,7 +48,7 @@ object Version {
   val scalaParallelCollection = "1.2.0"
   val scodec                  = "2.3.2"
   val skunk                   = "0.6.4"
-  val sttp                    = "4.0.0-M26"
+  val sttp                    = "4.0.0-RC1"
   val sttpOAuth               = "0.18.0"
   val sttpOpenAi              = "0.2.6"
   val squants                 = "1.8.3"

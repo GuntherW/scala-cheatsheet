@@ -1,5 +1,4 @@
 package de.wittig.macros.typesafejdbc
-import scala.reflect.Selectable.reflectiveSelectable
 
 object PlaygroundSchema extends App:
 
@@ -23,15 +22,18 @@ object PlaygroundColumnMapping extends App:
   val hobbies = getValues[JdbcType.TL.Array[JdbcType.TL.Varchar], JdbcNullability.TL.NonNullable, "hobbies"](rows, "hobbies")
   hobbies.foreach(println)
 
+/** Only compiles, if postgres instance is up and running */
 object PlaygroundQueryDecoder extends App:
   inline val query = "select * from users"
-  val decoder      = QueryResultDecoder.make(query)
-  val rows         = JdbcCommunication.runQuery(query)
-  val typedRows    = rows.map(decoder.decode)
-  val names        = typedRows.map(_.name)
-  names.foreach(println)
+//  import scala.reflect.Selectable.reflectiveSelectable
+//  val decoder      = QueryResultDecoder.make(query)
+//  val rows         = JdbcCommunication.runQuery(query)
+//  val typedRows    = rows.map(decoder.decode)
+//  val names        = typedRows.map(_.name)
+//  names.foreach(println)
 
 object PlaygroundQuery2Decoder extends App:
   inline val query = "select * from users"
-  val typedRows    = QueryResultDecoder.run(query)
-  typedRows.map(_.name).foreach(println)
+//  import scala.reflect.Selectable.reflectiveSelectable
+//  val typedRows    = QueryResultDecoder.run(query)
+//  typedRows.map(_.name).foreach(println)

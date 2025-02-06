@@ -17,5 +17,7 @@ object FromToCaseClass extends App:
   println(bobAgain)
 
   // Mapping over Tuples
-  val bobTupleOption = bobTuple.map[[X] =>> Option[X]]([T] => (t: T) => Some(t))
+  val bobTupleOption  = bobTuple.map[[X] =>> Option[X]]([T] => (t: T) => Some(t))
+  val bobTupleOption2 = bobTuple.map([T] => (t: T) => Some(t))
   println(bobTupleOption)
+  println(bobTupleOption2)

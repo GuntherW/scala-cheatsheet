@@ -10,7 +10,7 @@ mill __.test
 mill mill.scalalib.Dependency/showUpdates
 ```
 
-
+### Macro Output in Console:
 ```shell
 mill -w macros.compile
 ```

@@ -6,7 +6,7 @@ object CTypeInfo:
 
   inline def myLittleMacrox(x: Int): Int = ${ myLittleMacroImpl('x) }
 
-  def myLittleMacroImpl(expr: Expr[Int])(using Quotes): Expr[Int] =
+  private def myLittleMacroImpl(expr: Expr[Int])(using Quotes): Expr[Int] =
 
     // instance describing a Type. Like a TypeTag in regular code. Only available inside a macro implementation.
     val intType: Type[Int] = Type.of[Int]

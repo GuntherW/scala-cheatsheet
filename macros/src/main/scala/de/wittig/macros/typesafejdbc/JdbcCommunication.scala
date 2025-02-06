@@ -7,12 +7,10 @@ import scala.collection.mutable.ListBuffer
 object JdbcCommunication:
 
   private def withConnection[A](f: Connection => A) =
-    // load the driver
-    Class.forName("org.postgresql.Driver")
+    Class.forName("org.postgresql.Driver") // load the driver
 
     // get a connection
     val connection = DriverManager.getConnection("jdbc:postgresql://localhost:5433/macro", "postgres", "postgres")
-
     try
       f(connection)
     finally
@@ -26,9 +24,7 @@ object JdbcCommunication:
           val value = resultSet.getObject(descriptor.index) match
             case array: java.sql.Array => array.getArray()
             case obj                   => obj
-
           descriptor.name -> value
-
       }
       result += Row(row.toMap)
     }
@@ -36,11 +32,12 @@ object JdbcCommunication:
 
   def getSchema(query: String): Schema =
     withConnection { connection =>
+
       // create a PreparedStatment
       val statement = connection.prepareStatement(query)
 
       // get metadata out of that PreparedStatement
-      val metadata = statement.getMetaData()
+      val metadata = statement.getMetaData
 
       // transform metadata into Schema
       Schema.fromMetadata(metadata)
@@ -50,6 +47,6 @@ object JdbcCommunication:
     withConnection: connection =>
       val statement = connection.createStatement()
       val result    = statement.executeQuery(query)
-      val metaData  = result.getMetaData()
+      val metaData  = result.getMetaData
       val schema    = Schema.fromMetadata(metaData)
       parseRows(schema, result)

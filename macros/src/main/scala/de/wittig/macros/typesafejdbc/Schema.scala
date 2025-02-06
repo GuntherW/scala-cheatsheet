@@ -15,7 +15,7 @@ object Schema:
   def fromMetadata(metadata: ResultSetMetaData): Schema =
     val descriptors =
       for
-        i <- 1 to metadata.getColumnCount()
+        i <- 1 to metadata.getColumnCount
       yield ColumnDescriptor(
         index = i,
         name = metadata.getColumnLabel(i),

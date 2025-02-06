@@ -27,7 +27,7 @@ object JReflectionBasics:
   // createTuple[3, Int](42) => (42, 42, 42)
   transparent inline def createTuple[N <: Int, A](inline a: A) = ${ createTupleImpl[N, A]('a) }
 
-  def createTupleImpl[N: Type, A: Type](a: Expr[A])(using Quotes) =
+  private def createTupleImpl[N: Type, A: Type](a: Expr[A])(using Quotes) =
     import quotes.reflect.*
 
     def buildTupleSimple(n: Int): Expr[Tuple] =

@@ -42,6 +42,6 @@ object KStructuralTypes:
         case '[
             type r <: Record; r] => '{ Record($fields.toMap).asInstanceOf[r] }
 
-  def badFieldError(expr: Expr[?])(using Quotes) =
+  private def badFieldError(expr: Expr[?])(using Quotes) =
     import quotes.reflect.*
     report.errorAndAbort(s"Only literal values and compile-time computable expressions allowed.")

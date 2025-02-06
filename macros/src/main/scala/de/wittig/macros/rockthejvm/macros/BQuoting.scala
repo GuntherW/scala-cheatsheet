@@ -5,7 +5,7 @@ object BQuoting {
 
   inline def runPlayground(string: String): String = ${ macroPlayground('string) }
 
-  def macroPlayground(stringExpr: Expr[String])(using Quotes): Expr[String] =
+  private def macroPlayground(stringExpr: Expr[String])(using Quotes): Expr[String] =
 
     val anExpr          = '{ "some constant string" }
     val moreComplexExpr = '{ "some constant string" + $stringExpr }
@@ -29,5 +29,4 @@ object BQuoting {
     }
 
     legalUsageOfVariable
-
 }

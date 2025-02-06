@@ -1,6 +1,6 @@
 package de.wittig.macros.rockthejvm.inlines
 
-object InlineConditions extends App:
+object BInlineConditions extends App:
 
   inline def condition1(b: Boolean): String =
     if (b) "yes"
@@ -24,8 +24,7 @@ object InlineConditions extends App:
 
   // recursion
   transparent inline def sum(i: Int): Int =
-    inline if i == 0
-    then 0
+    inline if i == 0 then 0
     else i + sum(i - 1)
 
   val ten: 10 = sum(4)
