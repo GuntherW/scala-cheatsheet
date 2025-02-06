@@ -9,3 +9,8 @@ mill __.test
 ```shell
 mill mill.scalalib.Dependency/showUpdates
 ```
+
+
+```shell
+mill -w macros.compile
+```

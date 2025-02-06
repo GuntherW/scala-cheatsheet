@@ -3,8 +3,7 @@ import quoted.*
 
 object BQuoting {
 
-  inline def runPlayground(string: String): String =
-    ${ macroPlayground('string) }
+  inline def runPlayground(string: String): String = ${ macroPlayground('string) }
 
   def macroPlayground(stringExpr: Expr[String])(using Quotes): Expr[String] =
 

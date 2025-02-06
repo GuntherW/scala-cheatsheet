@@ -10,6 +10,6 @@ object ApplyDynamicNamed extends App:
 object Dyn4 extends Dynamic:
   def applyDynamicNamed(name: String)(args: (String, Any)*): String =
     val attributes = args
-      .map { case (k, v) => s"""$k="${v.toString}"""" }
+      .map { case (k, v) => s"$k=\"${v.toString}\"" }
       .mkString(" ")
     s"<$name $attributes></$name>"
