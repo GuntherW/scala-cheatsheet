@@ -33,7 +33,7 @@ trait UserRepository[F[_]]:
   def createUser(user: User): F[Unit]
   def findByName(name: String): F[List[User]]
 
-class UserRepositoryLive[F[_]: Concurrent: Console](session: Session[F]) extends UserRepository[F]:
+class UserRepositoryLive[F[_]: {Concurrent, Console}](session: Session[F]) extends UserRepository[F]:
   val codec: Codec[User] = (uuid, varchar, varchar).tupled.imap {
     case (id, name, email) => User(id, name, email)
   } {
@@ -54,7 +54,7 @@ class UserRepositoryLive[F[_]: Concurrent: Console](session: Session[F]) extends
     yield result
 
 object UserRepositoryLive:
-  def apply[F[_]: Concurrent: Console](session: Session[F]): F[UserRepositoryLive[F]] = new UserRepositoryLive[F](session).pure[F]
+  def apply[F[_]: {Concurrent, Console}](session: Session[F]): F[UserRepositoryLive[F]] = new UserRepositoryLive[F](session).pure[F]
 
 /** https://blog.rockthejvm.com/skunk-complete-guide/
   *
@@ -63,7 +63,7 @@ object UserRepositoryLive:
 
 object SkunkDemo extends IOApp.Simple:
 
-  private def getSession[F[_]: Temporal: Trace: Network: Console](config: Config): Resource[F, Session[F]] =
+  private def getSession[F[_]: {Temporal, Trace, Network, Console}](config: Config): Resource[F, Session[F]] =
     Session.single(
       host = config.host,
       port = config.port,
