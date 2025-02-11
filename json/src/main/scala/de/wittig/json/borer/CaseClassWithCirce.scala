@@ -13,7 +13,7 @@ object CaseClassWithCirce extends App:
   val p = Person("name", 123)
 
   val bytes: Array[Byte] = Cbor.encode(p).toByteArray // throws on error
-  println(bytes)
+  println(bytes.mkString)
 
   val list: Person = Cbor.decode(bytes).to[Person].value // throws on error
   println(list)

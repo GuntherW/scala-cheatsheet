@@ -58,7 +58,7 @@ object Version {
   val xstream                 = "1.4.21"
   val xml                     = "2.3.0"
   val zio                     = "2.1.15"
-  val zioJson                 = "0.7.16"
+  val zioJson                 = "0.7.17"
   val zioKafka                = "2.10.0"
   val zioHttp                 = "3.0.1"
   val zioPrelude              = "1.0.0-RC39"
@@ -72,7 +72,7 @@ object Version {
 
   // Test
   val cucumber        = "7.21.1"
-  val cucumberScala   = "8.26.0"
+  val cucumberScala   = "8.26.1"
   val junit           = "4.13.2"
   val junitInterface  = "0.13.3"
   val mockito         = "5.15.2"

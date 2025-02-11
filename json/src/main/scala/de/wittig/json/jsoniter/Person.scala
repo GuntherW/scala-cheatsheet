@@ -12,8 +12,11 @@ case class Person(
     dauer: FiniteDuration,
     year: Year,
     yearMonth: YearMonth,
-    numbers: List[Int]
+    numbers: List[Int],
+    car: Car
 )
 
 object Person:
   given userCodec: JsonValueCodec[Person] = JsonCodecMaker.make
+
+case class Car(brand: String, model: String, baujahr: Int)

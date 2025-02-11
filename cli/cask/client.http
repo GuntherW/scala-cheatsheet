@@ -1,0 +1,20 @@
+### GET Beispiel
+GET localhost:8080/
+
+### POST Beispiel
+POST localhost:8080/do-thing
+
+Rückwärts
+
+###
+GET localhost:8080/user/Gunther
+
+### Arbitrary Subpaths GET
+GET localhost:8080/path/Hallo/Du/da
+### Arbitrary Subpaths POST
+POST localhost:8080/path/Hallo/Du/da
+
+### Params
+GET localhost:8080/article/123?param=hallo
+### Params
+GET localhost:8080/article4/123?param=bar&param=qux

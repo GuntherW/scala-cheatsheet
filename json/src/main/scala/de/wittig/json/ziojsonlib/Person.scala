@@ -24,7 +24,6 @@ object Person:
         case ex: Exception => Left(s"Invalid duration format: ${ex.getMessage}")
     }
 
-  given JsonDecoder[Person] = DeriveJsonDecoder.gen[Person]
-
+  given JsonDecoder[Person]         = DeriveJsonDecoder.gen[Person]
   given JsonEncoder[FiniteDuration] = JsonEncoder.string.contramap(_.toString)
   given JsonEncoder[Person]         = DeriveJsonEncoder.gen[Person]
