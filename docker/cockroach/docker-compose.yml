@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  roach1:
+    image: cockroachdb/cockroach:latest
+    container_name: roach1
+    command: start --insecure --join=roach1,roach2,roach3
+    ports:
+      - "26257:26257"  # CockroachDB SQL port
+      - "8080:8080"    # CockroachDB Admin UI port
+    volumes:
+      - roach1-data:/cockroach/cockroach-data
+    networks:
+      - roachnet
+
+  roach2:
+    image: cockroachdb/cockroach:latest
+    container_name: roach2
+    command: start --insecure --join=roach1,roach2,roach3
+    volumes:
+      - roach2-data:/cockroach/cockroach-data
+    networks:
+      - roachnet
+
+  roach3:
+    image: cockroachdb/cockroach:latest
+    container_name: roach3
+    command: start --insecure --join=roach1,roach2,roach3
+    volumes:
+      - roach3-data:/cockroach/cockroach-data
+    networks:
+      - roachnet
+
+volumes:
+  roach1-data:
+  roach2-data:
+  roach3-data:
+
+networks:
+  roachnet:
+    driver: bridge

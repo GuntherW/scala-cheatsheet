@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.8"
-  val aws                     = "2.178.1"
+  val aws                     = "2.178.2"
   val avro4s                  = "5.0.14"
   val borer                   = "1.15.0"
   val caliban                 = "2.9.1"
@@ -15,8 +15,9 @@ object Version {
   val chimney                 = "1.7.3"
   val doobie                  = "1.0.0-RC7"
   val ducktape                = "0.2.7"
+  val duckdb                  = "1.2.0"
   val fs2                     = "3.11.0"
-  val gatling                 = "3.13.3"
+  val gatling                 = "3.13.4"
   val gears                   = "0.2.0"
   val h2                      = "2.3.232"
   val http4s                  = "0.23.30"
@@ -34,7 +35,7 @@ object Version {
   val magnum                  = "2.0.0-M1"
   val mongo                   = "5.3.1"
   val monocle                 = "3.3.0"
-  val neotype                 = "0.3.14"
+  val neotype                 = "0.3.15"
   val osLib                   = "0.11.3"
   val ox                      = "0.5.11"
   val parserCombinators       = "2.4.0"
@@ -58,7 +59,7 @@ object Version {
   val xstream                 = "1.4.21"
   val xml                     = "2.3.0"
   val zio                     = "2.1.15"
-  val zioJson                 = "0.7.17"
+  val zioJson                 = "0.7.19"
   val zioKafka                = "2.10.0"
   val zioHttp                 = "3.0.1"
   val zioPrelude              = "1.0.0-RC39"
@@ -109,6 +110,7 @@ object Library {
   val doobiePostgres          = "org.tpolecat"                          %% "doobie-postgres"            % Version.doobie
   val doobieHirari            = "org.tpolecat"                          %% "doobie-hikari"              % Version.doobie
   val ducktape                = "io.github.arainko"                     %% "ducktape"                   % Version.ducktape
+  val duckdb                  = "org.duckdb"                             % "duckdb_jdbc"                % Version.duckdb
   val fs2Core                 = "co.fs2"                                %% "fs2-core"                   % Version.fs2
   val fs2IO                   = "co.fs2"                                %% "fs2-io"                     % Version.fs2
   val fs2ReactiveStreams      = "co.fs2"                                %% "fs2-reactive-streams"       % Version.fs2

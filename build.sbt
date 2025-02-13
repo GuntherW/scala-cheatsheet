@@ -130,6 +130,7 @@ lazy val database = project
       Library.doobieCore,
       Library.doobiePostgres,
       Library.doobieHirari,
+      Library.duckdb,
       Library.magnum,
       Library.magnumpg,
       Library.pureConfig,

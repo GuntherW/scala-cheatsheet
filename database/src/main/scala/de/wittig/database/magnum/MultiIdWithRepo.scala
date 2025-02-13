@@ -15,17 +15,22 @@ object MultiIdWithRepo extends App {
   private val multRepo = MultiIdRepository()
 
   private val uuid = UUID.randomUUID
-  private val m1   = MultId(uuid, s"name-${Random.nextString(3)}", s"multi-${Random.nextString(3)}@mail.de")
-  private val m2   = MultId(uuid, s"name-${Random.nextString(3)}", s"multi-${Random.nextString(3)}@mail.de")
+  private val m1   = MultId(uuid, s"m1-${Random.nextString(3)}", s"m1-${Random.nextString(3)}@mail.de")
+  private val m2   = MultId(uuid, s"m2-${Random.nextString(3)}", s"m2-${Random.nextString(3)}@mail.de")
 
   transact(xa):
     multRepo.count.tap(println)
-    multRepo.insert(m1)
-    multRepo.insert(m2)
+    multRepo.insertAll(List(m1, m2))
     multRepo.findAll.tap(println)
-    multRepo.delete(m1)
-    println(s"delete $m1")
-    multRepo.findAll.tap(println)
+    multRepo.delete(m1).tap(_ => println(s"delete $m1"))
+    multRepo.findAll.tap(println) // Hier sollte jetzt noch m2 in der db sein.
 }
 
 class MultiIdRepository extends Repo[MultId, MultId, UUID]
+
+@Table(PostgresDbType, SqlNameMapper.CamelToSnakeCase)
+case class MultId(
+    @Id id: UUID,
+    @Id name: String,
+    email: String,
+) derives DbCodec

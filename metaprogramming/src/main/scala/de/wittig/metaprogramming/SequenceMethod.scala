@@ -2,7 +2,7 @@ package de.wittig.metaprogramming
 
 import scala.Tuple.InverseMap
 
-/** https://www.youtube.com/watch?v=leIB5tvDY64&t=1030s
+/** @see https://www.youtube.com/watch?v=leIB5tvDY64&t=1030s
   */
 object SequenceMethod extends App:
 

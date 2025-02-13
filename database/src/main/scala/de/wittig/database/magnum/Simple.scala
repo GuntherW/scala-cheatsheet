@@ -20,8 +20,9 @@ object Simple extends App {
   )
 
   // Simple Query
-  private val persons: Vector[Persons] = connect(xa):
-    sql"SELECT * FROM person".query[Persons].run()
+  private val persons: Vector[Persons] =
+    connect(xa):
+      sql"SELECT * FROM person".query[Persons].run()
   persons.foreach(println)
 
   // Transaction
@@ -31,8 +32,9 @@ object Simple extends App {
 //    throw new RuntimeException("Boom")
 
   // Returning Id
-  private val updateId: Vector[UUID] = connect(xa):
-    sql"""UPDATE person
+  private val updateId: Vector[UUID] =
+    connect(xa):
+      sql"""UPDATE person
          SET name = $randomString
          WHERE email = 'a@b.c'
          RETURNING id

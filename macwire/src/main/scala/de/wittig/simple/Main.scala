@@ -7,7 +7,8 @@ import Dependencies.*
   val userStatusReader = autowire[UserStatusReader]()
 
 object Dependencies:
-  class DatabaseAccess
+  class DatabaseAccess:
+    def printHallo(): Unit = println("Hallo")
   class SecurityFilter
   class UserFinder(databaseAccess: DatabaseAccess, securityFilter: SecurityFilter)
   class UserStatusReader(userFinder: UserFinder)

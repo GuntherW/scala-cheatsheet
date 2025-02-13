@@ -16,8 +16,8 @@ object Timed:
         println(s"Evaluating $exprAsString took ${end - start}ms")
     }
 
-  private def exprAsCompactString[T: Type](expr: Expr[T])(using ctx: Quotes): String =
-    import ctx.reflect.*
+  private def exprAsCompactString[T: Type](expr: Expr[T])(using q: Quotes): String =
+    import q.reflect.*
     expr.asTerm match
       case Inlined(_, _, Apply(method, params)) => s"${method.symbol.name}(${params.map(_.show).mkString(",")})"
       case _                                    => expr.show
