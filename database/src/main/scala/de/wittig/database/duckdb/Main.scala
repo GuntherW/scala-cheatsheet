@@ -6,6 +6,7 @@ import java.sql.{DriverManager, ResultSet}
 
 object Main extends App:
 
+//  val connection = DriverManager.getConnection("jdbc:duckdb:database/duck.db").asInstanceOf[DuckDBConnection]
   val connection = DriverManager.getConnection("jdbc:duckdb:").asInstanceOf[DuckDBConnection]
   val statement  = connection.createStatement()
 

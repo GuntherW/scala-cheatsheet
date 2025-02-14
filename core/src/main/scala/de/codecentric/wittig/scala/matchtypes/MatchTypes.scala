@@ -1,7 +1,5 @@
 package de.codecentric.wittig.scala.matchtypes
 
-import java.time.LocalDate
-
 object MatchTypes extends App:
 
   /** Folgende drei Methoden haben das gleich Muster: */

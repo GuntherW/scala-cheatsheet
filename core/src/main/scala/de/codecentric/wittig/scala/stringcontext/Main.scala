@@ -3,6 +3,7 @@ package de.codecentric.wittig.scala.stringcontext
 case class Point(x: Double, y: Double)
 case class Person(name: String, age: Int)
 
+// Erstellen eines eigenen StringInterpolators
 extension (sc: StringContext)
 
   // 1. Beispiel
@@ -19,7 +20,7 @@ extension (sc: StringContext)
     Person(tokens(0), tokens(1).toInt)
 
 @main
-def run =
+def run: Unit =
   val s = "Gun"
   val a = 4
   println(p"-1, 3")

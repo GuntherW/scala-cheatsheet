@@ -1,7 +1,6 @@
 package de.wittig.macros.typesafejdbc
 
 import java.sql.*
-import de.wittig.macros.rockthejvm.macrosUsage.JReflectionBasics.descriptor
 import scala.collection.mutable.ListBuffer
 
 object JdbcCommunication:
