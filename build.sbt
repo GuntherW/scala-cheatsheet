@@ -108,6 +108,7 @@ lazy val config = project
     libraryDependencies ++= Seq(
       Library.pureConfig,
       Library.ciris,
+      Library.toml,
     )
   )
 

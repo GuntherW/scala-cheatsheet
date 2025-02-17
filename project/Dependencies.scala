@@ -36,7 +36,7 @@ object Version {
   val mongo                   = "5.3.1"
   val monocle                 = "3.3.0"
   val neotype                 = "0.3.15"
-  val osLib                   = "0.11.3"
+  val osLib                   = "0.11.4"
   val ox                      = "0.5.11"
   val parserCombinators       = "2.4.0"
   val postgres                = "42.7.5"
@@ -54,12 +54,13 @@ object Version {
   val sttpOpenAi              = "0.2.6"
   val squants                 = "1.8.3"
   val tapir                   = "1.11.14"
+  val toml                    = "0.3.0"
   val tyqu                    = "0.1.0"
   val upickle                 = "4.1.0"
   val xstream                 = "1.4.21"
   val xml                     = "2.3.0"
   val zio                     = "2.1.15"
-  val zioJson                 = "0.7.20"
+  val zioJson                 = "0.7.21"
   val zioKafka                = "2.10.0"
   val zioHttp                 = "3.0.1"
   val zioPrelude              = "1.0.0-RC39"
@@ -181,6 +182,7 @@ object Library {
   val tapirNettyServerSync    = "com.softwaremill.sttp.tapir"           %% "tapir-netty-server-sync"    % Version.tapir
   val tapirSwaggerUiBundle    = "com.softwaremill.sttp.tapir"           %% "tapir-swagger-ui-bundle"    % Version.tapir
   val tapirPrometheusMetrics  = "com.softwaremill.sttp.tapir"           %% "tapir-prometheus-metrics"   % Version.tapir
+  val toml                    = "com.indoorvivants"                     %% "toml"                       % Version.toml
   val tyqu                    = "ch.epfl.tyqu"                          %% "tyqu"                       % Version.tyqu
   val upickle                 = "com.lihaoyi"                           %% "upickle"                    % Version.upickle
   val xstream                 = "com.thoughtworks.xstream"               % "xstream"                    % Version.xstream
