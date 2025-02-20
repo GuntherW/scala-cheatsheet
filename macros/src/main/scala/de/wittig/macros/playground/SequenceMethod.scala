@@ -1,4 +1,4 @@
-package de.wittig.metaprogramming
+package de.wittig.macros.playground
 
 import scala.Tuple.InverseMap
 

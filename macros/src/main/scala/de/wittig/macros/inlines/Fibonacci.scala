@@ -1,4 +1,4 @@
-package de.wittig.metaprogramming
+package de.wittig.macros.inlines
 
 inline def fibonacci(n: Int): Int =
   if n <= 1 then n

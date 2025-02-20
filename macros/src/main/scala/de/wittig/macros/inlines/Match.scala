@@ -1,4 +1,4 @@
-package de.wittig.metaprogramming.inline
+package de.wittig.macros.inlines
 
 inline def test(x: String | Int): String =
   inline x match

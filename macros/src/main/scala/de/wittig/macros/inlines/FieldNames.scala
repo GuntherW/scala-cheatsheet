@@ -1,9 +1,9 @@
-package de.wittig.macros.fieldnames
+package de.wittig.macros.inlines
 
 import scala.compiletime.{constValue, erasedValue, error, summonFrom}
 import scala.deriving.*
 
-object Main extends App:
+object FieldNames extends App:
 
   inline def fieldNames[T]: List[String] =
     summonFrom {

@@ -1,4 +1,4 @@
-package de.wittig.metaprogramming.inline
+package de.wittig.macros.inlines
 
 import scala.util.Random
 

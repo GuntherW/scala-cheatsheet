@@ -176,7 +176,8 @@ lazy val docs = project // new documentation project
   .settings(
     commonSettings,
     mdocVariables := Map( // Update mdocVariables to include site variables like @VERSION@.
-      "VERSION" -> version.value)
+      "VERSION" -> version.value
+    )
   )
   .enablePlugins(MdocPlugin)
 
@@ -264,11 +265,6 @@ lazy val magnolia = project
   .settings(
     commonSettings,
     libraryDependencies += Library.magnolia
-  )
-
-lazy val metaprogramming = project
-  .settings(
-    commonSettings
   )
 
 lazy val mongo = project

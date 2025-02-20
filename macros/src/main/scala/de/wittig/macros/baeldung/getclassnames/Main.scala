@@ -8,7 +8,7 @@ object Main extends App:
 
   case class Person(name: String)
 
-  getTypeMacro1("ein string").tap(println)
-  getTypeMacro2("ein string").tap(println)
-  getTypeMacro1(Person("peter")).tap(println)
-  getTypeMacro2(Person("peter")).tap(println)
+  getType1("ein string").tap(println)
+  getType2("ein string").tap(println)
+  getType1(Person("peter")).tap(println)
+  getType2(Person("peter")).tap(println)

@@ -1,6 +1,6 @@
-package de.wittig.metaprogramming.timed
+package de.wittig.macros.playground
 
-import de.wittig.metaprogramming.timed.Timed.timed
+import de.wittig.macros.playground.Timed.timed
 
 object Main extends App:
   private def myFunction(n: Int): Int =

@@ -6,15 +6,15 @@ import scala.quoted.{Expr, Quotes, Type}
   */
 object ClazzNames:
 
-  private def getType1[T](obj: Expr[T])(using Type[T])(using Quotes): Expr[String] = '{
+  inline def getType1[T](obj: T): String = ${ getType1Impl('obj) }
+  inline def getType2[T](obj: T): String = ${ getType2Impl('obj) }
+
+  private def getType1Impl[T: Type](obj: Expr[T])(using Quotes): Expr[String] = '{
     val o: T = $obj
     o.getClass.getSimpleName
   }
 
-  private def getType2[T](obj: Expr[T])(using t: Type[T])(using Quotes): Expr[String] = '{
+  private def getType2Impl[T](obj: Expr[T])(using t: Type[T])(using Quotes): Expr[String] = '{
     val o: t.Underlying = $obj
     o.getClass.getSimpleName
   }
-
-  inline def getTypeMacro1[T](obj: T): String = ${ getType1('obj) }
-  inline def getTypeMacro2[T](obj: T): String = ${ getType2('obj) }

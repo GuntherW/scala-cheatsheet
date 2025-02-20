@@ -1,4 +1,4 @@
-package de.wittig.metaprogramming.timed
+package de.wittig.macros.playground
 
 import scala.quoted.*
 
