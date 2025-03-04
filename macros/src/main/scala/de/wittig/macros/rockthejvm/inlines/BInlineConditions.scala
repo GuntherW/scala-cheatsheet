@@ -19,12 +19,12 @@ object BInlineConditions extends App:
   transparent inline def conditionUnion(b: Boolean): String | Int =
     if b then "yes" else 0
 
-  val union1 = conditionUnion(true)  // String
-  val union2 = conditionUnion(false) // Int
+  val union1 = conditionUnion(true)     // String
+  val union2 = conditionUnion(false)    // Int
+  val union3 = conditionUnion(variable) // Int
 
   // recursion
   transparent inline def sum(i: Int): Int =
-    inline if i == 0 then 0
-    else i + sum(i - 1)
+    inline if i == 0 then 0 else i + sum(i - 1)
 
   val ten: 10 = sum(4)

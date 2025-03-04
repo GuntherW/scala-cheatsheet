@@ -7,7 +7,6 @@ object CInlineSummoning extends App:
 
   trait Semigroup[A]:
     def combine(x: A, y: A): A
-  given Semigroup[Int] = _ + _
 
   def doubleSimple[A](a: A)(using Semigroup[A]): A =
     summon[Semigroup[A]].combine(a, a)
@@ -16,8 +15,9 @@ object CInlineSummoning extends App:
   inline def doubleInline[A](a: A): A =
     summonInline[Semigroup[A]].combine(a, a)
 
-  val f1 = doubleSimple(21).tap(println)
-  val f2 = doubleInline(21).tap(println)
+  given Semigroup[Int] = _ + _
+  val f1               = doubleSimple(21).tap(println)
+  val f2               = doubleInline(21).tap(println)
 
 // conditional summon
 object ConditionalSummoning extends App:
