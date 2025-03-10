@@ -1,4 +1,4 @@
-//> using dep "com.lihaoyi::cask:0.9.7"
+//> using dep "com.lihaoyi::cask:0.10.2"
 
 object CaskExample extends cask.MainRoutes {
 
