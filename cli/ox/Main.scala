@@ -2,7 +2,6 @@
 
 import ox.*
 
-@main def main = {
+@main def main =
 
   List(1, 2, 3).mapPar(2)(identity).foreach(println)
-}

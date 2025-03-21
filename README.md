@@ -6,7 +6,7 @@
 
 ### ScalaJs
 Run
-```
+```shell
 npm init private
 npm install jsdom
 ```

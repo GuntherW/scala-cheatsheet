@@ -32,9 +32,12 @@ object FlowSimple extends App {
   }
 
   def demoMerge = {
-    val f1 = Flow.tick(123.millis, "links")
+    val f1 = Flow.tick(150.millis, "links")
     val f2 = Flow.tick(300.millis, "rechts")
-    f1.merge(f2).take(10).runForeach(println)
+    val f3 = Flow.tick(500.millis, 123)
+    f1.merge(f2).merge(f3)
+      .take(10)
+      .runForeach(println)
   }
 
   inline def namesFlow = Flow

@@ -22,6 +22,7 @@ object StructuredConcurrency extends App {
   supervised {
     forkUser {
       println("fork1 start")
+      // forks will be interrupted here
       sleep(1.second)
       println("fork1 end")
     }
@@ -31,5 +32,5 @@ object StructuredConcurrency extends App {
       throw new RuntimeException("boom!")
     }
   }
-  println("Ende b")
+  println("Wird nicht mehr geschrieben")
 }
