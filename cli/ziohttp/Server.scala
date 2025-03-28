@@ -1,5 +1,5 @@
 //> using jvm "21"
-//> using dep "dev.zio::zio-http:3.0.1"
+//> using dep "dev.zio::zio-http:3.1.0"
 
 import zio.*
 import zio.http.*

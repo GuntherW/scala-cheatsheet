@@ -33,8 +33,8 @@ services:
 
   kafka-connect:
     container_name: kafka-connect
-#    image: confluentinc/cp-kafka-connect:7.2.1
-#    image: confluentinc/kafka-connect-datagen:latest
+    #    image: confluentinc/cp-kafka-connect:7.2.1
+    #    image: confluentinc/kafka-connect-datagen:latest
     build:
       context: connect
       dockerfile: Dockerfile
@@ -114,7 +114,7 @@ services:
       - data:/var/lib/postgres/dottydb/data
       - "./sql:/docker-entrypoint-initdb.d"
 
-    command: ["postgres", "-c", "log_statement=all", "-c", "log_destination=stderr"]
+    command: [ "postgres", "-c", "log_statement=all", "-c", "log_destination=stderr" ]
 
   pulsar:
     image: apachepulsar/pulsar
@@ -125,7 +125,7 @@ services:
     entrypoint: "bin/pulsar standalone"
 
   mongodb:
-    image: mongo:8.0.3
+    image: mongo:8.0
     container_name: mongodb-cheatsheet
     ports:
       - '27117:27017'
