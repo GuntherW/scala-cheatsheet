@@ -4,7 +4,7 @@ import kyo.*
 
 object Parallel extends KyoApp {
 
-  val programm = defer {
+  private val programm = defer {
 
     // An example computation
     val a: Int =
@@ -13,8 +13,7 @@ object Parallel extends KyoApp {
     // There are method overloadings for up to four
     // parallel computations. Parameters taken by
     // reference
-    val b: (Int, String) =
-      Async.parallel(a, "example").now
+    val b: (Int, String) = Async.zip(a, "example").now
     println(b)
   }
 
