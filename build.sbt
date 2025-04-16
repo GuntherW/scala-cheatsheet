@@ -337,9 +337,12 @@ lazy val sttp = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(
+      Library.jsoniterMacros,
       Library.sttpCore,
       Library.sttpBEZio,
+      Library.sttpFs2,
       Library.sttpCirce,
+      Library.sttpJsoniter,
       Library.sttpsSlf4j,
       Library.sttpOAuth,
       Library.catsCore,

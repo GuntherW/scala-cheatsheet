@@ -170,6 +170,8 @@ object Library {
   val sttpCore                = "com.softwaremill.sttp.client4"         %% "core"                       % Version.sttp
   val sttpCirce               = "com.softwaremill.sttp.client4"         %% "circe"                      % Version.sttp
   val sttpBEZio               = "com.softwaremill.sttp.client4"         %% "zio"                        % Version.sttp
+  val sttpFs2                 = "com.softwaremill.sttp.client4"         %% "fs2"                        % Version.sttp
+  val sttpJsoniter            = "com.softwaremill.sttp.client4"         %% "jsoniter"                   % Version.sttp
   val sttpsSlf4j              = "com.softwaremill.sttp.client4"         %% "slf4j-backend"              % Version.sttp
   val sttpOAuth               = "com.ocadotechnology"                   %% "sttp-oauth2"                % Version.sttpOAuth
   val sttpOpenAi              = "com.softwaremill.sttp.openai"          %% "core"                       % Version.sttpOpenAi
