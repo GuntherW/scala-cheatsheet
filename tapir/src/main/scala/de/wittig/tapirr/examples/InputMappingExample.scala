@@ -4,7 +4,6 @@ import scala.util.hashing.MurmurHash3
 
 import io.circe.{Decoder, Encoder}
 import io.circe.generic.auto.*
-import sttp.client3.Identity
 import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
@@ -37,7 +36,7 @@ object InputMappingExample extends App {
           case _     => Left(Error("Unknown operation"))
       }
 
-  val swaggerEndpoints = SwaggerInterpreter().fromServerEndpoints[Identity](List(maybeErrorEndpoint), "Meine App", "1.0")
+  val swaggerEndpoints = SwaggerInterpreter().fromServerEndpoints(List(maybeErrorEndpoint), "Meine App", "1.0")
 
   NettySyncServer().port(8080)
     .addEndpoint(maybeErrorEndpoint)

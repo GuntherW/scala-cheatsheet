@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.8"
-  val aws                     = "2.189.0"
+  val aws                     = "2.190.0"
   val avro4s                  = "5.0.14"
   val borer                   = "1.16.0"
   val caliban                 = "2.10.0"
@@ -22,12 +22,12 @@ object Version {
   val h2                      = "2.3.232"
   val http4s                  = "0.23.30"
   val jackson                 = "2.18.3"
-  val jwtHttp4s               = "2.0.3"
+  val jwtHttp4s               = "2.0.4"
   val jwtScala                = "10.0.4"
   val jsonSchemaValidator     = "1.5.6"
-  val jsoniter                = "2.34.0"
+  val jsoniter                = "2.34.1"
   val kafka                   = "4.0.0"
-  val kyo                     = "0.17.0"
+  val kyo                     = "0.18.0"
   val logback                 = "1.5.18"
   val log4j                   = "2.24.3"
   val macwire                 = "2.6.6"
@@ -35,7 +35,7 @@ object Version {
   val magnum                  = "2.0.0-M1"
   val mongo                   = "5.4.0"
   val monocle                 = "3.3.0"
-  val neotype                 = "0.3.21"
+  val neotype                 = "0.3.23"
   val openTelemetry           = "1.49.0"
   val osLib                   = "0.11.4"
   val ox                      = "0.5.13"
@@ -46,16 +46,16 @@ object Version {
   val quill                   = "4.8.6"
   val refined                 = "0.11.3"
   val resilience4j            = "2.3.0"
-  val scala                   = "3.6.4"
+  val scala                   = "3.7.0-RC2"
   val scalaParallelCollection = "1.2.0"
   val scalasql                = "0.1.19"
   val scodec                  = "2.3.2"
   val skunk                   = "0.6.4"
   val sttp                    = "4.0.2"
   val sttpOAuth               = "0.18.0"
-  val sttpOpenAi              = "0.3.2"
+  val sttpOpenAi              = "0.3.4"
   val squants                 = "1.8.3"
-  val tapir                   = "1.11.20"
+  val tapir                   = "1.11.25"
   val toml                    = "0.3.0"
   val tyqu                    = "0.1.0"
   val upickle                 = "4.1.0"
@@ -76,7 +76,7 @@ object Version {
 
   // Test
   val cucumber        = "7.22.0"
-  val cucumberScala   = "8.26.2"
+  val cucumberScala   = "8.27.0"
   val junit           = "4.13.2"
   val junitInterface  = "0.13.3"
   val mockito         = "5.17.0"
@@ -166,7 +166,6 @@ object Library {
   val refined                   = "eu.timepit"                            %% "refined"                                   % Version.refined
   val resilience4j              = "io.github.resilience4j"                 % "resilience4j-all"                          % Version.resilience4j
   val scalaParallelCollection   = "org.scala-lang.modules"                %% "scala-parallel-collections"                % Version.scalaParallelCollection
-  val scalaReflect              = "org.scala-lang"                         % "scala-reflect"                             % Version.scala % "provided"
   val scalasql                  = "com.lihaoyi"                           %% "scalasql"                                  % Version.scalasql
   val scodec                    = "org.scodec"                            %% "scodec-core"                               % Version.scodec
   val skunk                     = "org.tpolecat"                          %% "skunk-core"                                % Version.skunk

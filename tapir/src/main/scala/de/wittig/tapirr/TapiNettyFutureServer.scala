@@ -1,6 +1,6 @@
 package de.wittig.tapirr
 
-import sttp.client3.{asStringAlways, basicRequest, HttpURLConnectionBackend, Identity, SttpBackend, UriContext}
+import sttp.client4.{asStringAlways, basicRequest, DefaultSyncBackend, UriContext}
 import sttp.model.StatusCode
 import sttp.tapir.server.netty.{NettyFutureServer, NettyFutureServerBinding}
 import sttp.tapir.*
@@ -41,8 +41,8 @@ object TapiNettyFutureServer extends App {
   val host = serverBinding.hostName
   println(s"Server started at port = ${serverBinding.port}")
 
-  val backend: SttpBackend[Identity, Any] = HttpURLConnectionBackend()
-  val badUrl                              = uri"http://$host:$port/bad_url"
+  val backend = DefaultSyncBackend()
+  val badUrl  = uri"http://$host:$port/bad_url"
   assert(basicRequest.response(asStringAlways).get(badUrl).send(backend).code == StatusCode(404))
 
   val noQueryParameter = uri"http://$host:$port/hello"

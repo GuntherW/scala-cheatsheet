@@ -2,7 +2,6 @@ package de.wittig.tapirr.examples
 
 import scala.util.hashing.MurmurHash3
 
-import sttp.client3.Identity
 import sttp.model.*
 import sttp.tapir.*
 import sttp.tapir.server.netty.sync.NettySyncServer
@@ -59,7 +58,7 @@ object MultipleOutputsExample extends App {
         case 4 => Left(AvatarError.NotFound)
         case 5 => Left(AvatarError.Other("We don't like this user."))
       }
-  val swaggerEndpoints = SwaggerInterpreter().fromServerEndpoints[Identity](List(avatarEndpoint), "Meine App", "1.0")
+  val swaggerEndpoints = SwaggerInterpreter().fromServerEndpoints(List(avatarEndpoint), "Meine App", "1.0")
 
   NettySyncServer().port(8082)
     .addEndpoint(avatarEndpoint)

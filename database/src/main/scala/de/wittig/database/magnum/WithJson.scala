@@ -5,10 +5,6 @@ import com.augustnagro.magnum.*
 import de.wittig.database.DatabaseName.MagnumDb
 import de.wittig.database.dataSource
 
-import java.sql.Connection
-import java.util.UUID
-import scala.concurrent.duration.DurationInt
-import scala.util.Random
 import scala.util.chaining.*
 
 object WithJson extends App {

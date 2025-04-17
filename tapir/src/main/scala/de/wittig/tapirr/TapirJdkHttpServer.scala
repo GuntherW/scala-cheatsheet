@@ -1,4 +1,6 @@
-import sttp.client3.{asStringAlways, basicRequest, HttpURLConnectionBackend, Identity, Response, SttpBackend, UriContext}
+package de.wittig.tapirr
+
+import sttp.client4.{asStringAlways, basicRequest, DefaultSyncBackend, Response, UriContext}
 import sttp.model.StatusCode
 import sttp.tapir.server.jdkhttp.*
 import sttp.tapir.*
@@ -20,7 +22,7 @@ object TapirJdkHttpServer extends App {
 
   val secondServerEndpoint = secondEndpoint.handle(_ => Right("IT WORKS!"))
 
-  private val declaredPort = 9090
+  private val declaredPort = 9091
   private val declaredHost = "localhost"
 
   // Starting jdk http server
@@ -38,8 +40,8 @@ object TapirJdkHttpServer extends App {
   println(s"Server started at $host:$port")
 
   try {
-    val backend: SttpBackend[Identity, Any] = HttpURLConnectionBackend()
-    val badUrl                              = uri"http://$host:$port/bad_url"
+    val backend = DefaultSyncBackend()
+    val badUrl  = uri"http://$host:$port/bad_url"
     assert(basicRequest.response(asStringAlways).get(badUrl).send(backend).code == StatusCode(404))
 
     val noQueryParameter = uri"http://$host:$port/hello"

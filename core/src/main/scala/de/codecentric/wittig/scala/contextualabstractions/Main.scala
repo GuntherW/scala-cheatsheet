@@ -17,13 +17,13 @@ object Main extends App:
     override def combine(x: Int, y: Int): Int = x + y
     override def empty: Int                   = 0
 
-  def combineAll[A](l: List[A])(using combiner: Combiner[A]) = l.foldLeft(combiner.empty)(combiner.combine)
+  def combineAll[A: Combiner as combiner](l: List[A]) = l.foldLeft(combiner.empty)(combiner.combine)
 
   val numbers = (1 to 10).toList
   println(combineAll(numbers))
 
   // syntesize given instances
-  given optionCombiner[T](using combiner: Combiner[T]): Combiner[Option[T]] = new Combiner[Option[T]] {
+  given optionCombiner[T: Combiner as combiner]: Combiner[Option[T]] = new Combiner[Option[T]] {
     override def combine(x: Option[T], y: Option[T]): Option[T] =
       for
         vx <- x
@@ -45,8 +45,8 @@ object Main extends App:
   println("Peter".greet())
 
   // type classes
-  extension [T](list: List[T])
-    def reduceAll(using combiner: Combiner[T]) =
+  extension [T: Combiner as combiner](list: List[T])
+    def reduceAll =
       list.foldLeft(combiner.empty)(combiner.combine)
 
   println(numbers.reduceAll)

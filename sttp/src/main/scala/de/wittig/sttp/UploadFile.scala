@@ -18,11 +18,11 @@ object UploadFile extends App:
     println(response.body)
   }
 
-private def withTemporaryFile[T](data: Array[Byte])(f: Path => T): T = {
-  val file = Files.createTempFile("sttp", "demo")
-  try
-    Files.write(file, data)
-    f(file)
-  finally
-    val _ = Files.deleteIfExists(file)
-}
+  private def withTemporaryFile[T](data: Array[Byte])(f: Path => T): T = {
+    val file = Files.createTempFile("sttp", "demo")
+    try
+      Files.write(file, data)
+      f(file)
+    finally
+      val _ = Files.deleteIfExists(file)
+  }

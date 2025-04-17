@@ -362,8 +362,6 @@ lazy val tapir = project
     libraryDependencies ++= Seq(
       Library.http4sEmberServer,
       Library.tapirAwsLambda,
-      Library.tapirAwsCdk,
-      Library.tapirAwsSam,
       Library.tapirHttp4sServer,
       Library.tapirJsonCirce,
       Library.tapirJdkHttp,
