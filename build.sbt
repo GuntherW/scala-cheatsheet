@@ -340,6 +340,7 @@ lazy val sttp = project
       Library.jsoniterMacros,
       Library.openTelemtry,
       Library.openTelemtryAutoConfigure,
+      Library.resilience4j,
       Library.sttpCore,
       Library.sttpBEZio,
       Library.sttpFs2,
