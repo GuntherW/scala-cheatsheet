@@ -35,10 +35,15 @@ object NamedTuples extends App:
 //  val wontCompile = ageT ++ ageT
 
 // In scala 3.7?
-//  case class PersonV1(name: String, age: Int)
-//  case class PersonV2(name: String, age: Int, imker: Boolean)
-//
-//  val p1 = PersonV1("gun", 44)
+  case class PersonV1(name: String, age: Int)
+  case class PersonV2(name: String, age: Int, imker: Boolean)
+
+  val p1 = PersonV1("gun", 44)
+
+  p1 match
+    case PersonV1(name = "gun") => println("match") // Pattern matching with named fields
+    case _                      => println("no match")
+
 //  val p2 = p1
 //    .asNamedTuple
 //    .withField((imker = true))

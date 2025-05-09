@@ -12,7 +12,7 @@ object Version {
   val catsConsole             = "0.8.1"
   val circeVersion            = "0.14.13"
   val cirisVersion            = "3.8.0"
-  val chimney                 = "1.7.3"
+  val chimney                 = "1.8.0"
   val doobie                  = "1.0.0-RC9"
   val ducktape                = "0.2.8"
   val duckdb                  = "1.2.2.0"
@@ -25,7 +25,7 @@ object Version {
   val jwtHttp4s               = "2.0.7"
   val jwtScala                = "10.0.4"
   val jsonSchemaValidator     = "1.5.6"
-  val jsoniter                = "2.35.2"
+  val jsoniter                = "2.35.3"
   val kafka                   = "4.0.0"
   val kyo                     = "0.18.0"
   val logback                 = "1.5.18"
@@ -76,7 +76,7 @@ object Version {
 
   // Test
   val cucumber        = "7.22.1"
-  val cucumberScala   = "8.27.0"
+  val cucumberScala   = "8.27.1"
   val junit           = "4.13.2"
   val junitInterface  = "0.13.3"
   val mockito         = "5.17.0"
