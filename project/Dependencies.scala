@@ -51,7 +51,7 @@ object Version {
   val scalasql                = "0.1.19"
   val scodec                  = "2.3.2"
   val skunk                   = "0.6.4"
-  val sttp                    = "4.0.5"
+  val sttp                    = "4.0.6"
   val sttpOAuth               = "0.18.0"
   val sttpOpenAi              = "0.3.4"
   val squants                 = "1.8.3"
@@ -76,7 +76,7 @@ object Version {
 
   // Test
   val cucumber        = "7.22.2"
-  val cucumberScala   = "8.27.1"
+  val cucumberScala   = "8.27.2"
   val junit           = "4.13.2"
   val junitInterface  = "0.13.3"
   val mockito         = "5.17.0"

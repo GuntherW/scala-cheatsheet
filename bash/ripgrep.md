@@ -3,6 +3,12 @@
 rg '// TODO'
 ```
 
+### Normale Nutzung inklusive .* Dateien
+```shell
+rg '// TODO' --hidden
+```
+
+
 ### Zeige nur die Dateien
 ```shell
 rg -l '// TODO'

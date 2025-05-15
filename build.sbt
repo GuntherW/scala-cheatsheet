@@ -15,7 +15,6 @@ lazy val commonSettings = Seq(
     "-Ybackend-parallelism:8",
     "-experimental",
     "-unchecked",
-    "-release:23",
     "-Wunused:imports", // for scalafix
 //    "-language:strictEquality",
 //    "-Yprofile-enabled",
