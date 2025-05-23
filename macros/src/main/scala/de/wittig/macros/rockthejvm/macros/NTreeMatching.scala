@@ -1,6 +1,8 @@
 package de.wittig.macros.rockthejvm.macros
 import quoted.*
+
 object NTreeMatching:
+
   inline def demoTreeMatching[A](inline value: A): Unit = ${ demoTreeMatchingImpl('value) }
 
   private def demoTreeMatchingImpl[A: Type](value: Expr[A])(using Quotes): Expr[Unit] =

@@ -27,6 +27,7 @@ object TapiNettyFutureServer extends App {
   private val declaredHost                    = "localhost"
   // Starting netty server
   val serverBinding: NettyFutureServerBinding =
+
     Await.result(
       NettyFutureServer()
         .port(declaredPort)

@@ -17,9 +17,9 @@ object VersionRegex extends App:
 
 case class Version(major: Int, minor: Int, patch: Int) {
   override def toString: String = this match
-    case Version(_, -1, _) => major.toString
-    case Version(_, _, -1) => s"$major.$minor"
-    case _                 => s"$major.$minor.$patch"
+    case Version(minor = -1) => major.toString
+    case Version(patch = -1) => s"$major.$minor"
+    case _                   => s"$major.$minor.$patch"
 }
 
 object Version {

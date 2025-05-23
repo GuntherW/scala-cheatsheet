@@ -5,7 +5,7 @@ import scala.language.implicitConversions
 
 object ImplicitConversion extends App:
 
-  given Conversion[Double, Money] = Money(_, "EUR")
+  given Conversion[Double, Money] = d => Money(d, "EUR")
 
   private def sameCurrency(a: Money, b: Money) = a.currency == b.currency
 
