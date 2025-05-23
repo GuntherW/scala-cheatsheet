@@ -14,8 +14,8 @@ object MainWithRepo extends App {
   private val xa         = Transactor(dataSource(MagnumDb), sqlLogger = SqlLogger.logSlowQueries(3.milliseconds))
   private val personRepo = PersonRepository()
 
-  private val p1 = Persons(UUID.randomUUID, "HannesMin", s"${UUID.randomUUID}.h.de", Color.Red, LocalDateTime.now, Some(LocalDateTime.now), Some(LocalDate.of(1970, 1, 1)))
-  private val p2 = Persons(UUID.randomUUID, "HannesMax", s"${UUID.randomUUID}.h.de", Color.Red, LocalDateTime.now, Some(LocalDateTime.now), Some(LocalDate.of(9999, 1, 1)))
+  private val p1 = Persons(UUID.randomUUID, "HannesMin", s"${UUID.randomUUID}.h.de", Color.Red, OffsetDateTime.now, Some(LocalDateTime.now), Some(LocalDate.of(1970, 1, 1)))
+  private val p2 = Persons(UUID.randomUUID, "HannesMax", s"${UUID.randomUUID}.h.de", Color.Red, OffsetDateTime.now, Some(LocalDateTime.now), Some(LocalDate.of(9999, 1, 1)))
 
   val count = transact(xa):
     personRepo.count.tap(println)

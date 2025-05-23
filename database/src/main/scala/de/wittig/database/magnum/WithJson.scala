@@ -13,7 +13,7 @@ object WithJson extends App {
 
   connect(xa):
     sql"""
-          drop table people;
+          drop table if exists people;
           create table if not exists people (
             id serial primary key ,
             metadata jsonb
@@ -64,7 +64,7 @@ object WithJson extends App {
     sql"""select (metadata->'age')::int from people""".query[Int].run().tap(println)
     sql"""select metadata->'hobby'->0 from people""".query[String].run().tap(println)
     sql"""select metadata->'name', metadata->'hobby' from people""".query[(String, String)].run().tap(println)
-    // sql"""select metadata->'name' from people where metadata->'hobby' ? 'Scala'""".query[String].run().tap(println)
+//    sql"""select metadata->'name' from people where metadata->'hobby' ? 'Scala'""".query[String].run().tap(println)
     // sql"""select metadata->'name' from people where metadata->'hobby' ?& '["Fußball", "Scala"]'""".query[String].run().tap(println)
     // sql"""select metadata->'name' from people where metadata->'hobby' ?| '["Fußball", "Scala"]'""".query[String].run().tap(println)
     sql"""select metadata->'name' from people where metadata @> '{"name": "Gunther"}'""".query[String].run().tap(println)
