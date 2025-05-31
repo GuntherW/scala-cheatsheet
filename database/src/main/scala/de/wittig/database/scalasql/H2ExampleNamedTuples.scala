@@ -1,20 +1,23 @@
 package de.wittig.database.scalasql
-import scalasql.*, H2Dialect.*
+
 import org.h2.jdbcx.JdbcDataSource
+import scalasql.simple.*
+import scalasql.simple.H2Dialect.*
+
 import scala.util.chaining.*
 
-object H2Example extends App:
+object H2ExampleNamedTuples extends App:
 
   // Define your table model classes
-  case class City[T[_]](
-      id: T[Int],
-      name: T[String],
-      countryCode: T[String],
-      district: T[String],
-      population: T[Long]
+  case class City(
+      id: Int,
+      name: String,
+      countryCode: String,
+      district: String,
+      population: Long
   )
 
-  object City extends Table[City]
+  object City extends SimpleTable[City]
 
   // Connect to your database (example uses in-memory sqlite, org.xerial:sqlite-jdbc:3.43.0.0)
   val dataSource = JdbcDataSource()

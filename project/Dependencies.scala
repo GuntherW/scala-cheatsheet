@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.8"
-  val aws                     = "2.198.0"
+  val aws                     = "2.199.0"
   val avro4s                  = "5.0.14"
   val borer                   = "1.16.1"
   val caliban                 = "2.10.0"
@@ -12,7 +12,7 @@ object Version {
   val catsConsole             = "0.8.1"
   val circeVersion            = "0.14.13"
   val cirisVersion            = "3.8.0"
-  val chimney                 = "1.8.0"
+  val chimney                 = "1.8.1"
   val doobie                  = "1.0.0-RC9"
   val ducktape                = "0.2.8"
   val duckdb                  = "1.3.0.0"
@@ -38,9 +38,9 @@ object Version {
   val neotype                 = "0.3.25"
   val openTelemetry           = "1.50.0"
   val osLib                   = "0.11.4"
-  val ox                      = "0.5.13"
+  val ox                      = "0.5.15"
   val parserCombinators       = "2.4.0"
-  val postgres                = "42.7.5"
+  val postgres                = "42.7.6"
   val pureConfig              = "0.17.9"
   val pulsar4s                = "2.12.0.1"
   val quill                   = "4.8.6"
@@ -48,23 +48,23 @@ object Version {
   val resilience4j            = "2.3.0"
   val scala                   = "3.7.0"
   val scalaParallelCollection = "1.2.0"
-  val scalasql                = "0.1.19"
+  val scalasql                = "0.1.20"
   val scodec                  = "2.3.2"
   val skunk                   = "0.6.4"
   val sttp                    = "4.0.7"
   val sttpOAuth               = "0.18.0"
   val sttpOpenAi              = "0.3.5"
   val squants                 = "1.8.3"
-  val tapir                   = "1.11.32"
+  val tapir                   = "1.11.33"
   val toml                    = "0.3.0"
   val tyqu                    = "0.1.0"
   val upickle                 = "4.2.1"
   val xstream                 = "1.4.21"
-  val xml                     = "2.3.0"
-  val zio                     = "2.1.18"
+  val xml                     = "2.4.0"
+  val zio                     = "2.1.19"
   val zioJson                 = "0.7.43"
   val zioKafka                = "2.12.0"
-  val zioHttp                 = "3.3.0"
+  val zioHttp                 = "3.3.3"
   val zioPrelude              = "1.0.0-RC40"
   val zioSchema               = "1.7.2"
   val zioCli                  = "0.7.2"
@@ -75,8 +75,8 @@ object Version {
   val uTest      = "0.8.5"
 
   // Test
-  val cucumber        = "7.22.2"
-  val cucumberScala   = "8.27.3"
+  val cucumber        = "7.23.0"
+  val cucumberScala   = "8.28.0"
   val junit           = "4.13.2"
   val junitInterface  = "0.13.3"
   val mockito         = "5.18.0"
@@ -167,6 +167,7 @@ object Library {
   val resilience4j              = "io.github.resilience4j"                 % "resilience4j-all"                          % Version.resilience4j
   val scalaParallelCollection   = "org.scala-lang.modules"                %% "scala-parallel-collections"                % Version.scalaParallelCollection
   val scalasql                  = "com.lihaoyi"                           %% "scalasql"                                  % Version.scalasql
+  val scalasqlNamedTuples       = "com.lihaoyi"                           %% "scalasql-namedtuples"                      % Version.scalasql
   val scodec                    = "org.scodec"                            %% "scodec-core"                               % Version.scodec
   val skunk                     = "org.tpolecat"                          %% "skunk-core"                                % Version.skunk
   val sttpCore                  = "com.softwaremill.sttp.client4"         %% "core"                                      % Version.sttp
