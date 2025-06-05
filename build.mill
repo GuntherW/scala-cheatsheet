@@ -1,14 +1,14 @@
 import mill._, scalalib._
 
-trait CommonSbtModule extends SbtModule {
+trait CommonSbtModule extends SbtModule :
   def scalaVersion  = Version.scala
   def scalacOptions = Seq(
     "-experimental"
   )
-}
 
-object core extends CommonSbtModule {
-  def ivyDeps = Agg(
+
+object core extends CommonSbtModule:
+  def mvnDeps = Seq(
     Dependency.catsCore,
     Dependency.catsEffectCps,
     Dependency.catsFree,
@@ -34,8 +34,8 @@ object core extends CommonSbtModule {
     Dependency.jacksonScala,
   )
 
-  object test extends SbtTests {
-    def ivyDeps       = Agg(
+  object test extends SbtTests:
+    def mvnDeps       = Seq(
       Dependency.mockito,
       Dependency.scalatest,
       Dependency.scalaCheck,
@@ -43,20 +43,18 @@ object core extends CommonSbtModule {
       Dependency.testContainer
     )
     def testFramework = "org.scalatest.tools.Framework"
-  }
-}
 
-object config extends CommonSbtModule {
-  def ivyDeps = Agg(
+
+object config extends CommonSbtModule:
+  def mvnDeps = Seq(
     Dependency.pureConfig,
     Dependency.ciris,
     Dependency.toml
   )
-}
 
-object cucumber extends CommonSbtModule {
-  object test extends SbtTests {
-    def ivyDeps       = Agg(
+object cucumber extends CommonSbtModule:
+  object test extends SbtTests:
+    def mvnDeps       = Seq(
       Dependency.cucumberScala,
       Dependency.cucumberJunit,
       Dependency.cucumberPico,
@@ -64,11 +62,9 @@ object cucumber extends CommonSbtModule {
       Dependency.junit,
     )
     def testFramework = "com.novocode.junit.JUnitFramework"
-  }
-}
 
-object database extends CommonSbtModule {
-  def ivyDeps = Agg(
+object database extends CommonSbtModule:
+  def mvnDeps = Seq(
     Dependency.doobieCore,
     Dependency.doobiePostgres,
     Dependency.doobieHirari,
@@ -88,17 +84,16 @@ object database extends CommonSbtModule {
     Dependency.quillJdbc,
     Dependency.quillJdbcZio,
   )
-}
 
-object datatransformation extends CommonSbtModule {
-  def ivyDeps = Agg(
+
+object datatransformation extends CommonSbtModule:
+  def mvnDeps = Seq(
     Dependency.ducktape,
     Dependency.chimney,
   )
-}
 
-object direct extends CommonSbtModule {
-  def ivyDeps = Agg(
+object direct extends CommonSbtModule:
+  def mvnDeps = Seq(
     Dependency.gears,
     Dependency.kyoCore,
     Dependency.kyoDirect,
@@ -110,10 +105,9 @@ object direct extends CommonSbtModule {
     Dependency.tapirNettyServerSync,
     Dependency.sttpCore
   )
-}
 
-object json extends CommonSbtModule {
-  def ivyDeps = Agg(
+object json extends CommonSbtModule:
+  def mvnDeps = Seq(
     Dependency.avro4s,
     Dependency.borerCore,
     Dependency.borerCirce,
@@ -127,35 +121,31 @@ object json extends CommonSbtModule {
     Dependency.upickle,
     Dependency.zioJson,
   )
-}
 
-object macros extends CommonSbtModule {
+object macros extends CommonSbtModule:
   def forkArgs      = Seq("-Xmx4g")
   def scalacOptions = Seq(
     "-experimental",
     "-Xprint:postInlining", // Wichtiger output bei "compile", um zu sehen, ob/wie Inline funktioniert
     "-Xmax-inlines:100000"
   )
-  def ivyDeps       = Agg(
+  def mvnDeps       = Seq(
     Dependency.postgres
   )
-}
 
-object magwire extends CommonSbtModule {
-  def ivyDeps = Agg(
+object magwire extends CommonSbtModule:
+  def mvnDeps = Seq(
     Dependency.macwire
   )
-}
 
-object magnolia extends CommonSbtModule {
-  def ivyDeps = Agg(
+object magnolia extends CommonSbtModule:
+  def mvnDeps = Seq(
     Dependency.magnolia
   )
-}
 
-object munit extends CommonSbtModule {
-  object test extends SbtTests {
-    def ivyDeps       = Agg(
+object munit extends CommonSbtModule:
+  object test extends SbtTests:
+    def mvnDeps       = Seq(
       Dependency.munit,
       Dependency.scalatest,
       Dependency.munitScalaCheck,
@@ -164,31 +154,26 @@ object munit extends CommonSbtModule {
       Dependency.circeParser,
     )
     def testFramework = "munit.Framework"
-  }
-}
 
-object osLib extends CommonSbtModule {
+object osLib extends CommonSbtModule:
   def forkArgs = Seq("-Xmx4g")
 
-  def ivyDeps = Agg(
+  def mvnDeps = Seq(
     Dependency.osLib
   )
-}
 
-object scalacheck extends CommonSbtModule {
+object scalacheck extends CommonSbtModule:
 
-  object test extends SbtTests {
-    def ivyDeps       = Agg(
+  object test extends SbtTests:
+    def mvnDeps       = Seq(
       Dependency.scalaCheck
-    ) ++ Agg(
+    ) ++ Seq(
       Dependency.scalatest
     )
     def testFramework = "org.scalacheck.ScalaCheckFramework"
-  }
-}
 
-object sttp extends CommonSbtModule {
-  def ivyDeps = Agg(
+object sttp extends CommonSbtModule:
+  def mvnDeps = Seq(
     Dependency.jsoniterMacros,
     Dependency.jsoniter,
     Dependency.openTelemtry,
@@ -207,9 +192,8 @@ object sttp extends CommonSbtModule {
     Dependency.log4jCore,
     Dependency.log4jSlf4jImpl,
   )
-}
 
-object Version {
+object Version:
   val akka                    = "2.8.8"
   val avro4s                  = "5.0.14"
   val aws                     = "2.173.4"
@@ -294,146 +278,145 @@ object Version {
   val scalaMock       = "7.3.2"
   val testContainer   = "0.43.0"
   val weaverCats      = "0.8.4"
-}
 
-object Dependency {
-  val akka                      = ivy"com.typesafe.akka::akka-actor-typed:${Version.akka}"
-  val avro4s                    = ivy"com.sksamuel.avro4s::avro4s-core:${Version.avro4s}"
-  val awsCdk                    = ivy"software.amazon.awscdk:aws-cdk-lib:${Version.aws}"
-  val borerCore                 = ivy"io.bullet::borer-core:${Version.borer}"
-  val borerDerivation           = ivy"io.bullet::borer-derivation:${Version.borer}"
-  val borerCirce                = ivy"io.bullet::borer-compat-circe:${Version.borer}"
-  val borerScodec               = ivy"io.bullet::borer-compat-scodec:${Version.borer}"
-  val calibanQuick              = ivy"com.github.ghostdogpr::caliban-quick:${Version.caliban}"
-  val calibanClient             = ivy"com.github.ghostdogpr::caliban-client:${Version.caliban}"
-  val catsCore                  = ivy"org.typelevel::cats-core:${Version.catsVersion}"
-  val catsEffectCps             = ivy"org.typelevel::cats-effect-cps:${Version.catsEffectCps}"
-  val catsFree                  = ivy"org.typelevel::cats-free:${Version.catsVersion}"
-  val circeCore                 = ivy"io.circe::circe-core:${Version.circeVersion}"
-  val circeGeneric              = ivy"io.circe::circe-generic:${Version.circeVersion}"
-  val circeParser               = ivy"io.circe::circe-parser:${Version.circeVersion}"
-  val ciris                     = ivy"is.cir::ciris:${Version.cirisVersion}"
-  val cirisCirce                = ivy"is.cir::ciris-circe:${Version.cirisVersion}"
-  val chimney                   = ivy"io.scalaland::chimney:${Version.chimney}"
-  val doobieCore                = ivy"org.tpolecat::doobie-core:${Version.doobie}"
-  val doobiePostgres            = ivy"org.tpolecat::doobie-postgres:${Version.doobie}"
-  val doobieHirari              = ivy"org.tpolecat::doobie-hikari:${Version.doobie}"
-  val duckdb                    = ivy"org.duckdb:duckdb_jdbc:${Version.duckdb}"
-  val ducktape                  = ivy"io.github.arainko::ducktape:${Version.ducktape}"
-  val fs2Core                   = ivy"co.fs2::fs2-core:${Version.fs2}"
-  val fs2IO                     = ivy"co.fs2::fs2-io:${Version.fs2}"
-  val fs2ReactiveStreams        = ivy"co.fs2::fs2-reactive-streams:${Version.fs2}"
-  val gears                     = ivy"ch.epfl.lamp::gears:${Version.gears}"
-  val h2                        = ivy"com.h2database:h2:${Version.h2}"
-  val http4s                    = ivy"org.http4s::http4s-dsl:${Version.http4s}"
-  val http4sEmberServer         = ivy"org.http4s::http4s-ember-server:${Version.http4s}"
-  val http4sEmberClient         = ivy"org.http4s::http4s-ember-client:${Version.http4s}"
-  val http4sCirce               = ivy"org.http4s::http4s-circe:${Version.http4s}"
-  val http4sDsl                 = ivy"org.http4s::http4s-dsl:${Version.http4s}"
-  val jacksonCore               = ivy"com.fasterxml.jackson.core:jackson-databind:${Version.jackson}"
-  val jacksonScala              = ivy"com.fasterxml.jackson.module::jackson-module-scala:${Version.jackson}"
-  val jsoniter                  = ivy"com.github.plokhotnyuk.jsoniter-scala::jsoniter-scala-core:${Version.jsoniter}"
-  val jsoniterMacros            = ivy"com.github.plokhotnyuk.jsoniter-scala::jsoniter-scala-macros:${Version.jsoniter}"
-  val jsonSchemaValidator       = ivy"com.networknt:json-schema-validator:${Version.jsonSchemaValidator}"
-  val jwtHttp4s                 = ivy"dev.profunktor::http4s-jwt-auth:${Version.jwtHttp4s}"
-  val jwtScala                  = ivy"com.github.jwt-scala::jwt-core:${Version.jwtScala}"
-  val jwtCirce                  = ivy"com.github.jwt-scala::jwt-circe:${Version.jwtScala}"
-  val kafkaClients              = ivy"org.apache.kafka:kafka-clients:${Version.kafka}"
-  val kafkaStreams              = ivy"org.apache.kafka:kafka-streams:${Version.kafka}"
-  val kafkaStreamsScala         = ivy"org.apache.kafka::kafka-streams-scala:${Version.kafka}"
-  val kyoCore                   = ivy"io.getkyo::kyo-core:${Version.kyo}"
-  val kyoDirect                 = ivy"io.getkyo::kyo-direct:${Version.kyo}"
-  val kyoCache                  = ivy"io.getkyo::kyo-cache:${Version.kyo}"
-  val kyoStat                   = ivy"io.getkyo::kyo-stats-otel:${Version.kyo}"
-  val kyoSttp                   = ivy"io.getkyo::kyo-sttp:${Version.kyo}"
-  val kyoTapir                  = ivy"io.getkyo::kyo-tapir:${Version.kyo}"
-  val logback                   = ivy"ch.qos.logback:logback-classic:${Version.logback}"
-  val log4jApi                  = ivy"org.apache.logging.log4j:log4j-api:${Version.log4j}"
-  val log4jCore                 = ivy"org.apache.logging.log4j:log4j-core:${Version.log4j}"
-  val log4jSlf4jImpl            = ivy"org.apache.logging.log4j:log4j-slf4j-impl:${Version.log4j}"
-  val macwire                   = ivy"com.softwaremill.macwire::macros:${Version.macwire}"
-  val magnolia                  = ivy"com.softwaremill.magnolia1_3::magnolia:${Version.magnolia}"
-  val magnum                    = ivy"com.augustnagro::magnum:${Version.magnum}"
-  val magnumpg                  = ivy"com.augustnagro::magnumpg:${Version.magnum}"
-  val mongoDriverJava           = ivy"org.mongodb:mongodb-driver-sync:${Version.mongo}"
-  val monocle                   = ivy"dev.optics::monocle-core:${Version.monocle}"
-  val neotype                   = ivy"io.github.kitlangton::neotype:${Version.neotype}"
-  val openTelemtry              = ivy"io.opentelemetry:opentelemetry-exporter-otlp:${Version.openTelemetry}"
-  val openTelemtryAutoConfigure = ivy"io.opentelemetry:opentelemetry-sdk-extension-autoconfigure:${Version.openTelemetry}"
-  val osLib                     = ivy"com.lihaoyi::os-lib:${Version.osLib}"
-  val ox                        = ivy"com.softwaremill.ox::core:${Version.ox}"
-  val postgres                  = ivy"org.postgresql:postgresql:${Version.postgres}"
-  val pureConfig                = ivy"com.github.pureconfig::pureconfig-generic-scala3:${Version.pureConfig}"
-  val pulsar4s                  = ivy"com.clever-cloud.pulsar4s::pulsar4s-core:${Version.pulsar4s}"
-  val pulsar4sCirce             = ivy"com.clever-cloud.pulsar4s::pulsar4s-circe:${Version.pulsar4s}"
-  val quillJdbc                 = ivy"io.getquill::quill-jdbc:${Version.quill}"
-  val quillJdbcZio              = ivy"io.getquill::quill-jdbc-zio:${Version.quill}"
-  val refined                   = ivy"eu.timepit::refined:${Version.refined}"
-  val resilience4j              = ivy"io.github.resilience4j:resilience4j-all:${Version.resilience4j}"
-  val scalaParallelCollection   = ivy"org.scala-lang.modules::scala-parallel-collections:${Version.scalaParallelCollection}"
-  val scalaReflect              = ivy"org.scala-lang:scala-reflect:${Version.scala}"
-  val scalasql                  = ivy"com.lihaoyi::scalasql:${Version.scalasql}"
-  val scalasqlNamedTuples       = ivy"com.lihaoyi::scalasql-namedtuples:${Version.scalasql}"
-  val scodec                    = ivy"org.scodec::scodec-core:${Version.scodec}"
-  val skunk                     = ivy"org.tpolecat::skunk-core:${Version.skunk}"
-  val sttpCore                  = ivy"com.softwaremill.sttp.client4::core:${Version.sttp}"
-  val sttpCirce                 = ivy"com.softwaremill.sttp.client4::circe:${Version.sttp}"
-  val sttpBEZio                 = ivy"com.softwaremill.sttp.client4::zio:${Version.sttp}"
-  val sttpFs2                   = ivy"com.softwaremill.sttp.client4::fs2:${Version.sttp}"
-  val sttpJsoniter              = ivy"com.softwaremill.sttp.client4::jsoniter:${Version.sttp}"
-  val sttpsSlf4j                = ivy"com.softwaremill.sttp.client4::slf4j-backend:${Version.sttp}"
-  val sttpOpenTelemetry         = ivy"com.softwaremill.sttp.client4::opentelemetry-backend:${Version.sttp}"
-  val sttpOAuth                 = ivy"com.ocadotechnology::sttp-oauth2:${Version.sttpOAuth}"
-  val sttpOpenAi                = ivy"com.softwaremill.sttp.openai::core:${Version.sttpOpenAi}"
-  val squants                   = ivy"org.typelevel::squants:${Version.squants}"
-  val tapirAwsLambda            = ivy"com.softwaremill.sttp.tapir::tapir-aws-lambda:${Version.tapir}"
-  val tapirAwsCdk               = ivy"com.softwaremill.sttp.tapir::tapir-aws-cdk:${Version.tapir}"
-  val tapirAwsSam               = ivy"com.softwaremill.sttp.tapir::tapir-aws-sam:${Version.tapir}"
-  val tapirHttp4sServer         = ivy"com.softwaremill.sttp.tapir::tapir-http4s-server:${Version.tapir}"
-  val tapirJsonCirce            = ivy"com.softwaremill.sttp.tapir::tapir-json-circe:${Version.tapir}"
-  val tapirJdkHttp              = ivy"com.softwaremill.sttp.tapir::tapir-jdkhttp-server:${Version.tapir}"
-  val tapirNettyFuture          = ivy"com.softwaremill.sttp.tapir::tapir-netty-server:${Version.tapir}"
-  val tapirNettyServerSync      = ivy"com.softwaremill.sttp.tapir::tapir-netty-server-sync:${Version.tapir}"
-  val tapirSwaggerUiBundle      = ivy"com.softwaremill.sttp.tapir::tapir-swagger-ui-bundle:${Version.tapir}"
-  val tapirPrometheusMetrics    = ivy"com.softwaremill.sttp.tapir::tapir-prometheus-metrics:${Version.tapir}"
-  val toml                      = ivy"com.indoorvivants::toml:${Version.toml}"
-  val tyqu                      = ivy"ch.epfl.tyqu::tyqu:${Version.tyqu}"
-  val upickle                   = ivy"com.lihaoyi::upickle:${Version.upickle}"
-  val xstream                   = ivy"com.thoughtworks.xstream:xstream:${Version.xstream}"
-  val xml                       = ivy"org.scala-lang.modules::scala-xml:${Version.xml}"
-  val zio                       = ivy"dev.zio::zio:${Version.zio}"
-  val zioKafka                  = ivy"dev.zio::zio-kafka:${Version.zioKafka}"
-  val zioStreams                = ivy"dev.zio::zio-streams:${Version.zio}"
-  val zioJson                   = ivy"dev.zio::zio-json:${Version.zioJson}"
-  val zioPrelude                = ivy"dev.zio::zio-prelude:${Version.zioPrelude}"
-  val zioSchema                 = ivy"dev.zio::zio-schema:${Version.zioSchema}"
-  val zioSchemaJson             = ivy"dev.zio::zio-schema-json:${Version.zioSchema}"
-  val zioSchemaBson             = ivy"dev.zio::zio-schema-bson:${Version.zioSchema}"
-  val zioSchemaProtobuf         = ivy"dev.zio::zio-schema-protobuf:${Version.zioSchema}"
-  val zioSchemaDerivation       = ivy"dev.zio::zio-schema-derivation:${Version.zioSchema}"
-  val zioHttp                   = ivy"dev.zio::zio-http:${Version.zioHttp}"
-  val zioCli                    = ivy"dev.zio::zio-cli:${Version.zioCli}"
-  val zioOpenAI                 = ivy"dev.zio::zio-openai:${Version.zioOpenAI}"
+object Dependency:
+  val akka                      = mvn"com.typesafe.akka::akka-actor-typed:${Version.akka}"
+  val avro4s                    = mvn"com.sksamuel.avro4s::avro4s-core:${Version.avro4s}"
+  val awsCdk                    = mvn"software.amazon.awscdk:aws-cdk-lib:${Version.aws}"
+  val borerCore                 = mvn"io.bullet::borer-core:${Version.borer}"
+  val borerDerivation           = mvn"io.bullet::borer-derivation:${Version.borer}"
+  val borerCirce                = mvn"io.bullet::borer-compat-circe:${Version.borer}"
+  val borerScodec               = mvn"io.bullet::borer-compat-scodec:${Version.borer}"
+  val calibanQuick              = mvn"com.github.ghostdogpr::caliban-quick:${Version.caliban}"
+  val calibanClient             = mvn"com.github.ghostdogpr::caliban-client:${Version.caliban}"
+  val catsCore                  = mvn"org.typelevel::cats-core:${Version.catsVersion}"
+  val catsEffectCps             = mvn"org.typelevel::cats-effect-cps:${Version.catsEffectCps}"
+  val catsFree                  = mvn"org.typelevel::cats-free:${Version.catsVersion}"
+  val circeCore                 = mvn"io.circe::circe-core:${Version.circeVersion}"
+  val circeGeneric              = mvn"io.circe::circe-generic:${Version.circeVersion}"
+  val circeParser               = mvn"io.circe::circe-parser:${Version.circeVersion}"
+  val ciris                     = mvn"is.cir::ciris:${Version.cirisVersion}"
+  val cirisCirce                = mvn"is.cir::ciris-circe:${Version.cirisVersion}"
+  val chimney                   = mvn"io.scalaland::chimney:${Version.chimney}"
+  val doobieCore                = mvn"org.tpolecat::doobie-core:${Version.doobie}"
+  val doobiePostgres            = mvn"org.tpolecat::doobie-postgres:${Version.doobie}"
+  val doobieHirari              = mvn"org.tpolecat::doobie-hikari:${Version.doobie}"
+  val duckdb                    = mvn"org.duckdb:duckdb_jdbc:${Version.duckdb}"
+  val ducktape                  = mvn"io.github.arainko::ducktape:${Version.ducktape}"
+  val fs2Core                   = mvn"co.fs2::fs2-core:${Version.fs2}"
+  val fs2IO                     = mvn"co.fs2::fs2-io:${Version.fs2}"
+  val fs2ReactiveStreams        = mvn"co.fs2::fs2-reactive-streams:${Version.fs2}"
+  val gears                     = mvn"ch.epfl.lamp::gears:${Version.gears}"
+  val h2                        = mvn"com.h2database:h2:${Version.h2}"
+  val http4s                    = mvn"org.http4s::http4s-dsl:${Version.http4s}"
+  val http4sEmberServer         = mvn"org.http4s::http4s-ember-server:${Version.http4s}"
+  val http4sEmberClient         = mvn"org.http4s::http4s-ember-client:${Version.http4s}"
+  val http4sCirce               = mvn"org.http4s::http4s-circe:${Version.http4s}"
+  val http4sDsl                 = mvn"org.http4s::http4s-dsl:${Version.http4s}"
+  val jacksonCore               = mvn"com.fasterxml.jackson.core:jackson-databind:${Version.jackson}"
+  val jacksonScala              = mvn"com.fasterxml.jackson.module::jackson-module-scala:${Version.jackson}"
+  val jsoniter                  = mvn"com.github.plokhotnyuk.jsoniter-scala::jsoniter-scala-core:${Version.jsoniter}"
+  val jsoniterMacros            = mvn"com.github.plokhotnyuk.jsoniter-scala::jsoniter-scala-macros:${Version.jsoniter}"
+  val jsonSchemaValidator       = mvn"com.networknt:json-schema-validator:${Version.jsonSchemaValidator}"
+  val jwtHttp4s                 = mvn"dev.profunktor::http4s-jwt-auth:${Version.jwtHttp4s}"
+  val jwtScala                  = mvn"com.github.jwt-scala::jwt-core:${Version.jwtScala}"
+  val jwtCirce                  = mvn"com.github.jwt-scala::jwt-circe:${Version.jwtScala}"
+  val kafkaClients              = mvn"org.apache.kafka:kafka-clients:${Version.kafka}"
+  val kafkaStreams              = mvn"org.apache.kafka:kafka-streams:${Version.kafka}"
+  val kafkaStreamsScala         = mvn"org.apache.kafka::kafka-streams-scala:${Version.kafka}"
+  val kyoCore                   = mvn"io.getkyo::kyo-core:${Version.kyo}"
+  val kyoDirect                 = mvn"io.getkyo::kyo-direct:${Version.kyo}"
+  val kyoCache                  = mvn"io.getkyo::kyo-cache:${Version.kyo}"
+  val kyoStat                   = mvn"io.getkyo::kyo-stats-otel:${Version.kyo}"
+  val kyoSttp                   = mvn"io.getkyo::kyo-sttp:${Version.kyo}"
+  val kyoTapir                  = mvn"io.getkyo::kyo-tapir:${Version.kyo}"
+  val logback                   = mvn"ch.qos.logback:logback-classic:${Version.logback}"
+  val log4jApi                  = mvn"org.apache.logging.log4j:log4j-api:${Version.log4j}"
+  val log4jCore                 = mvn"org.apache.logging.log4j:log4j-core:${Version.log4j}"
+  val log4jSlf4jImpl            = mvn"org.apache.logging.log4j:log4j-slf4j-impl:${Version.log4j}"
+  val macwire                   = mvn"com.softwaremill.macwire::macros:${Version.macwire}"
+  val magnolia                  = mvn"com.softwaremill.magnolia1_3::magnolia:${Version.magnolia}"
+  val magnum                    = mvn"com.augustnagro::magnum:${Version.magnum}"
+  val magnumpg                  = mvn"com.augustnagro::magnumpg:${Version.magnum}"
+  val mongoDriverJava           = mvn"org.mongodb:mongodb-driver-sync:${Version.mongo}"
+  val monocle                   = mvn"dev.optics::monocle-core:${Version.monocle}"
+  val neotype                   = mvn"io.github.kitlangton::neotype:${Version.neotype}"
+  val openTelemtry              = mvn"io.opentelemetry:opentelemetry-exporter-otlp:${Version.openTelemetry}"
+  val openTelemtryAutoConfigure = mvn"io.opentelemetry:opentelemetry-sdk-extension-autoconfigure:${Version.openTelemetry}"
+  val osLib                     = mvn"com.lihaoyi::os-lib:${Version.osLib}"
+  val ox                        = mvn"com.softwaremill.ox::core:${Version.ox}"
+  val postgres                  = mvn"org.postgresql:postgresql:${Version.postgres}"
+  val pureConfig                = mvn"com.github.pureconfig::pureconfig-generic-scala3:${Version.pureConfig}"
+  val pulsar4s                  = mvn"com.clever-cloud.pulsar4s::pulsar4s-core:${Version.pulsar4s}"
+  val pulsar4sCirce             = mvn"com.clever-cloud.pulsar4s::pulsar4s-circe:${Version.pulsar4s}"
+  val quillJdbc                 = mvn"io.getquill::quill-jdbc:${Version.quill}"
+  val quillJdbcZio              = mvn"io.getquill::quill-jdbc-zio:${Version.quill}"
+  val refined                   = mvn"eu.timepit::refined:${Version.refined}"
+  val resilience4j              = mvn"io.github.resilience4j:resilience4j-all:${Version.resilience4j}"
+  val scalaParallelCollection   = mvn"org.scala-lang.modules::scala-parallel-collections:${Version.scalaParallelCollection}"
+  val scalaReflect              = mvn"org.scala-lang:scala-reflect:${Version.scala}"
+  val scalasql                  = mvn"com.lihaoyi::scalasql:${Version.scalasql}"
+  val scalasqlNamedTuples       = mvn"com.lihaoyi::scalasql-namedtuples:${Version.scalasql}"
+  val scodec                    = mvn"org.scodec::scodec-core:${Version.scodec}"
+  val skunk                     = mvn"org.tpolecat::skunk-core:${Version.skunk}"
+  val sttpCore                  = mvn"com.softwaremill.sttp.client4::core:${Version.sttp}"
+  val sttpCirce                 = mvn"com.softwaremill.sttp.client4::circe:${Version.sttp}"
+  val sttpBEZio                 = mvn"com.softwaremill.sttp.client4::zio:${Version.sttp}"
+  val sttpFs2                   = mvn"com.softwaremill.sttp.client4::fs2:${Version.sttp}"
+  val sttpJsoniter              = mvn"com.softwaremill.sttp.client4::jsoniter:${Version.sttp}"
+  val sttpsSlf4j                = mvn"com.softwaremill.sttp.client4::slf4j-backend:${Version.sttp}"
+  val sttpOpenTelemetry         = mvn"com.softwaremill.sttp.client4::opentelemetry-backend:${Version.sttp}"
+  val sttpOAuth                 = mvn"com.ocadotechnology::sttp-oauth2:${Version.sttpOAuth}"
+  val sttpOpenAi                = mvn"com.softwaremill.sttp.openai::core:${Version.sttpOpenAi}"
+  val squants                   = mvn"org.typelevel::squants:${Version.squants}"
+  val tapirAwsLambda            = mvn"com.softwaremill.sttp.tapir::tapir-aws-lambda:${Version.tapir}"
+  val tapirAwsCdk               = mvn"com.softwaremill.sttp.tapir::tapir-aws-cdk:${Version.tapir}"
+  val tapirAwsSam               = mvn"com.softwaremill.sttp.tapir::tapir-aws-sam:${Version.tapir}"
+  val tapirHttp4sServer         = mvn"com.softwaremill.sttp.tapir::tapir-http4s-server:${Version.tapir}"
+  val tapirJsonCirce            = mvn"com.softwaremill.sttp.tapir::tapir-json-circe:${Version.tapir}"
+  val tapirJdkHttp              = mvn"com.softwaremill.sttp.tapir::tapir-jdkhttp-server:${Version.tapir}"
+  val tapirNettyFuture          = mvn"com.softwaremill.sttp.tapir::tapir-netty-server:${Version.tapir}"
+  val tapirNettyServerSync      = mvn"com.softwaremill.sttp.tapir::tapir-netty-server-sync:${Version.tapir}"
+  val tapirSwaggerUiBundle      = mvn"com.softwaremill.sttp.tapir::tapir-swagger-ui-bundle:${Version.tapir}"
+  val tapirPrometheusMetrics    = mvn"com.softwaremill.sttp.tapir::tapir-prometheus-metrics:${Version.tapir}"
+  val toml                      = mvn"com.indoorvivants::toml:${Version.toml}"
+  val tyqu                      = mvn"ch.epfl.tyqu::tyqu:${Version.tyqu}"
+  val upickle                   = mvn"com.lihaoyi::upickle:${Version.upickle}"
+  val xstream                   = mvn"com.thoughtworks.xstream:xstream:${Version.xstream}"
+  val xml                       = mvn"org.scala-lang.modules::scala-xml:${Version.xml}"
+  val zio                       = mvn"dev.zio::zio:${Version.zio}"
+  val zioKafka                  = mvn"dev.zio::zio-kafka:${Version.zioKafka}"
+  val zioStreams                = mvn"dev.zio::zio-streams:${Version.zio}"
+  val zioJson                   = mvn"dev.zio::zio-json:${Version.zioJson}"
+  val zioPrelude                = mvn"dev.zio::zio-prelude:${Version.zioPrelude}"
+  val zioSchema                 = mvn"dev.zio::zio-schema:${Version.zioSchema}"
+  val zioSchemaJson             = mvn"dev.zio::zio-schema-json:${Version.zioSchema}"
+  val zioSchemaBson             = mvn"dev.zio::zio-schema-bson:${Version.zioSchema}"
+  val zioSchemaProtobuf         = mvn"dev.zio::zio-schema-protobuf:${Version.zioSchema}"
+  val zioSchemaDerivation       = mvn"dev.zio::zio-schema-derivation:${Version.zioSchema}"
+  val zioHttp                   = mvn"dev.zio::zio-http:${Version.zioHttp}"
+  val zioCli                    = mvn"dev.zio::zio-cli:${Version.zioCli}"
+  val zioOpenAI                 = mvn"dev.zio::zio-openai:${Version.zioOpenAI}"
 
   // test
-  val cucumberScala       = ivy"io.cucumber::cucumber-scala:${Version.cucumberScala}"
-  val cucumberJunit       = ivy"io.cucumber:cucumber-junit:${Version.cucumber}"
-  val cucumberPico        = ivy"io.cucumber:cucumber-picocontainer:${Version.cucumber}"
-  val junitInterface      = ivy"com.github.sbt:junit-interface:${Version.junitInterface}"
-  val junit               = ivy"junit:junit:${Version.junit}"
-  val gatlingCharts       = ivy"io.gatling.highcharts:gatling-charts-highcharts:${Version.gatling}"
-  val gatling             = ivy"io.gatling:gatling-test-framework:${Version.gatling}"
-  val mockito             = ivy"org.mockito:mockito-core:${Version.mockito}"
-  val munit               = ivy"org.scalameta::munit:${Version.munit}"
-  val munitScalaCheck     = ivy"org.scalameta::munit-scalacheck:${Version.munitScalaCheck}"
-  val scalatest           = ivy"org.scalatest::scalatest:${Version.scalaTest}"
-  val scalaCheck          = ivy"org.scalacheck::scalacheck:${Version.scalaCheck}"
-  val scalaMock           = ivy"org.scalamock::scalamock:${Version.scalaMock}"
-  val tapirSttpStubServer = ivy"com.softwaremill.sttp.tapir::tapir-sttp-stub-server:${Version.tapir}"
-  val testContainer       = ivy"com.dimafeng::testcontainers-scala-scalatest:${Version.testContainer}"
-  val testContainerMongo  = ivy"com.dimafeng::testcontainers-scala-mongodb:${Version.testContainer}"
-  val weaverCats          = ivy"com.disneystreaming::weaver-cats:${Version.weaverCats}"
-  val zioTest             = ivy"dev.zio::zio-test:${Version.zio}"
-  val zioTestSbt          = ivy"dev.zio::zio-test-sbt:${Version.zio}"
-  val zioTestJUnit        = ivy"dev.zio::zio-test-junit:${Version.zio}"
-}
+  val cucumberScala       = mvn"io.cucumber::cucumber-scala:${Version.cucumberScala}"
+  val cucumberJunit       = mvn"io.cucumber:cucumber-junit:${Version.cucumber}"
+  val cucumberPico        = mvn"io.cucumber:cucumber-picocontainer:${Version.cucumber}"
+  val junitInterface      = mvn"com.github.sbt:junit-interface:${Version.junitInterface}"
+  val junit               = mvn"junit:junit:${Version.junit}"
+  val gatlingCharts       = mvn"io.gatling.highcharts:gatling-charts-highcharts:${Version.gatling}"
+  val gatling             = mvn"io.gatling:gatling-test-framework:${Version.gatling}"
+  val mockito             = mvn"org.mockito:mockito-core:${Version.mockito}"
+  val munit               = mvn"org.scalameta::munit:${Version.munit}"
+  val munitScalaCheck     = mvn"org.scalameta::munit-scalacheck:${Version.munitScalaCheck}"
+  val scalatest           = mvn"org.scalatest::scalatest:${Version.scalaTest}"
+  val scalaCheck          = mvn"org.scalacheck::scalacheck:${Version.scalaCheck}"
+  val scalaMock           = mvn"org.scalamock::scalamock:${Version.scalaMock}"
+  val tapirSttpStubServer = mvn"com.softwaremill.sttp.tapir::tapir-sttp-stub-server:${Version.tapir}"
+  val testContainer       = mvn"com.dimafeng::testcontainers-scala-scalatest:${Version.testContainer}"
+  val testContainerMongo  = mvn"com.dimafeng::testcontainers-scala-mongodb:${Version.testContainer}"
+  val weaverCats          = mvn"com.disneystreaming::weaver-cats:${Version.weaverCats}"
+  val zioTest             = mvn"dev.zio::zio-test:${Version.zio}"
+  val zioTestSbt          = mvn"dev.zio::zio-test-sbt:${Version.zio}"
+  val zioTestJUnit        = mvn"dev.zio::zio-test-junit:${Version.zio}"
+

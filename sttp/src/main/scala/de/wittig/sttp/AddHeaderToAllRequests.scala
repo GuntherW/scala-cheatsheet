@@ -10,7 +10,7 @@ import sttp.model.Header
 // requests normally (it already includes some a default `Accept-Encoding` header). However, if the request description
 // is for any reason outside the control of the user, a backend wrapper can be used to add headers to each request.
 class AddHeaderBackendWrapper[F[_], P](delegate: GenericBackend[F, P], headers: List[Header]) extends DelegateBackend(delegate):
-  override def send[T](request: GenericRequest[T, P with Effect[F]]): F[Response[T]] =
+  override def send[T](request: GenericRequest[T, P & Effect[F]]): F[Response[T]] =
     delegate.send(headers.foldLeft(request) { case (r, h) => r.header(h) })
 
 object AddHeaderBackendWrapper:
