@@ -2,12 +2,11 @@ package de.wittig.ox
 
 import scala.concurrent.duration.*
 import scala.util.Random
-
 import ox.*
 import ox.channels.*
 import ox.either.ok
 import ox.resilience.*
-import ox.scheduling.Jitter
+import ox.scheduling.{Jitter, Schedule}
 
 object Main extends App {
 
@@ -30,7 +29,7 @@ object Main extends App {
     case true  => throw new RuntimeException("boom!")
     case false => Random.nextInt
 
-  val resultRetry = retry(RetryConfig.backoff(3, 100.millis, 5.minutes, Jitter.Equal))(computationR)
+  val resultRetry = retry(Schedule.exponentialBackoff(100.millis))(computationR)
   println(resultRetry)
 
   val v1: Either[Int, String]    = Left(1)
