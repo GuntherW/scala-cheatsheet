@@ -15,38 +15,42 @@ object BatchedStreamApp extends ZIOAppDefault {
       .schedule(Schedule.fixed(1.second))
       .tap(r => Console.printLine(s"Producing: $r"))
       .mapZIO { random =>
-        Producer.produce[Any, Long, String](
-          topic = MyConstants.topics,
-          key = random % 4,
-          value = random.toString,
-          keySerializer = Serde.long,
-          valueSerializer = Serde.string
-        )
+        ZIO.serviceWithZIO[Producer] {
+          _.produce(
+            topic = MyConstants.topics,
+            key = (random % 4).toLong,
+            value = random.toString,
+            keySerializer = Serde.long,
+            valueSerializer = Serde.string
+          )
+        }
       }
       .drain
 
   val consumer: ZStream[Consumer, Throwable, Nothing] =
-    Consumer
-      .plainStream(Subscription.topics(MyConstants.topics), Serde.long, Serde.string)
-      .tap(r => Console.printLine(s"Consuming: ${r.key} - ${r.value} - ${r.partition}"))
-      .groupedWithin(5, 6.seconds)
-      .mapZIO { batch =>
-        processBatch(batch) *>
-          batch.map(_.offset)
-            .foldLeft(OffsetBatch.empty)(_ add _)
-            .commit
-      }
-      .drain
+    ZStream.serviceWithStream[Consumer](consumer =>
+      consumer
+        .plainStream(Subscription.topics(MyConstants.topics), Serde.long, Serde.string)
+        .tap(r => Console.printLine(s"Consuming: ${r.key} - ${r.value} - ${r.partition}"))
+        .groupedWithin(5, 6.seconds)
+        .mapZIO { batch =>
+          processBatch(batch) *>
+            batch.map(_.offset)
+              .foldLeft(OffsetBatch.empty)(_ add _)
+              .commit
+        }
+        .drain
+    )
 
-  def processBatch(value: Chunk[CommittableRecord[Long, String]]) =
+  private def processBatch(value: Chunk[CommittableRecord[Long, String]]) =
     ZIO.foreach(value)(r => Console.printLine(s"Consuming batched: ${r.key} - ${r.value} - ${r.partition}"))
 
-  def producerLayer =
+  private def producerLayer =
     ZLayer.scoped(
       Producer.make(settings = ProducerSettings(List(MyConstants.bootstrapServer)))
     )
 
-  def consumerLayer =
+  private def consumerLayer =
     ZLayer.scoped(
       Consumer.make(ConsumerSettings(List(MyConstants.bootstrapServer)).withGroupId("group"))
     )

@@ -14,24 +14,28 @@ object SimpleStreamApp extends ZIOAppDefault {
       .repeatZIO(Random.nextIntBetween(0, Int.MaxValue))
       .schedule(Schedule.fixed(1.second))
       .mapZIO { random =>
-        Producer.produce[Any, Long, String](
-          topic = MyConstants.topics,
-          key = random % 4,
-          value = random.toString,
-          keySerializer = Serde.long,
-          valueSerializer = Serde.string
-        )
+        ZIO.serviceWithZIO[Producer] {
+          _.produce(
+            topic = MyConstants.topics,
+            key = (random % 4).toLong,
+            value = random.toString,
+            keySerializer = Serde.long,
+            valueSerializer = Serde.string
+          )
+        }
       }
       .drain
 
   val consumer: ZStream[Consumer, Throwable, Nothing] =
-    Consumer
-      .plainStream(Subscription.topics(MyConstants.topics), Serde.long, Serde.string)
-      .tap(r => Console.printLine(s"${r.key} - ${r.value} - ${r.partition}"))
-      .map(_.offset)
-      .aggregateAsync(Consumer.offsetBatches)
-      .mapZIO(_.commit)
-      .drain
+    ZStream.serviceWithStream[Consumer](consumer =>
+      consumer
+        .plainStream(Subscription.topics(MyConstants.topics), Serde.long, Serde.string)
+        .tap(r => Console.printLine(s"${r.key} - ${r.value} - ${r.partition}"))
+        .map(_.offset)
+        .aggregateAsync(Consumer.offsetBatches)
+        .mapZIO(_.commit)
+        .drain
+    )
 
   def producerLayer =
     ZLayer.scoped(

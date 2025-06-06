@@ -18,7 +18,11 @@ object MyProducer extends ZIOAppDefault:
   private val managedProducer: ZIO[Scope, Throwable, Producer] = Producer.make(ProducerSettings(List(bootstrapServer)))
   private val producer: ZLayer[Scope, Throwable, Producer]     = ZLayer.fromZIO(managedProducer)
   private val topic                                            = topics.split(",").head
-  private def produce(key: String, value: String)              = Producer.produce(topic, key, value, Serde.string, Serde.string)
+  private def produce(key: String, value: String)              =
+    for
+      producer <- ZIO.service[Producer]
+      meta     <- producer.produce(topic, key, value, Serde.string, Serde.string)
+    yield meta
 
   private val program = for {
     key        <- Random.nextIntBetween(10000, 100000).map(_.toString)
