@@ -51,12 +51,9 @@ object QueryResultDecoder:
 
     (jdbcType, nullable, colType) match
       case (
-            '[
-            type t <: JdbcType.TL; `t`],
-            '[
-            type n <: JdbcNullability.TL; `n`],
-            '[
-            type c <: String; `c`]
+            '[type t <: JdbcType.TL; `t`],
+            '[type n <: JdbcNullability.TL; `n`],
+            '[type c <: String; `c`]
           ) =>
         // fetch a given ColumnMapping
         val mapping = Expr.summon[ColumnMapping[t, n, c]].getOrElse(produceColumnMappingError[t, n, c])
@@ -113,8 +110,7 @@ object QueryResultDecoder:
       case JdbcType.VL.Varchar        => Type.of[JdbcType.TL.Varchar]
       case JdbcType.VL.Array(content) =>
         toType(content) match
-          case '[
-              type i <: JdbcType.TL; `i`] => Type.of[JdbcType.TL.Array[i]]
+          case '[type i <: JdbcType.TL; `i`] => Type.of[JdbcType.TL.Array[i]]
       case JdbcType.VL.NotSupported   => Type.of[JdbcType.TL.NotSupported]
 
   private def toType(vlType: JdbcNullability.VL)(using q: Quotes): Type[? <: JdbcNullability.TL] =

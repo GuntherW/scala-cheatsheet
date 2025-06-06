@@ -12,7 +12,7 @@ object NonEmptyListTest extends App {
 
   val eqp: Eq[Person] = Eq.fromUniversalEquals
 
-  println(l.contains_(Person("name0", 0))(eqp, implicitly))
+  println(l.contains_(Person("name0", 0))(using eqp, implicitly))
   println(l.exists(_ == Person("name0", 0)))
   println(l)
 }

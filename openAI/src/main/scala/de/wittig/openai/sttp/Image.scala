@@ -1,7 +1,6 @@
 package de.wittig.openai.sttp
 
 import sttp.openai.OpenAISyncClient
-import sttp.openai.requests.images.creation.ImageCreationRequestBody
 import sttp.openai.requests.images.creation.ImageCreationRequestBody.ImageCreationBody
 import sttp.openai.requests.images.{ResponseFormat, Size}
 

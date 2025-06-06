@@ -1,5 +1,4 @@
 package de.wittig.os
-import os.Path
 
 object Main extends App:
 

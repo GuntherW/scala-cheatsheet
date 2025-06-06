@@ -16,7 +16,7 @@ object JsonBson extends App:
     given jsonCodec: JsonCodec[Person] = zio.schema.codec.JsonCodec.jsonCodec(schema)
     given bsonCodec: BsonCodec[Person] = BsonSchemaCodec.bsonCodec(Person.schema)
 
-    given jsonBinaryCodec: BinaryCodec[Person] = zio.schema.codec.JsonCodec.schemaBasedBinaryCodec(schema)
+    given jsonBinaryCodec: BinaryCodec[Person] = zio.schema.codec.JsonCodec.schemaBasedBinaryCodec(using schema)
 
     given protobufCodec: BinaryCodec[Person] = ProtobufCodec.protobufCodec
 

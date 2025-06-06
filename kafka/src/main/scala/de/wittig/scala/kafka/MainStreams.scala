@@ -1,22 +1,21 @@
 package de.wittig.scala.kafka
-import java.time.Duration
-import java.time.temporal.ChronoUnit
-import java.util.Properties
-
 import de.wittig.scala.kafka.Domain.*
 import de.wittig.scala.kafka.Topics.*
-import io.circe.{Decoder, Encoder}
 import io.circe.generic.auto.*
 import io.circe.parser.*
 import io.circe.syntax.*
+import io.circe.{Decoder, Encoder}
 import org.apache.kafka.common.serialization.Serde
-import org.apache.kafka.streams.{KafkaStreams, StreamsConfig}
 import org.apache.kafka.streams.kstream.{GlobalKTable, JoinWindows}
 import org.apache.kafka.streams.scala.*
 import org.apache.kafka.streams.scala.ImplicitConversions.*
 import org.apache.kafka.streams.scala.kstream.{KStream, KTable}
 import org.apache.kafka.streams.scala.serialization.Serdes
-import org.apache.kafka.streams.scala.serialization.Serdes.*
+import org.apache.kafka.streams.{KafkaStreams, StreamsConfig}
+
+import java.time.Duration
+import java.time.temporal.ChronoUnit
+import java.util.Properties
 
 /** https://www.youtube.com/watch?v=MYTFPTtOoLs&t=156s https://blog.rockthejvm.com/kafka-streams/
   */

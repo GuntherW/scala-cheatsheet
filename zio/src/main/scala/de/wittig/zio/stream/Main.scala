@@ -3,7 +3,6 @@ package de.wittig.zio.stream
 import zio.*
 import zio.Console.*
 import zio.stream.*
-import zio.Duration.*
 
 object HelloWorld extends ZIOAppDefault:
   def run = programm

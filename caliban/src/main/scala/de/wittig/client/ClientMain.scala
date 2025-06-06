@@ -1,13 +1,12 @@
 package de.wittig.client
 
-import scala.concurrent.duration.DurationInt
-import scala.util.chaining.*
-
 import caliban.*
 import caliban.client.Operations.RootQuery
 import de.wittig.client.generated.Client.*
-import de.wittig.client.generated.Client.Query.*
 import sttp.client3.*
+
+import scala.concurrent.duration.DurationInt
+import scala.util.chaining.*
 
 case class CharacterView(name: String, nickname: List[String], origin: Origin)
 

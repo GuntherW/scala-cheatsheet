@@ -1,10 +1,10 @@
 package de.wittig
 
+import io.circe.*
 import io.circe.generic.semiauto.deriveCodec
+import io.circe.parser.*
 import io.circe.syntax.EncoderOps
 import munit.FunSuite
-import cats.syntax.either.*
-import io.circe.*, io.circe.parser.*
 
 class WithValueTransformationTest extends FunSuite {
 

@@ -1,9 +1,9 @@
 package de.wittig.scala.pulsar
 
+import com.sksamuel.pulsar4s.*
+
 import java.util.UUID
 import scala.util.Random
-import com.sksamuel.pulsar4s.*
-import io.circe.generic.auto.*
 
 object SensorDomain:
 

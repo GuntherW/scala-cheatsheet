@@ -1,10 +1,9 @@
 package de.wittig.config.pure
 
-import scala.util.chaining.scalaUtilChainingOps
-
 import com.typesafe.config.ConfigFactory
 import pureconfig.*
-import pureconfig.generic.semiauto.*
+
+import scala.util.chaining.scalaUtilChainingOps
 
 object MainRuntime extends App {
 

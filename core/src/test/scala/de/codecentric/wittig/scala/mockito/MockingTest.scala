@@ -1,12 +1,11 @@
 package de.codecentric.wittig.scala.mockito
 
-import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, verify, when}
 import org.mockito.stubbing.Answer
-import org.scalatest.funsuite.AnyFunSuite
+import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
-import scala.jdk.CollectionConverters.*
+import org.scalatest.funsuite.AnyFunSuite
 
 class MockingTest extends AnyFunSuite, BeforeAndAfterEach:
 

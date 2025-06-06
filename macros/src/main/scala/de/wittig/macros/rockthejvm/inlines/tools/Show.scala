@@ -30,9 +30,7 @@ object Show:
         ("" + label + ": " + value) :: showTuple[et, lt](t)
 
   inline def derived[A <: Product](using m: Mirror.ProductOf[A]): Show[A] =
-    new Show[A] {
-      override def show(entity: A): String =
-        val valueTuple = Tuple.fromProductTyped(entity)
-        val fieldReprs = showTuple[m.MirroredElemTypes, m.MirroredElemLabels](valueTuple)
-        fieldReprs.mkString("{", ", ", "}")
-    }
+    (entity: A) =>
+      val valueTuple = Tuple.fromProductTyped(entity)
+      val fieldReprs = showTuple[m.MirroredElemTypes, m.MirroredElemLabels](valueTuple)
+      fieldReprs.mkString("{", ", ", "}")

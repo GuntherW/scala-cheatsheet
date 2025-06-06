@@ -1,9 +1,8 @@
 package de.wittig.json.circe
 
-import io.circe.derivation.Configuration
-import io.circe.generic.semiauto.*
-import io.circe.parser.*
 import io.circe.Decoder
+import io.circe.derivation.Configuration
+import io.circe.parser.*
 
 object WithConfiguration extends App:
 

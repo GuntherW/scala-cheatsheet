@@ -9,7 +9,7 @@ object GreetingServer extends ZIOAppDefault {
     Routes(
       GET / Root                            -> handler(Response.text("Greetings at your service")),
       GET / "greet"                         -> handler { (req: Request) =>
-        val name = req.queryParamToOrElse("name", "World")
+        val name = req.queryParamOrElse("name", "World")
         Response.text(s"Hello $name!")
       },
       Method.GET / "greet" / string("name") -> handler { (name: String, req: Request) =>

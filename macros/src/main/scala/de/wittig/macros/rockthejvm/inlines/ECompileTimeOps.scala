@@ -4,7 +4,7 @@ object ECompileTimeOps:
 
   object Ints:
     import compiletime.ops.any.ToString
-    import compiletime.ops.int.{ToString => _, *}
+    import compiletime.ops.int.{ToString as _, *}
 
     val two: 1 + 1       = 2
     val two2: +[1, 1]    = 2
@@ -29,9 +29,9 @@ object ECompileTimeOps:
     val regexMatch: Matches["Scala", ".*al.*"] = true
 
   object Values:
+    import compiletime.constValue
     import compiletime.ops.int.+
     import compiletime.ops.string.Length
-    import compiletime.constValue
 
     val five  = constValue[3 + 2]           // Type 5 => Value 5
     val five2 = constValue[Length["Scala"]] // Type 5 => Value 5

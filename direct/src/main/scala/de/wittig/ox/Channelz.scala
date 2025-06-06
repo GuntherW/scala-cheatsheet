@@ -4,7 +4,7 @@ import ox.*
 import ox.channels.*
 
 @main
-def main() =
+def channelz() =
 
   val c = Channel.bufferedDefault[String]
   supervised:

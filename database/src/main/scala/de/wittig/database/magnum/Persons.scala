@@ -2,7 +2,6 @@ package de.wittig.database.magnum
 
 import com.augustnagro.magnum.*
 
-import java.sql.{Date, Timestamp}
 import java.time.{LocalDate, LocalDateTime, OffsetDateTime}
 import java.util.UUID
 

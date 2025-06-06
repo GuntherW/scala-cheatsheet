@@ -12,6 +12,6 @@ object WithOrdering extends App:
   val b = CurrencyAmount(124, "EUR")
 
   println(List(b, a).sorted)
-  println(List(b, a).sorted(o2))
-  println(List(b, a).sorted(o3))
-  println(List(b, a).sorted(o4))
+  println(List(b, a).sorted(using o2))
+  println(List(b, a).sorted(using o3))
+  println(List(b, a).sorted(using o4))
