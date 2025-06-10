@@ -63,7 +63,7 @@ object Version {
   val xml                     = "2.4.0"
   val zio                     = "2.1.19"
   val zioJson                 = "0.7.43"
-  val zioKafka                = "2.12.0"
+  val zioKafka                = "3.0.0"
   val zioHttp                 = "3.3.3"
   val zioPrelude              = "1.0.0-RC41"
   val zioSchema               = "1.7.2"

@@ -172,6 +172,12 @@ object scalacheck extends CommonSbtModule:
     )
     def testFramework = "org.scalacheck.ScalaCheckFramework"
 
+object zioKafka extends CommonSbtModule:
+    def mvnDeps       = Seq(
+        Dependency.zioKafka,
+        Dependency.zioJson,
+    )
+
 object sttp extends CommonSbtModule:
   def mvnDeps = Seq(
     Dependency.jsoniterMacros,
@@ -254,7 +260,7 @@ object Version:
   val xml                     = "2.4.0"
   val zio                     = "2.1.19"
   val zioJson                 = "0.7.43"
-  val zioKafka                = "2.9.0"
+  val zioKafka                = "3.0.0"
   val zioHttp                 = "3.0.1"
   val zioPrelude              = "1.0.0-RC41"
   val zioSchema               = "1.5.0"
