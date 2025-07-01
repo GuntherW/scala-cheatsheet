@@ -11,11 +11,15 @@ object FieldNames extends App:
       case _                      => error("Not a case class")
     }
 
-  inline def literalStrings[T]: List[String] =
+  inline def fieldNames2[T](using m: Mirror.ProductOf[T]): List[String] =
+    literalStrings[m.MirroredElemLabels]
+
+  inline def literalStrings[T <: Tuple]: List[String] =
     inline erasedValue[T] match
       case _: (head *: tail) => constValue[head].toString :: literalStrings[tail]
       case EmptyTuple        => Nil
 
-  fieldNames[Test].foreach(println)
+  println(fieldNames[Test])
+  println(fieldNames2[Test])
 
 case class Test(x: Int, y: String)

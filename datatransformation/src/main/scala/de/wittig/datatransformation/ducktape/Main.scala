@@ -23,11 +23,6 @@ object Main extends App:
   println(withComputed)
   println(withRename)
 
-  private def method(firstName: String, lastName: String, age: Int, nr: String) =
-    PersonExt(firstName: String, lastName: String, age: Int, nr: String)
+  private val definedTransformer = Transformer.define[Person, PersonExt].build(Field.const(_.nr, "ta2"))
 
-  private val definedViaTransformer = Transformer.defineVia[Person](method).build(Arg.const(_.nr, "ta1"))
-  private val definedTransformer    = Transformer.define[Person, PersonExt].build(Field.const(_.nr, "ta2"))
-
-  println(definedViaTransformer.transform(person))
   println(definedTransformer.transform(person))

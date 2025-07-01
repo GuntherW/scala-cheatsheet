@@ -34,7 +34,6 @@ object NamedTuples extends App:
   val bob2  = nameT ++ ageT
 //  val wontCompile = ageT ++ ageT
 
-// In scala 3.7?
   case class PersonV1(name: String, age: Int)
   case class PersonV2(name: String, age: Int, imker: Boolean)
 
@@ -48,3 +47,5 @@ object NamedTuples extends App:
 //    .asNamedTuple
 //    .withField((imker = true))
 //    .as[PersonV2]
+//
+//  println(s"Converted case class: $p2")
