@@ -8,14 +8,12 @@ import java.time.LocalDate
 object JsonDtoToDomainObjectExample extends App:
 
   case class PersonDto(firstName: String, lastName: String, birthday: (Int, Int, Int))
-
   object PersonDto {
     given schema: Schema[PersonDto]   = DeriveSchema.gen[PersonDto]
     given codec: JsonCodec[PersonDto] = jsonCodec[PersonDto](schema)
   }
 
   case class Person(name: String, birthdate: LocalDate)
-
   object Person {
     given schema: Schema[Person]   = DeriveSchema.gen[Person]
     given codec: JsonCodec[Person] = jsonCodec[Person](schema)
