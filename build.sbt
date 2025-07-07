@@ -274,9 +274,12 @@ lazy val mongo = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(
-      Library.mongoDriverJava,
+      Library.mongoDriverSync,
       Library.logback,
       "io.github.greenleafoss"  %% "green-leaf-mongo-circe" % "3.1",
+      Library.zioSchema,
+      Library.zioSchemaBson,
+      Library.zioSchemaDerivation,
       Library.testContainerMongo % Test,
       Library.testContainer      % Test,
       Library.scalatest          % Test,
