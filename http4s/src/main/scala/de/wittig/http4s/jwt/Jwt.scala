@@ -1,4 +1,5 @@
 package de.wittig.http4s.jwt
+
 import cats.effect.{ExitCode, IO, IOApp}
 import org.http4s.*
 import org.http4s.dsl.io.*
