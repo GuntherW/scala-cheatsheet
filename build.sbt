@@ -234,11 +234,13 @@ lazy val json = project
       Library.borerDerivation,
       Library.borerCirce,
       Library.borerScodec,
+      "org.bouncycastle" % "bcpkix-jdk18on" % "1.81",
       Library.circeCore,
       Library.circeGeneric,
       Library.circeParser,
       Library.jsoniter,
       Library.jsoniterMacros,
+      Library.jwtCirce,
       Library.upickle,
       Library.zioJson,
     )
