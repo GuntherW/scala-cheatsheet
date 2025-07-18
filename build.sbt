@@ -57,6 +57,7 @@ lazy val `scala-cheatsheet` = (project in file("."))
     parsers,
     scalacheck,
     scalajs,
+    spring,
     sttp,
     tapir,
     zio,
@@ -336,6 +337,19 @@ lazy val scalacheck = project
     commonSettings,
     libraryDependencies += Library.scalaCheck % Test,
     Test / fork                              := true, //  subprojects tests will run parallel with other subprojects
+  )
+
+lazy val spring = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.springBootStarterJson,
+      Library.springBootStarterJson,
+      Library.springBootStarter,
+      Library.xml,
+      Library.jacksonScala,
+      Library.jacksonJsr310
+    )
   )
 
 lazy val sttp = project

@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.8"
-  val aws                     = "2.204.0"
+  val aws                     = "2.206.0"
   val avro4s                  = "5.0.14"
   val borer                   = "1.16.1"
   val caliban                 = "2.11.1"
@@ -51,11 +51,12 @@ object Version {
   val scalasql                = "0.1.20"
   val scodec                  = "2.3.2"
   val skunk                   = "0.6.4"
+  val springBoot              = "3.5.3"
   val sttp                    = "4.0.9"
   val sttpOAuth               = "0.18.0"
   val sttpOpenAi              = "0.3.6"
   val squants                 = "1.8.3"
-  val tapir                   = "1.11.36"
+  val tapir                   = "1.11.37"
   val toml                    = "0.3.0"
   val tyqu                    = "0.1.0"
   val upickle                 = "4.2.1"
@@ -126,6 +127,7 @@ object Library {
   val http4sDsl                 = "org.http4s"                            %% "http4s-dsl"                                % Version.http4s
   val jacksonCore               = "com.fasterxml.jackson.core"             % "jackson-databind"                          % Version.jackson
   val jacksonScala              = "com.fasterxml.jackson.module"          %% "jackson-module-scala"                      % Version.jackson
+  val jacksonJsr310             = "com.fasterxml.jackson.datatype"         % "jackson-datatype-jsr310"                   % Version.jackson
   val jsoniter                  = "com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scala-core"                       % Version.jsoniter
   val jsoniterMacros            = "com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scala-macros"                     % Version.jsoniter
   val jsonSchemaValidator       = "com.networknt"                          % "json-schema-validator"                     % Version.jsonSchemaValidator
@@ -170,6 +172,9 @@ object Library {
   val scalasqlNamedTuples       = "com.lihaoyi"                           %% "scalasql-namedtuples"                      % Version.scalasql
   val scodec                    = "org.scodec"                            %% "scodec-core"                               % Version.scodec
   val skunk                     = "org.tpolecat"                          %% "skunk-core"                                % Version.skunk
+  val springBootStarterWeb      = "org.springframework.boot"               % "spring-boot-starter-web"                   % Version.springBoot
+  val springBootStarterJson     = "org.springframework.boot"               % "spring-boot-starter-json"                  % Version.springBoot
+  val springBootStarter         = "org.springframework.boot"               % "spring-boot-starter"                       % Version.springBoot
   val sttpCore                  = "com.softwaremill.sttp.client4"         %% "core"                                      % Version.sttp
   val sttpCirce                 = "com.softwaremill.sttp.client4"         %% "circe"                                     % Version.sttp
   val sttpBEZio                 = "com.softwaremill.sttp.client4"         %% "zio"                                       % Version.sttp

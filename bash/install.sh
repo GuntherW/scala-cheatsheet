@@ -27,3 +27,7 @@ sudo snap install \
  procs `# better ps https://github.com/dalance/procs`
 
 # https://atuin.sh/
+
+# oha https://github.com/hatoo/oha
+sudo wget -qO /usr/local/bin/oha https://github.com/hatoo/oha/releases/latest/download/oha-linux-amd64
+sudo chmod a+x /usr/local/bin/oha
