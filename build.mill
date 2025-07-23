@@ -35,7 +35,6 @@ object core extends CommonSbtModule:
   )
 
   object test extends SbtTests:
-    override def re
     def mvnDeps       = Seq(
       Dependency.mockito,
       Dependency.scalatest,

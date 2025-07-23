@@ -40,48 +40,45 @@ object Main extends App:
     .getDatabase("ziobson")
     .withCodecRegistry(codecRegistry)
 
-  val collection        = database.getCollection("persons", classOf[Person])
+  val personCollection  = database.getCollection("persons", classOf[Person])
   val addressCollection = database.getCollection("addresses", classOf[Address])
 
-  try {
-
-    collection.drop()
-
-    val person = Person(
-      id = UUID.randomUUID(),
-      name = "John Doe",
-      name1Opt = Some("some"),
-      name2Opt = None,
-      enum1 = Enum1.Enum1A("hallo"),
-      sum1 = Sum1A("hallo"),
-      age = 30,
-      birthDate = LocalDate.of(1993, 5, 15),
-      lastModified = Instant.now,
-      active = true,
-      tags = List("developer", "scala", "mongodb"),
-      contactInfo = ContactInfo(
-        phone = Some("+1-555-123-4567"),
-        address = Address(
-          street = "123 Main St",
-          zipCode = "1234s",
-          country = DE
-        )
+  val person = Person(
+    id = UUID.randomUUID(),
+    name = "John Doe",
+    name1Opt = Some("some"),
+    name2Opt = None,
+    enum1 = Enum1.Enum1A("hallo"),
+    sum1 = Sum1A("hallo"),
+    age = 30,
+    birthDate = LocalDate.of(1993, 5, 15),
+    lastModified = Instant.now,
+    active = true,
+    tags = List("developer", "scala", "mongodb"),
+    contactInfo = ContactInfo(
+      phone = Some("+1-555-123-4567"),
+      address = Address(
+        street = "123 Main St",
+        zipCode = "1234s",
+        country = DE
       )
     )
+  )
+
+  try {
+    personCollection.drop()
+    addressCollection.drop()
 
     // Insert the person into the collection
-    println(s"Inserting person: $person")
-    collection.insertOne(person)
+    personCollection.insertOne(person)
 
     // Find the person by id
-    val foundPerson = collection.find(Filters.eq("id", person.id)).first()
+    val foundPerson = personCollection.find(Filters.eq("id", person.id)).first()
     println(s"Found person: $foundPerson")
 
     // Find all persons
-    val allPersons = collection.find()
+    val allPersons = personCollection.find()
     println(s"All persons: $allPersons")
-
-    addressCollection.drop()
 
     // Insert an address directly
     val address = Address("456 Park Ave", "02108", DE)
