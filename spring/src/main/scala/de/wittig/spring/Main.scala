@@ -8,6 +8,10 @@ import org.springframework.boot.SpringApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.web.client.RestClient
 
+object Main:
+  def main(args: Array[String]): Unit =
+    SpringApplication.run(classOf[Main], args*)
+
 @SpringBootApplication
 class Main:
 
@@ -17,9 +21,4 @@ class Main:
 
   @Bean
   def objectMapper(): ObjectMapper =
-    ObjectMapper()
-      .registerModules(DefaultScalaModule, new JavaTimeModule)
-
-object Main:
-  def main(args: Array[String]): Unit =
-    SpringApplication.run(classOf[Main], args*)
+    ObjectMapper().registerModules(DefaultScalaModule, new JavaTimeModule)

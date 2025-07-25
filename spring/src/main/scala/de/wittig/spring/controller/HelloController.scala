@@ -15,7 +15,7 @@ class HelloController(restClient: RestClient):
     ResponseEntity.ok(message)
 
   @GetMapping(Array("/delay/{seconds}"))
-  def delay(@PathVariable seconds: Int): ResponseEntity[Map[String, Any]] = {
+  def delay(@PathVariable seconds: Int): ResponseEntity[Map[String, Any]] =
 
     // Aufruf eines externen Service um einen blockierenden Thread zu simulieren.
     val res = restClient.get()
@@ -24,13 +24,13 @@ class HelloController(restClient: RestClient):
       .body(classOf[Map[String, Any]])
 
     // Map verschiedener Types, die in Json umgewandelt wird.
-    val responseMap = Map[String, Any](
+    val responseMap = Map(
       "seconds"          -> seconds,
-      "timestamp"        -> System.currentTimeMillis(),
-      "date"             -> LocalDate.now().toString,
-      "thread"           -> Thread.currentThread().getName,
+      "timestamp"        -> System.currentTimeMillis,
+      "date"             -> LocalDate.now.toString,
+      "thread"           -> Thread.currentThread.getName,
       "externalResponse" -> res
     )
 
     ResponseEntity.ok(responseMap)
-  }
+  end delay
