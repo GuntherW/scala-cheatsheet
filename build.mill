@@ -243,7 +243,7 @@ object Version:
   val quill                   = "4.8.6"
   val refined                 = "0.11.3"
   val resilience4j            = "2.3.0"
-  val scala                   = "3.7.1"
+  val scala                   = "3.7.2"
   val scalaParallelCollection = "1.2.0"
   val scalasql                = "0.1.20"
   val scodec                  = "2.3.3"

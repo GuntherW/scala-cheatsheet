@@ -46,7 +46,7 @@ object Version {
   val quill                   = "4.8.6"
   val refined                 = "0.11.3"
   val resilience4j            = "2.3.0"
-  val scala                   = "3.7.1"
+  val scala                   = "3.7.2"
   val scalaParallelCollection = "1.2.0"
   val scalasql                = "0.1.20"
   val scodec                  = "2.3.3"
@@ -54,7 +54,7 @@ object Version {
   val springBoot              = "3.5.4"
   val sttp                    = "4.0.9"
   val sttpOAuth               = "0.18.0"
-  val sttpOpenAi              = "0.3.6"
+  val sttpOpenAi              = "0.3.7"
   val squants                 = "1.8.3"
   val tapir                   = "1.11.40"
   val toml                    = "0.3.0"
@@ -73,7 +73,11 @@ object Version {
 
   // ScalaJS
   val scalaJsDom = "2.8.1"
-  val uTest      = "0.8.9"
+  val uTest      = "0.9.0" +
+    "" +
+    "" +
+    "" +
+    ""
 
   // Test
   val cucumber        = "7.27.0"
