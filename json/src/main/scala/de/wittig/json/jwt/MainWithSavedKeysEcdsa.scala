@@ -34,6 +34,6 @@ object MainWithSavedKeysEcdsa extends App:
 
   val decoded = Jwt.decode(token, publicKeyEC, Seq(JwtAlgorithm.ES512))
   decoded.tap(println)
-  
+
   // Wrong key...
   Jwt.decode(token, ecKey.getPublic, Seq(JwtAlgorithm.ES512))

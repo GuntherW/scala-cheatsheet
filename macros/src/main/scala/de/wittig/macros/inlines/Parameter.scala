@@ -14,5 +14,5 @@ inline def printTwice(inline x: Int): Unit =
 object Parameter extends App:
   private val rand = new Random(0)
   printTwiceOhne(rand.nextInt())
-  println("-"*11)
+  println("-" * 11)
   printTwice(rand.nextInt())

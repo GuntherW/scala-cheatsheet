@@ -17,8 +17,8 @@ object Main extends App:
 
 object Dtos:
   case class UserDTO(
-      name: String,                       // 1. primitive
-      addresses: Seq[AddressDTO],         // 2. Seq collection
+      name: String,               // 1. primitive
+      addresses: Seq[AddressDTO], // 2. Seq collection
       recovery: Option[RecoveryMethodDTO] // 3. Option type
   )
   case class AddressDTO(street: String, city: String)
@@ -37,7 +37,7 @@ object model:
   case class User(
       name: Username,           // 1. value class
       addresses: List[Address], // 2. List collection
-      recovery: RecoveryMethod  // 3. non-Option type
+      recovery: RecoveryMethod // 3. non-Option type
   )
   case class Username(name: String) extends AnyVal
   case class Address(street: String, city: String)

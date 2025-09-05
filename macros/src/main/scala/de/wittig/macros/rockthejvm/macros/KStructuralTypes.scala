@@ -39,8 +39,7 @@ object KStructuralTypes:
       // resultType:TypeRepr
       // I need the complete type Record { val ...}
       resultType.asType match
-        case '[
-            type r <: Record; r] => '{ Record($fields.toMap).asInstanceOf[r] }
+        case '[type r <: Record; r] => '{ Record($fields.toMap).asInstanceOf[r] }
 
   private def badFieldError(expr: Expr[?])(using Quotes) =
     import quotes.reflect.*

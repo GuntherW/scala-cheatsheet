@@ -2,7 +2,7 @@ package de.wittig.ox
 
 import scala.concurrent.duration.*
 
-  import ox.*
+import ox.*
 
 object StructuredConcurrency2 extends App {
 
