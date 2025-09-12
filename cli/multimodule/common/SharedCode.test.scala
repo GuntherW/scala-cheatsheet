@@ -1,4 +1,4 @@
-//> using dep "org.scalameta::munit::1.1.1"
+//> using dep "org.scalameta::munit::1.2.0"
 //> using file "SharedCode.scala"
 
 class SharedCodeTests extends munit.FunSuite:

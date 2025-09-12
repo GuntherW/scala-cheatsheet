@@ -2,17 +2,6 @@ package de.codecentric.wittig.scala.matchtypes
 
 object MatchTypes extends App:
 
-  /** Folgende drei Methoden haben das gleich Muster: */
-  def lastDigitOf(number: BigInt): Int = (number % 10).toInt
-
-  def lastCharOf(string: String): Char =
-    if (string.isEmpty) throw new NoSuchElementException
-    else string.charAt(string.length - 1)
-
-  def lastCharOf[A](list: List[A]): A =
-    if (list.isEmpty) throw new NoSuchElementException
-    else list.last
-
   /** Matching types */
   type ConstituentPartOf[A] = A match
     case BigInt  => Int
@@ -23,16 +12,33 @@ object MatchTypes extends App:
   val aChar: ConstituentPartOf[String]           = 'a'
   val anElement: ConstituentPartOf[List[String]] = "Hallo"
 
-  def lastPartOf[A](a: A): ConstituentPartOf[A] = a match
-    case number: BigInt => (number % 10).toInt
-    case string: String =>
-      if (string.isEmpty) throw new NoSuchElementException
-      else string.charAt(string.length - 1)
-    case list: List[_]  =>
-      if (list.isEmpty) throw new NoSuchElementException
-      else list.last
+  /** Folgende drei Methoden haben das gleich Muster: */
+  def lastDigitOf(number: BigInt): Int =
+    (number % 10).toInt
 
-  val lastPartOfString = lastPartOf("Scala") // 'a'
+  def lastCharOf(string: String): Char =
+    if (string.isEmpty) throw new NoSuchElementException
+    else string.charAt(string.length - 1)
+
+  def lastCharOf[A](list: List[A]): A =
+    if (list.isEmpty) throw new NoSuchElementException
+    else list.last
+
+  /** Und können zusammengefasst werden: */
+  def lastPartOf[A](a: A): ConstituentPartOf[A] =
+    a match
+      case n: BigInt  => (n % 10).toInt
+      case s: String  =>
+        if (s.isEmpty) throw new NoSuchElementException
+        else s.charAt(s.length - 1)
+      case l: List[_] =>
+        if (l.isEmpty) throw new NoSuchElementException
+        else l.last
+
+  val a: Char = lastPartOf("Scala")
+  assert(lastPartOf("Scala") == 'a')
+  assert(lastPartOf(BigInt.apply("13")) == 3)
+  assert(lastPartOf(List(1, 2, 3)) == 3)
 
   /** Recursive Matching types */
   type LowestLevelPartOf[A] = A match

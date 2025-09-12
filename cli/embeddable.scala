@@ -1,6 +1,6 @@
-#!/usr/bin/env scala-cli
+#!/usr/bin/env scala
 
-//> using dep "com.lihaoyi::pprint::0.9.0"
+//> using dep "com.lihaoyi::pprint::0.9.3"
 
 import pprint.*
 

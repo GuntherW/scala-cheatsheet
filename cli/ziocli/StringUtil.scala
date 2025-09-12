@@ -1,4 +1,4 @@
-//> using dep "dev.zio::zio-cli::0.7.2"
+//> using dep "dev.zio::zio-cli::0.7.3"
 
 import zio.{NonEmptyChunk, *}
 import zio.cli.*

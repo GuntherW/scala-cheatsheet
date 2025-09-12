@@ -1,3 +1,3 @@
 ```shell
-scala-cli size-higher-than.scala -- /home/gunther/projekte/scala/otto 20
+scala size-higher-than.scala -- /home/gunther/Downloads/ 20
 ```
