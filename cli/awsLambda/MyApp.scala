@@ -2,8 +2,8 @@
 //> using repository "jitpack"
 //> using dep "com.github.lambdaspot:aws-lambda-scala-bridge:0.1.5"
 //> using dep "com.amazonaws:aws-lambda-java-core:1.4.0"
-//> using dep "com.github.plokhotnyuk.jsoniter-scala::jsoniter-scala-core:2.37.10"
-//> using dep "com.github.plokhotnyuk.jsoniter-scala::jsoniter-scala-macros:2.37.10"
+//> using dep "com.github.plokhotnyuk.jsoniter-scala::jsoniter-scala-core:2.38.2"
+//> using dep "com.github.plokhotnyuk.jsoniter-scala::jsoniter-scala-macros:2.38.2"
 
 import com.amazonaws.services.lambda.runtime.Context
 import com.github.plokhotnyuk.jsoniter_scala.core.JsonValueCodec
