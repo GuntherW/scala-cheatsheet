@@ -2,12 +2,11 @@ package de.codecentric.wittig.scala.opaque
 
 object InSameScope extends App:
 
-  opaque type Year <: Int  = Int
   opaque type Month <: Int = Int
-
   object Month:
     def apply(i: Int): Month = i
 
+  opaque type Year <: Int = Int
   object Year:
     def apply(i: Int): Year        = i
     def make(i: Int): Option[Year] = if i < 10 then Some(i) else None

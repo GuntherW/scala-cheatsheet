@@ -233,7 +233,7 @@ object Version:
   val neotype                 = "0.3.25"
   val openTelemetry           = "1.54.1"
   val osLib                   = "0.11.5"
-  val ox                      = "1.0.0"
+  val ox                      = "1.0.1"
   val postgres                = "42.7.8"
   val pureConfig              = "0.17.9"
   val pulsar4s                = "2.10.0"
@@ -249,7 +249,7 @@ object Version:
   val sttpOAuth               = "0.18.0"
   val sttpOpenAi              = "0.2.6"
   val squants                 = "1.8.3"
-  val tapir                   = "1.11.46"
+  val tapir                   = "1.11.48"
   val toml                    = "0.3.0"
   val tyqu                    = "0.1.0"
   val upickle                 = "4.3.2"
@@ -270,7 +270,7 @@ object Version:
 
   // Test
   val cucumber        = "7.30.0"
-  val cucumberScala   = "8.33.0"
+  val cucumberScala   = "8.35.0"
   val junit           = "4.13.2"
   val junitInterface  = "0.13.3"
   val mockito         = "5.20.0"

@@ -1,5 +1,6 @@
 package de.codecentric.wittig.scala.ducktyping
 import reflect.Selectable.reflectiveSelectable
+import scala.language.reflectiveCalls
 
 object Duck extends App:
 
