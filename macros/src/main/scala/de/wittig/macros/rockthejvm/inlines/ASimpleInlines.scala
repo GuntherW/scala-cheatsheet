@@ -6,15 +6,16 @@ package de.wittig.macros.rockthejvm.inlines
   */
 object ASimpleInlines extends App:
 
-  def increment(x: Int): Int       = x + 1
-  inline def inc(x: Int): Int      = x + 1
-  inline def incia(inline x: Int)  = x + 1     // conceptually similar to by-name invocation, but at compile time
-  inline def incia2(inline x: Int) = x + x + 1 // Will be inlined twice
+  def inc(x: Int): Int                 = x + 1
+  inline def incInl(x: Int): Int       = x + 1
+  inline def incInlInl1(inline x: Int) = x + 1     // conceptually similar to by-name invocation, but at compile time
+  inline def incInlInl2(inline x: Int) = x + x + 1 // Will be inlined twice
 
   val number = 3
-  val f      = increment(number)
-  val four   = inc(number)
+  val f      = inc(number)
+  val four   = incInl(number)
 
-  val eight   = inc(2 * number + 1)
-  val eight2  = incia(2 * number + 1)
-  val eight22 = incia2(2 * number + 1)
+  val eight  = incInl(2 * number + 1)
+  val eight2 = incInlInl1(2 * number + 1)
+
+  val eight22 = incInlInl2(2 * number + 1)

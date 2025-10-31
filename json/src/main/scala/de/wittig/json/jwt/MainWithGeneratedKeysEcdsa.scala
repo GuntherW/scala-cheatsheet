@@ -1,10 +1,9 @@
 package de.wittig.json.jwt
 import org.bouncycastle.jce.provider.BouncyCastleProvider
-
-import java.security.spec.{ECGenParameterSpec, ECParameterSpec, ECPoint, ECPrivateKeySpec, ECPublicKeySpec}
-import java.security.{KeyFactory, KeyPairGenerator, SecureRandom, Security}
 import pdi.jwt.{Jwt, JwtAlgorithm}
 
+import java.security.spec.ECGenParameterSpec
+import java.security.{KeyPairGenerator, SecureRandom, Security}
 import scala.util.chaining.scalaUtilChainingOps
 
 object MainWithGeneratedKeysEcdsa extends App:

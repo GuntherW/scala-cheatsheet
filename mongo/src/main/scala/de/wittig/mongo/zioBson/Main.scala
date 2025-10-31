@@ -11,8 +11,6 @@ import org.bson.codecs.configuration.CodecRegistry
 import zio.bson
 import zio.bson.*
 import zio.schema.codec.BsonSchemaCodec
-import zio.schema.codec.BsonSchemaCodec.Config
-import zio.schema.codec.BsonSchemaCodec.SumTypeHandling.DiscriminatorField
 import zio.schema.{DeriveSchema, Schema}
 
 import java.time.{Instant, LocalDate}

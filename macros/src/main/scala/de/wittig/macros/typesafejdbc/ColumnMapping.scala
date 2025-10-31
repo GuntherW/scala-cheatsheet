@@ -14,14 +14,17 @@ object ColumnMapping:
     type Result = Int
     override def reader: JdbcReader[Int] = JdbcReader.int
   }
+
   given [C <: String]: ColumnMapping[JdbcType.TL.Varchar, NonNullable, C] with {
     type Result = String
     override def reader: JdbcReader[String] = JdbcReader.string
   }
-  given [C <: String]: ColumnMapping[JdbcType.TL.Double, NonNullable, C] with  {
+
+  given [C <: String]: ColumnMapping[JdbcType.TL.Double, NonNullable, C] with {
     type Result = Double
     override def reader: JdbcReader[Double] = JdbcReader.double
   }
+
   given [C <: String]: ColumnMapping[JdbcType.TL.Boolean, NonNullable, C] with {
     type Result = Boolean
     override def reader: JdbcReader[Boolean] = JdbcReader.boolean
