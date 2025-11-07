@@ -1,6 +1,7 @@
 package de.wittig.macros.rockthejvm.inlines.tools
 import compiletime.*
 import scala.deriving.Mirror
+import scala.deriving.Mirror.Sum
 
 trait Show[A]:
   def show(a: A): String
@@ -30,7 +31,7 @@ object Show:
         ("" + label + ": " + value) :: showTuple[et, lt](t)
 
   inline def derived[A <: Product](using m: Mirror.ProductOf[A]): Show[A] =
-    (entity: A) =>
-      val valueTuple = Tuple.fromProductTyped(entity)
+    (a: A) =>
+      val valueTuple = Tuple.fromProductTyped(a)
       val fieldReprs = showTuple[m.MirroredElemTypes, m.MirroredElemLabels](valueTuple)
       fieldReprs.mkString("{", ", ", "}")

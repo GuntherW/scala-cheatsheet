@@ -91,7 +91,7 @@ lazy val cdk = project
     commonSettings,
     libraryDependencies ++= Seq(
       Library.awsCdk,
-      "software.constructs" % "constructs" % "10.4.2"
+      "software.constructs" % "constructs" % "10.4.3"
     )
   )
 
