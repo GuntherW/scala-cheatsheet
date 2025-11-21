@@ -1,41 +1,64 @@
-//> using dep xyz.matthieucourt::layoutz::0.3.0
+//> using dep xyz.matthieucourt::layoutz::0.5.0
 
 import layoutz.*
 
 @main
 def layoutDemo = println(dashboard.render)
 
-def dashboard =
-  layout(
-    section("System Status")(
-      row( // layout horizontal
-        statusCard("CPU", "45%"),
-        statusCard("Memory", "78%"),
-        statusCard("Disk", "23%")
-      )
-    ),
-    br, // line break
+/** * Define layouts **
+  */
+val t = table(
+  Seq("Name", "Role", "Status"),
+  Seq(
+    Seq("Alice", "Engineer", "Online"),
+    Seq("Eve", "QA", "Away"),
+    Seq(ul("Gegard", ul("Mousasi", ul("was a BAD man"))), "Fighter", "Nasty")
+  )
+).border(Border.Round)
 
-    "Andere Sektionen:",
-    box("Recent Activity")(
-      ul(
-        "User alice logged in",
-        "Database backup completed",
-        "3 new deployments"
-      )
-    ),
-    hr, // horizontal rule
-    hr.width(30).char("~"),
-    inlineBar("Health", 0.91),
-    section("Config")(kv("env" -> "prod", "version" -> "1.2.3")),
-    table(
-      headers = Seq("Name", "Status"),
-      rows = Seq(Seq("Alice", "Online"), Seq("Bob", "Away"))
-    ),
-    tree("Project")(
-      tree("src")(
-        tree("main")(tree("App.scala")),
-        tree("test")(tree("AppSpec.scala"))
+/** * Nest, compose, combine them **
+  */
+val dashboard = layout(
+  row(
+    underlineColored("^", Color.BrightMagenta)("Layoutz").style(Style.Bold),
+    "... A Small Demo (ちいさい)"
+  ).center(),
+  row(
+    statusCard("Users", "1.2K").color(Color.BrightBlue),
+    statusCard("API", "UP").border(Border.Double).color(Color.BrightGreen),
+    statusCard("CPU", "23%").border(Border.Thick).color(Color.BrightYellow),
+    t,
+    section("Pugilists")(
+      layout(
+        kv("Kazushi" -> "Sakuraba", "Jet 李連杰" -> "Li", "Rory" -> "MacDonald"),
+        tightRow((0 to 255 by 12).map { i =>
+          val r = if (i < 128) i * 2 else 255;
+          val g = if (i < 128) 255 else (255 - i) * 2
+          val b = if (i > 128) (i - 128) * 2 else 0;
+          "█".color(Color.True(r, g, b))
+        }: _*)
       )
     )
+  ),
+  row(
+    layout(
+      box("Wrapped")(wrap("Where there is a will ... Water x Necessaries", 20))
+        .color(Color.BrightMagenta)
+        .style(Style.Reverse ++ Style.Bold),
+      ol("Arcole", "Austerlitz", ol("Iéna", ol("Бородино")))
+    ),
+    margin("[Scala!]")(
+      box("Deploy Status")(
+        inlineBar("Build", 1.0),
+        inlineBar("Test", 0.8),
+        inlineBar("Deploy", 0.3)
+      ).color(Color.Green),
+      tree("📁 Project")(
+        tree("src")(
+          tree("main.scala"),
+          tree("test.scala")
+        )
+      ).color(Color.Cyan)
+    )
   )
+)
