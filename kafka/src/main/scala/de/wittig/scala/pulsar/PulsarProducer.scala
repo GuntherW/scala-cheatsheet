@@ -6,18 +6,19 @@ import de.wittig.scala.pulsar.PulsarConf.*
 import de.wittig.scala.pulsar.SensorDomain.SensorEvent
 import io.circe.generic.auto.*
 
-object PulsarProducer extends App:
+@main
+def pulsarProducer(): Unit =
 
   import scala.concurrent.ExecutionContext.Implicits.global
 
-  private val pulsarClient   = PulsarClient(url)
-  private val producerConfig = ProducerConfig(
+  val pulsarClient   = PulsarClient(url)
+  val producerConfig = ProducerConfig(
     topic,
     producerName = Some("sensor-producer"),
     enableBatching = Some(true),
     blockIfQueueFull = Some(true)
   )
-  private val eventProducer  = pulsarClient.producer[SensorEvent](producerConfig)
+  val eventProducer  = pulsarClient.producer[SensorEvent](producerConfig)
 
   SensorDomain
     .generate()

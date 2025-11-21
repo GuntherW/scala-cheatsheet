@@ -1,7 +1,8 @@
 package de.wittig.json.borer
 import io.bullet.borer.Cbor
 
-object Main extends App:
+@main
+def main(): Unit =
 
   val value = List("foo", "bar", "baz") // example value
 

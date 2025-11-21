@@ -65,7 +65,8 @@ object FlowSimple extends App {
   }
 }
 
-@main def startHttpServer(): Unit =
+@main
+def startHttpServer(): Unit =
   import scala.util.Random
 
   import sttp.tapir.*

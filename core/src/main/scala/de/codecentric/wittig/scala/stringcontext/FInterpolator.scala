@@ -2,13 +2,14 @@ package de.codecentric.wittig.scala.stringcontext
 
 import java.time.LocalDate
 
-object FInterpolator extends App:
+@main
+def fInterpolator(): Unit =
 
-  private val a = 127
-  private val b = "zwei"
-  private val c = 12345.234
-  private val d = LocalDate.now
-  private val e = true
+  val a = 127
+  val b = "zwei"
+  val c = 12345.234
+  val d = LocalDate.now
+  val e = true
 
   println(s"$a,$b,$c,$d,$e")
   println(f"$a,$b,$c,$d,$e")

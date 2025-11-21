@@ -3,9 +3,10 @@ package de.wittig.sttp
 import sttp.client4.*
 import sttp.model.{HeaderNames, MediaType}
 
-object Simple extends App:
+@main
+def simple(): Unit =
 
-  private val backend = DefaultSyncBackend()
+  val backend = DefaultSyncBackend()
 
   val response = quickRequest
     .get(uri"https://httpbin.org/get")

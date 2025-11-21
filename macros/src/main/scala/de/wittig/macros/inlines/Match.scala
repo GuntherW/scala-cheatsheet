@@ -5,6 +5,7 @@ inline def test(x: String | Int): String =
     case _: String => "s"
     case _: Int    => "i"
 
-object Match extends App:
+@main
+def matcher(): Unit =
   println(test("s")) // will compile to println("s")
   println(test(1))   // will compile to println("i")

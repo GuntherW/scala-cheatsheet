@@ -2,7 +2,8 @@ package de.wittig.macros.wartimizer
 import de.wittig.macros.wartimizer.Wartimizer.wartimize
 case class Person(name: String, email: String)
 
-object StringPlusAnyUsage extends App:
+@main
+def stringPlusAnyUsage(): Unit =
 
   val badPractice = "This is Scala: " + Person("a", "a@b.de")
 

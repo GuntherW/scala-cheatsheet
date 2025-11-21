@@ -5,7 +5,8 @@ import ox.scheduling.*
 
 import scala.concurrent.duration.*
 
-object Playground extends App:
+@main
+def playground(): Unit =
 
   def insert(i: Int) =
     sleep(2.seconds)

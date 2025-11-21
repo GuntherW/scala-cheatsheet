@@ -7,7 +7,8 @@ import java.time.LocalDate
 import java.util.UUID
 import scala.util.chaining.*
 
-object JsonBson extends App:
+@main
+def jsonBson(): Unit =
 
   final case class Person(name: String, age: Int, date: LocalDate, id: UUID)
 
@@ -20,7 +21,7 @@ object JsonBson extends App:
 
     given protobufCodec: BinaryCodec[Person] = ProtobufCodec.protobufCodec
 
-  private val p = Person("John", 30, LocalDate.now, UUID.randomUUID)
+  val p = Person("John", 30, LocalDate.now, UUID.randomUUID)
 
   val json       = p.toJson.tap(println)
   val jsonBinary = Person.jsonBinaryCodec.encode(p).tap(println)

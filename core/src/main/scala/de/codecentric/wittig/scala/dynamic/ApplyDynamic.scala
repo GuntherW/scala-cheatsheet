@@ -2,9 +2,10 @@ package de.codecentric.wittig.scala.dynamic
 
 import scala.language.dynamics
 
-object ApplyDynamic extends App:
+@main
+def applyDynamic(): Unit =
 
-  private val dyn = new Dyn3
+  val dyn = new Dyn3
 
   println(dyn.foo(99, false))
 

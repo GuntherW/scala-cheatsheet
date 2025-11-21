@@ -10,18 +10,19 @@ import java.time.Instant
 
 import scala.util.Random
 
-object OAuth1ByHand extends App:
+@main
+def oAuth1ByHand(): Unit =
 
-  private val backend = HttpURLConnectionBackend()
+  val backend = HttpURLConnectionBackend()
 
-  private val consumerKey        = "yourConsumerKey"
-  private val accessToken        = "yourAccessToken"
-  private val consumerPrivateKey = "yourConsumerPrivateKey"
-  private val accessTokenSecret  = "yourAccessTokenSecret"
-  private val signer             = Signer(consumerKey, accessToken, consumerPrivateKey, accessTokenSecret)
+  val consumerKey        = "yourConsumerKey"
+  val accessToken        = "yourAccessToken"
+  val consumerPrivateKey = "yourConsumerPrivateKey"
+  val accessTokenSecret  = "yourAccessTokenSecret"
+  val signer             = Signer(consumerKey, accessToken, consumerPrivateKey, accessTokenSecret)
 
-  private val request       = basicRequest.get(uri"https://httpbin.org/get")
-  private val requestSigned = signer.sign(request)
+  val request       = basicRequest.get(uri"https://httpbin.org/get")
+  val requestSigned = signer.sign(request)
 
   println(requestSigned.header("Authorization"))
 

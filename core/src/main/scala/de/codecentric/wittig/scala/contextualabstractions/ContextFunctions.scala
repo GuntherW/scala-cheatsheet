@@ -1,6 +1,7 @@
 package de.codecentric.wittig.scala.contextualabstractions
 
-object ContextFunctions extends App:
+@main
+def contextFunctions(): Unit =
 
   class TimeProvider():
     def sagHallo(): String = "Hallo"

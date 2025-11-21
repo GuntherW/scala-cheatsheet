@@ -1,7 +1,8 @@
 package de.wittig.macros.rockthejvm.macrosUsage
 import de.wittig.macros.rockthejvm.macros.JReflectionBasics.*
 
-object JReflectionBasics extends App:
+@main
+def jReflectionBasics(): Unit =
   case class SimpleWrapper(x: Int):
     def magicMethod(y: Int): String = s"Ergebnis: ${x + y}"
 

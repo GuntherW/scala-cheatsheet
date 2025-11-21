@@ -5,7 +5,8 @@ package de.codecentric.wittig.scala.types
   * @see
   *   https://stackoverflow.com/questions/3427345/what-do-and-mean-in-scala-2-8-and-where-are-they-documented
   */
-object GeneralizedTypeConstraints extends App:
+@main
+def generalizedTypeConstraints(): Unit =
 
   /** A =:= B means A must be exactly B A <:< B means A must be a subtype of B (analogous to the simple type constraint <:)
     */

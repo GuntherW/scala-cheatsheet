@@ -1,6 +1,7 @@
 package de.codecentric.wittig.scala.contextualabstractions
 
-object Main extends App:
+@main
+def main(): Unit =
 
   // simple
   given defaultInt: Int = 10

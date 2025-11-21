@@ -3,7 +3,8 @@ package de.wittig.macros.inlines
 import scala.compiletime.{constValue, erasedValue, error, summonFrom}
 import scala.deriving.*
 
-object FieldNames extends App:
+@main
+def fieldNames(): Unit =
 
   inline def fieldNames[T]: List[String] =
     summonFrom {

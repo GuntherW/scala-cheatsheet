@@ -1,6 +1,7 @@
 package de.codecentric.wittig.scala.partialfunction
 
-object Main extends App:
+@main
+def main(): Unit =
 
   val myPartialFunction: PartialFunction[Int, Int] =
     new PartialFunction[Int, Int] {

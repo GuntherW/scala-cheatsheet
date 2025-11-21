@@ -9,7 +9,8 @@ import scala.util.{Failure, Success}
 /** @author
   *   gunther
   */
-object TestFuture extends App:
+@main
+def testFuture(): Unit =
 
   val randomNumber = 42
 
@@ -25,8 +26,8 @@ object TestFuture extends App:
     }
     f
 
-  private val f1 = Future(randomNumber)
-  private val f2 = Future(new Exception("Boom"))
+  val f1 = Future(randomNumber)
+  val f2 = Future(new Exception("Boom"))
 
   val u1: Unit = f1.failed.foreach(t => println(t))
   val u2: Unit = f2.foreach(i => println(i))

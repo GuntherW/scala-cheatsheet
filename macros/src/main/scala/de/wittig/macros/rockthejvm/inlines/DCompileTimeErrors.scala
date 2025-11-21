@@ -1,6 +1,7 @@
 package de.wittig.macros.rockthejvm.inlines
 
-object DCompileTimeErrors extends App:
+@main
+def dCompileTimeErrors(): Unit =
 
   inline def compileTimeError(x: Int): Int =
     compiletime.error("This is a compile-time error")

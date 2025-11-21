@@ -2,9 +2,10 @@ package de.codecentric.wittig.scala.dynamic
 
 import scala.language.dynamics
 
-object SelectDynamic extends App:
+@main
+def selectDynamic(): Unit =
 
-  private val dyn = Dyn(Map("foo" -> "fooValue", "bar" -> "barValue"))
+  val dyn = Dyn(Map("foo" -> "fooValue", "bar" -> "barValue"))
 
   println(dyn.foo)
   println(dyn.bar)

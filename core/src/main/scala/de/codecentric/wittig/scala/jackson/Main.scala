@@ -6,7 +6,8 @@ import com.fasterxml.jackson.module.scala.DefaultScalaModule
 
 import scala.jdk.CollectionConverters.MapHasAsJava
 
-object Main extends App:
+@main
+def main(): Unit =
 
   val p = Person("lklkj", Map("k1" -> "w1", "k2" -> "w2"))
   println(objectMapper.writeValueAsString(p))

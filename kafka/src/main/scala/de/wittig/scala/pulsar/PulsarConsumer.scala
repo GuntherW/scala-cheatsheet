@@ -9,20 +9,21 @@ import de.wittig.scala.pulsar.SensorDomain.SensorEvent
 import io.circe.generic.auto.*
 import org.apache.pulsar.client.api.{SubscriptionInitialPosition, SubscriptionType}
 
-object PulsarConsumer extends App:
+@main
+def pulsarConsumer(): Unit =
 
-  private val pulsarClient                    = PulsarClient(url)
-  private val consumerConfig                  = ConsumerConfig(
+  val pulsarClient                    = PulsarClient(url)
+  val consumerConfig                  = ConsumerConfig(
     Subscription("sensor-event-subscription"),
     Seq(topic),
     consumerName = Some("sensor-event-consumer"),
     subscriptionInitialPosition = Some(SubscriptionInitialPosition.Earliest),
     subscriptionType = Some(SubscriptionType.Exclusive)
   )
-  private val consumer: Consumer[SensorEvent] = pulsarClient.consumer[SensorEvent](consumerConfig)
+  val consumer: Consumer[SensorEvent] = pulsarClient.consumer[SensorEvent](consumerConfig)
 
   @tailrec
-  private def receiveAll(totalMessageCount: Int = 0): Unit =
+  def receiveAll(totalMessageCount: Int = 0): Unit =
     consumer.receive match
       case Failure(exception) =>
         println(s"Failed to receive message ${exception.getMessage}")

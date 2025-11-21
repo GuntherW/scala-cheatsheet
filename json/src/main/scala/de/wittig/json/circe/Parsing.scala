@@ -3,7 +3,8 @@ package de.wittig.json.circe
 import io.circe.parser.*
 import io.circe.{Json, ParsingFailure}
 
-object Parsing extends App:
+@main
+def parsing(): Unit =
   val rawJson: String =
     """
       {

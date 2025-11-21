@@ -3,7 +3,8 @@ package de.codecentric.wittig.scala.monads
 import cats.data.Writer
 import cats.implicits.{catsSyntaxApplicativeId, catsSyntaxWriterId}
 
-object WriterMonadExample extends App:
+@main
+def writerMonadExample(): Unit =
   type Logged[A] = Writer[Vector[String], A]
 
   val direct1: Logged[Int]  = 123.pure[Logged]

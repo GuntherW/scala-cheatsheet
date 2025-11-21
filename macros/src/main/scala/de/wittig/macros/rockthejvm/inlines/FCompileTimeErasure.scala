@@ -1,7 +1,8 @@
 package de.wittig.macros.rockthejvm.inlines
 import scala.util.chaining.scalaUtilChainingOps
 
-object FCompileTimeErasure extends App:
+@main
+def fCompileTimeErasure(): Unit =
 
   import compiletime.erasedValue
   import compiletime.constValue

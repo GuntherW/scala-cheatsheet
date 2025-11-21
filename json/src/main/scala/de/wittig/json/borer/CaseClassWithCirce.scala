@@ -6,7 +6,8 @@ import io.bullet.borer.compat.circe.*
 
 import java.time.LocalDate
 
-object CaseClassWithCirce extends App:
+@main
+def caseClassWithCirce(): Unit =
 
   case class Person(name: String, age: Int, date: LocalDate = LocalDate.now) derives Encoder, Decoder
 

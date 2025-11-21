@@ -7,9 +7,10 @@ import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.DurationInt
 
-object Future extends App:
+@main
+def future(): Unit =
 
-  private val backend = HttpClientFutureBackend()
+  val backend = HttpClientFutureBackend()
 
   val response = quickRequest
     .get(uri"https://httpbin.org/get")

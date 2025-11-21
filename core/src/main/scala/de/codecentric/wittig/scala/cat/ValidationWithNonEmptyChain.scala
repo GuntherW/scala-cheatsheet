@@ -7,22 +7,23 @@ import cats.implicits.catsSyntaxValidatedIdBinCompat0
 
 case class User(name: String, password: String)
 
-object ValidationWithNonEmptyChain extends App:
+@main
+def validationWithNonEmptyChain(): Unit =
 
   type ValidationResult[A] = ValidatedNec[String, A]
 
-  private def validateUserName(userName: String): ValidationResult[String] =
+  def validateUserName(userName: String): ValidationResult[String] =
     if userName.matches("^[a-zA-Z0-9]+$") then userName.validNec
     else "wrong username".invalidNec
 
-  private def isLowerCase(s: String): ValidationResult[String] =
+  def isLowerCase(s: String): ValidationResult[String] =
     if s == s.toLowerCase then s.validNec
     else "not lowercase".invalidNec
 
-  private def lowerUserName(userName: String) =
+  def lowerUserName(userName: String) =
     validateUserName(userName).andThen(isLowerCase)
 
-  private def validatePassword(password: String): ValidationResult[String] =
+  def validatePassword(password: String): ValidationResult[String] =
     if password.matches("(?=^.{10,}$)((?=.*\\d)|(?=.*\\W+))(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$") then password.validNec
     else "wrong password".invalidNec
 

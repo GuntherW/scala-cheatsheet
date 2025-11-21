@@ -1,10 +1,11 @@
 package de.codecentric.wittig.scala.regex
 
-object VersionRegex extends App:
+@main
+def versionRegex(): Unit =
 
-  private val versionPattern = """(\d+)(?:\.(\d+)(?:\.(\d+))?)?""".r
+  val versionPattern = """(\d+)(?:\.(\d+)(?:\.(\d+))?)?""".r
 
-  private def getVersion(value: String): Option[Version] = value match
+  def getVersion(value: String): Option[Version] = value match
     case versionPattern(major, null, null)   => Some(Version(major.toInt))
     case versionPattern(major, minor, null)  => Some(Version(major.toInt, minor.toInt))
     case versionPattern(major, minor, patch) => Some(Version(major.toInt, minor.toInt, patch.toInt))

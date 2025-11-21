@@ -14,7 +14,8 @@ object UtilScope:
   extension (y: Year)
     def pprint = s"--$y--"
 
-object OtherScope extends App:
+@main
+def otherScope(): Unit =
   import UtilScope.*
 
   case class Person(name: String, year: Year)

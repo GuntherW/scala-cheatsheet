@@ -3,9 +3,10 @@ package de.codecentric.wittig.scala.dynamic
 import scala.collection.mutable
 import scala.language.dynamics
 
-object UpdateDynamic extends App:
+@main
+def updateDynamic(): Unit =
 
-  private val dyn2 = new Dyn2
+  val dyn2 = new Dyn2
   dyn2.hallo = "eins"
   dyn2.hallo2 = "zwei"
 

@@ -37,7 +37,8 @@ object RateLimitingBackendWrapper:
     import sttp.monad.syntax._
     monadError.blocking(RateLimiter.waitForPermission(rateLimiter)).flatMap(_ => service)
 
-object RateLimit extends App:
+@main
+def rateLimit(): Unit =
   import scala.concurrent.ExecutionContext.Implicits.global
   val rawBackend = HttpClientFutureBackend()
   val backend    = RateLimitingBackendWrapper(

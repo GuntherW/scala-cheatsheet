@@ -24,7 +24,8 @@ object Raise {
     }
 }
 
-object Continuation extends App:
+@main
+def continuation(): Unit =
 
   val program: Raise[String] =
     Raise {

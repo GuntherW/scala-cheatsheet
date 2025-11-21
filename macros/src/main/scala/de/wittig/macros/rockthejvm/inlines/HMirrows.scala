@@ -14,7 +14,8 @@ enum Permissions:
 
 // Automatically derive Show[A] where A can be any Sum Type or Product Type
 // mirror contains all type information at compile time
-object Mirrows extends App:
+@main
+def mirrows(): Unit =
 
   /** Mirror of Product Type */
   val personMirror                   = summon[Mirror.Of[Person]]                        // Mirror.ProductOf[Person]

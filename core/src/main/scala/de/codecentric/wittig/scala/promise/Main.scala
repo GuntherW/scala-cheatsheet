@@ -6,7 +6,8 @@ import scala.concurrent.{Future, Promise}
 
 /** Where Future provides an interface exclusively for querying, Promise is a companion type that allows you to complete a Future by putting a value into it. This can be done exactly once.
   */
-object Main extends App:
+@main
+def main(): Unit =
   def foo: Future[Foo] =
     val p = Promise[Foo]()
     Future {

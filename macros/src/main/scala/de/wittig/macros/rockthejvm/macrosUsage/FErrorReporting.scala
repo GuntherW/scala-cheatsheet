@@ -1,7 +1,8 @@
 package de.wittig.macros.rockthejvm.macrosUsage
 import de.wittig.macros.rockthejvm.macros.FErrorReporting.*
 
-object FErrorReporting extends App:
+@main
+def fErrorReporting(): Unit =
   val someIntExpression = functionWithErrors(42 + 2)
   // val errorIntExpression = functionWithErrors(-2) // will not compile.
 

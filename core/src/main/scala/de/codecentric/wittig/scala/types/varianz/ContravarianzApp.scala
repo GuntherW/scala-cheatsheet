@@ -1,6 +1,7 @@
 package de.codecentric.wittig.scala.types.varianz
 
-object ContravarianzApp extends App:
+@main
+def contravarianzApp(): Unit =
 
   class Animal
   class Dog(name: String) extends Animal

@@ -4,7 +4,8 @@ import ox.flow.Flow
 
 import java.nio.file.Paths
 
-object FlowFileIO extends App:
+@main
+def flowFileIO(): Unit =
 
   Flow
     .fromFile(Paths.get("direct/src/main/resources/names.txt"))

@@ -1,6 +1,7 @@
 package de.wittig.os
 
-object Main extends App:
+@main
+def main(): Unit =
 
   println(s"pwd : ${os.pwd}")
   println(s"root: ${os.root}")

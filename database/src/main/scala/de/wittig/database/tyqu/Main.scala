@@ -8,9 +8,10 @@ import de.wittig.database.tyqu.BookDatabase.*
 import tyqu.execution.PostgreSqlQueryExecutor
 import tyqu.{*, given}
 
-object Main extends App:
+@main
+def main(): Unit =
 
-  private val connection = DriverManager.getConnection("jdbc:postgresql://localhost:5433/booksdb?user=postgres&password=postgres&ssl=false")
+  val connection = DriverManager.getConnection("jdbc:postgresql://localhost:5433/booksdb?user=postgres&password=postgres&ssl=false")
   given PostgreSqlQueryExecutor(connection)
 
   val results1 =

@@ -2,7 +2,8 @@ package de.codecentric.wittig.scala.cat.fmap
 
 import cats.implicits.*
 
-object Main extends App:
+@main
+def main(): Unit =
 
   case class Person(name: String, age: Int)
   val l = List(Person("lkj", 22), Person("jj", 44), Person("a", 22))

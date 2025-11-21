@@ -5,12 +5,13 @@ import scala.collection.parallel.CollectionConverters.*
 
 /** You need to include "org.scala-lang.modules" %% "scala-parallel-collections"
   */
-object ParallelandSeq extends App:
+@main
+def parallelandSeq(): Unit =
 
-  private val l1 = List.tabulate(1000)(identity)
-  private val m1 = (0 to 3).map(i => (i, l1)).toMap
+  val l1 = List.tabulate(1000)(identity)
+  val m1 = (0 to 3).map(i => (i, l1)).toMap
 
-  private def slowIncrement(i: Int): Int =
+  def slowIncrement(i: Int): Int =
     Thread.sleep(10)
     i + 1
 

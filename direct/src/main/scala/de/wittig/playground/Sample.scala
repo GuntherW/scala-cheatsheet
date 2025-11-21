@@ -21,7 +21,8 @@ object Sample:
   // Constructs a `Sample[A]`.
   inline def apply[A](inline body: Random ?=> A): Sample[A] = body
 
-object TestBoth extends App:
+@main
+def testBoth(): Unit =
 
   val printSample: (Console, Random) ?=> Unit =
     Print {

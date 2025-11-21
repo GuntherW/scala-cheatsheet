@@ -5,7 +5,8 @@ import scala.Tuple.InverseMap
 /** @see
   *   https://www.youtube.com/watch?v=leIB5tvDY64&t=1030s
   */
-object SequenceMethod extends App:
+@main
+def sequenceMethod(): Unit =
 
   (10, "x", true): (Int, String, Boolean)
   (10, "x", true): Int *: (String, Boolean)

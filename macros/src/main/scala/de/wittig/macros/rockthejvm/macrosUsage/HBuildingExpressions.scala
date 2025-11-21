@@ -1,7 +1,8 @@
 package de.wittig.macros.rockthejvm.macrosUsage
 import de.wittig.macros.rockthejvm.macros.HBuildingExpressions.*
 
-object HBuildingExpressions extends App:
+@main
+def hBuildingExpressions(): Unit =
 
   val a = createDefaultPermissions
   println(a)

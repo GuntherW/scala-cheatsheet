@@ -1,6 +1,7 @@
 package de.codecentric.wittig.scala.ordered
 
-object WithOrdered extends App:
+@main
+def withOrdered(): Unit =
   case class CurrencyAmount(amount: Double, currency: String) extends Ordered[CurrencyAmount]:
     override def compare(that: CurrencyAmount): Int = this.amount.compareTo(that.amount)
 

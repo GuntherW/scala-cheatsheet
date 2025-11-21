@@ -7,7 +7,8 @@ import scala.collection.mutable
   * @see
   *   https://blog.rockthejvm.com/free-monad/
   */
-object FreeMonad extends App:
+@main
+def freeMonad(): Unit =
 
   trait Monad[M[_]]:
     def pure[A](a: A): M[A]

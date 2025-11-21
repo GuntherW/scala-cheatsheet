@@ -1,8 +1,8 @@
 package de.codecentric.wittig.scala.extension
 
-object Main extends App:
-
-  case class Money(value: Double, currency: String)
+case class Money(value: Double, currency: String)
+@main
+def main(): Unit =
 
   extension (m: Money)
     def +(other: Money) = Money(m.value + other.value, m.currency)

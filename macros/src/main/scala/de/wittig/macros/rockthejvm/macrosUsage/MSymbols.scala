@@ -1,6 +1,7 @@
 package de.wittig.macros.rockthejvm.macrosUsage
 import de.wittig.macros.rockthejvm.macros.MSymbols.*
-object MSymbols extends App:
+@main
+def mSymbols(): Unit =
 
   enum Permissions:
     case Read(bitset: Int, dir: String, mask: Boolean)

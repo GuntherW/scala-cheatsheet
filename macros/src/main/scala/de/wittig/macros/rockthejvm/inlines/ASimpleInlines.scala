@@ -4,7 +4,8 @@ package de.wittig.macros.rockthejvm.inlines
   *
   * Am besten diese Datei mit VSCode öffnen, da bei IntelliJ alles Neukompiliert wird.
   */
-object ASimpleInlines extends App:
+@main
+def aSimpleInlines(): Unit =
 
   def inc(x: Int): Int                 = x + 1
   inline def incInl(x: Int): Int       = x + 1

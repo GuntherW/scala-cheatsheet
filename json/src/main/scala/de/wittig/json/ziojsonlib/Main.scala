@@ -4,7 +4,8 @@ import zio.json.*
 import java.time.{Year, YearMonth}
 import scala.concurrent.duration.DurationInt
 
-object Main extends App:
+@main
+def main(): Unit =
 
   val p = Person("lkj", 234, 5.seconds, Year.now, YearMonth.now, List(1, 2))
   println(p.toJson)

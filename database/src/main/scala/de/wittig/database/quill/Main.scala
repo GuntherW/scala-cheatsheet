@@ -5,12 +5,13 @@ import io.getquill.*
 
 import scala.util.chaining.scalaUtilChainingOps
 
-object Main extends App:
+@main
+def main(): Unit =
 
 //  val dbContext: DBContext = H2Context
   val dbContext: DBContext = PostgresContext
 
-  private val ctx = dbContext match {
+  val ctx = dbContext match {
     case PostgresContext => new PostgresJdbcContext(SnakeCase, "ctxpg")
     case H2Context       => new H2JdbcContext(SnakeCase, "ctxh2")
   }

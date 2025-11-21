@@ -1,6 +1,7 @@
 package de.codecentric.wittig.scala.matchtypes
 
-object MatchTypes extends App:
+@main
+def matchTypes(): Unit =
 
   /** Matching types */
   type ConstituentPartOf[A] = A match
@@ -19,10 +20,6 @@ object MatchTypes extends App:
   def lastCharOf(string: String): Char =
     if (string.isEmpty) throw new NoSuchElementException
     else string.charAt(string.length - 1)
-
-  def lastCharOf[A](list: List[A]): A =
-    if (list.isEmpty) throw new NoSuchElementException
-    else list.last
 
   /** Und können zusammengefasst werden: */
   def lastPartOf[A](a: A): ConstituentPartOf[A] =

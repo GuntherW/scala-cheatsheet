@@ -4,7 +4,8 @@ import scala.reflect.{classTag, ClassTag}
 
 case class Teil[T](inhalt: T)
 
-object ClassTagExample extends App:
+@main
+def classTagExample(): Unit =
 
   def usingClassTag[T: ClassTag](l: Teil[T]): Unit =
     println(s"mit ClassTag: ${l.inhalt} ${classTag[T].runtimeClass}")

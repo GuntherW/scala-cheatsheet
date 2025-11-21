@@ -5,7 +5,8 @@ import scala.util.chaining.scalaUtilChainingOps
 import de.wittig.macros.baeldung.Inliners.*
 import de.wittig.macros.baeldung.Macros.*
 
-object Main extends App:
+@main
+def main(): Unit =
 
   println("-" * 10 + "1")
   oddEvenInline(1).tap(println)
@@ -23,7 +24,7 @@ object Main extends App:
   oddEvenQuote(2).tap(println)
   println("-" * 10 + "2")
 
-  private val zahl1 = 1
+  val zahl1 = 1
   println("-" * 10 + "private val zahl1 = 1")
   oddEvenInline(zahl1).tap(println)
   oddEvenInlineArgument(zahl1).tap(println)
@@ -32,7 +33,7 @@ object Main extends App:
   oddEvenQuote(zahl1).tap(println)
   println("-" * 10 + "private val zahl1 = 1")
 
-  private val zahl2 = 2
+  val zahl2 = 2
   println("-" * 10 + "private val zahl2 = 2")
   oddEvenInline(zahl2).tap(println)
   oddEvenInlineArgument(zahl2).tap(println)
@@ -41,7 +42,7 @@ object Main extends App:
   oddEvenQuote(zahl2).tap(println)
   println("-" * 10 + "private val zahl2 = 2")
 
-  private inline val zahl1Inline = 1
+  inline val zahl1Inline = 1
   println("-" * 10 + "private inline val zahl1Inline = 1")
   oddEvenInline(zahl1Inline).tap(println)
   oddEvenInlineArgument(zahl1Inline).tap(println)
@@ -50,7 +51,7 @@ object Main extends App:
   oddEvenQuote(zahl1Inline).tap(println)
   println("-" * 10 + "private inline val zahl1Inline = 1")
 
-  private inline val zahl2Inline = 2
+  inline val zahl2Inline = 2
   println("-" * 10 + "private inline val zahl2Inline = 2")
   oddEvenInline(zahl2Inline).tap(println)
   oddEvenInlineArgument(zahl2Inline).tap(println)

@@ -3,7 +3,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
-object Transform extends App:
+@main
+def transform(): Unit =
 
   val f1    = Future(1)
   val f1Map = f1.map(_ + 1)

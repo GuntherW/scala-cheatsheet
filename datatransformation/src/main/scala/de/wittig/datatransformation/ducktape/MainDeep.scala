@@ -2,7 +2,8 @@ package de.wittig.datatransformation.ducktape
 
 import io.github.arainko.ducktape.*
 
-object MainDeep extends App:
+@main
+def mainDeep(): Unit =
 
   case class SourceToplevel1(level1: Option[SourceLevel1])
   case class SourceLevel1(level2: Option[SourceLevel2])

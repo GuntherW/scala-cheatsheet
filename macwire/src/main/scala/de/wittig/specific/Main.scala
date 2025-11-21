@@ -5,7 +5,8 @@ import scala.util.Using
 import com.softwaremill.macwire.*
 import Dependencies.*
 
-@main def main(): Unit =
+@main
+def main(): Unit =
   val userStatusReader = Using.resource(DataSource("jdbc:h2:~/test")): ds =>
     autowire[UserStatusReader](
       ds,

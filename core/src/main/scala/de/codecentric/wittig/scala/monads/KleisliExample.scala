@@ -8,7 +8,8 @@ import cats.implicits.*
   * @see
   *   https://typelevel.org/cats/datatypes/kleisli.html
   */
-object KleisliExample extends App:
+@main
+def kleisliExample(): Unit =
 
   val parse: Kleisli[Option, String, Int] =
     Kleisli(s => if s.matches("-?[0-9]+") then s.toInt.some else None)

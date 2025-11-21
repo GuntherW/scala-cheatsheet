@@ -2,7 +2,8 @@ package de.codecentric.wittig.scala.logging
 
 import org.slf4j.LoggerFactory
 
-object Main extends App:
+@main
+def main(): Unit =
   val c1 = MeineTestKlasse1()
   c1.logWithDuplicateMessageFilter()
 

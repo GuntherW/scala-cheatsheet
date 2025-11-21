@@ -1,16 +1,13 @@
 package de.wittig.macros.rockthejvm.warmup
 
-object MatchTypes extends App:
+@main
+def matchTypes(): Unit =
 
   def lastDigitOf(number: BigInt): Int = (number % 10).toInt
 
   def lastCharOf(string: String): Char =
     if (string.isEmpty) throw new NoSuchElementException
     else string.charAt(string.length - 1)
-
-  def lastCharOf[A](list: List[A]): A =
-    if (list.isEmpty) throw new NoSuchElementException
-    else list.last
 
   type ConstituentPartOf[A] = A match {
     case BigInt  => Int

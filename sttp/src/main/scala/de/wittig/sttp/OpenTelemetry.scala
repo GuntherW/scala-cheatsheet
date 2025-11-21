@@ -19,7 +19,8 @@ services:
       - '3000:3000' # Grafana's UI
       - '4317:4317' # Exporter
  */
-object OpenTelemetry extends App:
+@main
+def openTelemetry(): Unit =
   val otel: OpenTelemetry      = AutoConfiguredOpenTelemetrySdk.initialize().getOpenTelemetrySdk
   val baseBackend: SyncBackend = HttpClientSyncBackend()
   val backend                  = OpenTelemetryTracingBackend(OpenTelemetryMetricsBackend(baseBackend, otel), otel)

@@ -9,13 +9,14 @@ import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.DurationInt
 
-object GithubFuture extends App:
+@main
+def githubFuture(): Unit =
 
-  private val backend = HttpClientFutureBackend()
-  private val query   = "language:scala"
-  private val sort    = Some("stars")
+  val backend = HttpClientFutureBackend()
+  val query   = "language:scala"
+  val sort    = Some("stars")
 
-  private val request = basicRequest
+  val request = basicRequest
     .get(uri"https://api.github.com/search/repositories?q=$query&sort=$sort")
     .response(asJson[GitHubResponse])
 

@@ -1,6 +1,7 @@
 package de.codecentric.wittig.scala.compose
 
-object Compose extends App:
+@main
+def compose(): Unit =
 
   composeMethods()
   composeFunctions()

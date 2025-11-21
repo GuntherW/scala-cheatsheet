@@ -6,9 +6,10 @@ import NamedTuple.withNames
 
 type Person = (name: String, age: Int)
 
-object NamedTuples extends App:
+@main
+def namedTuples(): Unit =
 
-  private val bob: Person = (name = "Bob", age = 33)
+  val bob: Person = (name = "Bob", age = 33)
   println(bob.name)
 
   bob match

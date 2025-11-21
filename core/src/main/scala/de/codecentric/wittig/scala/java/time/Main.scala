@@ -1,14 +1,15 @@
 package de.codecentric.wittig.scala.java.time
 import java.time.*
 
-object Main extends App:
+@main
+def main(): Unit =
 
-  private val berlinZone: ZoneId = ZoneId.of("Europe/Berlin")
-  private val utc: ZoneId        = ZoneId.of("UTC")
+  val berlinZone: ZoneId = ZoneId.of("Europe/Berlin")
+  val utc: ZoneId        = ZoneId.of("UTC")
 
-  private val i             = Instant.now
-  private val zonedDateTime = i.atZone(berlinZone)
-  private val p             = zonedDateTime.withZoneSameInstant(berlinZone)
+  val i             = Instant.now
+  val zonedDateTime = i.atZone(berlinZone)
+  val p             = zonedDateTime.withZoneSameInstant(berlinZone)
 
   println(i)
   println(zonedDateTime)

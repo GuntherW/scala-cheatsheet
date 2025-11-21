@@ -5,7 +5,8 @@ import java.nio.file.Files
 import java.nio.file.Path
 import sttp.model.MediaType
 
-object Multipart extends App:
+@main
+def main(): Unit =
 
   withTemporaryFile("Hello, World!".getBytes) { file1 =>
     withTemporaryFile("<img>".getBytes) { file2 =>
@@ -28,7 +29,7 @@ object Multipart extends App:
     }
   }
 
-  private def withTemporaryFile[T](data: Array[Byte])(f: Path => T): T = {
+  def withTemporaryFile[T](data: Array[Byte])(f: Path => T): T = {
     val file = Files.createTempFile("sttp", "demo")
     try
       Files.write(file, data)

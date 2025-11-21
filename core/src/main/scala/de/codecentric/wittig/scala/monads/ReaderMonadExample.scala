@@ -2,7 +2,8 @@ package de.codecentric.wittig.scala.monads
 import cats.data.Reader
 import cats.*
 
-object ReaderMonadExample extends App:
+@main
+def readerMonadExample(): Unit =
 
   case class Config(x: String, y: String)
 

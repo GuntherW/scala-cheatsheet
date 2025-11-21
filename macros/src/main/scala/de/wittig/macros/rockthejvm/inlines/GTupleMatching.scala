@@ -3,7 +3,8 @@ package de.wittig.macros.rockthejvm.inlines
 import compiletime.summonInline
 import tools.*
 
-object GTupleMatching extends App:
+@main
+def gTupleMatching(): Unit =
 
   inline def showTuple[T <: Tuple](tuple: T): String =
     inline tuple match

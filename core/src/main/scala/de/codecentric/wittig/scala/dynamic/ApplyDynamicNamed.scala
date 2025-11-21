@@ -2,7 +2,8 @@ package de.codecentric.wittig.scala.dynamic
 
 import scala.language.dynamics
 
-object ApplyDynamicNamed extends App:
+@main
+def applyDynamicNamed(): Unit =
 
   println(Dyn4.foo(eins = 99, zwei = false))
   println(Dyn4.foo(99, zwei = false))

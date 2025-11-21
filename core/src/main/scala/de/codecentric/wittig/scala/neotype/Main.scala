@@ -1,7 +1,8 @@
 package de.codecentric.wittig.scala.neotype
 import neotype.*
 
-object Main extends App:
+@main
+def main(): Unit =
 
   type NonEmptyString = NonEmptyString.Type
   object NonEmptyString extends Newtype[String]:
@@ -12,7 +13,7 @@ object Main extends App:
 
   NonEmptyString("Hallo Welt")
   StringStartsWithNumber("123")
-  private val abc = "abc"
+  val abc = "abc"
   println(StringStartsWithNumber.make(abc))
 
   case class Person(name: String, age: Int)

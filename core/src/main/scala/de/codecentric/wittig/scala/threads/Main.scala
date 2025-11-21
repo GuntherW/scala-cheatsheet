@@ -1,6 +1,7 @@
 package de.codecentric.wittig.scala.threads
 
-object Main extends App:
+@main
+def main(): Unit =
 
 //  first()
   new Thread(task(1)).start()

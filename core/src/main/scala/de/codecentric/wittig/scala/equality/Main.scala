@@ -5,7 +5,8 @@ case class OneE(i: Int) derives CanEqual
 case class Two(i: Int)
 case class TwoE(i: Int) derives CanEqual
 
-object Main extends App:
+@main
+def main(): Unit =
 
   val one  = One(1)
   val oneE = OneE(1)
@@ -15,13 +16,13 @@ object Main extends App:
   withStrictEquality
   withoutStrictEquality
 
-  private def withoutStrictEquality =
+  def withoutStrictEquality =
     println(oneE == oneE)
     println(one == one)
     println(one == two)
 //    println(oneE == twoE)
 
-  private def withStrictEquality =
+  def withStrictEquality =
     import scala.language.strictEquality // or "-language:strictEquality"
     println(oneE == oneE)
 //    println(one == one)

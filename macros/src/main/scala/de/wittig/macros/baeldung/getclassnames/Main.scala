@@ -4,7 +4,8 @@ import de.wittig.macros.baeldung.getclassnames.ClazzNames.*
 
 import scala.util.chaining.scalaUtilChainingOps
 
-object Main extends App:
+@main
+def main(): Unit =
 
   case class Person(name: String)
 

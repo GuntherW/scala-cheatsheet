@@ -9,14 +9,15 @@ import scala.util.Try
 
 import de.codecentric.wittig.scala.compress.Gzip.*
 
-object Main extends App:
+@main
+def main(): Unit =
 
-  private val s = "Mein schöner String, Mein schöner String, Mein schöner String, Mein schöner String, Kein schöner String"
+  val s = "Mein schöner String, Mein schöner String, Mein schöner String, Mein schöner String, Kein schöner String"
 
-  private val gzipped = compress(s.getBytes("UTF-8")).tap(a => println(s"${new String(a)} [${a.size}]"))
+  val gzipped = compress(s.getBytes("UTF-8")).tap(a => println(s"${new String(a)} [${a.size}]"))
   decompress(gzipped).tap(println)
 
-  private val gzippedUrlEncoded = compressAndUrlEncode(s).tap(a => println(s"${new String(a)} [${a.size}]"))
+  val gzippedUrlEncoded = compressAndUrlEncode(s).tap(a => println(s"${new String(a)} [${a.size}]"))
   decompressUrlDecode(gzippedUrlEncoded).tap(println)
 
 object Gzip:

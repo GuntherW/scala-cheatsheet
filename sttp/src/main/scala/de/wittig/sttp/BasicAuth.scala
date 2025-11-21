@@ -3,7 +3,8 @@ package de.wittig.sttp
 import sttp.client4.*
 import sttp.model.HeaderNames
 
-object BasicAuth extends App:
+@main
+def basicAuth(): Unit =
 
   val password                 = "1234"
   val backend: SyncBackend     = DefaultSyncBackend()

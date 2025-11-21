@@ -5,7 +5,8 @@ import io.bullet.borer.{Cbor, Codec, Decoder, Encoder}
 import java.time.LocalDate
 import io.bullet.borer.derivation.MapBasedCodecs.*
 
-object CaseClass extends App:
+@main
+def caseClass(): Unit =
 
   case class Person(name: String, age: Int, date: LocalDate = LocalDate.now) derives Codec
   object Person:

@@ -8,7 +8,8 @@ case class Address(street: String, city: String) derives ConfiguredJsonValueCode
 case class PersonalData(name: String, age: Int, address: Address) derives ConfiguredJsonValueCodec
 case class HttpBinResponse(origin: String, headers: Map[String, String], data: String) derives ConfiguredJsonValueCodec
 
-object SimpleJson extends App:
+@main
+def simpleJson(): Unit =
 
   val request = basicRequest
     .post(uri"https://httpbin.org/post")

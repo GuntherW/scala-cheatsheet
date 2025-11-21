@@ -5,7 +5,8 @@ import fs2.{text, Pipe, Stream}
 import fs2.compression.Compression
 import fs2.io.file.{Files, Path}
 
-object Main extends App:
+@main
+def main(): Unit =
 
   Stream(1, 2, 3)
     .toList

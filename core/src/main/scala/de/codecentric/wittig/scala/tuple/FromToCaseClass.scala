@@ -5,7 +5,8 @@ import scala.deriving.Mirror
 case class Employee(name: String, number: Int, manager: Boolean)
 case class IceCream(name: String, numCherries: Int, inCone: Boolean)
 
-object FromToCaseClass extends App:
+@main
+def fromToCaseClass(): Unit =
 
   val bob: Employee = Employee("Bob", 42, false)
 

@@ -3,7 +3,8 @@ package de.codecentric.wittig.scala.patternmatching
 /** @author
   *   gunther
   */
-object Matching extends App:
+@main
+def matching(): Unit =
 
   trait User:
     def name: String

@@ -3,7 +3,8 @@ package de.codecentric.wittig.scala.resource
 import java.io.{BufferedReader, FileReader}
 import scala.util.Using
 
-object Main extends App:
+@main
+def main(): Unit =
 
   mitUsing("alias.sbt")
   mitManager("alias.sbt", "build.sbt")

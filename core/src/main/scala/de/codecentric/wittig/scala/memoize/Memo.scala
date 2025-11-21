@@ -1,6 +1,7 @@
 package de.codecentric.wittig.scala.memoize
 
-object Memo extends App:
+@main
+def memo(): Unit =
 
   def memoize[A, B](f: A => B) =
     new (A => B) {

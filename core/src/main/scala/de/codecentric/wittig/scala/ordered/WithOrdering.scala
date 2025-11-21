@@ -1,6 +1,7 @@
 package de.codecentric.wittig.scala.ordered
 
-object WithOrdering extends App:
+@main
+def withOrdering(): Unit =
   case class CurrencyAmount(amount: Double, currency: String)
 
   given o1: Ordering[CurrencyAmount] = Ordering.by(_.amount)

@@ -4,7 +4,8 @@ import sttp.client4.*
 import sttp.client4.ws.SyncWebSocket
 import sttp.client4.ws.sync.*
 
-object WebSocket extends App:
+@main
+def webSocket(): Unit =
   def useWebSocket(ws: SyncWebSocket): Unit =
     ws.sendText("Hello,")
     ws.sendText("world!")

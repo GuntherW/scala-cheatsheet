@@ -3,7 +3,8 @@ import scalasql.*, H2Dialect.*
 import org.h2.jdbcx.JdbcDataSource
 import scala.util.chaining.*
 
-object H2Example extends App:
+@main
+def h2Example(): Unit =
 
   // Define your table model classes
   case class City[T[_]](

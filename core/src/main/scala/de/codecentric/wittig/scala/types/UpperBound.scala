@@ -2,7 +2,8 @@ package de.codecentric.wittig.scala.types
 
 import de.codecentric.wittig.scala.Printer.printlnYellow
 
-object UpperBound extends App:
+@main
+def upperBound(): Unit =
   case class Person(name: String) extends Ordered[Person]:
     def compare(that: Person): Int = name.compareTo(that.name)
 

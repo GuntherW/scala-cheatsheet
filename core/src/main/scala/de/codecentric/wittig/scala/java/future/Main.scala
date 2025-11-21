@@ -3,7 +3,8 @@ package de.codecentric.wittig.scala.java.future
 import java.util.concurrent.{CompletableFuture, Executors}
 import java.util.concurrent.Future
 
-object Main extends App:
+@main
+def main(): Unit =
 
   val f1 = CompletableFuture.supplyAsync(() => "x")
   val f2 = CompletableFuture.supplyAsync(() => 42)

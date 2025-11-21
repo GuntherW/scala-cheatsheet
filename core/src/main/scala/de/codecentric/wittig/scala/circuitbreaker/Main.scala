@@ -7,18 +7,19 @@ import io.github.resilience4j.circuitbreaker.CircuitBreaker
 import io.github.resilience4j.decorators.Decorators
 import io.github.resilience4j.retry.Retry
 
-object Main extends App:
-
-  private val circuitBreaker = CircuitBreaker.ofDefaults("backendService")
+@main
+def main(): Unit =
+  def myMethod()     = "Meine tolle Methode"
+  val circuitBreaker = CircuitBreaker.ofDefaults("backendService")
 
   // Create a Retry with default configuration
   // 3 retry attempts and a fixed time interval between retries of 500ms
-  private val retry = Retry.ofDefaults("backendService")
+  val retry = Retry.ofDefaults("backendService")
 
   // Create a Bulkhead with default configuration
-  private val bulkhead = Bulkhead.ofDefaults("backendService")
+  val bulkhead = Bulkhead.ofDefaults("backendService")
 
-  private val supplier: Supplier[String] = () => myMethod()
+  val supplier: Supplier[String] = () => myMethod()
 
   // Decorate your call to backendService.doSomething()
   // with a Bulkhead, CircuitBreaker and Retry
@@ -29,7 +30,5 @@ object Main extends App:
     .withBulkhead(bulkhead)
     .withRetry(retry)
     .decorate
-
-  def myMethod() = "Meine tolle Methode"
 
   println(decoratedSupplier.get())

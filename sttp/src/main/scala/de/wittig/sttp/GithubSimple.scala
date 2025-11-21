@@ -7,14 +7,15 @@ import sttp.client4.circe.*
 case class GitHubResponse(total_count: Int, items: List[GitHubItem])
 case class GitHubItem(name: String, stargazers_count: Int, html_url: String)
 
-object GithubSimple extends App:
+@main
+def githubSimple(): Unit =
 
-  private val backend = DefaultSyncBackend()
-  private val query   = "language:scala"
-  private val sort    = Some("stars")
-//  private val sort    = None
+  val backend = DefaultSyncBackend()
+  val query   = "language:scala"
+  val sort    = Some("stars")
+//  val sort    = None
 
-  private val request = basicRequest
+  val request = basicRequest
     .get(uri"https://api.github.com/search/repositories?q=$query&sort=$sort")
     .response(asJson[GitHubResponse])
 

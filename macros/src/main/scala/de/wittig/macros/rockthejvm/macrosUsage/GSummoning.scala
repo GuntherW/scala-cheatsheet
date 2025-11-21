@@ -1,7 +1,8 @@
 package de.wittig.macros.rockthejvm.macrosUsage
 import de.wittig.macros.rockthejvm.macros.GSummoning.*
 
-object GSummoning extends App:
+@main
+def gSummoning(): Unit =
   given MyTypeClass[String] with
     def message: String = "I am a String"
 

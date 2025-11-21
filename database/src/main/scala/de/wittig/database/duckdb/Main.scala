@@ -4,7 +4,8 @@ import org.duckdb.DuckDBConnection
 
 import java.sql.{DriverManager, ResultSet}
 
-object Main extends App:
+@main
+def main(): Unit =
 
 //  val connection = DriverManager.getConnection("jdbc:duckdb:database/duck.db").asInstanceOf[DuckDBConnection]
   val connection = DriverManager.getConnection("jdbc:duckdb:").asInstanceOf[DuckDBConnection]

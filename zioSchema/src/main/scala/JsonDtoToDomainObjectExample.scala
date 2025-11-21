@@ -5,7 +5,8 @@ import scala.util.chaining.*
 
 import java.time.LocalDate
 
-object JsonDtoToDomainObjectExample extends App:
+@main
+def jsonDtoToDomainObjectExample(): Unit =
 
   case class PersonDto(firstName: String, lastName: String, birthday: (Int, Int, Int))
   object PersonDto {

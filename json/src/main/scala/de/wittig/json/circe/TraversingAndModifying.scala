@@ -3,7 +3,8 @@ package de.wittig.json.circe
 import io.circe.*
 import io.circe.parser.*
 
-object TraversingAndModifying extends App:
+@main
+def traversingAndModifying(): Unit =
   val json: String = """
   {
     "id": "c730433b-082c-4984-9d66-855c243266f0",

@@ -68,7 +68,8 @@ object CharacterDomain:
       true
   )
 
-object ServerMain extends App:
+@main
+def serverMain(): Unit =
   import CharacterDomain.*
   import caliban.quick.*
 

@@ -2,9 +2,10 @@ package de.codecentric.wittig.scala.phantomtypes.example
 
 import scala.annotation.targetName
 
-object Solution extends App:
-  private val tenString  = CodeSafe[Int]("10")
-  private val trueString = CodeSafe[Boolean]("true")
+@main
+def solution(): Unit =
+  val tenString  = CodeSafe[Int]("10")
+  val trueString = CodeSafe[Boolean]("true")
 
   tenString + tenString
   // tenString + trueString // won't compile

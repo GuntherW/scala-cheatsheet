@@ -2,7 +2,8 @@
 
 import scala.util.chaining.scalaUtilChainingOps
 
-object Update extends App:
+  @main
+def update(): Unit: Unit =
 
   println(os.pwd)
   val path = os.pwd / os.up

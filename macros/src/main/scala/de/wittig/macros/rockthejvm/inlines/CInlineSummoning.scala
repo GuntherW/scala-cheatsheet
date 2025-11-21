@@ -3,7 +3,8 @@ package de.wittig.macros.rockthejvm.inlines
 import scala.compiletime.{summonFrom, summonInline}
 import scala.util.chaining.scalaUtilChainingOps
 
-object CInlineSummoning extends App:
+@main
+def cInlineSummoning(): Unit =
 
   trait Semigroup[A]:
     def combine(x: A, y: A): A
@@ -20,7 +21,8 @@ object CInlineSummoning extends App:
   val f2               = doubleInline(21).tap(println)
 
 // conditional summon
-object ConditionalSummoning extends App:
+@main
+def conditionalSummoning(): Unit =
 
   trait Messenger[A]:
     def message: String

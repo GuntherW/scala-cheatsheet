@@ -34,7 +34,8 @@ object Print:
   /** Constructor for `Print` values */
   inline def apply[A](inline body: Console ?=> A): Print[A] = body
 
-@main def go(): Unit =
+@main
+def go(): Unit =
   // Declare some `Prints`
   val message: Print[Unit] = Print.println("Hello from direct-style land!")
 

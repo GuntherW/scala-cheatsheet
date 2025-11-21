@@ -6,13 +6,14 @@ import scala.concurrent.duration.*
 import gears.async.*
 import gears.async.default.given
 
-object Main extends App:
+@main
+def main(): Unit =
 
 //  simpleExample()
 //  sleepExample()
   sleepSort()
 
-  private inline def simpleExample(): Unit =
+  inline def simpleExample(): Unit =
     Async.blocking:
       val hello = Future:
         print("Hello")
@@ -21,7 +22,7 @@ object Main extends App:
         println(", world!")
       world.await
 
-  private inline def sleepExample(): Unit =
+  inline def sleepExample(): Unit =
     /** Counts to [[n]], sleeping for 100milliseconds in between. */
     def countTo(n: Int)(using Async): Unit =
       (1 to n).foreach: i =>
@@ -32,7 +33,7 @@ object Main extends App:
       countTo(10)
       println("Finished counting!")
 
-  private inline def sleepSort(): Unit =
+  inline def sleepSort(): Unit =
     Async.blocking:
       val origin = Seq(50, 80, 10, 60, 40, 100)
       // Spawn sleeping futures!

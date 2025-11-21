@@ -2,7 +2,8 @@ package de.codecentric.wittig.scala.monocle
 import monocle.Prism
 import scala.util.chaining.*
 
-object Prisms extends App:
+@main
+def prisms(): Unit =
 
   // define a prism for JStr => Option[String]
   val jStr  = Prism[Building, String] {

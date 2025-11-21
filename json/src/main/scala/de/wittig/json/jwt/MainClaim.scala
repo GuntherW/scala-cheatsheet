@@ -1,13 +1,12 @@
-package de.wittig.json.jwt
-
 import java.time.Clock
 import pdi.jwt.JwtClaim
 
 import scala.util.chaining.scalaUtilChainingOps
 
-object MainClaim extends App:
+@main
+def mainClaim(): Unit =
 
-  private given Clock = Clock.systemUTC
+  given Clock = Clock.systemUTC
 
   JwtClaim()
 

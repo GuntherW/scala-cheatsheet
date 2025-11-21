@@ -1,6 +1,7 @@
 package de.wittig.macros.rockthejvm.inlines
 
-object ATransparentInlines extends App:
+@main
+def aTransparentInlines(): Unit =
 
   // Durch das Schlüsselwort transparent kann der Compiler den Rückgabetyp der Methode noch enger ableiten.
   inline def wrap(i: Int): Option[Int]              = Some(i)

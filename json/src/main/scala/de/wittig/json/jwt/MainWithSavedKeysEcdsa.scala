@@ -9,7 +9,8 @@ import java.security.KeyFactory
 import java.security.spec.*
 import scala.util.chaining.scalaUtilChainingOps
 
-object MainWithSavedKeysEcdsa extends App:
+@main
+def mainWithSavedKeysEcdsa(): Unit =
 
   // Our saved params
   val S = BigInt("1ed498eedf499e5dd12b1ab94ee03d1a722eaca3ed890630c8b25f1015dd4ec5630a02ddb603f3248a3b87c88637e147ecc7a6e2a1c2f9ff1103be74e5d42def37d", 16)

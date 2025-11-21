@@ -4,7 +4,8 @@ import pdi.jwt.{JwtAlgorithm, JwtHeader}
 
 import scala.util.chaining.scalaUtilChainingOps
 
-object MainHeader extends App:
+@main
+def mainHeader(): Unit =
 
   JwtHeader()
   JwtHeader(JwtAlgorithm.HS256)

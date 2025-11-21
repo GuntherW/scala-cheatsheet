@@ -6,20 +6,21 @@ import scala.collection.parallel.CollectionConverters.*
 
 /** You need to include "org.scala-lang.modules" %% "scala-parallel-collections"
   */
-object ParallelAndView extends App:
+@main
+def parallelAndView(): Unit =
 
-  private val l1 = List.tabulate(100)(identity)
-  private val m1 = (0 to 3).map(i => (i, l1)).toMap
+  val l1 = List.tabulate(100)(identity)
+  val m1 = (0 to 3).map(i => (i, l1)).toMap
 
-  private def slowIncrement(i: Int): Int =
+  def slowIncrement(i: Int): Int =
     Thread.sleep(10)
     i + 1
 
-  private def decode(key: Int, values: List[Int]): (Int, List[Int]) =
+  def decode(key: Int, values: List[Int]): (Int, List[Int]) =
     println(s"decoding key: $key")
     key -> values.map(slowIncrement)
 
-  private def transform(key: Int, values: List[Int]): (Int, List[Int]) =
+  def transform(key: Int, values: List[Int]): (Int, List[Int]) =
     println(s"transforming key: $key")
     key -> values.map(slowIncrement)
 

@@ -5,9 +5,10 @@ import io.scalaland.chimney.dsl._
 import Dtos.*
 import model.*
 
-object Main extends App:
+@main
+def main(): Unit =
 
-  private val user = User(
+  val user = User(
     Username("John"),
     List(Address("Paper St", "Somewhere")),
     RecoveryMethod.Email("john@example.com")

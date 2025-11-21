@@ -5,7 +5,8 @@ import sttp.client4.*
 import java.nio.file.Files
 import java.nio.file.Path
 
-object UploadFile extends App:
+@main
+def uploadFile(): Unit =
   withTemporaryFile("Hello, World!".getBytes) { file =>
     val request = basicRequest
       .body(file)
@@ -18,7 +19,7 @@ object UploadFile extends App:
     println(response.body)
   }
 
-  private def withTemporaryFile[T](data: Array[Byte])(f: Path => T): T = {
+  def withTemporaryFile[T](data: Array[Byte])(f: Path => T): T = {
     val file = Files.createTempFile("sttp", "demo")
     try
       Files.write(file, data)

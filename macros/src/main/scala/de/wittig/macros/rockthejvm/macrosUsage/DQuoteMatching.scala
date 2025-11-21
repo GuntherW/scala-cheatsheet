@@ -2,7 +2,8 @@ package de.wittig.macros.rockthejvm.macrosUsage
 import de.wittig.macros.rockthejvm.macros.DQuoteMatching.*
 import scala.util.chaining.scalaUtilChainingOps
 
-object DQuoteMatching extends App:
+@main
+def dQuoteMatching(): Unit =
   pmOptions(Some(42)).tap(println)
   pmOptions(Some(43)).tap(println)
   pmOptions(Option(42)).tap(println)   // Option(42) != Some(42))

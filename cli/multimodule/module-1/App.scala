@@ -1,4 +1,5 @@
 //> using file "../common/SharedCode.scala"
 
-object App extends App:
+@main
+def app(): Unit: Unit =
   println(renderText("module-1"))

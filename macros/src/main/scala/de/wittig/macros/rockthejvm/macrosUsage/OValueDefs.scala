@@ -1,7 +1,8 @@
 package de.wittig.macros.rockthejvm.macrosUsage
 import de.wittig.macros.rockthejvm.macros.OValueDefs.*
 
-object OValueDefs extends App:
+@main
+def oValueDefs(): Unit =
 
   // synthesized:
   // scalaLength = {

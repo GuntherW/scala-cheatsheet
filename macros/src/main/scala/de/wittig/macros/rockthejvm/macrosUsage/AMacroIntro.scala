@@ -3,7 +3,8 @@ import de.wittig.macros.rockthejvm.macros.AMacroIntro.firstMacro
 import scala.util.chaining.scalaUtilChainingOps
 import de.wittig.macros.rockthejvm.macros.AMacroIntro.firstMacroInlineArguments
 
-object AMacroIntro extends App:
+@main
+def aMacroIntro(): Unit =
 
   firstMacro(3, "Scala").tap(println)
   firstMacro(2 + 1, "Scala").tap(println)

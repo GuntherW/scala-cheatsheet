@@ -1,10 +1,11 @@
 package de.codecentric.wittig.scala.dynamic.selectabled
 
-object Main extends App:
+@main
+def main(): Unit =
 
-  private type RefinedResult = DynS { val a: String; val b: Int; val c: String }
-  private val m       = Map("a" -> "Gunther", "b" -> 99)
-  private val rResult = DynS(m).asInstanceOf[RefinedResult]
+  type RefinedResult = DynS { val a: String; val b: Int; val c: String }
+  val m       = Map("a" -> "Gunther", "b" -> 99)
+  val rResult = DynS(m).asInstanceOf[RefinedResult]
 
   println(rResult.a)
   println(rResult.b)

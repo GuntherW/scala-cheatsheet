@@ -3,7 +3,8 @@ package de.codecentric.wittig.scala.xml
 import scala.xml.*
 import scala.xml.transform.{RewriteRule, RuleTransformer}
 
-object ScalaXml extends App:
+@main
+def scalaXml(): Unit =
 
   val books =
     <books>

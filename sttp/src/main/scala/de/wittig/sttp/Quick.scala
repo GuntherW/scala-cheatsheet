@@ -1,6 +1,7 @@
 package de.wittig.sttp
 import sttp.client4.quick.*
 
-object Quick extends App:
+@main
+def quick(): Unit =
 
   println(quickRequest.get(uri"http://httpbin.org/ip").send())

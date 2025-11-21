@@ -1,6 +1,7 @@
 package de.wittig.macros.rockthejvm.inlines
 
-object BInlineConditions extends App:
+@main
+def bInlineConditions(): Unit =
 
   inline def condition1(b: Boolean): String =
     if (b) "yes"

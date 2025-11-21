@@ -1,12 +1,13 @@
 package de.codecentric.wittig.scala.tuple
 
-object Simple extends App:
+@main
+def simple(): Unit =
 
-  private val input: (Int, Int, Int)           = (1, 2, 3)
-  private def sum(a: Int, b: Int, c: Int): Int = a + b + c
+  val input: (Int, Int, Int)           = (1, 2, 3)
+  def sum(a: Int, b: Int, c: Int): Int = a + b + c
 
   // how to use a method with a Tuple, when it was not originally written for:
-  private val summe = sum.tupled(input)
+  val summe = sum.tupled(input)
 
   println(summe)
 

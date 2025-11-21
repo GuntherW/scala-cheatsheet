@@ -3,7 +3,8 @@ package de.wittig.simple
 import com.softwaremill.macwire.*
 import Dependencies.*
 
-@main def main(): Unit =
+@main
+def main(): Unit =
   val userStatusReader = autowire[UserStatusReader]()
 
 object Dependencies:

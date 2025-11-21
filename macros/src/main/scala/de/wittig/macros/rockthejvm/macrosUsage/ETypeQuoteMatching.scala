@@ -2,7 +2,8 @@ package de.wittig.macros.rockthejvm.macrosUsage
 import de.wittig.macros.rockthejvm.macros.ETypeQuoteMatching.*
 import scala.util.Try
 
-object ETypeQuoteMatching extends App:
+@main
+def eTypeQuoteMatching(): Unit =
 
   val intDescriptor      = matchType[Int]
   val stringDescriptor   = matchType[String]

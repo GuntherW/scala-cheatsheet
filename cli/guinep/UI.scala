@@ -7,7 +7,8 @@ def rollDice(sides: Int): Int = scala.util.Random.nextInt(sides) + 1
 case class Add(a: Int, b: Int)
 def addObj(add: Add) = add.a + add.b
 
-object UI extends App:
+  @main
+def uI(): Unit: Unit =
   guinep.web(
     upperCaseText,
     rollDice,

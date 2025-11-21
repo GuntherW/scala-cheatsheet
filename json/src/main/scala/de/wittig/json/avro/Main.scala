@@ -4,7 +4,8 @@ import org.apache.avro.Schema
 
 import java.io.File
 
-object Main extends App:
+@main
+def main(): Unit =
 
   case class Ingredient(name: String, sugar: Double, fat: Double)
   case class Pizza(name: String, ingredients: Seq[Ingredient], vegetarian: Boolean, vegan: Boolean, calories: Int)

@@ -2,9 +2,10 @@ package de.codecentric.wittig.scala.phantomtypes.example
 
 import scala.annotation.targetName
 
-object Problem extends App:
-  private val tenString  = Code("10")
-  private val trueString = Code("true")
+@main
+def problem(): Unit =
+  val tenString  = Code("10")
+  val trueString = Code("true")
 
   tenString && trueString // Code((10 && true)) // unsafe
 

@@ -1,8 +1,9 @@
 package de.codecentric.wittig.scala.phantomtypes
 
-object SimpleExample extends App:
+@main
+def simpleExample(): Unit =
 
-  private val box = StrangeBox[Int]("Hallo")
+  val box = StrangeBox[Int]("Hallo")
   print(box.name) // "Hallo"
 
   def stringBoxesOnly(box: StrangeBox[String]): Unit = ???

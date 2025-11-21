@@ -4,9 +4,10 @@ import java.util.concurrent.CompletableFuture
 
 import de.codecentric.wittig.scala.Ops.time
 
-object Main2 extends App:
+@main
+def main2(): Unit =
 
-  private def createMaterial(name: String, gewicht: Int) =
+  def createMaterial(name: String, gewicht: Int) =
     Thread.sleep(2000)
     Material(name, gewicht)
 

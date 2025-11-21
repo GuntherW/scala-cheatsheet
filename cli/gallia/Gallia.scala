@@ -2,7 +2,8 @@
 
 import gallia.*
 
-@main def main(): Unit =
+@main
+def main(): Unit =
   """{"foo": "hallo", "bar": 1, "baz": true, "qux": "world"}"""
     .read() // will infer schema if none is provided
     .toUpperCase("foo")

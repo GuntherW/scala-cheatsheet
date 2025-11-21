@@ -1,7 +1,8 @@
 package de.wittig.macros.rockthejvm.macrosUsage
 import de.wittig.macros.rockthejvm.macros.QTreeMappings.*
 
-object QTreeMappings extends App:
+@main
+def qTreeMappings(): Unit =
 
 //   val scopedValue = transformCode {
 //     def multiply(x: String, y: Int) = x * y

@@ -2,7 +2,8 @@ package de.codecentric.wittig.scala.ducktyping
 import reflect.Selectable.reflectiveSelectable
 import scala.language.reflectiveCalls
 
-object Duck extends App:
+@main
+def duck(): Unit =
 
   def quaken(duck: { def quak(s: String): String }): Unit =
     println(duck.quak("Quak"))

@@ -18,7 +18,8 @@ object AddHeaderBackendWrapper:
     new AddHeaderBackendWrapper(backend, headers) with WebSocketSyncBackend {}
 
 // depending on the backend & effect type used, other "apply" variants might be needed here
-object AddHeaderToAllRequests extends App:
+@main
+def addHeaderToAllRequests(): Unit =
 
   val backend: WebSocketSyncBackend = AddHeaderBackendWrapper(
     DefaultSyncBackend(),

@@ -17,15 +17,16 @@ import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
   * kafka-topics --bootstrap-server localhost:9092 --alter --topic text_topic --partitions 3
   */
 
-object KafkaProducerApp extends App:
+@main
+def kafkaProducerApp(): Unit =
 
-  private val props: Properties = new Properties()
+  val props: Properties = new Properties()
   props.put("bootstrap.servers", bootstrapServer)
   props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
   props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
   props.put("acks", "all")
 
-  private val producer = new KafkaProducer[String, String](props)
+  val producer = new KafkaProducer[String, String](props)
 
   try
     for (i <- 0 to 15)

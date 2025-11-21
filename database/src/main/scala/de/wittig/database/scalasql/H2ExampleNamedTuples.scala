@@ -6,7 +6,8 @@ import scalasql.simple.H2Dialect.*
 
 import scala.util.chaining.*
 
-object H2ExampleNamedTuples extends App:
+@main
+def h2ExampleNamedTuples(): Unit =
 
   // Define your table model classes
   case class City(
