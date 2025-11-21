@@ -2,7 +2,8 @@ package de.codecentric.wittig.scala.regex
 
 import scala.util.matching.Regex
 
-object PositiveLookahead extends App:
+@main
+def main(): Unit =
 
   // Define a regex with a positive lookahead
   val pattern: Regex          = "(?=b).*d".r

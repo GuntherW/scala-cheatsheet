@@ -4,7 +4,8 @@ import monocle.syntax.all.*
 import java.time.YearMonth
 import scala.util.chaining.*
 
-object Main extends App:
+@main
+def main(): Unit =
 
   val user = User(
     "Anna",

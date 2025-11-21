@@ -1,12 +1,12 @@
 package de.codecentric.wittig.scala.squants
 
-import squants.*
 import squants.energy.Megawatts
 import squants.time.{Days, Hours}
 import squants.energy.Kilowatts
 import squants.market.EUR
 
-object Main extends App {
+@main
+def main(): Unit =
 
   val ratio = Days(1) / Hours(3)
   println(ratio)
@@ -21,4 +21,3 @@ object Main extends App {
   val tenEuro = EUR(10)
 
   println(tenEuro + EUR(0.3))
-}

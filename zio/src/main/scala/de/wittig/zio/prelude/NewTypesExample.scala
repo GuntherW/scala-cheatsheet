@@ -6,7 +6,8 @@ import zio.prelude.*
 import zio.prelude.Assertion.*
 import Person.*
 
-object NewTypesExample extends App {
+@main
+def main(): Unit =
 
   val name1    = Name("MeinName")
   val address1 = Address("MeineAdresse")
@@ -31,7 +32,6 @@ object NewTypesExample extends App {
   val person2b = Validation.validateWith(name2, email2, address2)(Person.apply)
   println(person2a.toOption.getOrElse("Error"))
   println(person2b.toOption.getOrElse("Error"))
-}
 
 case class Person(name: Name, email: Email, address: Address)
 

@@ -6,7 +6,8 @@ import cats.kernel.Eq
 
 case class Person(name: String, alter: Int)
 
-object NonEmptyListTest extends App {
+@main
+def nonEmptyList(): Unit =
 
   val l = NonEmptyList.fromList(List.tabulate(3)(i => Person("name" + i, i))).get
 
@@ -15,4 +16,3 @@ object NonEmptyListTest extends App {
   println(l.contains_(Person("name0", 0))(using eqp, implicitly))
   println(l.exists(_ == Person("name0", 0)))
   println(l)
-}

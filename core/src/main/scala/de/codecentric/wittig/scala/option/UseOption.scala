@@ -2,8 +2,8 @@ package de.codecentric.wittig.scala.option
 
 /** Thanks to Marconi Lanna! https://skillsmatter.com/skillscasts/7040-lightning-talks-4
   */
-object UseOption extends App:
-
+@main
+def main(): Unit =
   val p: String => Boolean = _.isEmpty
   val f: String => String  = _.toUpperCase
 
@@ -131,7 +131,8 @@ object UseOption extends App:
         assert(aa == bb)
       }
 
-object A extends App {
+@main
+def main2(): Unit =
   val m: Map[Int, Option[String]] = Map(1 -> Some("a"), 2 -> None)
 
   val a = m.view
@@ -143,4 +144,3 @@ object A extends App {
     .collect { case (variationId, Some(value)) => variationId -> value }
     .toMap
   println(a)
-}

@@ -11,7 +11,8 @@ import org.mongodb.scala.bsonDocumentToUntypedDocument
 import java.time.ZonedDateTime
 import scala.language.implicitConversions
 
-object Main extends App:
+@main
+def main(): Unit =
   import TestBsonProtocol.given
 
   val obj = Test(1, 0x123456789L, true, "1970-01-01T00:00:00Z".parseZonedDateTime)

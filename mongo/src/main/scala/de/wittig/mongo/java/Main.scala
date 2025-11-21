@@ -3,7 +3,8 @@ package de.wittig.mongo.java
 import org.bson.Document
 import de.wittig.MongoUtil.*
 
-object Main extends App {
+@main
+def main(): Unit =
 
   try {
     val database   = mongoClient.getDatabase("test1")
@@ -17,4 +18,3 @@ object Main extends App {
     val doc      = collection.find().first()
     println(doc.toJson)
   } finally if (mongoClient != null) mongoClient.close()
-}

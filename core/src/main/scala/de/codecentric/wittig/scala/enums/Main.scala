@@ -1,6 +1,7 @@
 package de.codecentric.wittig.scala.enums
 
-object Main extends App:
+@main
+def main(): Unit =
 
   enum Color(val value: Int):
     case Red   extends Color(0xff0000)
@@ -19,4 +20,4 @@ object Main extends App:
   assert(Color.values.length == 3)
   assert(Color.values.indexOf(Color.Green) == 1)
   assert(Color.Green.ordinal == 1)
-  assert(Color(0x0000ff) == Some(Color.Blue))
+  assert(Color(0x0000ff).contains(Color.Blue))

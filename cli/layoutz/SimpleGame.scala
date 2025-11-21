@@ -6,9 +6,6 @@ import scala.util.Random
 @main
 def simpleGame(): Unit = SimpleGame.run()
 
-import layoutz._
-import scala.util.Random
-
 case class Enemy(x: Int, y: Int)
 
 case class GameState(

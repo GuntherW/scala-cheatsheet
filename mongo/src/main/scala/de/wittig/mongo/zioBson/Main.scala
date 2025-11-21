@@ -17,7 +17,8 @@ import java.time.{Instant, LocalDate}
 import java.util.UUID
 import scala.collection.immutable.List
 
-object Main extends App:
+@main
+def main(): Unit =
 
   given BsonCodec[Person]      = BsonSchemaCodec.bsonCodec(DeriveSchema.gen[Person])
   //  given BsonCodec[Person]      = BsonSchemaCodec.bsonCodec(DeriveSchema.gen[Person], Config.withSumTypeHandling(DiscriminatorField("type")))
