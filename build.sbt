@@ -344,7 +344,7 @@ lazy val spring = project
     commonSettings,
     libraryDependencies ++= Seq(
       Library.springBootStarterJson,
-      Library.springBootStarterJson,
+      Library.springBootStarterWeb,
       Library.springBootStarter,
       Library.xml,
       Library.jacksonScala,

@@ -1,24 +1,25 @@
 package de.wittig.macros.rockthejvm.macrosUsage
 import de.wittig.macros.rockthejvm.macros.DQuoteMatching.*
+import scala.util.chaining.scalaUtilChainingOps
 
 object DQuoteMatching extends App:
-  val a = pmOptions(Some(42))
-  val b = pmOptions(Some(43))
-  val c = pmOptions(Option(42))   // Option(42) != Some(42))
-  val d = pmOptions(new Some(42)) // new Some(42) != Some(42))
+  pmOptions(Some(42)).tap(println)
+  pmOptions(Some(43)).tap(println)
+  pmOptions(Option(42)).tap(println)   // Option(42) != Some(42))
+  pmOptions(new Some(42)).tap(println) // new Some(42) != Some(42))
 
   // generics
-  pmGeneric(Some(43))
-  pmGeneric(None)
+  pmGeneric(Some(43)).tap(println)
+  pmGeneric(None).tap(println)
 
   // any
-  pmAny(Some("Scala"))
-  pmAny(Some(42))
-  pmAny(Some(42.4))
+  pmAny(Some("Scala")).tap(println)
+  pmAny(Some(42)).tap(println)
+  pmAny(Some(42.4)).tap(println)
 
-  pmErasureAvoidance(List(1, 2, 3))
-  pmErasureAvoidance(List("1", "2", "3"))
-  pmErasureAvoidance(List('a', 'b', 'c'))
+  pmErasureAvoidance(List(1, 2, 3)).tap(println)
+  pmErasureAvoidance(List("1", "2", "3")).tap(println)
+  pmErasureAvoidance(List('a', 'b', 'c')).tap(println)
 
-  pmListExpression(List(1, 2, 3).map(_.toString).map(_.length))
-  pmListExpression(List("a").map(_.length).map(_.toString))
+  pmListExpression(List(1, 2, 3).map(_.toString).map(_.length)).tap(println)
+  pmListExpression(List("a").map(_.length).map(_.toString)).tap(println)

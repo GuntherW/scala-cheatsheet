@@ -6,6 +6,12 @@ import scala.quoted.{Expr, Quotes}
   */
 object Macros:
 
+  /** Splicing
+    *
+    * From Expr to ScalaCode
+    */
+  inline def oddEvenQuote(inline number: Int): String = ${ oddEvenQuotes('number) }
+
   /** Quouting
     *
     * Quoting is the process of casting Scala code into an Expr. It lets us create simpler code that we can use for our macros.
@@ -15,9 +21,3 @@ object Macros:
       case 0 => "even"
       case _ => "odd"
   }
-
-  /** Splicing
-    *
-    * From Expr to ScalaCode
-    */
-  inline def oddEvenQuote(inline number: Int): String = ${ oddEvenQuotes('number) }

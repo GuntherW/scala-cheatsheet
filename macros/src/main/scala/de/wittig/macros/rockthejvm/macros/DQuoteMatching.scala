@@ -3,8 +3,7 @@ import quoted.*
 
 object DQuoteMatching:
 
-  inline def pmOptions(inline opt: Option[Int]): String = ${ pmOptionsImpl('opt) }
-
+  inline def pmOptions(inline opt: Option[Int]): String                         = ${ pmOptionsImpl('opt) }
   private def pmOptionsImpl(opt: Expr[Option[Int]])(using Quotes): Expr[String] =
     val result = opt match
       case '{ Some(42) } => "Got the meaning of life"
@@ -12,16 +11,14 @@ object DQuoteMatching:
       case _             => "Unknown"
     Expr(result)
 
-  inline def pmGeneric[T](inline x: Option[T]): String = ${ pmGenericImpl('x) }
-
+  inline def pmGeneric[T](inline x: Option[T]): String                               = ${ pmGenericImpl('x) }
   private def pmGenericImpl[T: Type](x: Expr[Option[T]])(using Quotes): Expr[String] =
     val result = x match
       case '{ Some($x) } => "Got some other value: " + x.show + " of type" + Type.show[T]
       case _             => "Unknown"
     Expr(result)
 
-  inline def pmAny(inline x: Option[Any]): String = ${ pmAnyImpl('x) }
-
+  inline def pmAny(inline x: Option[Any]): String                         = ${ pmAnyImpl('x) }
   private def pmAnyImpl(x: Expr[Option[Any]])(using Quotes): Expr[String] =
     val result = x match
       case '{ Some($x: String) } => "Got a string: " + x.show
@@ -30,8 +27,7 @@ object DQuoteMatching:
       case _                     => "Unknown"
     Expr(result)
 
-  inline def pmErasureAvoidance(inline x: List[Any]): String = ${ pmErasureAvoidanceImpl('x) }
-
+  inline def pmErasureAvoidance(inline x: List[Any]): String                         = ${ pmErasureAvoidanceImpl('x) }
   private def pmErasureAvoidanceImpl(x: Expr[List[Any]])(using Quotes): Expr[String] =
     val result = x match
       case '{ $l: List[Int] } => "Got a list of ints"
@@ -39,8 +35,7 @@ object DQuoteMatching:
       case _                  => "Got a list of something else"
     Expr(result)
 
-  inline def pmListExpression(inline x: List[Any]): String = ${ pmListExpressionImpl('x) }
-
+  inline def pmListExpression(inline x: List[Any]): String                         = ${ pmListExpressionImpl('x) }
   private def pmListExpressionImpl(x: Expr[List[Any]])(using Quotes): Expr[String] =
     val result = x match
       case '{

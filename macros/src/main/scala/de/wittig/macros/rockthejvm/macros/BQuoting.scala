@@ -12,8 +12,8 @@ object BQuoting {
 
     // casting Expr
     val anyExpr: Expr[Any] = '{ "some constant string" }
-    val recoveredExpr      = anyExpr.asExprOf[String] // .asExprOf[T] is a cast like .asInstanceOf[T] in regular code.
-    val aQoutedExpr        = '{ $recoveredExpr.drop(1) + "!" }
+    val recoveredExpr = anyExpr.asExprOf[String] // .asExprOf[T] is a cast like .asInstanceOf[T] in regular code.
+    val aQoutedExpr   = '{ $recoveredExpr.drop(1) + "!" }
 
     // Level
     val aSimpleString        = "some string".repeat(2)        // "level" 0
