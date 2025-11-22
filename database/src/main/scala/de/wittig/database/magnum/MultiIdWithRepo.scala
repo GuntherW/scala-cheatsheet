@@ -9,14 +9,15 @@ import scala.concurrent.duration.DurationInt
 import scala.util.Random
 import scala.util.chaining.*
 
-object MultiIdWithRepo extends App {
+@main
+def multiIdWithRepo(): Unit =
 
-  private val xa       = Transactor(dataSource(MagnumDb), sqlLogger = SqlLogger.logSlowQueries(3.milliseconds))
-  private val multRepo = MultiIdRepository()
+  val xa       = Transactor(dataSource(MagnumDb), sqlLogger = SqlLogger.logSlowQueries(3.milliseconds))
+  val multRepo = MultiIdRepository()
 
-  private val uuid = UUID.randomUUID
-  private val m1   = MultId(uuid, s"m1-${Random.nextString(3)}", s"m1-${Random.nextString(3)}@mail.de")
-  private val m2   = MultId(uuid, s"m2-${Random.nextString(3)}", s"m2-${Random.nextString(3)}@mail.de")
+  val uuid = UUID.randomUUID
+  val m1   = MultId(uuid, s"m1-${Random.nextString(3)}", s"m1-${Random.nextString(3)}@mail.de")
+  val m2   = MultId(uuid, s"m2-${Random.nextString(3)}", s"m2-${Random.nextString(3)}@mail.de")
 
   transact(xa):
     multRepo.count.tap(println)
@@ -24,7 +25,6 @@ object MultiIdWithRepo extends App {
     multRepo.findAll.tap(println)
     multRepo.delete(m1).tap(_ => println(s"delete $m1"))
     multRepo.findAll.tap(println) // Hier sollte jetzt noch m2 in der db sein.
-}
 
 class MultiIdRepository extends Repo[MultId, MultId, UUID]
 

@@ -10,29 +10,30 @@ import java.util.UUID
 import scala.concurrent.duration.DurationInt
 import scala.util.Random
 
-object Simple extends App {
+@main
+def simple(): Unit =
 
   // Transactor lets you customize the transaction (or connection) behavior.
-  private val xa = Transactor(
+  val xa = Transactor(
     dataSource(MagnumDb),
     sqlLogger = SqlLogger.logSlowQueries(5.milliseconds),
     connectionConfig = con => con.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ)
   )
 
   // Simple Query
-  private val persons: Vector[Persons] =
+  val persons: Vector[Persons] =
     connect(xa):
       sql"SELECT * FROM person".query[Persons].run()
   persons.foreach(println)
 
   // Transaction
-  private val randomString = Random.nextString(10)
+  val randomString = Random.nextString(10)
   transact(xa):
     sql"UPDATE person SET name = $randomString WHERE email = 'a@b.c'".update.run()
 //    throw new RuntimeException("Boom")
 
   // Returning Id
-  private val updateId: Vector[UUID] =
+  val updateId: Vector[UUID] =
     connect(xa):
       sql"""UPDATE person
          SET name = $randomString
@@ -51,4 +52,3 @@ object Simple extends App {
     updateResult match
       case magnum.BatchUpdateResult.Success(rowsUpdated) => println(s"Rows updated: $rowsUpdated")
       case magnum.BatchUpdateResult.SuccessNoInfo        => println("No rows updated")
-}

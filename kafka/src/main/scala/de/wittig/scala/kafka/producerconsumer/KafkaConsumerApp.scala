@@ -8,9 +8,10 @@ import scala.jdk.CollectionConverters.*
 import de.wittig.scala.kafka.producerconsumer.Constants.*
 import org.apache.kafka.clients.consumer.KafkaConsumer
 
-object KafkaConsumerApp extends App {
+@main
+def kafkaConsumerApp(): Unit =
 
-  private val props: Properties = new Properties()
+  val props: Properties = new Properties()
   props.put("group.id", "test")
   props.put("bootstrap.servers", bootstrapServer)
   props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
@@ -18,8 +19,8 @@ object KafkaConsumerApp extends App {
   props.put("enable.auto.commit", "true")
   props.put("auto.commit.interval.ms", "1000")
 
-  private val consumer = new KafkaConsumer(props)
-  private val topics   = List(topic)
+  val consumer = new KafkaConsumer(props)
+  val topics   = List(topic)
 
   try
     consumer.subscribe(topics.asJava)
@@ -32,4 +33,3 @@ object KafkaConsumerApp extends App {
     case e: Exception => e.printStackTrace()
   finally
     consumer.close()
-}

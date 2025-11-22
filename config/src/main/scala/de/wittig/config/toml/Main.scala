@@ -3,9 +3,10 @@ import toml.derivation.auto.*
 
 import scala.util.chaining.scalaUtilChainingOps
 
-object Main extends App:
+@main
+def main(): Unit =
 
-  private val table =
+  val table =
     """
       |a = 1
       |[table]
@@ -15,7 +16,7 @@ object Main extends App:
   toml.Toml.parse(table).tap(println)
   toml.Toml.parseAs[Root1](table).tap(println)
 
-  private val tableList =
+  val tableList =
     """
       |points = [ { x = 1, y = 2, z = 3 },
       |           { x = 7, y = 8, z = 9 },

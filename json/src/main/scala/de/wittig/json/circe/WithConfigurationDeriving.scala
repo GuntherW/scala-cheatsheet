@@ -6,7 +6,8 @@ import io.circe.derivation.*
 import io.circe.parser.*
 import io.circe.syntax.*
 
-object WithConfigurationDeriving extends App:
+@main
+def withConfigurationDeriving(): Unit =
 
   case class Address(cityName: String = "Kölle") derives ConfiguredCodec
   case class Person(givenName: String, age: Int = 123, recentAddress: Address = Address()) derives ConfiguredCodec

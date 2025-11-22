@@ -4,7 +4,8 @@ import java.time.{Year, YearMonth}
 import scala.concurrent.duration.DurationInt
 import com.github.plokhotnyuk.jsoniter_scala.core.*
 
-object Main extends App, JsoniterOps:
+@main
+def main(): Unit =
 
   val p = Person("lkj", 234, 5.seconds, Year.now, YearMonth.now, List(1, 2), Car("Astra", "Opel", 2024))
   val s = """{
@@ -24,10 +25,8 @@ object Main extends App, JsoniterOps:
   println(p.toJson)
   println(s.fromJson[Person])
 
-trait JsoniterOps:
+extension (payload: String)
+  def fromJson[T: JsonValueCodec]: T = readFromString(payload)
 
-  extension (payload: String)
-    def fromJson[T: JsonValueCodec]: T = readFromString(payload)
-
-  extension [T: JsonValueCodec](obj: T)
-    def toJson: String = writeToString(obj)
+extension [T: JsonValueCodec](obj: T)
+  def toJson: String = writeToString(obj)

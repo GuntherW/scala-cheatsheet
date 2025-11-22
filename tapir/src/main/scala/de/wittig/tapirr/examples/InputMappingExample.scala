@@ -10,7 +10,8 @@ import sttp.tapir.json.circe.*
 import sttp.tapir.server.netty.sync.NettySyncServer
 import sttp.tapir.swagger.bundle.SwaggerInterpreter
 
-object InputMappingExample extends App {
+@main
+def inputMappingExample(): Unit =
 
   case class Input(operation: String, value1: Int, value2: Int)
   case class Output(result: Result, hash: String)
@@ -42,4 +43,3 @@ object InputMappingExample extends App {
     .addEndpoint(maybeErrorEndpoint)
     .addEndpoints(swaggerEndpoints)
     .startAndWait()
-}

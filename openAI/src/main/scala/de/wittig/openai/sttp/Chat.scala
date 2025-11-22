@@ -5,21 +5,21 @@ import sttp.openai.requests.completions.chat.ChatRequestBody.{ChatBody, ChatComp
 import sttp.openai.requests.completions.chat.ChatRequestResponseData.ChatResponse
 import sttp.openai.requests.completions.chat.message.*
 
-object Chat extends App {
+@main
+def chat(): Unit =
 
-  private val openAI: OpenAISyncClient = OpenAISyncClient(sys.env("OPENAI_APIKEY"))
+  val openAI: OpenAISyncClient = OpenAISyncClient(sys.env("OPENAI_APIKEY"))
 
-  private val requestMessage = Seq(
+  val requestMessage = Seq(
     Message.UserMessage(
       content = Content.TextContent("Hello!")
     )
   )
 
-  private val chatRequestBody = ChatBody(
+  val chatRequestBody = ChatBody(
     model = ChatCompletionModel.GPT35Turbo,
     messages = requestMessage
   )
 
-  private val chatResponse: ChatResponse = openAI.createChatCompletion(chatRequestBody)
+  val chatResponse: ChatResponse = openAI.createChatCompletion(chatRequestBody)
   println(chatResponse)
-}

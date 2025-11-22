@@ -33,7 +33,8 @@ val errorOutput: EndpointOutput[AvatarError] =
     oneOfVariant(stringBody.mapTo[AvatarError.Other]),
   )
 
-object MultipleOutputsExample extends App {
+@main
+def multipleOutputsExample(): Unit =
 
   case class Input(operation: String, value1: Int, value2: Int)
   case class Output(result: Result, hash: String)
@@ -64,5 +65,3 @@ object MultipleOutputsExample extends App {
     .addEndpoint(avatarEndpoint)
     .addEndpoints(swaggerEndpoints)
     .startAndWait()
-
-}

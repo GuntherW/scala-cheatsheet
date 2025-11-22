@@ -7,12 +7,13 @@ import de.wittig.database.dataSource
 import java.util.UUID
 import scala.concurrent.duration.DurationInt
 
-object Seek extends App {
+@main
+def seek(): Unit =
 
-  private val xa         = Transactor(dataSource(MagnumDb), sqlLogger = SqlLogger.logSlowQueries(3.milliseconds))
-  private val personRepo = PersonRepository()
-  private val persons    = List.tabulate(30)(i => Persons(UUID.randomUUID, s"Gunner$i", s"a$i@b.c", Color.BlueOrange))
-  private val idPosition = persons(19)
+  val xa         = Transactor(dataSource(MagnumDb), sqlLogger = SqlLogger.logSlowQueries(3.milliseconds))
+  val personRepo = PersonRepository()
+  val persons    = List.tabulate(30)(i => Persons(UUID.randomUUID, s"Gunner$i", s"a$i@b.c", Color.BlueOrange))
+  val idPosition = persons(19)
 
   // Setup
   connect(xa):
@@ -53,4 +54,3 @@ object Seek extends App {
     println(s"before deletion count: ${personRepo.count}")
     sql"""DELETE from person WHERE name like 'Gunner%'""".update.run()
     println(s"after deletion count: ${personRepo.count}")
-}

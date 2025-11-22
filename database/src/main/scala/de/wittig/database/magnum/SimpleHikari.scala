@@ -7,7 +7,8 @@ import de.wittig.database.hikariDataSource
 import java.sql.Connection
 import scala.concurrent.duration.DurationInt
 
-object SimpleHikari extends App {
+@main
+def simpleHikari(): Unit =
 
   // Transactor lets you customize the transaction (or connection) behavior.
   val xa = Transactor(
@@ -20,5 +21,3 @@ object SimpleHikari extends App {
   val persons: Vector[Persons] = connect(xa):
     sql"SELECT * FROM person".query[Persons].run()
   persons.foreach(println)
-
-}

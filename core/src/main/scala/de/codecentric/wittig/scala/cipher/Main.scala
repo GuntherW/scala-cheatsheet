@@ -5,17 +5,18 @@ import java.util.Base64
 import javax.crypto.Cipher
 import javax.crypto.spec.{IvParameterSpec, SecretKeySpec}
 
-object Main extends App {
+@main
+def main(): Unit =
 
-  private val passphrase = "LwCeAPO6amEeLGNMK9yb895QGKVhalhyrWO+6bjNIJM="
-  private val key        = new SecretKeySpec(Base64.getDecoder.decode(passphrase), "AES")
+  val passphrase = "LwCeAPO6amEeLGNMK9yb895QGKVhalhyrWO+6bjNIJM="
+  val key        = new SecretKeySpec(Base64.getDecoder.decode(passphrase), "AES")
 
   Security.getProviders().foreach(println)
 
   aes()
   aesCbc()
 
-  private def aes() = {
+  def aes(): Unit = {
     val cipher = Cipher.getInstance("AES")
 
     cipher.init(Cipher.ENCRYPT_MODE, key)
@@ -26,7 +27,7 @@ object Main extends App {
     println(new String(decrypted))
   }
 
-  private def aesCbc() = {
+  def aesCbc(): Unit = {
     val cipher    = Cipher.getInstance("AES/CBC/PKCS5Padding")
     val BlockSize = 16
 
@@ -39,5 +40,3 @@ object Main extends App {
     val decrypted = cipher.doFinal(encryptedIv, BlockSize, encryptedIv.length - BlockSize)
     println(new String(decrypted))
   }
-
-}

@@ -5,7 +5,8 @@ import scala.util.chaining.scalaUtilChainingOps
 import pureconfig.*
 import pureconfig.generic.semiauto.*
 
-object Main extends App {
+@main
+def main(): Unit =
 
   case class MyConf(pizza: Pizza) derives ConfigReader
 
@@ -27,4 +28,3 @@ object Main extends App {
   val resource = ConfigSource.resources("application.conf")
   resource.load[MyConf].tap(println)
   resource.at("pizza").load[Pizza].tap(println)
-}

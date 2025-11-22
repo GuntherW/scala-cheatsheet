@@ -4,7 +4,7 @@ import zio.openai.*
 import zio.openai.model.CreateCompletionRequest.Model.Models
 import zio.openai.model.CreateCompletionRequest.{MaxTokens, Model, Prompt}
 import zio.openai.model.Temperature
-import zio.{Console, ZIO, ZIOAppDefault}
+import zio.{Console, ZIOAppDefault}
 
 object OpenQuestion extends ZIOAppDefault {
 

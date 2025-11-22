@@ -7,9 +7,10 @@ import de.wittig.database.dataSource
 
 import scala.util.chaining.*
 
-object WithJson extends App {
+@main
+def withJson(): Unit =
 
-  private val xa = Transactor(dataSource(MagnumDb))
+  val xa = Transactor(dataSource(MagnumDb))
 
   connect(xa):
     sql"""
@@ -70,4 +71,3 @@ object WithJson extends App {
     sql"""select metadata->'name' from people where metadata @> '{"name": "Gunther"}'""".query[String].run().tap(println)
     sql"""select metadata->'name' from people where metadata @> '{"hobby": ["Fußball"]}'""".query[String].run().tap(println)
     // sql"""select metadata->'name' from people where metadata->'name' = 'Gunther'""".query[String].run().tap(println)
-}

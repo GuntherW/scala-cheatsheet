@@ -5,7 +5,8 @@ import pureconfig.*
 
 import scala.util.chaining.scalaUtilChainingOps
 
-object MainRuntime extends App {
+@main
+def mainRuntime(): Unit =
 
   case class MyConf(runtimetesta: String, runtimetestb: String) derives ConfigReader
 
@@ -14,4 +15,3 @@ object MainRuntime extends App {
 
   lazy val resource = ConfigSource.fromConfig(ConfigFactory.load("application.conf"))
   resource.load[MyConf].tap(println)
-}

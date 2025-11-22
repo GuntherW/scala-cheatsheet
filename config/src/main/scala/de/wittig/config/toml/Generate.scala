@@ -5,7 +5,8 @@ import Value.*
 
 import scala.util.chaining.scalaUtilChainingOps
 
-object Generate extends App:
+@main
+def generate(): Unit =
 
   val root = Root(List(Pair(
     "scalaDeps",

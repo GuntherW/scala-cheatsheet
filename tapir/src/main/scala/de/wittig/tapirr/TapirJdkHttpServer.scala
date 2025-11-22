@@ -5,7 +5,8 @@ import sttp.model.StatusCode
 import sttp.tapir.server.jdkhttp.*
 import sttp.tapir.*
 
-object TapirJdkHttpServer extends App {
+@main
+def tapirJdkHttpServer(): Unit =
 
   // GET /hello endpoint, with query parameter `name`
   val helloWorldEndpoint =
@@ -22,8 +23,8 @@ object TapirJdkHttpServer extends App {
 
   val secondServerEndpoint = secondEndpoint.handle(_ => Right("IT WORKS!"))
 
-  private val declaredPort = 9091
-  private val declaredHost = "localhost"
+  val declaredPort = 9091
+  val declaredHost = "localhost"
 
   // Starting jdk http server
   val server =
@@ -60,4 +61,3 @@ object TapirJdkHttpServer extends App {
     assert(port == declaredPort, "Ports don't match")
     assert(host == declaredHost, "Hosts don't match")
   } finally server.stop(0)
-}

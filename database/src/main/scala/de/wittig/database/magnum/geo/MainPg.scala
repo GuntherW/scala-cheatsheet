@@ -7,13 +7,12 @@ import de.wittig.database.DatabaseName.MagnumDb
 import de.wittig.database.dataSource
 import org.postgresql.geometric.*
 
-object MainPg extends App {
+@main
+def mainPg(): Unit =
 
-  private val xa = Transactor(dataSource(MagnumDb))
+  val xa = Transactor(dataSource(MagnumDb))
 
-  private val myGeoRepo = Repo[Geotest, Geotest, Long]
+  val myGeoRepo = Repo[Geotest, Geotest, Long]
 
   transact(xa):
     myGeoRepo.insert(Geotest(2L, PGpoint(1, 2)))
-
-}
