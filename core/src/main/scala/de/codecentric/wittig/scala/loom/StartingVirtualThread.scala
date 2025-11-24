@@ -1,6 +1,7 @@
 package de.codecentric.wittig.scala.loom
 
-object StartingVirtualThread extends App {
+@main
+def startingVirtualThread(): Unit =
 
   val threads = Array.ofDim[Thread](10_000_000)
 
@@ -11,4 +12,3 @@ object StartingVirtualThread extends App {
     threads(i).join()
 
   println("All threads finished")
-}

@@ -6,7 +6,8 @@ import ox.{sleep, supervised, tap}
 import ox.flow.Flow
 import sttp.tapir.server.netty.sync.NettySyncServer
 
-object FlowSimple extends App {
+@main
+def flowSimple(): Unit =
 
 //  flowSimple
 //  demoZip
@@ -63,7 +64,6 @@ object FlowSimple extends App {
       .take(10)
       .runForeach(n => println(n.toString))
   }
-}
 
 @main
 def startHttpServer(): Unit =

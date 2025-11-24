@@ -9,13 +9,14 @@ import java.util.UUID
 import scala.concurrent.duration.DurationInt
 import scala.util.chaining.*
 
-object MainWithRepo extends App {
+@main
+def mainWithRepo(): Unit = {
 
-  private val xa         = Transactor(dataSource(MagnumDb), sqlLogger = SqlLogger.logSlowQueries(3.milliseconds))
-  private val personRepo = PersonRepository()
+  val xa         = Transactor(dataSource(MagnumDb), sqlLogger = SqlLogger.logSlowQueries(3.milliseconds))
+  val personRepo = PersonRepository()
 
-  private val p1 = Persons(UUID.randomUUID, "HannesMin", s"${UUID.randomUUID}.h.de", Color.Red, OffsetDateTime.now, Some(LocalDateTime.now), Some(LocalDate.of(1970, 1, 1)))
-  private val p2 = Persons(UUID.randomUUID, "HannesMax", s"${UUID.randomUUID}.h.de", Color.Red, OffsetDateTime.now, Some(LocalDateTime.now), Some(LocalDate.of(9999, 1, 1)))
+  val p1 = Persons(UUID.randomUUID, "HannesMin", s"${UUID.randomUUID}.h.de", Color.Red, OffsetDateTime.now, Some(LocalDateTime.now), Some(LocalDate.of(1970, 1, 1)))
+  val p2 = Persons(UUID.randomUUID, "HannesMax", s"${UUID.randomUUID}.h.de", Color.Red, OffsetDateTime.now, Some(LocalDateTime.now), Some(LocalDate.of(9999, 1, 1)))
 
   val count = transact(xa):
     personRepo.count.tap(println)
@@ -23,8 +24,6 @@ object MainWithRepo extends App {
     personRepo.insert(p1)
     personRepo.insert(p2)
     personRepo.findAll.tap(println)
-
-  withSpecifications()
 
   val delete = connect(xa):
     personRepo.delete(p1)
@@ -35,7 +34,7 @@ object MainWithRepo extends App {
     personRepo.findAll.tap(println)
     personRepo.count.tap(println)
 
-  def withSpecifications() =
+  def withSpecifications(): Unit =
     val partialEmail            = "a"
     val nameOpt: Option[String] = None
     val searchDate              = OffsetDateTime.now.minusYears(2)
@@ -49,6 +48,9 @@ object MainWithRepo extends App {
     val users = connect(xa):
       personRepo.findAll(spec)
     users.foreach(println)
+
+  withSpecifications()
+
 }
 
 /* Generates:

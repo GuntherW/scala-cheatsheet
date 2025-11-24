@@ -10,13 +10,14 @@ import scala.util.chaining.*
 
 case class CharacterView(name: String, nickname: List[String], origin: Origin)
 
-object ClientMain extends App {
+@main
+def clientMain(): Unit =
 
-  private val backend = HttpClientSyncBackend()
+  val backend = HttpClientSyncBackend()
 
-  private val selection = Character.name ~ Character.nicknames ~ Character.origin
+  val selection = Character.name ~ Character.nicknames ~ Character.origin
 
-  private val query = Query.character("James Holden") {
+  val query = Query.character("James Holden") {
     selection.mapN(CharacterView.apply)
   }
 
@@ -25,5 +26,3 @@ object ClientMain extends App {
     .readTimeout(2.seconds)
     .send(backend)
     .body
-    .tap(println)
-}

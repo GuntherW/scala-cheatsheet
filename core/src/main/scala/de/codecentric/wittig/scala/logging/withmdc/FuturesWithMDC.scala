@@ -5,15 +5,16 @@ import scala.concurrent.duration.DurationInt
 
 import org.slf4j.{LoggerFactory, MDC}
 
-object FuturesWithMDC extends App {
+@main
+def futuresWithMDC(): Unit =
 
-  private val logger = LoggerFactory.getLogger(getClass.getSimpleName)
+  val logger = LoggerFactory.getLogger(getClass.getSimpleName)
 
   logger.warn("eins")
   MDC.put("key1", "### MDC-Wert ###")
   logger.warn(s"zwei ${MDC.get("key1")}")
 
-  private val logWithGlobalExecutionContext =
+  val logWithGlobalExecutionContext: Unit =
     given ExecutionContext = scala.concurrent.ExecutionContext.global
     Await.result(
       Future {
@@ -23,7 +24,7 @@ object FuturesWithMDC extends App {
       5.seconds
     )
 
-  private val logWithMdcExecutionContext =
+  val logWithMdcExecutionContext: Unit =
     given ExecutionContext = MdcExecutionContext(scala.concurrent.ExecutionContext.global)
     Await.result(
       Future {
@@ -32,4 +33,3 @@ object FuturesWithMDC extends App {
       },
       5.seconds
     )
-}

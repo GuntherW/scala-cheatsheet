@@ -2,7 +2,8 @@ package de.wittig.ox
 import ox.*
 import scala.concurrent.duration.*
 
-object StructuredConcurrency extends App {
+@main
+def structuredConcurrency(): Unit =
 
   val (f1, f2) = supervised {
     val f1 = fork {
@@ -33,4 +34,3 @@ object StructuredConcurrency extends App {
     }
   }
   println("Wird nicht mehr geschrieben")
-}

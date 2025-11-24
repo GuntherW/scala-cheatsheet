@@ -1,5 +1,5 @@
 package de.wittig.macros.typesafejdbc
-import quoted.*
+import scala.quoted.*
 
 trait QueryResultDecoder[A]:
   def decode(row: Row): A
@@ -12,7 +12,6 @@ object QueryResultDecoder:
   //   rows.map(decoder.decode)
   transparent inline def run(inline query: String): List[?]                = ${ runImpl('query) }
   private def runImpl(query: Expr[String])(using q: Quotes): Expr[List[?]] =
-    import q.reflect.*
     val schema               = JdbcCommunication.getSchema(query.valueOrAbort)
     val descriptorToMappings = schema.values.map(descriptorToMapping)
     val refinedType          = makeRefinedType(descriptorToMappings)
@@ -25,7 +24,6 @@ object QueryResultDecoder:
     ${ makeImpl('query) }
 
   private def makeImpl(query: Expr[String])(using q: Quotes): Expr[QueryResultDecoder[?]] =
-    import q.reflect.*
 
     // 1. Find the Schema
     val schema = JdbcCommunication.getSchema(query.valueOrAbort)
@@ -82,7 +80,6 @@ object QueryResultDecoder:
 
   // fetches all readers of the correct type, so the values can be read correctly into the types
   private def getColumnReaders(descriptorToMappings: List[DescriptorToMapping])(using q: Quotes): Expr[List[(String, JdbcReader[?])]] =
-    import q.reflect.*
     val jdbcReaders = descriptorToMappings.map { dtm =>
       val nameExpr = Expr(dtm.descriptor.name)
       dtm.mapping match
@@ -93,7 +90,6 @@ object QueryResultDecoder:
 
   // get the final decoder that can read entire rows into the structural type inferred ealier
   private def makeDecoder(columnReaders: Expr[List[(String, JdbcReader[?])]], refinedType: Type[?])(using q: Quotes): Expr[QueryResultDecoder[?]] =
-    import q.reflect.*
     refinedType match
       case '[r] => '{
           new QueryResultDecoder[r] {
@@ -102,7 +98,6 @@ object QueryResultDecoder:
         }
 
   private def toType(vlType: JdbcType.VL)(using q: Quotes): Type[? <: JdbcType.TL] =
-    import q.reflect.*
     vlType match
       case JdbcType.VL.Boolean        => Type.of[JdbcType.TL.Boolean]
       case JdbcType.VL.Double         => Type.of[JdbcType.TL.Double]
@@ -114,7 +109,6 @@ object QueryResultDecoder:
       case JdbcType.VL.NotSupported   => Type.of[JdbcType.TL.NotSupported]
 
   private def toType(vlType: JdbcNullability.VL)(using q: Quotes): Type[? <: JdbcNullability.TL] =
-    import q.reflect.*
     vlType match
       case JdbcNullability.VL.NonNullable => Type.of[JdbcNullability.TL.NonNullable]
       case JdbcNullability.VL.Nullable    => Type.of[JdbcNullability.TL.Nullable]

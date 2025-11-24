@@ -14,7 +14,8 @@ import akka.actor.typed.scaladsl.Behaviors
   *   https://blog.rockthejvm.com/akka-actor-discovery/
   */
 
-object AkkaActorDiscovery extends App {
+@main
+def akkaActorDiscovery(): Unit = {
 
   case class SensorReading(id: String, value: Int)
 

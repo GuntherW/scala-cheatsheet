@@ -2,7 +2,8 @@ package de.codecentric.wittig.scala.java.uri
 
 import java.net.{MalformedURLException, URI, URISyntaxException}
 
-object Main extends App {
+@main
+def main(): Unit =
 
   // Create a URI
   try
@@ -18,5 +19,3 @@ object Main extends App {
     System.out.println("URL from URI: " + url)
   catch
     case e: MalformedURLException => System.out.println("Malformed URL: " + e.getMessage)
-
-}

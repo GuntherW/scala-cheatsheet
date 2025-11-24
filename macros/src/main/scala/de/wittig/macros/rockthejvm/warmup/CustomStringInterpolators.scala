@@ -1,17 +1,18 @@
 package de.wittig.macros.rockthejvm.warmup
 
-object CustomStringInterpolators extends App {
+@main
+def customStringInterpolators(): Unit =
 
-  private val pi = 3.14159
+  val pi = 3.14159
 
   // s-interpolator
-  private val sInterpolator = s"The value of PI is appox ${pi + 0.000002}"
+  val sInterpolator = s"The value of PI is appox ${pi + 0.000002}"
 
   // f-interpolator
-  private val fInterpolator = f"The value of PI up to 3 sig digits is $pi%3.2f"
+  val fInterpolator = f"The value of PI up to 3 sig digits is $pi%3.2f"
 
   // raw-interpolator
-  private val rawInterpolator = raw"The value of pi is $pi\n This is not a new line"
+  val rawInterpolator = raw"The value of pi is $pi\n This is not a new line"
 
   println(sInterpolator)
   println(fInterpolator)
@@ -35,4 +36,3 @@ object CustomStringInterpolators extends App {
   val age      = 123
   val gunther2 = pers"$name,$age"
   println(gunther2)
-}

@@ -1,6 +1,6 @@
 package de.wittig.json.circe
 
-import de.wittig.json.circe.WithConfiguration.Foo.given_Configuration
+import de.wittig.json.circe.Foo.given_Configuration
 import io.circe.Decoder
 import io.circe.derivation.*
 import io.circe.parser.*

@@ -2,23 +2,24 @@ package de.codecentric.wittig.scala.extractors
 
 import scala.util.Random
 
-object Main extends App {
+@main
+def main(): Unit =
 
-  private object Even:
+  object Even:
     def unapply(s: String): Boolean = s.length % 2 == 0
 
   "even" match
     case s @ Even() => println(s"$s has even number of characters")
     case s          => println(s"$s has odd number of characters")
 
-  private object CustomerID:
+  object CustomerID:
     def apply(name: String) = s"$name--${Random.nextLong()}"
 
     def unapply(customerID: String): Option[String] =
       val stringArray: Array[String] = customerID.split("--")
       if stringArray.tail.nonEmpty then Some(stringArray.head) else None
 
-  private val customer1ID = CustomerID("Ka")
+  val customer1ID = CustomerID("Ka")
   customer1ID match
     case CustomerID(name) => println(name)
     case _                => println("Could not extract a CustomerID")
@@ -29,4 +30,3 @@ object Main extends App {
   val b    = User.unapply(user)
   user match
     case User(name, age) => println(name)
-}

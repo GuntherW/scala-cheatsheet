@@ -1,7 +1,6 @@
 package de.wittig.macros.rockthejvm.inlines.tools
-import compiletime.*
+import scala.compiletime.*
 import scala.deriving.Mirror
-import scala.deriving.Mirror.Sum
 
 trait Show[A]:
   def show(a: A): String

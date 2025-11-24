@@ -4,7 +4,8 @@ import scala.concurrent.duration.*
 
 import ox.*
 
-object StructuredConcurrency2 extends App {
+@main
+def structuredConcurrency2(): Unit =
 
   val a = supervised {
     forkUser {
@@ -18,4 +19,3 @@ object StructuredConcurrency2 extends App {
       println("fork2 end")
     }
   }
-}
