@@ -7,7 +7,6 @@ object IExprList:
     ${ processVarargsImpl('values) }
 
   private def processVarargsImpl(values: Expr[Seq[Int]])(using Quotes): Expr[String] =
-    import quotes.reflect.*
 
     values match
       case Varargs(elements) =>
@@ -19,7 +18,6 @@ object IExprList:
   inline def returnExpr = ${ returnExprImpl }
 
   private def returnExprImpl(using Quotes): Expr[List[String]] =
-    import quotes.reflect.*
 
     val expr: List[Expr[String]] = List('{ "Hello" * 2 }, '{ "World".toUpperCase })
 

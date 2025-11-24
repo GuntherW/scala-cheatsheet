@@ -6,7 +6,8 @@ import java.security.spec.ECGenParameterSpec
 import java.security.{KeyPairGenerator, SecureRandom, Security}
 import scala.util.chaining.scalaUtilChainingOps
 
-object MainWithGeneratedKeysEcdsa extends App:
+@main
+def mainWithGeneratedKeysEcdsa(): Unit =
 
   val ecGenSpec = ECGenParameterSpec("P-521") // We specify the curve we want to use
 

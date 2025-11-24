@@ -4,7 +4,6 @@ import scala.concurrent.{Await, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 
-import de.wittig.tapirr.TapiNettyFutureServer2.Kitten
 import io.circe.derivation.{Configuration, ConfiguredCodec}
 import sttp.model.StatusCode
 import sttp.tapir.*
@@ -12,14 +11,22 @@ import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.netty.{NettyFutureServer, NettyFutureServerBinding}
 
-object TapiNettyFutureServer2 extends App {
+given Configuration = Configuration.default.withSnakeCaseMemberNames
+case class Kitten(id: Long, name: String, gender: String, ageInDays: Int) derives ConfiguredCodec
+case class ErrorResponse(message: String) derives ConfiguredCodec
+case class AuthenticationToken(value: String) derives ConfiguredCodec
+case class AuthenticationError(code: Int) derives ConfiguredCodec
+type User = String
 
-  given Configuration = Configuration.default.withSnakeCaseMemberNames
-  case class Kitten(id: Long, name: String, gender: String, ageInDays: Int) derives ConfiguredCodec
-  case class ErrorResponse(message: String) derives ConfiguredCodec
-  case class AuthenticationToken(value: String) derives ConfiguredCodec
-  case class AuthenticationError(code: Int) derives ConfiguredCodec
-  type User = String
+@main
+def tapirNettyFutureServer2(): Unit = {
+
+  def authenticate(token: AuthenticationToken): Future[Either[AuthenticationError, User]] = Future.successful(
+    token.value match
+      case "papa"     => Right("Papa Schlumpf")
+      case "gargamel" => Right("Gargamel")
+      case _          => Left(AuthenticationError(1001))
+  )
 
   val get = endpoint
     .get
@@ -31,13 +38,6 @@ object TapiNettyFutureServer2 extends App {
     .securityIn(auth.bearer[String]().mapTo[AuthenticationToken])
     .errorOut(plainBody[Int].mapTo[AuthenticationError])
     .serverSecurityLogic(authenticate)
-
-  def authenticate(token: AuthenticationToken): Future[Either[AuthenticationError, User]] = Future.successful(
-    token.value match
-      case "papa"     => Right("Papa Schlumpf")
-      case "gargamel" => Right("Gargamel")
-      case _          => Left(AuthenticationError(1001))
-  )
 
   val getSecured = secured
     .get

@@ -1,11 +1,10 @@
 package de.wittig.json.jwt
 
-import de.wittig.json.jwt.MainWithGeneratedKeysEcdsa.ecKey
 import org.bouncycastle.jce.ECNamedCurveTable
 import org.bouncycastle.jce.spec.ECNamedCurveSpec
 import pdi.jwt.{Jwt, JwtAlgorithm}
 
-import java.security.KeyFactory
+import java.security.{KeyFactory, KeyPairGenerator}
 import java.security.spec.*
 import scala.util.chaining.scalaUtilChainingOps
 
@@ -22,8 +21,8 @@ def mainWithSavedKeysEcdsa(): Unit =
   val curveParams                = ECNamedCurveTable.getParameterSpec("P-521")
   val curveSpec: ECParameterSpec = new ECNamedCurveSpec("P-521", curveParams.getCurve, curveParams.getG, curveParams.getN, curveParams.getH);
 
-  val privateSpec = new ECPrivateKeySpec(S.underlying(), curveSpec)
-  val publicSpec  = new ECPublicKeySpec(new ECPoint(X.underlying(), Y.underlying()), curveSpec)
+  val privateSpec = new ECPrivateKeySpec(S.underlying, curveSpec)
+  val publicSpec  = new ECPublicKeySpec(new ECPoint(X.underlying, Y.underlying), curveSpec)
 
   val privateKeyEC = KeyFactory.getInstance("ECDSA", "BC").generatePrivate(privateSpec)
   val publicKeyEC  = KeyFactory.getInstance("ECDSA", "BC").generatePublic(publicSpec)
@@ -37,4 +36,4 @@ def mainWithSavedKeysEcdsa(): Unit =
   decoded.tap(println)
 
   // Wrong key...
-  Jwt.decode(token, ecKey.getPublic, Seq(JwtAlgorithm.ES512))
+  Jwt.decode(token, KeyPairGenerator.getInstance("ECDSA", "BC").generateKeyPair().getPublic, Seq(JwtAlgorithm.ES512))

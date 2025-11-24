@@ -9,7 +9,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 
-object TapiNettyFutureServer extends App {
+@main
+def tapirNettyFutureServer(): Unit = {
 
   // One endpoint on GET /hello with query parameter `name`
   val helloWorldEndpoint: PublicEndpoint[String, Unit, String, Any] =
@@ -23,8 +24,8 @@ object TapiNettyFutureServer extends App {
   val helloWorldServerEndpoint = helloWorldEndpoint
     .serverLogic(name => Future.successful[Either[Unit, String]](Right(s"Hello, $name!")))
 
-  private val declaredPort                    = 9090
-  private val declaredHost                    = "localhost"
+  val declaredPort                            = 9090
+  val declaredHost                            = "localhost"
   // Starting netty server
   val serverBinding: NettyFutureServerBinding =
 

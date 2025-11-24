@@ -8,7 +8,7 @@ import org.slf4j.{LoggerFactory, MDC}
 @main
 def futuresWithMDC(): Unit =
 
-  val logger = LoggerFactory.getLogger(getClass.getSimpleName)
+  val logger = LoggerFactory.getLogger("FuturesWithMDC")
 
   logger.warn("eins")
   MDC.put("key1", "### MDC-Wert ###")

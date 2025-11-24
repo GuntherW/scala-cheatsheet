@@ -17,10 +17,9 @@ def main(): Unit =
 
 case class Person(name: String, properties: Map[String, String])
 
-class Person2(val name: String, properties: Map[String, String]) {
-  @JsonAnyGetter def props: java.util.Map[String, String] = properties.asJava
-}
+class Person2(val name: String, properties: Map[String, String]):
+  @JsonAnyGetter
+  def props: java.util.Map[String, String] = properties.asJava
 
-object objectMapper extends ObjectMapper {
+object objectMapper extends ObjectMapper:
   registerModule(DefaultScalaModule)
-}
