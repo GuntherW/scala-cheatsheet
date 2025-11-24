@@ -79,8 +79,6 @@ object database extends CommonSbtModule:
     Dependency.osLib,
     Dependency.postgres,
     Dependency.h2,
-    Dependency.quillJdbc,
-    Dependency.quillJdbcZio,
   )
 
 object datatransformation extends CommonSbtModule:

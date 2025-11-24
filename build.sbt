@@ -142,8 +142,6 @@ lazy val database = project
       Library.magnumpg,
       Library.ox,
       Library.osLib,
-      Library.quillJdbcZio,
-      Library.quillJdbc,
       Library.pureConfig,
       Library.postgres,
       Library.scalasql,

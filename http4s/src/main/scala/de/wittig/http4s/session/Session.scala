@@ -10,6 +10,7 @@ import org.http4s.headers.Cookie
 import org.http4s.implicits.*
 import org.http4s.server.*
 import org.http4s.server.middleware.authentication.DigestAuth
+import org.http4s.server.middleware.authentication.DigestAuth.Md5HashedAuthStore
 
 import java.nio.charset.StandardCharsets
 import java.time.LocalDateTime
@@ -24,10 +25,12 @@ object Session extends IOApp:
   def setToken(user: String, date: String): String = Base64.getEncoder.encodeToString(s"${user}:{$today}".getBytes(StandardCharsets.UTF_8))
   def getUser(token: String): Try[String]          = Try(new String(Base64.getDecoder.decode(token)).split(":")(0))
 
-  val funcPass: String => IO[Option[(User, String)]] = (user_val: String) =>
-    user_val match
-      case "username" => IO(Some(User(1, "username"), "password"))
-      case _          => IO(None)
+  val ha1: IO[String] = Md5HashedAuthStore.precomputeHash[IO]("username", "http://localhost:8080/welcome", "password")
+
+  val funcPass: String => IO[Option[(User, String)]] = {
+    case "username" => ha1.flatMap(hash => IO(Some(User(1, "username"), hash)))
+    case _          => IO(None)
+  }
 
   val authedRoutes: AuthedRoutes[User, IO] =
     AuthedRoutes.of {
@@ -54,23 +57,19 @@ object Session extends IOApp:
       case None         => Ok("No cookies"))
   }
 
-  val middleware: AuthMiddleware[IO, User] = DigestAuth[IO, User]("http://localhost:8080/welcome", funcPass)
-  val digestService: HttpRoutes[IO]        = middleware(authedRoutes)
-
-  val serviceRouter =
-    Router(
-      "/login" -> digestService,
-      "/"      -> cookieCheckerService(cookieAccessRoutes)
-    )
-
-  val server = EmberServerBuilder
-    .default[IO]
-    .withHost(ipv4"0.0.0.0")
-    .withPort(port"9083")
-    .withHttpApp(serviceRouter.orNotFound)
-    .build
-
   override def run(args: List[String]): IO[ExitCode] =
-    server
-      .use(_ => IO.never)
-      .as(ExitCode.Success)
+    for {
+      middleware <- DigestAuth.applyF[IO, User]("http://localhost:8080/welcome", Md5HashedAuthStore(funcPass))
+      digestService = middleware(authedRoutes)
+      serviceRouter = Router(
+        "/login" -> digestService,
+        "/"      -> cookieCheckerService(cookieAccessRoutes)
+      )
+      server = EmberServerBuilder
+        .default[IO]
+        .withHost(ipv4"0.0.0.0")
+        .withPort(port"9083")
+        .withHttpApp(serviceRouter.orNotFound)
+        .build
+      exitCode <- server.use(_ => IO.never).as(ExitCode.Success)
+    } yield exitCode

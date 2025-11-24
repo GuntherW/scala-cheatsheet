@@ -6,10 +6,10 @@ import de.wittig.scala.pulsar.PulsarConf.*
 import de.wittig.scala.pulsar.SensorDomain.SensorEvent
 import io.circe.generic.auto.*
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 @main
 def pulsarProducer(): Unit =
-
-  import scala.concurrent.ExecutionContext.Implicits.global
 
   val pulsarClient   = PulsarClient(url)
   val producerConfig = ProducerConfig(

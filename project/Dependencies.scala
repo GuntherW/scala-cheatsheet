@@ -43,7 +43,6 @@ object Version {
   val postgres                = "42.7.8"
   val pureConfig              = "0.17.9"
   val pulsar4s                = "2.12.0.1"
-  val quill                   = "4.8.6"
   val refined                 = "0.11.3"
   val resilience4j            = "2.3.0"
   val scala                   = "3.8.0-RC1"
@@ -165,8 +164,6 @@ object Library {
   val pureConfig                = "com.github.pureconfig"                 %% "pureconfig-generic-scala3"                 % Version.pureConfig
   val pulsar4s                  = "com.clever-cloud.pulsar4s"             %% "pulsar4s-core"                             % Version.pulsar4s
   val pulsar4sCirce             = "com.clever-cloud.pulsar4s"             %% "pulsar4s-circe"                            % Version.pulsar4s
-  val quillJdbc                 = "io.getquill"                           %% "quill-jdbc"                                % Version.quill
-  val quillJdbcZio              = "io.getquill"                           %% "quill-jdbc-zio"                            % Version.quill
   val refined                   = "eu.timepit"                            %% "refined"                                   % Version.refined
   val resilience4j              = "io.github.resilience4j"                 % "resilience4j-all"                          % Version.resilience4j
   val scalaParallelCollection   = "org.scala-lang.modules"                %% "scala-parallel-collections"                % Version.scalaParallelCollection

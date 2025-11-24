@@ -62,16 +62,11 @@ object DoobieDemo extends IOApp.Simple:
     .toList
     .transact(xa)
 
-  // HC, HPS
+  // Alternative zu HC.stream - verwende sql-Interpolation
   def findActorByName(name: String): IO[Option[Actor]] =
-    val queryString = "select id, name from actors where name = ?"
-    HC.stream[Actor](
-      queryString,
-      HPS.set(name),
-      100
-    ).compile
-      .toList
-      .map(_.headOption)
+    sql"select id, name from actors where name = $name"
+      .query[Actor]
+      .option
       .transact(xa)
 
   // fragments

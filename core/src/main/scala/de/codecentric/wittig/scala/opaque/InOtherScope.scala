@@ -1,6 +1,6 @@
 package de.codecentric.wittig.scala.opaque
 
-object UtilScope:
+object OtherScope:
 
   opaque type Month <: Int = Int
   object Month:
@@ -15,8 +15,8 @@ object UtilScope:
     def pprint = s"--$y--"
 
 @main
-def otherScope(): Unit =
-  import UtilScope.*
+def mainOther(): Unit =
+  import OtherScope.*
 
   case class Person(name: String, year: Year)
   case class Person2(name: String, year: Int)

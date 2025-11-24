@@ -1,6 +1,10 @@
 package de.codecentric.wittig.scala.opaque
 
-object InSameScope extends App:
+@main
+def mainSame(): Unit =
+  InSameScope.print
+
+object InSameScope:
 
   opaque type Month <: Int = Int
   object Month:
@@ -21,8 +25,9 @@ object InSameScope extends App:
   val p1 = Person("lkj", Month(123)) // Kompiliert, weil der opaque Typ im selben Scope definiert wurde
   val p2 = Person2("lkj", Month(123))
 
-  println(p)
-  println(p1)
-  println(p2)
-  println(Year.make(5))
-  println(Year.make(5).map(_.pprint))
+  def print: Unit =
+    println(p)
+    println(p1)
+    println(p2)
+    println(Year.make(5))
+    println(Year.make(5).map(_.pprint))

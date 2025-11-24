@@ -56,6 +56,9 @@ object QueryResultDecoder:
         // fetch a given ColumnMapping
         val mapping = Expr.summon[ColumnMapping[t, n, c]].getOrElse(produceColumnMappingError[t, n, c])
         DescriptorToMapping(descriptor, mapping)
+      case _ =>
+        import q.reflect.*
+        report.errorAndAbort(s"Failed to extract type information for column '${descriptor.name}'")
 
   private def produceColumnMappingError[T: Type, N: Type, C: Type](using q: Quotes) =
     import q.reflect.*
