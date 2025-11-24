@@ -76,19 +76,20 @@ object Version {
   val uTest      = "0.9.2"
 
   // Test
-  val cucumber        = "7.32.0"
-  val cucumberScala   = "8.36.0"
-  val junitInterface  = "0.13.3"
-  val junitJupiter    = "5.14.1"
-  val junitPlatform   = "1.14.1"
-  val mockito         = "5.20.0"
-  val munit           = "1.2.1"
-  val munitScalaCheck = "1.2.0"
-  val scalaCheck      = "1.19.0"
-  val scalaMock       = "7.5.2"
-  val scalaTest       = "3.2.19"
-  val testContainer   = "0.43.6"
-  val weaverCats      = "0.8.4"
+  val cucumber              = "7.32.0"
+  val cucumberScala         = "8.36.0"
+  val junitInterface        = "0.13.3"
+  val junitJupiter          = "5.14.1"
+  val junitJupiterInterface = "0.16.0"
+  val junitPlatform         = "1.14.1"
+  val mockito               = "5.20.0"
+  val munit                 = "1.2.1"
+  val munitScalaCheck       = "1.2.0"
+  val scalaCheck            = "1.19.0"
+  val scalaMock             = "7.5.2"
+  val scalaTest             = "3.2.19"
+  val testContainer         = "0.43.6"
+  val weaverCats            = "0.8.4"
 }
 
 object Library {
@@ -225,7 +226,7 @@ object Library {
   val junitPlatformEngine   = "org.junit.platform"           % "junit-platform-engine"          % Version.junitPlatform
   val junitPlatformLauncher = "org.junit.platform"           % "junit-platform-launcher"        % Version.junitPlatform
   val junitPlatformSuite    = "org.junit.platform"           % "junit-platform-suite"           % Version.junitPlatform
-  val jupiterInterface      = "com.github.sbt.junit"         % "jupiter-interface"              % "0.16.0"
+  val jupiterInterface      = "com.github.sbt.junit"         % "jupiter-interface"              % Version.junitJupiterInterface
   val gatlingCharts         = "io.gatling.highcharts"        % "gatling-charts-highcharts"      % Version.gatling
   val gatling               = "io.gatling"                   % "gatling-test-framework"         % Version.gatling
   val mockito               = "org.mockito"                  % "mockito-core"                   % Version.mockito
