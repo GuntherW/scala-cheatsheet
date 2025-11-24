@@ -1,7 +1,7 @@
 package de.wittig.cucumber
 
 import io.cucumber.scala.{EN, ScalaDsl, Scenario}
-import org.junit.Assert.*
+import org.junit.jupiter.api.Assertions.*
 
 class CalculatorStepDefinitions extends ScalaDsl, EN:
 

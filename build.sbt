@@ -116,11 +116,15 @@ lazy val cucumber = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(
-      Library.cucumberScala  % Test,
-      Library.cucumberJunit  % Test,
-      Library.cucumberPico   % Test,
-      Library.junitInterface % Test,
-      Library.junit          % Test
+      Library.cucumberScala         % Test,
+      Library.cucumberJunit         % Test,
+      Library.cucumberPico          % Test,
+      Library.junitJupiterApi       % Test,
+      Library.junitJupiterEngine    % Test,
+      Library.junitPlatformEngine   % Test,
+      Library.junitPlatformLauncher % Test,
+      Library.junitPlatformSuite    % Test,
+      Library.jupiterInterface      % Test
     )
   )
 

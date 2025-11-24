@@ -3,7 +3,7 @@ package de.wittig.cucumber
 import io.cucumber.datatable.DataTable
 import io.cucumber.scala.{DE, ScalaDsl}
 import io.cucumber.scala.Implicits.ScalaDataTable
-import org.junit.Assert.*
+import org.junit.jupiter.api.Assertions.*
 
 class TabellenStepDefinitions extends ScalaDsl, DE:
 

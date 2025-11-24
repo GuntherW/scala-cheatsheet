@@ -1,7 +1,7 @@
 package de.wittig.cucumber
 
 import io.cucumber.scala.{DE, ScalaDsl}
-import org.junit.Assert.*
+import org.junit.jupiter.api.Assertions.*
 
 class DECalculatorStepDefinitions extends ScalaDsl, DE:
 
