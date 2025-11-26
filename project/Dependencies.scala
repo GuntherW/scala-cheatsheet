@@ -77,7 +77,6 @@ object Version {
   // Test
   val cucumber              = "7.32.0"
   val cucumberScala         = "8.36.0"
-  val junitInterface        = "0.13.3"
   val junitJupiter          = "5.14.1"
   val junitJupiterInterface = "0.16.0"
   val junitPlatform         = "1.14.1"
@@ -217,7 +216,6 @@ object Library {
   val cucumberScala         = "io.cucumber"                 %% "cucumber-scala"                 % Version.cucumberScala
   val cucumberJunit         = "io.cucumber"                  % "cucumber-junit-platform-engine" % Version.cucumber
   val cucumberPico          = "io.cucumber"                  % "cucumber-picocontainer"         % Version.cucumber
-  val junitInterface        = "com.github.sbt"               % "junit-interface"                % Version.junitInterface
   val junitJupiterApi       = "org.junit.jupiter"            % "junit-jupiter-api"              % Version.junitJupiter
   val junitJupiterEngine    = "org.junit.jupiter"            % "junit-jupiter-engine"           % Version.junitJupiter
   val junitPlatformEngine   = "org.junit.platform"           % "junit-platform-engine"          % Version.junitPlatform

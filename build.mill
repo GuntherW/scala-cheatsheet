@@ -56,10 +56,14 @@ object cucumber extends CommonSbtModule:
       Dependency.cucumberScala,
       Dependency.cucumberJunit,
       Dependency.cucumberPico,
-      Dependency.junitInterface,
-      Dependency.junit,
+      Dependency.junitJupiterApi,
+      Dependency.junitJupiterEngine,
+      Dependency.junitPlatformEngine,
+      Dependency.junitPlatformLauncher,
+      Dependency.junitPlatformSuite,
+      Dependency.jupiterInterface,
     )
-    def testFramework = "com.novocode.junit.JUnitFramework"
+    def testFramework = "com.github.sbt.junit.jupiter.api.JupiterFramework"
 
 object database extends CommonSbtModule:
   def mvnDeps = Seq(
@@ -231,7 +235,7 @@ object Version:
   val neotype                 = "0.3.36"
   val openTelemetry           = "1.56.0"
   val osLib                   = "0.11.6"
-  val ox                      = "1.0.1"
+  val ox                      = "1.0.2"
   val postgres                = "42.7.8"
   val pureConfig              = "0.17.9"
   val pulsar4s                = "2.10.0"
@@ -269,15 +273,16 @@ object Version:
   // Test
   val cucumber        = "7.32.0"
   val cucumberScala   = "8.36.0"
-  val junit           = "4.13.2"
-  val junitInterface  = "0.13.3"
+  val junitJupiter          = "5.14.1"
+  val junitJupiterInterface = "0.16.0"
+  val junitPlatform         = "1.14.1"
   val mockito         = "5.20.0"
   val munit           = "1.2.1"
   val munitScalaCheck = "1.2.0"
   val scalaTest       = "3.2.19"
   val scalaCheck      = "1.19.0"
   val scalaMock       = "7.5.2"
-  val testContainer   = "0.43.6"
+  val testContainer   = "0.44.0"
   val weaverCats      = "0.8.4"
 
 object Dependency:
@@ -399,12 +404,17 @@ object Dependency:
   val zioCli                    = mvn"dev.zio::zio-cli:${Version.zioCli}"
   val zioOpenAI                 = mvn"dev.zio::zio-openai:${Version.zioOpenAI}"
 
+
   // test
   val cucumberScala       = mvn"io.cucumber::cucumber-scala:${Version.cucumberScala}"
-  val cucumberJunit       = mvn"io.cucumber:cucumber-junit:${Version.cucumber}"
+  val cucumberJunit       = mvn"io.cucumber:cucumber-junit-platform-engine:${Version.cucumber}"
   val cucumberPico        = mvn"io.cucumber:cucumber-picocontainer:${Version.cucumber}"
-  val junitInterface      = mvn"com.github.sbt:junit-interface:${Version.junitInterface}"
-  val junit               = mvn"junit:junit:${Version.junit}"
+  val junitJupiterApi       = mvn"org.junit.jupiter:junit-jupiter-api:${Version.junitJupiter}"
+  val junitJupiterEngine    = mvn"org.junit.jupiter:junit-jupiter-engine:${Version.junitJupiter}"
+  val junitPlatformEngine   = mvn"org.junit.platform:junit-platform-engine:${Version.junitPlatform}"
+  val junitPlatformLauncher = mvn"org.junit.platform:junit-platform-launcher:${Version.junitPlatform}"
+  val junitPlatformSuite    = mvn"org.junit.platform:junit-platform-suite:${Version.junitPlatform}"
+  val jupiterInterface      = mvn"com.github.sbt.junit:jupiter-interface:${Version.junitJupiterInterface}"
   val gatlingCharts       = mvn"io.gatling.highcharts:gatling-charts-highcharts:${Version.gatling}"
   val gatling             = mvn"io.gatling:gatling-test-framework:${Version.gatling}"
   val mockito             = mvn"org.mockito:mockito-core:${Version.mockito}"
