@@ -29,6 +29,7 @@ object ECompileTimeOps:
     val regexMatch: Matches["Scala", ".*al.*"] = true
 
   object Values:
+
     import compiletime.constValue
     import compiletime.ops.int.+
     import compiletime.ops.string.Length
