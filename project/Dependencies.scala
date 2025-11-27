@@ -2,9 +2,10 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.8"
-  val aws                     = "2.229.1"
+  val aws                     = "2.230.0"
   val avro4s                  = "5.0.14"
   val borer                   = "1.16.2"
+  val bouncyCastle            = "1.83"
   val caliban                 = "2.11.1"
   val catsEffect              = "3.6.3"
   val catsEffectCps           = "0.5.0"
@@ -64,7 +65,7 @@ object Version {
   val zio                     = "2.1.22"
   val zioJson                 = "0.7.45"
   val zioKafka                = "3.2.0"
-  val zioHttp                 = "3.5.1"
+  val zioHttp                 = "3.6.0"
   val zioPrelude              = "1.0.0-RC42"
   val zioSchema               = "1.7.5"
   val zioCli                  = "0.7.4"
@@ -76,7 +77,7 @@ object Version {
 
   // Test
   val cucumber              = "7.32.0"
-  val cucumberScala         = "8.36.0"
+  val cucumberScala         = "8.37.0"
   val junitJupiter          = "5.14.1"
   val junitJupiterInterface = "0.16.0"
   val junitPlatform         = "1.14.1"
@@ -98,6 +99,7 @@ object Library {
   val borerDerivation           = "io.bullet"                             %% "borer-derivation"                          % Version.borer
   val borerCirce                = "io.bullet"                             %% "borer-compat-circe"                        % Version.borer
   val borerScodec               = "io.bullet"                             %% "borer-compat-scodec"                       % Version.borer
+  val bouncyCastle              = "org.bouncycastle"                       % "bcpkix-jdk18on"                            % Version.bouncyCastle
   val calibanQuick              = "com.github.ghostdogpr"                 %% "caliban-quick"                             % Version.caliban
   val calibanClient             = "com.github.ghostdogpr"                 %% "caliban-client"                            % Version.caliban
   val catsCore                  = "org.typelevel"                         %% "cats-core"                                 % Version.catsVersion

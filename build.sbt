@@ -237,7 +237,7 @@ lazy val json = project
       Library.borerDerivation,
       Library.borerCirce,
       Library.borerScodec,
-      "org.bouncycastle" % "bcpkix-jdk18on" % "1.82",
+      Library.bouncyCastle,
       Library.circeCore,
       Library.circeGeneric,
       Library.circeParser,
