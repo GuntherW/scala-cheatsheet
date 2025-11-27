@@ -78,9 +78,8 @@ object Version {
   // Test
   val cucumber              = "7.32.0"
   val cucumberScala         = "8.37.0"
-  val junitJupiter          = "5.14.1"
-  val junitJupiterInterface = "0.16.0"
-  val junitPlatform         = "1.14.1"
+  val junit                 = "6.0.1"
+  val junitJupiterInterface = "0.17.0"
   val mockito               = "5.20.0"
   val munit                 = "1.2.1"
   val munitScalaCheck       = "1.2.0"
@@ -218,11 +217,11 @@ object Library {
   val cucumberScala         = "io.cucumber"                 %% "cucumber-scala"                 % Version.cucumberScala
   val cucumberJunit         = "io.cucumber"                  % "cucumber-junit-platform-engine" % Version.cucumber
   val cucumberPico          = "io.cucumber"                  % "cucumber-picocontainer"         % Version.cucumber
-  val junitJupiterApi       = "org.junit.jupiter"            % "junit-jupiter-api"              % Version.junitJupiter
-  val junitJupiterEngine    = "org.junit.jupiter"            % "junit-jupiter-engine"           % Version.junitJupiter
-  val junitPlatformEngine   = "org.junit.platform"           % "junit-platform-engine"          % Version.junitPlatform
-  val junitPlatformLauncher = "org.junit.platform"           % "junit-platform-launcher"        % Version.junitPlatform
-  val junitPlatformSuite    = "org.junit.platform"           % "junit-platform-suite"           % Version.junitPlatform
+  val junitJupiterApi       = "org.junit.jupiter"            % "junit-jupiter-api"              % Version.junit
+  val junitJupiterEngine    = "org.junit.jupiter"            % "junit-jupiter-engine"           % Version.junit
+  val junitPlatformEngine   = "org.junit.platform"           % "junit-platform-engine"          % Version.junit
+  val junitPlatformLauncher = "org.junit.platform"           % "junit-platform-launcher"        % Version.junit
+  val junitPlatformSuite    = "org.junit.platform"           % "junit-platform-suite"           % Version.junit
   val jupiterInterface      = "com.github.sbt.junit"         % "jupiter-interface"              % Version.junitJupiterInterface
   val gatlingCharts         = "io.gatling.highcharts"        % "gatling-charts-highcharts"      % Version.gatling
   val gatling               = "io.gatling"                   % "gatling-test-framework"         % Version.gatling

@@ -272,10 +272,9 @@ object Version:
 
   // Test
   val cucumber        = "7.32.0"
-  val cucumberScala   = "8.36.0"
-  val junitJupiter          = "5.14.1"
-  val junitJupiterInterface = "0.16.0"
-  val junitPlatform         = "1.14.1"
+  val cucumberScala   = "8.37.0"
+  val junit          = "6.0.1"
+  val junitJupiterInterface = "0.17.0"
   val mockito         = "5.20.0"
   val munit           = "1.2.1"
   val munitScalaCheck = "1.2.0"
@@ -404,16 +403,15 @@ object Dependency:
   val zioCli                    = mvn"dev.zio::zio-cli:${Version.zioCli}"
   val zioOpenAI                 = mvn"dev.zio::zio-openai:${Version.zioOpenAI}"
 
-
   // test
   val cucumberScala       = mvn"io.cucumber::cucumber-scala:${Version.cucumberScala}"
   val cucumberJunit       = mvn"io.cucumber:cucumber-junit-platform-engine:${Version.cucumber}"
   val cucumberPico        = mvn"io.cucumber:cucumber-picocontainer:${Version.cucumber}"
-  val junitJupiterApi       = mvn"org.junit.jupiter:junit-jupiter-api:${Version.junitJupiter}"
-  val junitJupiterEngine    = mvn"org.junit.jupiter:junit-jupiter-engine:${Version.junitJupiter}"
-  val junitPlatformEngine   = mvn"org.junit.platform:junit-platform-engine:${Version.junitPlatform}"
-  val junitPlatformLauncher = mvn"org.junit.platform:junit-platform-launcher:${Version.junitPlatform}"
-  val junitPlatformSuite    = mvn"org.junit.platform:junit-platform-suite:${Version.junitPlatform}"
+  val junitJupiterApi       = mvn"org.junit.jupiter:junit-jupiter-api:${Version.junit}"
+  val junitJupiterEngine    = mvn"org.junit.jupiter:junit-jupiter-engine:${Version.junit}"
+  val junitPlatformEngine   = mvn"org.junit.platform:junit-platform-engine:${Version.junit}"
+  val junitPlatformLauncher = mvn"org.junit.platform:junit-platform-launcher:${Version.junit}"
+  val junitPlatformSuite    = mvn"org.junit.platform:junit-platform-suite:${Version.junit}"
   val jupiterInterface      = mvn"com.github.sbt.junit:jupiter-interface:${Version.junitJupiterInterface}"
   val gatlingCharts       = mvn"io.gatling.highcharts:gatling-charts-highcharts:${Version.gatling}"
   val gatling             = mvn"io.gatling:gatling-test-framework:${Version.gatling}"
