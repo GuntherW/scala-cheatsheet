@@ -146,10 +146,11 @@ object DoobieDemo extends IOApp.Simple:
         actors        <- maybeMovie match
                            case Some(movieId, _, _, _) => findActorsByMovieId(movieId)
                            case None                   => List.empty[String].pure[ConnectionIO]
-      yield for
-        (id, t, year, _)      <- maybeMovie
-        (firstName, lastName) <- maybeDirector
-      yield Movie(id.toString, t, year, actors, s"$firstName $lastName")
+      yield
+        for
+          (id, t, year, _)      <- maybeMovie
+          (firstName, lastName) <- maybeDirector
+        yield Movie(id.toString, t, year, actors, s"$firstName $lastName")
 
     query.transact(xa)
 

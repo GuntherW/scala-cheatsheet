@@ -8,4 +8,4 @@ inline def test(x: String | Int): String =
 @main
 def matcher(): Unit =
   println(test("s")) // will compile to println("s")
-  println(test(1))   // will compile to println("i")
+  println(test(1)) // will compile to println("i")

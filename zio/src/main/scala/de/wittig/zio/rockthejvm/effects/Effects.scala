@@ -68,7 +68,6 @@ object Effects {
     given trace: Trace = Trace.empty
 
     Unsafe.unsafe { implicit u =>
-
       val firstEffect  = ZIO.succeed {
         println("First Effect")
         Thread.sleep(1000)

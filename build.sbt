@@ -11,7 +11,7 @@ lazy val commonSettings = Seq(
     "-feature",
     "-language:higherKinds",
     "-deprecation",
-//    "-source:future",
+//    "-source:future",   // deprecates all scala 2 features
     "-Ybackend-parallelism:8",
     "-experimental",
     "-unchecked",

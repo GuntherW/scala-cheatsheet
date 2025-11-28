@@ -59,17 +59,17 @@ object Session extends IOApp:
 
   override def run(args: List[String]): IO[ExitCode] =
     for {
-      middleware <- DigestAuth.applyF[IO, User]("http://localhost:8080/welcome", Md5HashedAuthStore(funcPass))
+      middleware   <- DigestAuth.applyF[IO, User]("http://localhost:8080/welcome", Md5HashedAuthStore(funcPass))
       digestService = middleware(authedRoutes)
       serviceRouter = Router(
-        "/login" -> digestService,
-        "/"      -> cookieCheckerService(cookieAccessRoutes)
-      )
-      server = EmberServerBuilder
-        .default[IO]
-        .withHost(ipv4"0.0.0.0")
-        .withPort(port"9083")
-        .withHttpApp(serviceRouter.orNotFound)
-        .build
-      exitCode <- server.use(_ => IO.never).as(ExitCode.Success)
+                        "/login" -> digestService,
+                        "/"      -> cookieCheckerService(cookieAccessRoutes)
+                      )
+      server        = EmberServerBuilder
+                        .default[IO]
+                        .withHost(ipv4"0.0.0.0")
+                        .withPort(port"9083")
+                        .withHttpApp(serviceRouter.orNotFound)
+                        .build
+      exitCode     <- server.use(_ => IO.never).as(ExitCode.Success)
     } yield exitCode

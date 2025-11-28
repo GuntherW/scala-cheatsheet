@@ -9,15 +9,13 @@ import squants.market.EUR
 def main(): Unit =
 
   val ratio = Days(1) / Hours(3)
-  println(ratio)
+  val load  = Kilowatts(1.2)
+  val time  = Hours(2)
 
-  val load       = Kilowatts(1.2)
-  val time       = Hours(2)
-  val energyUsed = load * time
-  println(energyUsed)
+  println(ratio)
+  println(load)
+  println(load * time)
+  println((load * time) / Hours(4))
   println(load in Megawatts)
   println(load to Megawatts)
-
-  val tenEuro = EUR(10)
-
-  println(tenEuro + EUR(0.3))
+  println(EUR(10) + EUR(0.3))

@@ -35,7 +35,6 @@ def h2ExampleNamedTuples(): Unit =
   )
 
   dbClient.transaction { db =>
-
     // Initialize database table schema and data
     db.updateRaw(os.read(os.Path("database/src/main/resources/sql/world-schema.sql", os.pwd)))
     // db.updateRaw(os.read(os.Path("database/src/main/resources/sql/world-data.sql", os.pwd)))

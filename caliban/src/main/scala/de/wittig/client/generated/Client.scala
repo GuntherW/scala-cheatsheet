@@ -39,7 +39,7 @@ object Client {
   object Query {
     def characters[A](origin: scala.Option[Origin] = None)(innerSelection: SelectionBuilder[Character, A])(implicit
         encoder0: ArgEncoder[scala.Option[Origin]]
-    ): SelectionBuilder[_root_.caliban.client.Operations.RootQuery, List[A]] =
+    ): SelectionBuilder[_root_.caliban.client.Operations.RootQuery, List[A]]         =
       _root_.caliban.client.SelectionBuilder.Field("characters", ListOf(Obj(innerSelection)), arguments = List(Argument("origin", origin, "Origin")(using encoder0)))
     def character[A](name: String)(innerSelection: SelectionBuilder[Character, A])(implicit
         encoder0: ArgEncoder[String]

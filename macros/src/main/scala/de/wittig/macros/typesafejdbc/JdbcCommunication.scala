@@ -31,7 +31,6 @@ object JdbcCommunication:
 
   def getSchema(query: String): Schema =
     withConnection { connection =>
-
       // create a PreparedStatment
       val statement = connection.prepareStatement(query)
 
