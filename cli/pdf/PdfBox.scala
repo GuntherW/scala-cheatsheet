@@ -8,7 +8,7 @@ import scala.util.Using
 
 @main
 def pdfBox(): Unit =
-  
+
   val pdfPath = "beispiel1.pdf"
   // val pdfPath = "beispiel2.pdf"
 

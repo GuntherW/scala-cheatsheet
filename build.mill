@@ -251,7 +251,7 @@ object Version:
   val sttpOAuth               = "0.18.0"
   val sttpOpenAi              = "0.2.6"
   val squants                 = "1.8.3"
-  val tapir                   = "1.12.5"
+  val tapir                   = "1.12.6"
   val toml                    = "0.3.0"
   val tyqu                    = "0.1.0"
   val upickle                 = "4.4.1"

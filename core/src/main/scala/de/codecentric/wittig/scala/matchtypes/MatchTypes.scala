@@ -34,7 +34,7 @@ def matchTypes(): Unit =
 
   val a: Char = lastPartOf("Scala")
   assert(lastPartOf("Scala") == 'a')
-  assert(lastPartOf(BigInt.apply("13")) == 3)
+  assert(lastPartOf(BigInt("13")) == 3)
   assert(lastPartOf(List(1, 2, 3)) == 3)
 
   /** Recursive Matching types */
