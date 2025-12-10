@@ -1,0 +1,26 @@
+layout {
+    tab name="Scala" {
+        pane size=1 borderless=true {
+            plugin location="tab-bar"
+        }
+        pane split_direction="vertical" {
+            pane name="Sbt" command="sbt"
+            pane name="Mill"
+        }
+        pane size=1 borderless=true {
+            plugin location="status-bar"
+        }
+    }
+    tab name="Anderes" {
+        pane size=1 borderless=true {
+            plugin location="tab-bar"
+        }
+        pane stacked=true {
+            pane name="Terminal 1"
+            pane name="Terminal 2"
+        }
+        pane size=1 borderless=true {
+            plugin location="status-bar"
+        }
+    }
+}
