@@ -35,6 +35,7 @@ object core extends CommonSbtModule:
 
   object test extends SbtTests:
     def mvnDeps       = Seq(
+      Dependency.junitJupiter,
       Dependency.mockito,
       Dependency.scalatest,
       Dependency.scalaCheck,
@@ -407,6 +408,7 @@ object Dependency:
   val cucumberScala       = mvn"io.cucumber::cucumber-scala:${Version.cucumberScala}"
   val cucumberJunit       = mvn"io.cucumber:cucumber-junit-platform-engine:${Version.cucumber}"
   val cucumberPico        = mvn"io.cucumber:cucumber-picocontainer:${Version.cucumber}"
+  val junitJupiter       = mvn"org.junit.jupiter:junit-jupiter:${Version.junit}"
   val junitJupiterApi       = mvn"org.junit.jupiter:junit-jupiter-api:${Version.junit}"
   val junitJupiterEngine    = mvn"org.junit.jupiter:junit-jupiter-engine:${Version.junit}"
   val junitPlatformEngine   = mvn"org.junit.platform:junit-platform-engine:${Version.junit}"

@@ -80,7 +80,7 @@ object Version {
   val cucumberScala         = "8.37.0"
   val junit                 = "6.0.1"
   val junitJupiterInterface = "0.17.0"
-  val mockito               = "5.20.0"
+  val mockito               = "5.21.0"
   val munit                 = "1.2.1"
   val munitScalaCheck       = "1.2.0"
   val scalaCheck            = "1.19.0"
@@ -217,6 +217,7 @@ object Library {
   val cucumberScala         = "io.cucumber"                 %% "cucumber-scala"                 % Version.cucumberScala
   val cucumberJunit         = "io.cucumber"                  % "cucumber-junit-platform-engine" % Version.cucumber
   val cucumberPico          = "io.cucumber"                  % "cucumber-picocontainer"         % Version.cucumber
+  val junitJupiter          = "org.junit.jupiter"            % "junit-jupiter"                  % Version.junit
   val junitJupiterApi       = "org.junit.jupiter"            % "junit-jupiter-api"              % Version.junit
   val junitJupiterEngine    = "org.junit.jupiter"            % "junit-jupiter-engine"           % Version.junit
   val junitPlatformEngine   = "org.junit.platform"           % "junit-platform-engine"          % Version.junit
@@ -270,10 +271,12 @@ object Dependencies {
   )
 
   val testDependencies: Seq[ModuleID] = Seq(
-    mockito       % Test,
-    scalatest     % Test,
-    scalaCheck    % Test,
-    scalaMock     % Test,
-    testContainer % Test,
+    junitJupiter     % Test,
+    jupiterInterface % Test,
+    mockito          % Test,
+    scalatest        % Test,
+    scalaCheck       % Test,
+    scalaMock        % Test,
+    testContainer    % Test,
   )
 }
