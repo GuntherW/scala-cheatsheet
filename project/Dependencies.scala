@@ -36,7 +36,7 @@ object Version {
   val magnum                  = "2.0.0-M2"
   val mongo                   = "5.6.2"
   val monocle                 = "3.3.0"
-  val neotype                 = "0.3.36"
+  val neotype                 = "0.3.37"
   val openTelemetry           = "1.57.0"
   val osLib                   = "0.11.6"
   val ox                      = "1.0.2"
@@ -77,7 +77,7 @@ object Version {
 
   // Test
   val cucumber              = "7.33.0"
-  val cucumberScala         = "8.37.0"
+  val cucumberScala         = "8.38.0"
   val junit                 = "6.0.1"
   val junitJupiterInterface = "0.17.0"
   val mockito               = "5.21.0"
