@@ -33,10 +33,14 @@ object BlobViewerApp extends LayoutzApp[BlobState, BlobViewMsg] {
     case BlobViewMsg.LoadError(error) => (state.copy(error = Some(error)), Cmd.none)
     case BlobViewMsg.Refresh          => loadAllBlobs()
 
-  def subscriptions(state: BlobState) = Sub.onKeyPress {
-    case CharKey('r') => Some(BlobViewMsg.Refresh)
-    case _            => None
-  }
+  def subscriptions(state: BlobState) =
+    Sub.batch(
+      Sub.time.every(2000, BlobViewMsg.Refresh),
+      Sub.onKeyPress {
+        case CharKey('r') => Some(BlobViewMsg.Refresh)
+        case _            => None
+      }
+    )
 
   def view(state: BlobState) =
     state.error match

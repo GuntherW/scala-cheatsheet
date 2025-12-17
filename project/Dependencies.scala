@@ -30,7 +30,7 @@ object Version {
   val kafka                   = "4.1.1"
   val kyo                     = "0.19.0"
   val logback                 = "1.5.22"
-  val log4j                   = "2.25.2"
+  val log4j                   = "2.25.3"
   val macwire                 = "2.6.7"
   val magnolia                = "1.3.18"
   val magnum                  = "2.0.0-M2"
