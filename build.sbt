@@ -437,7 +437,6 @@ lazy val zio = project
       Library.zioStreams,
       Library.zioJson,
       Library.zioPrelude,
-      Library.zioCli,
       Library.zioTest      % Test,
       Library.zioTestSbt   % Test,
       Library.zioTestJUnit % Test,

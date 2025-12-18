@@ -65,10 +65,9 @@ object Version {
   val zio                     = "2.1.23"
   val zioJson                 = "0.7.45"
   val zioKafka                = "3.2.0"
-  val zioHttp                 = "3.7.3"
+  val zioHttp                 = "3.7.4"
   val zioPrelude              = "1.0.0-RC44"
-  val zioSchema               = "1.7.5"
-  val zioCli                  = "0.7.4"
+  val zioSchema               = "1.7.6"
   val zioOpenAI               = "0.4.1"
 
   // ScalaJS
@@ -210,7 +209,6 @@ object Library {
   val zioSchemaProtobuf         = "dev.zio"                               %% "zio-schema-protobuf"                       % Version.zioSchema
   val zioSchemaDerivation       = "dev.zio"                               %% "zio-schema-derivation"                     % Version.zioSchema
   val zioHttp                   = "dev.zio"                               %% "zio-http"                                  % Version.zioHttp
-  val zioCli                    = "dev.zio"                               %% "zio-cli"                                   % Version.zioCli
   val zioOpenAI                 = "dev.zio"                               %% "zio-openai"                                % Version.zioOpenAI
 
   // test
