@@ -1,8 +1,9 @@
 package de.codecentric.wittig.scala.jackson
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
-import com.fasterxml.jackson.databind.*
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import tools.jackson.databind.*
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.module.scala.DefaultScalaModule
 
 import scala.jdk.CollectionConverters.MapHasAsJava
 
@@ -21,5 +22,9 @@ class Person2(val name: String, properties: Map[String, String]):
   @JsonAnyGetter
   def props: java.util.Map[String, String] = properties.asJava
 
-object objectMapper extends ObjectMapper:
-  registerModule(DefaultScalaModule)
+object objectMapper:
+  private val mapper: ObjectMapper = JsonMapper.builder()
+    .addModule(DefaultScalaModule)
+    .build()
+  
+  def writeValueAsString(value: Any): String = mapper.writeValueAsString(value)

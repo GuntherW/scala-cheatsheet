@@ -1,8 +1,7 @@
 package de.wittig.spring
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import tools.jackson.databind.{json, ObjectMapper}
+import tools.jackson.module.scala.DefaultScalaModule
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.SpringApplication
 import org.springframework.context.annotation.Bean
@@ -21,4 +20,6 @@ class Main:
 
   @Bean
   def objectMapper(): ObjectMapper =
-    ObjectMapper().registerModules(DefaultScalaModule, new JavaTimeModule)
+    json.JsonMapper.builder()
+      .addModule(DefaultScalaModule)
+      .build()

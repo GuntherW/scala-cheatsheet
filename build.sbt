@@ -350,7 +350,6 @@ lazy val spring = project
       Library.springBootStarter,
       Library.xml,
       Library.jacksonScala,
-      Library.jacksonJsr310,
       Library.munit % Test
     )
   )

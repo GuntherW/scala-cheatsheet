@@ -22,10 +22,10 @@ object Version {
   val gears                   = "0.2.0"
   val h2                      = "2.4.240"
   val http4s                  = "0.23.33"
-  val jackson                 = "2.20.1"
+  val jackson                 = "3.0.3"
   val jwtHttp4s               = "2.0.12"
   val jwtScala                = "11.0.3"
-  val jsonSchemaValidator     = "2.0.1"
+  val jsonSchemaValidator     = "3.0.0"
   val jsoniter                = "2.38.7"
   val kafka                   = "4.1.1"
   val kyo                     = "0.19.0"
@@ -125,9 +125,9 @@ object Library {
   val http4sEmberClient         = "org.http4s"                            %% "http4s-ember-client"                       % Version.http4s
   val http4sCirce               = "org.http4s"                            %% "http4s-circe"                              % Version.http4s
   val http4sDsl                 = "org.http4s"                            %% "http4s-dsl"                                % Version.http4s
-  val jacksonCore               = "com.fasterxml.jackson.core"             % "jackson-databind"                          % Version.jackson
-  val jacksonScala              = "com.fasterxml.jackson.module"          %% "jackson-module-scala"                      % Version.jackson
-  val jacksonJsr310             = "com.fasterxml.jackson.datatype"         % "jackson-datatype-jsr310"                   % Version.jackson
+  val jacksonCore               = "tools.jackson.core"                     % "jackson-databind"                          % Version.jackson
+  val jacksonScala              = "tools.jackson.module"                  %% "jackson-module-scala"                      % Version.jackson
+  val jacksonJsr310             = "tools.jackson.datatype"                 % "jackson-datatype-jsr310"                   % "3.0.0-rc2"
   val jsoniter                  = "com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scala-core"                       % Version.jsoniter
   val jsoniterMacros            = "com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scala-macros"                     % Version.jsoniter
   val jsonSchemaValidator       = "com.networknt"                          % "json-schema-validator"                     % Version.jsonSchemaValidator

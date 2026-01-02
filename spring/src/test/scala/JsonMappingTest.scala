@@ -1,13 +1,13 @@
 import JsonMappingTest.{Model2, Model3}
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import munit.FunSuite
+import tools.jackson.databind.json
+import tools.jackson.module.scala.DefaultScalaModule
 
 class JsonMappingTest extends FunSuite:
 
-  private val mapper = ObjectMapper()
-    .registerModules(DefaultScalaModule, new JavaTimeModule)
+  private val mapper = json.JsonMapper.builder()
+    .addModule(DefaultScalaModule)
+    .build()
 
   test("model2 1"):
     val model = Model2(1, List("eins"))
