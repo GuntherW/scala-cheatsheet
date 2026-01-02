@@ -7,12 +7,15 @@
 import scala.util.{Failure, Success, Try}
 import layoutz.*
 
+import java.time.LocalDateTime
+
 @main
 def mainLocalCli(): Unit = BlobViewerApp.run()
 
 case class BlobState(
     blobsIncoming: List[BlobInfo] = Nil,
     blobsOutgoing: List[BlobInfo] = Nil,
+    time: LocalDateTime = LocalDateTime.now,
     error: Option[String] = None
 )
 
@@ -24,8 +27,8 @@ object BlobViewerApp extends LayoutzApp[BlobState, BlobViewMsg] {
 
   private def loadAllBlobs(): (BlobState, Cmd[BlobViewMsg]) =
     Try((loadBlobs("incoming"), loadBlobs("outgoing"))) match
-      case Success((blobsIncoming, blobsOutgoing)) => (BlobState(blobsIncoming, blobsOutgoing), Cmd.none)
-      case Failure(error)                          => (BlobState(error = Some(error.getMessage)), Cmd.none)
+      case Success((blobsIncoming, blobsOutgoing)) => (BlobState(blobsIncoming, blobsOutgoing, LocalDateTime.now), Cmd.none)
+      case Failure(error)                          => (BlobState(time = LocalDateTime.now, error = Some(error.getMessage)), Cmd.none)
 
   def init = loadAllBlobs()
 
@@ -35,7 +38,7 @@ object BlobViewerApp extends LayoutzApp[BlobState, BlobViewMsg] {
 
   def subscriptions(state: BlobState) =
     Sub.batch(
-      Sub.time.every(2000, BlobViewMsg.Refresh),
+      Sub.time.every(1000, BlobViewMsg.Refresh),
       Sub.onKeyPress {
         case CharKey('r') => Some(BlobViewMsg.Refresh)
         case _            => None
@@ -60,14 +63,12 @@ object BlobViewerApp extends LayoutzApp[BlobState, BlobViewMsg] {
                 renderTree(buildTreeStructure(state.blobsOutgoing)).color(Color.Cyan)
               ).color(Color.Blue)
             ),
-            "   (Drücke 'r' zum Aktualisieren)"
+            "",
+            state.time.toString.color(Color.BrightBlack).center()
           ).color(Color.Green)
         )
 
   def renderTree(node: FileNode): TreeNode = node match
     case Directory(name, children) => tree(s"📁 $name")(children.values.map(renderTree).toSeq*)
-    case File(name)                =>
-      val icon = if name.endsWith(".zip") then "🗜️" else "📎"
-      tree(s"$icon $name")
-
+    case File(name)                => tree(s"${if name.endsWith(".zip") then "🗜️" else "📎"} $name")
 }

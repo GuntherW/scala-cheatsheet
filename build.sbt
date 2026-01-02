@@ -145,7 +145,7 @@ lazy val database = project
       Library.pureConfig,
       Library.postgres,
       Library.scalasql,
-      Library.scalasqlNamedTuples,
+      Library.scalasqlSimple,
       Library.skunk,
       Library.tyqu,
     )

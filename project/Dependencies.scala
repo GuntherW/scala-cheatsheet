@@ -2,20 +2,20 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.8"
-  val aws                     = "2.232.2"
+  val aws                     = "2.233.0"
   val avro4s                  = "5.0.14"
   val borer                   = "1.16.2"
   val bouncyCastle            = "1.83"
-  val caliban                 = "2.11.1"
+  val caliban                 = "2.11.2"
   val catsEffect              = "3.6.3"
   val catsEffectCps           = "0.5.0"
   val catsVersion             = "2.13.0"
   val catsConsole             = "0.8.1"
   val circeVersion            = "0.14.15"
-  val cirisVersion            = "3.11.1"
+  val cirisVersion            = "3.12.0"
   val chimney                 = "1.8.2"
   val doobie                  = "1.0.0-RC11"
-  val ducktape                = "0.2.11"
+  val ducktape                = "0.2.12"
   val duckdb                  = "1.4.3.0"
   val fs2                     = "3.12.2"
   val gatling                 = "3.14.9"
@@ -26,10 +26,10 @@ object Version {
   val jwtHttp4s               = "2.0.12"
   val jwtScala                = "11.0.3"
   val jsonSchemaValidator     = "2.0.1"
-  val jsoniter                = "2.38.6"
+  val jsoniter                = "2.38.7"
   val kafka                   = "4.1.1"
   val kyo                     = "0.19.0"
-  val logback                 = "1.5.22"
+  val logback                 = "1.5.23"
   val log4j                   = "2.25.3"
   val macwire                 = "2.6.7"
   val magnolia                = "1.3.18"
@@ -46,23 +46,23 @@ object Version {
   val pulsar4s                = "2.12.0.1"
   val refined                 = "0.11.3"
   val resilience4j            = "2.3.0"
-  val scala                   = "3.8.0-RC3"
+  val scala                   = "3.8.0-RC5"
   val scalaParallelCollection = "1.2.0"
-  val scalasql                = "0.2.3"
+  val scalasql                = "0.2.7"
   val scodec                  = "2.3.3"
   val skunk                   = "0.6.5"
-  val springBoot              = "4.0.0"
+  val springBoot              = "4.0.1"
   val sttp                    = "4.0.13"
   val sttpOAuth               = "0.18.0"
   val sttpOpenAi              = "0.3.10"
   val squants                 = "1.8.3"
-  val tapir                   = "1.13.3"
+  val tapir                   = "1.13.4"
   val toml                    = "0.3.0"
   val tyqu                    = "0.1.0"
-  val upickle                 = "4.4.1"
+  val upickle                 = "4.4.2"
   val xstream                 = "1.4.21"
   val xml                     = "2.4.0"
-  val zio                     = "2.1.23"
+  val zio                     = "2.1.24"
   val zioJson                 = "0.7.45"
   val zioKafka                = "3.2.0"
   val zioHttp                 = "3.7.4"
@@ -85,7 +85,7 @@ object Version {
   val scalaCheck            = "1.19.0"
   val scalaMock             = "7.5.2"
   val scalaTest             = "3.2.19"
-  val testContainer         = "0.44.0"
+  val testContainer         = "0.44.1"
   val weaverCats            = "0.8.4"
 }
 
@@ -167,7 +167,7 @@ object Library {
   val resilience4j              = "io.github.resilience4j"                 % "resilience4j-all"                          % Version.resilience4j
   val scalaParallelCollection   = "org.scala-lang.modules"                %% "scala-parallel-collections"                % Version.scalaParallelCollection
   val scalasql                  = "com.lihaoyi"                           %% "scalasql"                                  % Version.scalasql
-  val scalasqlNamedTuples       = "com.lihaoyi"                           %% "scalasql-namedtuples"                      % Version.scalasql
+  val scalasqlSimple            = "com.lihaoyi"                           %% "scalasql-simple"                           % Version.scalasql
   val scodec                    = "org.scodec"                            %% "scodec-core"                               % Version.scodec
   val skunk                     = "org.tpolecat"                          %% "skunk-core"                                % Version.skunk
   val springBootStarterWeb      = "org.springframework.boot"               % "spring-boot-starter-web"                   % Version.springBoot
