@@ -20,11 +20,12 @@ lazy val commonSettings = Seq(
 //    "-Yprofile-enabled",
 //    "-Yprofile-trace:compiler.trace",
   ),
-  Test / fork       := true, // subprojects won't run in parallel then
-  Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oF"), // Showing full stack trace
+  publish / skip    := true,
+  scalafixOnCompile := true,
   turbo             := true,
   usePipelining     := true,
-  scalafixOnCompile := true,
+  Test / fork       := true, // subprojects won't run in parallel then
+  Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oF"), // Showing full stack trace
 )
 
 ThisBuild / concurrentRestrictions := Seq(Tags.limit(Tags.ForkedTestGroup, 2))
@@ -32,6 +33,7 @@ Global / concurrentRestrictions += Tags.limit(Tags.Test, 1)
 Global / onChangedBuildSource      := ReloadOnSourceChanges
 
 lazy val `scala-cheatsheet` = (project in file("."))
+  .settings(commonSettings)
   .aggregate(
     akka,
     caliban,
