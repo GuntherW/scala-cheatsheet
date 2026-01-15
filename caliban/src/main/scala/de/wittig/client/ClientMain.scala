@@ -3,7 +3,7 @@ package de.wittig.client
 import caliban.*
 import caliban.client.Operations.RootQuery
 import de.wittig.client.generated.Client.*
-import sttp.client3.*
+import sttp.client4.*
 
 import scala.concurrent.duration.DurationInt
 
@@ -12,7 +12,7 @@ case class CharacterView(name: String, nickname: List[String], origin: Origin)
 @main
 def clientMain(): Unit =
 
-  val backend = HttpClientSyncBackend()
+  val backend = DefaultSyncBackend()
 
   val selection = Character.name ~ Character.nicknames ~ Character.origin
 
