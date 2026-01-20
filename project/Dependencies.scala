@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.8"
-  val aws                     = "2.235.0"
+  val aws                     = "2.235.1"
   val avro4s                  = "5.0.14"
   val borer                   = "1.16.2"
   val bouncyCastle            = "1.83"
@@ -29,7 +29,7 @@ object Version {
   val jsoniter                = "2.38.8"
   val kafka                   = "4.1.1"
   val kyo                     = "0.19.0"
-  val logback                 = "1.5.24"
+  val logback                 = "1.5.25"
   val log4j                   = "2.25.3"
   val macwire                 = "2.6.7"
   val magnolia                = "1.3.18"
@@ -52,7 +52,7 @@ object Version {
   val scodec                  = "2.3.3"
   val skunk                   = "0.6.5"
   val springBoot              = "4.0.1"
-  val sttp                    = "4.0.13"
+  val sttp                    = "4.0.14"
   val sttpOAuth               = "0.18.0"
   val sttpOpenAi              = "0.3.10"
   val squants                 = "1.8.3"
