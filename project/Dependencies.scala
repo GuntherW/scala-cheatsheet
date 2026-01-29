@@ -3,7 +3,7 @@ import sbt.*
 object Version {
   val akka                    = "2.8.8"
   val aws                     = "2.236.0"
-  val avro4s                  = "5.0.14"
+  val avro4s                  = "5.0.15"
   val borer                   = "1.16.2"
   val bouncyCastle            = "1.83"
   val caliban                 = "3.0.0"
@@ -75,12 +75,12 @@ object Version {
   val uTest      = "0.9.5"
 
   // Test
-  val cucumber              = "7.33.0"
+  val cucumber              = "7.34.1"
   val cucumberScala         = "8.38.0"
   val junit                 = "6.0.2"
   val junitJupiterInterface = "0.17.0"
   val mockito               = "5.21.0"
-  val munit                 = "1.2.1"
+  val munit                 = "1.2.2"
   val munitScalaCheck       = "1.2.0"
   val scalaCheck            = "1.19.0"
   val scalaMock             = "7.5.4"
