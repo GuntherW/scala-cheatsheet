@@ -1,4 +1,4 @@
-//> using dep "org.scalafx::scalafx:23.0.1-R34"
+//> using dep "org.scalafx::scalafx:24.0.2-R36"
 
 import scalafx.application.JFXApp3
 import scalafx.scene.Scene
