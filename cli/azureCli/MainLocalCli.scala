@@ -1,7 +1,7 @@
 //> using dep com.azure:azure-sdk-bom:1.3.3
 //> using dep com.azure:azure-identity:1.18.1
 //> using dep com.azure:azure-storage-blob:12.32.0
-//> using dep xyz.matthieucourt::layoutz::0.5.0
+//> using dep xyz.matthieucourt::layoutz::0.6.0
 //> using file AzureBlobService.scala
 
 import scala.util.{Failure, Success, Try}

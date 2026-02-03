@@ -100,6 +100,7 @@ lazy val cdk = project
 lazy val core = project
   .settings(
     commonSettings,
+    scalafixOnCompile := false, // Capture Checking syntax not yet supported by scalafix
     libraryDependencies ++= Dependencies.dependencies ++ Dependencies.testDependencies,
     Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-s", "4") // scalacheck should emit 4 examples only
   )

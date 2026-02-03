@@ -1,4 +1,4 @@
-//> using dep xyz.matthieucourt::layoutz::0.5.0
+//> using dep xyz.matthieucourt::layoutz::0.6.0
 
 import layoutz.*
 import scala.util.Random
