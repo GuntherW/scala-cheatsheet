@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.8"
-  val aws                     = "2.237.0"
+  val aws                     = "2.237.1"
   val avro4s                  = "5.0.15"
   val borer                   = "1.16.2"
   val bouncyCastle            = "1.83"
@@ -34,7 +34,7 @@ object Version {
   val macwire                 = "2.6.7"
   val magnolia                = "1.3.18"
   val magnum                  = "2.0.0-M2"
-  val mongo                   = "5.6.2"
+  val mongo                   = "5.6.3"
   val monocle                 = "3.3.0"
   val neotype                 = "0.4.10"
   val openTelemetry           = "1.58.0"
