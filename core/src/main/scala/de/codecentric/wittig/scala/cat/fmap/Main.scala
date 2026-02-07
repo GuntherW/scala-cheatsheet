@@ -19,6 +19,3 @@ def main(): Unit =
   println(l.groupBy(_.age))
   println(l.groupByNel(_.age).map(i => Option(i)))
   println(l.groupByNel(_.age).traverse(i => Option(i)))
-
-object A extends App:
-  println("sdf")
