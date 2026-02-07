@@ -16,9 +16,7 @@ layout {
             plugin location="tab-bar"
         }
         pane stacked=true {
-            pane name="Open Connect" command="docker" {
-                args "exec" "-it" "opencode-container-scala-cheatsheet" "opencode" "."
-            }
+            pane name="opencode" command="opencode"
         }
         pane size=1 borderless=true {
             plugin location="status-bar"
