@@ -16,7 +16,14 @@ layout {
             plugin location="tab-bar"
         }
         pane stacked=true {
-            pane name="opencode" command="opencode"
+            pane name="opencode" command="firejail" {
+                args "--noprofile" \
+                "--read-only=~" \
+                "--read-write=." \
+                "--read-write=~/.local/share/opencode" \
+                "--read-write=~/.config/opencode" \
+                "/home/gunther/.opencode/bin/opencode" "."
+            }
         }
         pane size=1 borderless=true {
             plugin location="status-bar"

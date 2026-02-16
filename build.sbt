@@ -63,6 +63,7 @@ lazy val `scala-cheatsheet` = (project in file("."))
     sttp,
     tapir,
     zio,
+    zioBlocks,
     zioHttp,
     zioKafka,
     zioSchema,
@@ -453,6 +454,19 @@ lazy val zioKafka = project
       Library.zioKafka,
       Library.zioJson
     )
+  )
+
+lazy val zioBlocks = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.zioBlocks,
+      Library.zioBlocksAvro,
+      Library.zioBlocksBson,
+      Library.zioBlocksMessagepack,
+      Library.zioBlocksThrift,
+      Library.zioBocksToon,
+    ),
   )
 
 lazy val zioHttp = project

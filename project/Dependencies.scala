@@ -29,7 +29,7 @@ object Version {
   val jsoniter                = "2.38.8"
   val kafka                   = "4.1.1"
   val kyo                     = "0.19.0"
-  val logback                 = "1.5.29"
+  val logback                 = "1.5.31"
   val log4j                   = "2.25.3"
   val macwire                 = "2.6.7"
   val magnolia                = "1.3.18"
@@ -41,7 +41,7 @@ object Version {
   val osLib                   = "0.11.8"
   val ox                      = "1.0.3"
   val parserCombinators       = "2.4.0"
-  val postgres                = "42.7.9"
+  val postgres                = "42.7.10"
   val pureConfig              = "0.17.10"
   val pulsar4s                = "2.12.0.1"
   val refined                 = "0.11.3"
@@ -56,13 +56,14 @@ object Version {
   val sttpOAuth               = "0.18.0"
   val sttpOpenAi              = "0.3.10"
   val squants                 = "1.8.3"
-  val tapir                   = "1.13.6"
+  val tapir                   = "1.13.8"
   val toml                    = "0.3.0"
   val tyqu                    = "0.1.0"
-  val upickle                 = "4.4.2"
+  val upickle                 = "4.4.3"
   val xstream                 = "1.4.21"
   val xml                     = "2.4.0"
   val zio                     = "2.1.24"
+  val zioBlocks               = "0.0.20"
   val zioJson                 = "0.7.45"
   val zioKafka                = "3.2.0"
   val zioHttp                 = "3.8.1"
@@ -77,7 +78,7 @@ object Version {
   // Test
   val cucumber              = "7.34.2"
   val cucumberScala         = "8.39.0"
-  val junit                 = "6.0.2"
+  val junit                 = "6.0.3"
   val junitJupiterInterface = "0.17.0"
   val mockito               = "5.21.0"
   val munit                 = "1.2.2"
@@ -199,6 +200,12 @@ object Library {
   val xstream                   = "com.thoughtworks.xstream"               % "xstream"                                   % Version.xstream
   val xml                       = "org.scala-lang.modules"                %% "scala-xml"                                 % Version.xml
   val zio                       = "dev.zio"                               %% "zio"                                       % Version.zio
+  val zioBlocks                 = "dev.zio"                               %% "zio-blocks-schema"                         % Version.zioBlocks
+  val zioBlocksAvro             = "dev.zio"                               %% "zio-blocks-schema-avro"                    % Version.zioBlocks
+  val zioBocksToon              = "dev.zio"                               %% "zio-blocks-schema-toon"                    % Version.zioBlocks
+  val zioBlocksMessagepack      = "dev.zio"                               %% "zio-blocks-schema-messagepack"             % Version.zioBlocks
+  val zioBlocksThrift           = "dev.zio"                               %% "zio-blocks-schema-thrift"                  % Version.zioBlocks
+  val zioBlocksBson             = "dev.zio"                               %% "zio-blocks-schema-bson"                    % Version.zioBlocks
   val zioKafka                  = "dev.zio"                               %% "zio-kafka"                                 % Version.zioKafka
   val zioStreams                = "dev.zio"                               %% "zio-streams"                               % Version.zio
   val zioJson                   = "dev.zio"                               %% "zio-json"                                  % Version.zioJson
