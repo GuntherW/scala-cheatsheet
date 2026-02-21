@@ -6,7 +6,7 @@ Standalone Scala CLI application for viewing Azure Blob Storage (Azurite) conten
 
 ```
 azureCli/
-├── MainLocalCli.scala       # Main entry point, UI logic (BlobViewerApp)
+├── App.scala                 # Main entry point, UI logic (BlobViewerApp)
 ├── BlobService.scala        # Azure Blob Storage service functions
 ├── Model.scala              # Domain types and state
 ├── .scalafmt.conf           # Formatting config
@@ -17,13 +17,13 @@ azureCli/
 
 ```bash
 # Run application
-scala-cli run MainLocalCli.scala
+scala-cli run App.scala
 
 # Run with watch mode
-scala-cli run MainLocalCli.scala --watch
+scala-cli run App.scala --watch
 
 # Package as executable
-scala-cli package MainLocalCli.scala -o az
+scala-cli package App.scala -o az
 
 # Format code with scalafmt
 scala-cli scalafmt
@@ -42,6 +42,9 @@ scala-cli setup-ide .
 //> using file Model.scala
 //> using file BlobService.scala
 ```
+`
+Die Grundlogik der Architektur sollte der `layoutz` Bibliothek folgen: https://github.com/mattlianje/layoutz
+Für das Durchsuchen des lokalen Verzeichnises wird die Bibiothek https://github.com/com-lihaoyi/os-lib benutzt.
 
 ## Code Style
 

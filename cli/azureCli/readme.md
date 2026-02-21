@@ -1,7 +1,7 @@
 Package
 
 ```shell
-scala-cli package MainLocalCli.scala -o az
+scala-cli package App.scala -o az
 ```
 
 ```shell
