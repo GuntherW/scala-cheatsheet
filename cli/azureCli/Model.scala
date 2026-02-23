@@ -1,6 +1,4 @@
 import java.time.LocalDateTime
-import scala.util.{Failure, Success, Try}
-import layoutz.*
 
 case class AzuriteConfig(accountName: String, accountKey: String, storageEndpoint: String)
 case class AzureConfig(blobUrl: String, tenantId: String, clientId: String, pfxBase64: String, pfxPassword: String)
@@ -8,19 +6,41 @@ case class AzureConfig(blobUrl: String, tenantId: String, clientId: String, pfxB
 enum StorageMode:
   case Azurite, Azure
 
-sealed trait FileNode:
-  def containerName: String
-  def name: String
-  def depth: Int
-case class Directory(containerName: String, path: String, name: String, depth: Int, children: Map[String, FileNode]) extends FileNode
-case class File(containerName: String, blobPath: String, name: String, depth: Int)                                   extends FileNode
-
 case class BlobInfo(path: String, name: String)
 
-sealed trait LocalItem:
+sealed trait NodeView:
+  def containerName: String
+  def path: String
   def name: String
-case class LocalFile(name: String) extends LocalItem
-case class LocalDir(name: String)  extends LocalItem
+  def depth: Int
+case class FileView(containerName: String, path: String, name: String, depth: Int)                                 extends NodeView
+case class DirView(containerName: String, path: String, name: String, depth: Int, children: Map[String, NodeView]) extends NodeView:
+  def fullPath = s"$containerName:$path"
+
+sealed trait ItemLocal:
+  def name: String
+case class FileLocal(name: String) extends ItemLocal
+case class DirLocal(name: String)  extends ItemLocal
+
+enum StatusMessage:
+  case Info(message: String)
+  case ModeSwitched(mode: StorageMode)
+  case Downloaded(name: String, targetPath: String)
+  case DownloadFailed(error: String)
+  case Uploaded(path: String)
+  case UploadFailed(error: String)
+  case Deleted(name: String)
+  case DeleteFailed(error: String)
+
+  def text: String = this match
+    case Info(m)           => m
+    case ModeSwitched(m)   => s"🔄 Modus gewechselt zu: $m"
+    case Downloaded(n, p)  => s"✅ $n  →  $p"
+    case DownloadFailed(e) => s"❌ Download fehlgeschlagen: $e"
+    case Uploaded(p)       => s"✅ Hochgeladen: $p"
+    case UploadFailed(e)   => s"❌ Upload fehlgeschlagen: $e"
+    case Deleted(n)        => s"✅ Gelöscht: $n"
+    case DeleteFailed(e)   => s"❌ Löschen fehlgeschlagen: $e"
 
 case class BlobState(
     containers: Map[String, List[BlobInfo]] = Map.empty,
@@ -28,7 +48,7 @@ case class BlobState(
     error: Option[String] = None,
     selectedIndex: Int = 0,
     expandedPaths: Set[String] = Set.empty,
-    downloadStatus: Option[String] = None,
+    statusMessage: Option[StatusMessage] = None,
     pendingUpload: Option[UploadState] = None,
     storageMode: StorageMode = StorageMode.Azurite
 )
@@ -36,7 +56,7 @@ case class BlobState(
 case class UploadState(
     containerName: String,
     blobFolderPath: String,
-    localItems: List[LocalItem],
+    localItems: List[ItemLocal],
     localSelectedIndex: Int,
     localCurrentPath: String
 )
@@ -55,5 +75,3 @@ enum BlobViewMsg:
   case UploadEnter
   case UploadBack
   case CancelUpload
-
-def pathKey(containerName: String, path: String): String = s"$containerName:$path"

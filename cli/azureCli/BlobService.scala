@@ -5,12 +5,12 @@
 //> using dep com.lihaoyi::os-lib:0.11.9-M6
 //> using file Model.scala
 
+import com.azure.identity.ClientCertificateCredentialBuilder
 import com.azure.storage.blob.*
 import com.azure.storage.common.StorageSharedKeyCredential
-import com.azure.identity.ClientCertificateCredentialBuilder
-import scala.jdk.CollectionConverters.*
-import scala.util.chaining.*
+
 import java.util.Base64
+import scala.jdk.CollectionConverters.*
 
 // Azurite Konfiguration (lokaler Azure Storage Emulator)
 lazy val azuriteConfig = AzuriteConfig(
@@ -55,9 +55,8 @@ def createBlobServiceClient(mode: StorageMode = getStorageMode()): BlobServiceCl
       .credential(credential)
       .buildClient()
 
-def listContainers(mode: StorageMode): List[String] = {
-  val blobServiceClient = createBlobServiceClient(mode)
-  blobServiceClient
+def listContainers(client: BlobServiceClient): List[String] = {
+  client
     .listBlobContainers()
     .iterableByPage()
     .asScala
@@ -68,9 +67,8 @@ def listContainers(mode: StorageMode): List[String] = {
     .filter(_.startsWith("esapsdeunr")) // temporär. Nur "unsere" Container anzeigen.
 }
 
-def loadBlobs(containerName: String, mode: StorageMode): List[BlobInfo] = {
-  val blobServiceClient = createBlobServiceClient(mode)
-  val containerClient   = blobServiceClient.getBlobContainerClient(containerName)
+def loadBlobs(client: BlobServiceClient, containerName: String): List[BlobInfo] = {
+  val containerClient = client.getBlobContainerClient(containerName)
 
   if !containerClient.exists() then Nil
   else
@@ -84,58 +82,54 @@ def loadBlobs(containerName: String, mode: StorageMode): List[BlobInfo] = {
       .sortBy(_.path)
 }
 
-def downloadBlob(containerName: String, blobPath: String, targetDir: String = ".")(mode: StorageMode): String = {
+def downloadBlob(client: BlobServiceClient, containerName: String, blobPath: String, targetDir: String = "."): String = {
   import java.nio.file.Paths
-  val blobServiceClient = createBlobServiceClient(mode)
-  val containerClient   = blobServiceClient.getBlobContainerClient(containerName)
-  val blobClient        = containerClient.getBlobClient(blobPath)
-  val fileName          = blobPath.split("/").last
-  val targetPath        = Paths.get(targetDir, fileName).toAbsolutePath.toString
+  val containerClient = client.getBlobContainerClient(containerName)
+  val blobClient      = containerClient.getBlobClient(blobPath)
+  val fileName        = blobPath.split("/").last
+  val targetPath      = Paths.get(targetDir, fileName).toAbsolutePath.toString
   blobClient.downloadToFile(targetPath, true)
   targetPath
 }
 
-def uploadBlob(containerName: String, blobPath: String, localFilePath: String)(mode: StorageMode): String = {
-  val blobServiceClient = createBlobServiceClient(mode)
-  val containerClient   = blobServiceClient.getBlobContainerClient(containerName)
-  val blobClient        = containerClient.getBlobClient(blobPath)
+def uploadBlob(client: BlobServiceClient, containerName: String, blobPath: String, localFilePath: String): String = {
+  val containerClient = client.getBlobContainerClient(containerName)
+  val blobClient      = containerClient.getBlobClient(blobPath)
   blobClient.uploadFromFile(localFilePath, true)
   blobPath
 }
 
-def deleteBlob(containerName: String, blobPath: String)(mode: StorageMode): String = {
-  val blobServiceClient = createBlobServiceClient(mode)
-  val containerClient   = blobServiceClient.getBlobContainerClient(containerName)
-  val blobClient        = containerClient.getBlobClient(blobPath)
+def deleteBlob(client: BlobServiceClient, containerName: String, blobPath: String): String = {
+  val containerClient = client.getBlobContainerClient(containerName)
+  val blobClient      = containerClient.getBlobClient(blobPath)
   blobClient.delete()
   blobPath
 }
 
 // Erstellt eine Baumstruktur aus den Blob-Pfaden
-def buildTreeStructure(containerName: String, blobs: List[BlobInfo]): Directory = {
+def buildTreeStructure(containerName: String, blobs: List[BlobInfo]): DirView = {
   val knownDirs = Set("incoming", "outgoing", "forward")
 
-  def insertPath(root: Directory, parts: List[String], currentPath: String): Directory = parts match {
+  def insertPath(root: DirView, parts: List[String], currentPath: String): DirView = parts match {
     case Nil             => root
     case fileName :: Nil =>
       val filePath = if currentPath.isEmpty then fileName else s"$currentPath/$fileName"
       if knownDirs.contains(fileName) then
         val dir = root.children.get(fileName) match
-          case Some(d: Directory) => d
-          case _                  => Directory(containerName, filePath, fileName, root.depth + 1, Map.empty)
+          case Some(d: DirView) => d
+          case _                => DirView(containerName, filePath, fileName, root.depth + 1, Map.empty)
         root.copy(children = root.children + (fileName -> dir))
-      else
-        root.copy(children = root.children + (fileName -> File(containerName, filePath, fileName, root.depth + 1)))
+      else root.copy(children = root.children + (fileName -> FileView(containerName, filePath, fileName, root.depth + 1)))
     case dirName :: rest =>
       val subPath = if currentPath.isEmpty then dirName else s"$currentPath/$dirName"
       val subDir  = root.children.get(dirName) match
-        case Some(dir: Directory) => dir
-        case _                    => Directory(containerName, subPath, dirName, root.depth + 1, Map.empty)
+        case Some(dir: DirView) => dir
+        case _                  => DirView(containerName, subPath, dirName, root.depth + 1, Map.empty)
       val updated = insertPath(subDir, rest, subPath)
       root.copy(children = root.children + (dirName -> updated))
   }
 
-  blobs.foldLeft(Directory(containerName, "", containerName, 0, Map.empty)) { (root, blob) =>
+  blobs.foldLeft(DirView(containerName, "", containerName, 0, Map.empty)) { (root, blob) =>
     insertPath(root, blob.path.split("/").toList, "")
   }
 }

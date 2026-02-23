@@ -3,25 +3,30 @@
 //> using dep com.azure:azure-storage-blob:12.32.0
 //> using dep xyz.matthieucourt::layoutz:0.6.0
 //> using dep com.lihaoyi::os-lib:0.11.9-M6
+//> using dep com.softwaremill.ox::core:1.0.4
 //> using file BlobService.scala
 //> using file Model.scala
 //> using file Renderer.scala
 
-import scala.util.{Failure, Success, Try}
-import scala.concurrent.*
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.DurationInt
+import com.azure.storage.blob.BlobServiceClient
 import layoutz.*
+import ox.*
+
 import java.time.LocalDateTime
+import scala.compiletime.uninitialized
+import scala.util.{Failure, Success, Try}
 
 @main
 def main(): Unit = BlobViewerApp.run()
 
 object BlobViewerApp extends LayoutzApp[BlobState, BlobViewMsg]:
 
+  private var blobClient: BlobServiceClient = uninitialized
+
   def init: (BlobState, Cmd[BlobViewMsg]) =
     val mode = getStorageMode()
-    loadContainerData(mode) match
+    blobClient = createBlobServiceClient(mode)
+    loadContainerData(blobClient) match
       case Success(data) => (BlobState(containers = data, time = LocalDateTime.now, storageMode = mode), Cmd.none)
       case Failure(e)    => (BlobState(time = LocalDateTime.now, error = Some(e.getMessage), storageMode = mode), Cmd.none)
 
@@ -34,21 +39,14 @@ object BlobViewerApp extends LayoutzApp[BlobState, BlobViewMsg]:
 
     case BlobViewMsg.Refresh =>
       if state.pendingUpload.isDefined then (state, Cmd.none)
-      else
-        loadContainerData(state.storageMode) match
-          case Success(data) => (state.copy(containers = data, time = LocalDateTime.now, error = None, downloadStatus = None), Cmd.none)
-          case Failure(e)    => (state.copy(error = Some(e.getMessage), time = LocalDateTime.now), Cmd.none)
+      else withRefreshedContainers(state.copy(error = None, statusMessage = None))
 
     case BlobViewMsg.SwitchMode =>
       val newMode = state.storageMode match
         case StorageMode.Azurite => StorageMode.Azure
         case StorageMode.Azure   => StorageMode.Azurite
-      loadContainerData(newMode) match
-        case Success(data) =>
-          val status = s"🔄 Modus gewechselt zu: $newMode"
-          (state.copy(containers = data, storageMode = newMode, downloadStatus = Some(status)), Cmd.none)
-        case Failure(e)    =>
-          (state.copy(storageMode = newMode, error = Some(e.getMessage)), Cmd.none)
+      blobClient = createBlobServiceClient(newMode)
+      withRefreshedContainers(state.copy(storageMode = newMode, statusMessage = Some(StatusMessage.ModeSwitched(newMode))))
 
     case BlobViewMsg.MoveUp =>
       val newIndex = moveIndex(state.selectedIndex, -1, computeFlatItems(state).length)
@@ -63,24 +61,19 @@ object BlobViewerApp extends LayoutzApp[BlobState, BlobViewMsg]:
     case BlobViewMsg.DeleteFile =>
       val items = computeFlatItems(state)
       items.lift(state.selectedIndex) match
-        case Some(f: File) =>
-          Try(deleteBlob(f.containerName, f.blobPath)(state.storageMode)) match
-            case Success(_) =>
-              val newState = state.copy(downloadStatus = Some(s"✅ Gelöscht: ${f.name}"))
-              loadContainerData(state.storageMode) match
-                case Success(data) => (newState.copy(containers = data, time = LocalDateTime.now), Cmd.none)
-                case Failure(e)    => (newState.copy(error = Some(e.getMessage)), Cmd.none)
-            case Failure(e) =>
-              (state.copy(downloadStatus = Some(s"❌ Löschen fehlgeschlagen: ${e.getMessage}")), Cmd.none)
-        case _             => (state, Cmd.none)
+        case Some(f: FileView) =>
+          Try(deleteBlob(blobClient, f.containerName, f.path)) match
+            case Success(_) => withRefreshedContainers(state.copy(statusMessage = Some(StatusMessage.Deleted(f.name))))
+            case Failure(e) => (state.copy(statusMessage = Some(StatusMessage.DeleteFailed(e.getMessage))), Cmd.none)
+        case _                 => (state, Cmd.none)
 
     case BlobViewMsg.RequestUpload =>
       val items = computeFlatItems(state)
       items.lift(state.selectedIndex) match
-        case Some(d: Directory) =>
+        case Some(d: DirView) =>
           val blobFolderPath = if d.path.isEmpty then "" else d.path + "/"
           val localItems     = loadLocalItems(".")
-          if localItems.isEmpty then (state.copy(downloadStatus = Some("Keine Dateien im aktuellen Verzeichnis")), Cmd.none)
+          if localItems.isEmpty then (state.copy(statusMessage = Some(StatusMessage.Info("Keine Dateien im aktuellen Verzeichnis"))), Cmd.none)
           else
             val uploadState = UploadState(
               containerName = d.containerName,
@@ -90,7 +83,7 @@ object BlobViewerApp extends LayoutzApp[BlobState, BlobViewMsg]:
               localCurrentPath = "."
             )
             (state.copy(pendingUpload = Some(uploadState)), Cmd.none)
-        case _                  => (state, Cmd.none)
+        case _                => (state, Cmd.none)
 
     case BlobViewMsg.UploadMoveUp =>
       state.pendingUpload.fold((state, Cmd.none)) { upload =>
@@ -108,7 +101,7 @@ object BlobViewerApp extends LayoutzApp[BlobState, BlobViewMsg]:
       state.pendingUpload match
         case Some(upload) =>
           upload.localItems.lift(upload.localSelectedIndex) match
-            case Some(item: LocalDir)  =>
+            case Some(item: DirLocal)  =>
               val newPath   = if upload.localCurrentPath == "." then item.name else s"${upload.localCurrentPath}/${item.name}"
               val newItems  = loadLocalItems(newPath)
               val newUpload = upload.copy(
@@ -117,22 +110,16 @@ object BlobViewerApp extends LayoutzApp[BlobState, BlobViewMsg]:
                 localCurrentPath = newPath
               )
               (state.copy(pendingUpload = Some(newUpload)), Cmd.none)
-            case Some(item: LocalFile) =>
+            case Some(item: FileLocal) =>
               val localFilePath = if upload.localCurrentPath == "." then item.name else s"${upload.localCurrentPath}/${item.name}"
               Try {
                 val blobPath = upload.blobFolderPath + item.name
-                uploadBlob(upload.containerName, blobPath, localFilePath)(state.storageMode)
+                uploadBlob(blobClient, upload.containerName, blobPath, localFilePath)
               } match
                 case Success(path) =>
-                  val newState = state.copy(
-                    downloadStatus = Some(s"✅ Hochgeladen: $path"),
-                    pendingUpload = None
-                  )
-                  loadContainerData(state.storageMode) match
-                    case Success(data) => (newState.copy(containers = data, time = LocalDateTime.now), Cmd.none)
-                    case Failure(e)    => (newState.copy(error = Some(e.getMessage)), Cmd.none)
+                  withRefreshedContainers(state.copy(statusMessage = Some(StatusMessage.Uploaded(path)), pendingUpload = None))
                 case Failure(e)    =>
-                  (state.copy(downloadStatus = Some(s"❌ Upload fehlgeschlagen: ${e.getMessage}"), pendingUpload = None), Cmd.none)
+                  (state.copy(statusMessage = Some(StatusMessage.UploadFailed(e.getMessage)), pendingUpload = None), Cmd.none)
             case _                     => (state, Cmd.none)
         case None         => (state, Cmd.none)
 
@@ -179,58 +166,62 @@ object BlobViewerApp extends LayoutzApp[BlobState, BlobViewMsg]:
     }
   )
 
-  private def loadContainerData(mode: StorageMode): Try[Map[String, List[BlobInfo]]] = Try {
-    val containers = listContainers(mode)
-    val futures    = containers.map(name => Future(name -> loadBlobs(name, mode)))
-    val results    = Await.result(Future.sequence(futures), 30.seconds)
+  private def loadContainerData(client: BlobServiceClient): Try[Map[String, List[BlobInfo]]] = Try {
+    val containers = listContainers(client)
+    val results    = par(containers.map(name => () => { name -> loadBlobs(client, name) }))
     results.toMap
   }
+
+  /** Reloads all container data and merges it into the given state. On failure, sets the error field. */
+  private def withRefreshedContainers(state: BlobState): (BlobState, Cmd[BlobViewMsg]) =
+    loadContainerData(blobClient) match
+      case Success(data) => (state.copy(containers = data, time = LocalDateTime.now), Cmd.none)
+      case Failure(e)    => (state.copy(error = Some(e.getMessage)), Cmd.none)
 
   private def selectItem(state: BlobState): (BlobState, Cmd[BlobViewMsg]) =
     val items = computeFlatItems(state)
     items.lift(state.selectedIndex) match
-      case Some(d: Directory) => toggleDirectory(state, d)
-      case Some(f: File)      => downloadFile(state, f)
-      case None               => (state, Cmd.none)
+      case Some(d: DirView)  => toggleDirectory(state, d)
+      case Some(f: FileView) => downloadFile(state, f)
+      case None              => (state, Cmd.none)
 
-  private def toggleDirectory(state: BlobState, dir: Directory): (BlobState, Cmd[BlobViewMsg]) =
-    val key         = pathKey(dir.containerName, dir.path)
+  private def toggleDirectory(state: BlobState, dir: DirView): (BlobState, Cmd[BlobViewMsg]) =
+    val key         = dir.fullPath
     val newExpanded =
       if state.expandedPaths.contains(key)
       then state.expandedPaths - key
       else state.expandedPaths + key
     (state.copy(expandedPaths = newExpanded), Cmd.none)
 
-  private def downloadFile(state: BlobState, file: File): (BlobState, Cmd[BlobViewMsg]) =
-    Try(downloadBlob(file.containerName, file.blobPath)(state.storageMode)) match
+  private def downloadFile(state: BlobState, file: FileView): (BlobState, Cmd[BlobViewMsg]) =
+    Try(downloadBlob(blobClient, file.containerName, file.path)) match
       case Success(targetPath) =>
-        val status = s"✅ ${file.name}  →  $targetPath"
-        (state.copy(downloadStatus = Some(status)), Cmd.none)
+        (state.copy(statusMessage = Some(StatusMessage.Downloaded(file.name, targetPath))), Cmd.none)
       case Failure(e)          =>
-        val status = s"❌ Download fehlgeschlagen: ${e.getMessage}"
-        (state.copy(downloadStatus = Some(status)), Cmd.none)
+        (state.copy(statusMessage = Some(StatusMessage.DownloadFailed(e.getMessage))), Cmd.none)
 
-  private def computeFlatItems(state: BlobState): List[FileNode] =
-    state.containers.toList.sortBy(_._1).flatMap { (containerName, blobs) =>
-      val root = buildTreeStructure(containerName, blobs)
+  private def computeFlatItems(state: BlobState): List[NodeView] =
+    val items = par(
+      state.containers.toList.sortBy(_._1).map { (containerName, blobs) => () => (containerName, buildTreeStructure(containerName, blobs)) }
+    )
+    items.toList.sortBy(_._1).flatMap { (_, root) =>
       flattenNode(root, state.expandedPaths)
     }
 
-  private def flattenNode(node: FileNode, expandedPaths: Set[String]): List[FileNode] = node match
-    case file: File     => List(file)
-    case dir: Directory =>
-      val key = pathKey(dir.containerName, dir.path)
-      if dir.depth == 0 || expandedPaths.contains(key) then 
-        dir :: dir.children.values.toList.sortBy(_.name).flatMap(child => flattenNode(child, expandedPaths))
+  private def flattenNode(node: NodeView, expandedPaths: Set[String]): List[NodeView] = node match
+    case file: FileView => List(file)
+    case dir: DirView   =>
+      val key = dir.fullPath
+      if dir.depth == 0 || expandedPaths.contains(key) then dir :: dir.children.values.toList.sortBy(_.name).flatMap(child => flattenNode(child, expandedPaths))
       else List(dir)
 
-  private def loadLocalItems(path: String): List[LocalItem] =
-    import java.io.File
-    val dir = new File(path)
-    if !dir.exists() || !dir.isDirectory then Nil
+  private def loadLocalItems(path: String): List[ItemLocal] =
+    val dir = os.Path(path, os.pwd)
+    if !os.exists(dir) || !os.isDir(dir) then Nil
     else
-      val dirs  = dir.listFiles.filter(_.isDirectory).map(f => LocalDir(f.getName)).toList.sortBy(_.name)
-      val files = dir.listFiles.filter(_.isFile).map(f => LocalFile(f.getName)).toList.sortBy(_.name)
+      val entries = os.list(dir)
+      val dirs    = entries.filter(os.isDir(_)).map(p => DirLocal(p.last)).toList.sortBy(_.name)
+      val files   = entries.filter(os.isFile(_)).map(p => FileLocal(p.last)).toList.sortBy(_.name)
       dirs ++ files
 
   private def moveIndex(current: Int, delta: Int, length: Int): Int =
