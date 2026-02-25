@@ -60,9 +60,14 @@ object Renderer:
     val (icon, label) = item match
       case d: DirView  =>
         val count    = countFiles(d)
+        val sizeMB   = d.totalSize / (1024.0 * 1024.0)
         val countStr = if count > 0 then s" [$count]" else ""
-        (directoryIcon(d, state), d.name + countStr)
-      case f: FileView => (fileIcon(f.name), f.name)
+        val sizeStr  = if sizeMB > 0 then s" (${f"$sizeMB%.2f"} MB)" else ""
+        (directoryIcon(d, state), d.name + countStr + sizeStr)
+      case f: FileView =>
+        val sizeMB  = f.size / (1024.0 * 1024.0)
+        val sizeStr = if sizeMB > 0 then s" (${f"$sizeMB%.2f"} MB)" else ""
+        (fileIcon(f.name), f.name + sizeStr)
     s"$indent$cursor$icon$label"
 
   private def countFiles(dir: DirView): Int =

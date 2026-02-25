@@ -6,16 +6,19 @@ case class AzureConfig(blobUrl: String, tenantId: String, clientId: String, pfxB
 enum StorageMode:
   case Azurite, Azure
 
-case class BlobInfo(path: String, name: String)
+case class BlobInfo(path: String, name: String, size: Long = 0L)
 
 sealed trait NodeView:
   def containerName: String
   def path: String
   def name: String
   def depth: Int
-case class FileView(containerName: String, path: String, name: String, depth: Int)                                 extends NodeView
+  def totalSize: Long
+case class FileView(containerName: String, path: String, name: String, depth: Int, size: Long = 0L)                extends NodeView:
+  def totalSize = size
 case class DirView(containerName: String, path: String, name: String, depth: Int, children: Map[String, NodeView]) extends NodeView:
-  def fullPath = s"$containerName:$path"
+  def fullPath  = s"$containerName:$path"
+  def totalSize = children.values.map(_.totalSize).sum
 
 sealed trait ItemLocal:
   def name: String

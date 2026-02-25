@@ -77,7 +77,7 @@ def loadBlobs(client: BlobServiceClient, containerName: String): List[BlobInfo] 
       .iterableByPage()
       .asScala
       .flatMap(_.getValue.asScala)
-      .map(blobItem => BlobInfo(blobItem.getName, blobItem.getName.split("/").last))
+      .map(blobItem => BlobInfo(blobItem.getName, blobItem.getName.split("/").last, blobItem.getProperties.getContentLength))
       .toList
       .sortBy(_.path)
 }
@@ -108,9 +108,9 @@ def deleteBlob(client: BlobServiceClient, containerName: String, blobPath: Strin
 
 // Erstellt eine Baumstruktur aus den Blob-Pfaden
 def buildTreeStructure(containerName: String, blobs: List[BlobInfo]): DirView = {
-  val knownDirs = Set("incoming", "outgoing", "forward")
+  val knownDirs = Set("incoming", "outgoing", "forward", "archive", "public")
 
-  def insertPath(root: DirView, parts: List[String], currentPath: String): DirView = parts match {
+  def insertPath(root: DirView, parts: List[String], currentPath: String, blobSize: Long): DirView = parts match {
     case Nil             => root
     case fileName :: Nil =>
       val filePath = if currentPath.isEmpty then fileName else s"$currentPath/$fileName"
@@ -119,17 +119,18 @@ def buildTreeStructure(containerName: String, blobs: List[BlobInfo]): DirView = 
           case Some(d: DirView) => d
           case _                => DirView(containerName, filePath, fileName, root.depth + 1, Map.empty)
         root.copy(children = root.children + (fileName -> dir))
-      else root.copy(children = root.children + (fileName -> FileView(containerName, filePath, fileName, root.depth + 1)))
+      else root.copy(children = root.children + (fileName -> FileView(containerName, filePath, fileName, root.depth + 1, blobSize)))
     case dirName :: rest =>
       val subPath = if currentPath.isEmpty then dirName else s"$currentPath/$dirName"
       val subDir  = root.children.get(dirName) match
         case Some(dir: DirView) => dir
         case _                  => DirView(containerName, subPath, dirName, root.depth + 1, Map.empty)
-      val updated = insertPath(subDir, rest, subPath)
+      val updated = insertPath(subDir, rest, subPath, blobSize)
       root.copy(children = root.children + (dirName -> updated))
   }
 
-  blobs.foldLeft(DirView(containerName, "", containerName, 0, Map.empty)) { (root, blob) =>
-    insertPath(root, blob.path.split("/").toList, "")
+  val tree = blobs.foldLeft(DirView(containerName, "", containerName, 0, Map.empty)) { (root, blob) =>
+    insertPath(root, blob.path.split("/").toList, "", blob.size)
   }
+  tree
 }
