@@ -27,6 +27,8 @@ object Renderer:
       timeStr.color(Color.BrightBlack)
     )
 
+    val helpText = buildHelpText(items, state.selectedIndex)
+
     layout(
       box("")(
         header,
@@ -35,9 +37,16 @@ object Renderer:
         "",
         statusElement,
         "",
-        Text("↑↓ Navigieren   Enter Öffnen/Download   l Löschen   u Upload   m Modus   a Aktualisieren").color(Color.BrightBlack).center()
+        helpText.color(Color.BrightBlack).center()
       ).color(Color.Green)
     )
+
+  private def buildHelpText(items: List[NodeView], selectedIndex: Int): String =
+    val base = "↑↓ Navigieren   Enter Öffnen/Download   m Modus   a Aktualisieren"
+    items.lift(selectedIndex) match
+      case Some(_: FileView) => s"$base   l Löschen"
+      case Some(_: DirView)  => s"$base   u Upload"
+      case None              => base
 
   private def renderItem(state: BlobState, computeFlatItems: BlobState => List[NodeView])(itemWithIndex: (NodeView, Int)): Element =
     val (item, idx) = itemWithIndex
@@ -73,8 +82,8 @@ object Renderer:
     else "📎 "
 
   private def renderStatus(status: Option[StatusMessage]): Element = status match
-    case Some(msg)               => Text(msg.text).color(Color.BrightGreen)
-    case None                    => Text("")
+    case Some(msg) => statusCard("Info", msg.text).border(Border.Thick).color(Color.BrightYellow)
+    case None      => Text("")
 
   private def renderUploadDialog(state: BlobState): Element =
     state.pendingUpload match
