@@ -5,7 +5,7 @@ import java.util.Locale
 
 object Renderer:
 
-  def render(state: BlobState, computeFlatItems: BlobState => List[NodeView]): Element =
+  def render(state: AppState, computeFlatItems: AppState => List[NodeView]): Element =
     if state.error.isDefined
     then renderError(state.error.get)
     else if state.pendingUpload.isDefined
@@ -15,7 +15,7 @@ object Renderer:
   private def renderError(error: String): Element =
     layout(s"❌ Fehler: $error")
 
-  private def renderMainView(state: BlobState, computeFlatItems: BlobState => List[NodeView]): Element =
+  private def renderMainView(state: AppState, computeFlatItems: AppState => List[NodeView]): Element =
     val items         = computeFlatItems(state)
     val itemElements  = items.zipWithIndex.map(renderItem(state, computeFlatItems))
     val statusElement = renderStatus(state.statusMessage).center()
@@ -48,13 +48,13 @@ object Renderer:
       case Some(_: DirView)  => s"$base   u Upload"
       case None              => base
 
-  private def renderItem(state: BlobState, computeFlatItems: BlobState => List[NodeView])(itemWithIndex: (NodeView, Int)): Element =
+  private def renderItem(state: AppState, computeFlatItems: AppState => List[NodeView])(itemWithIndex: (NodeView, Int)): Element =
     val (item, idx) = itemWithIndex
     val isSelected  = idx == state.selectedIndex
     val line        = formatItemLine(item, isSelected, state)
     Text(line).color(if isSelected then Color.Yellow else Color.White)
 
-  private def formatItemLine(item: NodeView, isSelected: Boolean, state: BlobState): String =
+  private def formatItemLine(item: NodeView, isSelected: Boolean, state: AppState): String =
     val indent        = "  " * item.depth
     val cursor        = if isSelected then "▶ " else "  "
     val (icon, label) = item match
@@ -71,7 +71,7 @@ object Renderer:
       case d: DirView  => d.children.values.iterator.map(countRecursive).sum
     countRecursive(dir)
 
-  private def directoryIcon(dir: DirView, state: BlobState): String =
+  private def directoryIcon(dir: DirView, state: AppState): String =
     if dir.depth == 0 then "🗄️ "
     else if state.expandedPaths.contains(dir.fullPath) then "📂 "
     else "📁 "
@@ -85,7 +85,7 @@ object Renderer:
     case Some(msg) => statusCard("Info", msg.text).border(Border.Thick).color(Color.BrightYellow)
     case None      => Text("")
 
-  private def renderUploadDialog(state: BlobState): Element =
+  private def renderUploadDialog(state: AppState): Element =
     state.pendingUpload match
       case None         => layout("")
       case Some(upload) =>

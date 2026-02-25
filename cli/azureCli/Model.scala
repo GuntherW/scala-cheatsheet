@@ -42,7 +42,7 @@ enum StatusMessage:
     case Deleted(n)        => s"✅ Gelöscht: $n"
     case DeleteFailed(e)   => s"❌ Löschen fehlgeschlagen: $e"
 
-case class BlobState(
+case class AppState(
     containers: Map[String, List[BlobInfo]] = Map.empty,
     time: LocalDateTime = LocalDateTime.now,
     error: Option[String] = None,
@@ -61,7 +61,7 @@ case class UploadState(
     localCurrentPath: String
 )
 
-enum BlobViewMsg:
+enum AppMsg:
   case LoadError(error: String)
   case Refresh
   case SwitchMode

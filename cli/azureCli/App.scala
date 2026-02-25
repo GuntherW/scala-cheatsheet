@@ -8,6 +8,7 @@
 //> using file Model.scala
 //> using file Renderer.scala
 
+import AppMsg.*
 import com.azure.storage.blob.BlobServiceClient
 import layoutz.*
 import ox.*
@@ -19,46 +20,48 @@ import scala.util.{Failure, Success, Try}
 @main
 def main(): Unit = BlobViewerApp.run()
 
-object BlobViewerApp extends LayoutzApp[BlobState, BlobViewMsg]:
+object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
 
   private var blobClient: BlobServiceClient = uninitialized
 
-  def init: (BlobState, Cmd[BlobViewMsg]) =
+  def init: (AppState, Cmd[AppMsg]) =
     val mode = getStorageMode()
     blobClient = createBlobServiceClient(mode)
     loadContainerData(blobClient) match
-      case Success(data) => (BlobState(containers = data, time = LocalDateTime.now, storageMode = mode), Cmd.none)
-      case Failure(e)    => (BlobState(time = LocalDateTime.now, error = Some(e.getMessage), storageMode = mode), Cmd.none)
+      case Success(data) =>
+        val expandedPaths = data.keys.map(c => s"$c:").toSet
+        (AppState(containers = data, time = LocalDateTime.now, storageMode = mode, expandedPaths = expandedPaths), Cmd.none)
+      case Failure(e)    => (AppState(time = LocalDateTime.now, error = Some(e.getMessage), storageMode = mode), Cmd.none)
 
-  def view(state: BlobState): Element =
+  def view(state: AppState): Element =
     Renderer.render(state, computeFlatItems)
 
-  def update(msg: BlobViewMsg, state: BlobState): (BlobState, Cmd[BlobViewMsg]) = msg match
+  def update(msg: AppMsg, state: AppState): (AppState, Cmd[AppMsg]) = msg match
 
-    case BlobViewMsg.LoadError(error) => (state.copy(error = Some(error)), Cmd.none)
+    case LoadError(error) => (state.copy(error = Some(error)), Cmd.none)
 
-    case BlobViewMsg.Refresh =>
+    case Refresh =>
       if state.pendingUpload.isDefined then (state, Cmd.none)
       else withRefreshedContainers(state.copy(error = None, statusMessage = None))
 
-    case BlobViewMsg.SwitchMode =>
+    case SwitchMode =>
       val newMode = state.storageMode match
         case StorageMode.Azurite => StorageMode.Azure
         case StorageMode.Azure   => StorageMode.Azurite
       blobClient = createBlobServiceClient(newMode)
       withRefreshedContainers(state.copy(storageMode = newMode, statusMessage = Some(StatusMessage.ModeSwitched(newMode))))
 
-    case BlobViewMsg.MoveUp =>
+    case MoveUp =>
       val newIndex = moveIndex(state.selectedIndex, -1, computeFlatItems(state).length)
       (state.copy(selectedIndex = newIndex), Cmd.none)
 
-    case BlobViewMsg.MoveDown =>
+    case MoveDown =>
       val newIndex = moveIndex(state.selectedIndex, 1, computeFlatItems(state).length)
       (state.copy(selectedIndex = newIndex), Cmd.none)
 
-    case BlobViewMsg.Select => selectItem(state)
+    case Select => selectItem(state)
 
-    case BlobViewMsg.DeleteFile =>
+    case DeleteFile =>
       val items = computeFlatItems(state)
       items.lift(state.selectedIndex) match
         case Some(f: FileView) =>
@@ -67,7 +70,7 @@ object BlobViewerApp extends LayoutzApp[BlobState, BlobViewMsg]:
             case Failure(e) => (state.copy(statusMessage = Some(StatusMessage.DeleteFailed(e.getMessage))), Cmd.none)
         case _                 => (state, Cmd.none)
 
-    case BlobViewMsg.RequestUpload =>
+    case RequestUpload =>
       val items = computeFlatItems(state)
       items.lift(state.selectedIndex) match
         case Some(d: DirView) =>
@@ -85,19 +88,19 @@ object BlobViewerApp extends LayoutzApp[BlobState, BlobViewMsg]:
             (state.copy(pendingUpload = Some(uploadState)), Cmd.none)
         case _                => (state, Cmd.none)
 
-    case BlobViewMsg.UploadMoveUp =>
+    case UploadMoveUp =>
       state.pendingUpload.fold((state, Cmd.none)) { upload =>
         val newIdx = moveIndex(upload.localSelectedIndex, -1, upload.localItems.length)
         (state.copy(pendingUpload = Some(upload.copy(localSelectedIndex = newIdx))), Cmd.none)
       }
 
-    case BlobViewMsg.UploadMoveDown =>
+    case UploadMoveDown =>
       state.pendingUpload.fold((state, Cmd.none)) { upload =>
         val newIdx = moveIndex(upload.localSelectedIndex, 1, upload.localItems.length)
         (state.copy(pendingUpload = Some(upload.copy(localSelectedIndex = newIdx))), Cmd.none)
       }
 
-    case BlobViewMsg.UploadEnter =>
+    case UploadEnter =>
       state.pendingUpload match
         case Some(upload) =>
           upload.localItems.lift(upload.localSelectedIndex) match
@@ -123,7 +126,7 @@ object BlobViewerApp extends LayoutzApp[BlobState, BlobViewMsg]:
             case _                     => (state, Cmd.none)
         case None         => (state, Cmd.none)
 
-    case BlobViewMsg.UploadBack =>
+    case UploadBack =>
       state.pendingUpload match
         case Some(upload) if upload.localCurrentPath != "." =>
           val parentPath = upload.localCurrentPath.lastIndexOf('/') match
@@ -138,30 +141,21 @@ object BlobViewerApp extends LayoutzApp[BlobState, BlobViewMsg]:
           (state.copy(pendingUpload = Some(newUpload)), Cmd.none)
         case _                                              => (state, Cmd.none)
 
-    case BlobViewMsg.CancelUpload =>
+    case CancelUpload =>
       (state.copy(pendingUpload = None), Cmd.none)
 
-  def subscriptions(state: BlobState): Sub[BlobViewMsg] = Sub.batch(
-    Sub.time.every(5000, BlobViewMsg.Refresh),
+  def subscriptions(state: AppState): Sub[AppMsg] = Sub.batch(
+    Sub.time.every(5000, Refresh),
     Sub.onKeyPress {
-      case ArrowUpKey   =>
-        if state.pendingUpload.isDefined then Some(BlobViewMsg.UploadMoveUp)
-        else Some(BlobViewMsg.MoveUp)
-      case ArrowDownKey =>
-        if state.pendingUpload.isDefined then Some(BlobViewMsg.UploadMoveDown)
-        else Some(BlobViewMsg.MoveDown)
-      case EnterKey     =>
-        if state.pendingUpload.isDefined then Some(BlobViewMsg.UploadEnter)
-        else Some(BlobViewMsg.Select)
-      case CharKey('a') => Some(BlobViewMsg.Refresh)
-      case CharKey('u') => Some(BlobViewMsg.RequestUpload)
-      case CharKey('l') => Some(BlobViewMsg.DeleteFile)
-      case CharKey('m') => Some(BlobViewMsg.SwitchMode)
-      case CharKey('z') =>
-        if state.pendingUpload.isDefined then Some(BlobViewMsg.UploadBack)
-        else None
-      case CharKey('q') => // Quit - zum Abbrechen
-        Some(BlobViewMsg.CancelUpload)
+      case ArrowUpKey   => state.pendingUpload.map(_ => UploadMoveUp).orElse(Some(MoveUp))
+      case ArrowDownKey => state.pendingUpload.map(_ => UploadMoveDown).orElse(Some(MoveDown))
+      case EnterKey     => state.pendingUpload.map(_ => UploadEnter).orElse(Some(Select))
+      case CharKey('a') => Some(Refresh)
+      case CharKey('u') => Some(RequestUpload)
+      case CharKey('l') => Some(DeleteFile)
+      case CharKey('m') => Some(SwitchMode)
+      case CharKey('z') => state.pendingUpload.map(_ => UploadBack)
+      case CharKey('q') => Some(CancelUpload)
       case _            => None
     }
   )
@@ -173,19 +167,19 @@ object BlobViewerApp extends LayoutzApp[BlobState, BlobViewMsg]:
   }
 
   /** Reloads all container data and merges it into the given state. On failure, sets the error field. */
-  private def withRefreshedContainers(state: BlobState): (BlobState, Cmd[BlobViewMsg]) =
+  private def withRefreshedContainers(state: AppState): (AppState, Cmd[AppMsg]) =
     loadContainerData(blobClient) match
       case Success(data) => (state.copy(containers = data, time = LocalDateTime.now), Cmd.none)
       case Failure(e)    => (state.copy(error = Some(e.getMessage)), Cmd.none)
 
-  private def selectItem(state: BlobState): (BlobState, Cmd[BlobViewMsg]) =
+  private def selectItem(state: AppState): (AppState, Cmd[AppMsg]) =
     val items = computeFlatItems(state)
     items.lift(state.selectedIndex) match
       case Some(d: DirView)  => toggleDirectory(state, d)
       case Some(f: FileView) => downloadFile(state, f)
       case None              => (state, Cmd.none)
 
-  private def toggleDirectory(state: BlobState, dir: DirView): (BlobState, Cmd[BlobViewMsg]) =
+  private def toggleDirectory(state: AppState, dir: DirView): (AppState, Cmd[AppMsg]) =
     val key         = dir.fullPath
     val newExpanded =
       if state.expandedPaths.contains(key)
@@ -193,26 +187,32 @@ object BlobViewerApp extends LayoutzApp[BlobState, BlobViewMsg]:
       else state.expandedPaths + key
     (state.copy(expandedPaths = newExpanded), Cmd.none)
 
-  private def downloadFile(state: BlobState, file: FileView): (BlobState, Cmd[BlobViewMsg]) =
+  private def downloadFile(state: AppState, file: FileView): (AppState, Cmd[AppMsg]) =
     Try(downloadBlob(blobClient, file.containerName, file.path)) match
       case Success(targetPath) =>
         (state.copy(statusMessage = Some(StatusMessage.Downloaded(file.name, targetPath))), Cmd.none)
       case Failure(e)          =>
         (state.copy(statusMessage = Some(StatusMessage.DownloadFailed(e.getMessage))), Cmd.none)
 
-  private def computeFlatItems(state: BlobState): List[NodeView] =
+  private def computeFlatItems(state: AppState): List[NodeView] =
     val items = par(
-      state.containers.toList.sortBy(_._1).map { (containerName, blobs) => () => (containerName, buildTreeStructure(containerName, blobs)) }
+      state.containers.toList
+        .sortBy(_._1)
+        .map { (containerName, blobs) => () =>
+          (containerName, buildTreeStructure(containerName, blobs))
+        }
     )
-    items.toList.sortBy(_._1).flatMap { (_, root) =>
-      flattenNode(root, state.expandedPaths)
-    }
+    items.toList
+      .sortBy(_._1)
+      .flatMap { (_, root) =>
+        flattenNode(root, state.expandedPaths)
+      }
 
   private def flattenNode(node: NodeView, expandedPaths: Set[String]): List[NodeView] = node match
     case file: FileView => List(file)
     case dir: DirView   =>
-      val key = dir.fullPath
-      if dir.depth == 0 || expandedPaths.contains(key) then dir :: dir.children.values.toList.sortBy(_.name).flatMap(child => flattenNode(child, expandedPaths))
+      if expandedPaths.contains(dir.fullPath)
+      then dir :: dir.children.values.toList.sortBy(_.name).flatMap(child => flattenNode(child, expandedPaths))
       else List(dir)
 
   private def loadLocalItems(path: String): List[ItemLocal] =

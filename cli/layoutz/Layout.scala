@@ -20,7 +20,7 @@ val t = table(
   */
 val dashboard = layout(
   row(
-    underlineColored("^", Color.BrightMagenta)("Layoutz").style(Style.Bold),
+    underline("^", Color.BrightMagenta)("Layoutz").style(Style.Bold),
     "... A Small Demo (ちいさい)"
   ).center(),
   row(
@@ -36,7 +36,7 @@ val dashboard = layout(
           val g = if (i < 128) 255 else (255 - i) * 2
           val b = if (i > 128) (i - 128) * 2 else 0;
           "█".color(Color.True(r, g, b))
-        }: _*)
+        }*)
       )
     )
   ),
