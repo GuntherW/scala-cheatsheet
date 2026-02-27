@@ -14,6 +14,16 @@ import scala.util.chaining.scalaUtilChainingOps
 
 object Database:
 
+  object colors:
+    val green  = "\u001B[32m"
+    val yellow = "\u001B[33m"
+    val blue   = "\u001B[34m"
+    val reset  = "\u001B[0m"
+
+  def green(s: Any): String  = colors.green + s + colors.reset
+  def yellow(s: Any): String = colors.yellow + s + colors.reset
+  def blue(s: Any): String   = colors.blue + s + colors.reset
+
   case class LeiRecord(
       id: String,
       legalName: String,
@@ -22,47 +32,11 @@ object Database:
       lastUpdateDate: String,
       status: String,
       nextRenewalDate: String
-  ) derives DbCodec
-
-  @Table(PostgresDbType, CamelToSnakeCase)
-  case class LeiEntity(
-      id: String,
-      legalName: String,
-      legalNameLanguage: String,
-      initialRegistrationDate: Timestamp,
-      lastUpdateDate: Timestamp,
-      status: String,
-      nextRenewalDate: Timestamp,
-      importedAt: Timestamp = Timestamp.from(Instant.now())
-  ) derives DbCodec
-
-  @Table(PostgresDbType, CamelToSnakeCase)
-  case class LeiEntityCreator(
-      id: String,
-      legalName: String,
-      legalNameLanguage: String,
-      initialRegistrationDate: Timestamp,
-      lastUpdateDate: Timestamp,
-      status: String,
-      nextRenewalDate: Timestamp
-  ) derives DbCodec
+  )
 
   private def parseTimestamp(iso: String): Timestamp =
     if iso == null || iso.isEmpty then null
     else Timestamp.from(Instant.parse(iso))
-
-  private def toEntity(r: LeiRecord): LeiEntityCreator =
-    LeiEntityCreator(
-      id = r.id,
-      legalName = r.legalName,
-      legalNameLanguage = r.legalNameLanguage,
-      initialRegistrationDate = parseTimestamp(r.initialRegistrationDate),
-      lastUpdateDate = parseTimestamp(r.lastUpdateDate),
-      status = r.status,
-      nextRenewalDate = parseTimestamp(r.nextRenewalDate)
-    )
-
-  private val repo = Repo[LeiEntityCreator, LeiEntity, String]
 
   private var cachedTransactor: Option[Transactor] = None
 
@@ -76,12 +50,14 @@ object Database:
     val xa = getTransactor(url, user, password)
     transact(xa):
       batchUpdate(chunk): record =>
-        val e = toEntity(record)
+        val regDate = parseTimestamp(record.initialRegistrationDate)
+        val updDate = parseTimestamp(record.lastUpdateDate)
+        val renDate = parseTimestamp(record.nextRenewalDate)
         sql"""
           INSERT INTO gleif_lei_records (
             id, legal_name, legal_name_language, initial_registration_date,
             last_update_date, status, next_renewal_date
-          ) VALUES ($e)
+          ) VALUES (${record.id}, ${record.legalName}, ${record.legalNameLanguage}, $regDate, $updDate, ${record.status}, $renDate)
           ON CONFLICT (id) DO UPDATE SET
             legal_name                = EXCLUDED.legal_name,
             legal_name_language       = EXCLUDED.legal_name_language,
@@ -91,7 +67,7 @@ object Database:
             next_renewal_date         = EXCLUDED.next_renewal_date,
             imported_at               = CURRENT_TIMESTAMP
         """.update
-    println(s"    Inserted ${chunk.size} records")
+    println("    " + green("✓") + " " + green("Inserted") + " " + yellow(chunk.size) + " records")
     chunk.size
 
   def insertRecords(records: List[LeiRecord], url: String, user: String, password: String): Unit =
@@ -101,13 +77,16 @@ object Database:
   def verifyImport(url: String, user: String, password: String): Unit =
     val xa = createTransactor(url, user, password)
     transact(xa):
-      val total = sql"SELECT COUNT(*) FROM gleif_lei_records".query[Long].run()
-      println(s"    Total LEI records: $total")
+      val totalVec = sql"SELECT COUNT(*) FROM gleif_lei_records".query[Long].run()
+      val total    = totalVec.head
+      println(green("✓") + " " + green("Total LEI records:") + " " + yellow(total))
 
-      println("\n    Status distribution:")
+      println(blue("╔═══ Status Distribution ════╗"))
       val byStatus = sql"SELECT status, COUNT(*) FROM gleif_lei_records GROUP BY status ORDER BY COUNT(*) DESC".query[(String, Long)].run()
       for (status, count) <- byStatus do
-        println(s"      $status: $count")
+        val pct = (count.toDouble / total * 100).round
+        println(s"  $status: ${yellow(count)} ($pct%)")
+      println(blue("╚════════════════════════════╝"))
 
   def setupDatabase(configUrl: String, configUser: String, configPassword: String, migrationsPath: os.Path): Unit =
     import org.flywaydb.core.Flyway
@@ -133,5 +112,5 @@ object Database:
     cfg.setUsername(user)
     cfg.setPassword(password)
     cfg.setMaximumPoolSize(4)
-    val ds = com.zaxxer.hikari.HikariDataSource(cfg)
+    val ds  = com.zaxxer.hikari.HikariDataSource(cfg)
     Transactor(ds)

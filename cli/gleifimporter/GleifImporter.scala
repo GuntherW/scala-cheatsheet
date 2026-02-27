@@ -7,6 +7,7 @@
 //> using dep com.softwaremill.ox::core:1.0.4
 //> using dep com.zaxxer:HikariCP:7.0.2
 //> using dep com.augustnagro::magnum:1.3.1
+//> using dep com.fasterxml.woodstox:woodstox-core:7.1.1
 //> using file Database.scala
 
 import java.io.FileInputStream
@@ -39,13 +40,9 @@ object GleifImporter extends OxApp:
           "lei-cdf-concatenated",
           "https://leidata.gleif.org/api/v1/concatenated-files/lei2/latest/zip"
         )
-    case Rr  extends GleifFileType(
-          "rr-cdf-concatenated",
-          "https://leidata.gleif.org/api/v1/concatenated-files/rr/latest/zip"
-        )
 
   def run(args: Vector[String])(using Ox): ExitCode =
-    val config  = parseArgs(args)
+    val config  = Config()
     val dataDir = os.Path(config.dataDir, os.pwd)
     if !os.exists(dataDir) then os.makeDir(dataDir)
 
@@ -56,11 +53,8 @@ object GleifImporter extends OxApp:
     println("\n[1/3] Setting up database with Flyway...")
     Database.setupDatabase(config.dbUrl, config.dbUser, config.dbPassword, os.pwd / "migrations")
 
-    println("\n[2/3] Downloading and importing GLEIF data (parallel)...")
-    par(
-      processFile(GleifFileType.Lei, config),
-      processFile(GleifFileType.Rr, config)
-    )
+    println("\n[2/3] Downloading and importing GLEIF data...")
+    processFile(GleifFileType.Lei, config)
 
     println("\n[3/3] Verifying import...")
     Database.verifyImport(config.dbUrl, config.dbUser, config.dbPassword)
@@ -69,17 +63,6 @@ object GleifImporter extends OxApp:
     println("Import complete!")
     println("=" * 60)
     ExitCode.Success
-
-  // ── Config parsing ──────────────────────────────────────────────────────────
-  def parseArgs(args: Vector[String]): Config =
-    args
-      .sliding(2, 2)
-      .foldLeft(Config()):
-        case (cfg, Vector("--db-url", v))      => cfg.copy(dbUrl = v)
-        case (cfg, Vector("--db-user", v))     => cfg.copy(dbUser = v)
-        case (cfg, Vector("--db-password", v)) => cfg.copy(dbPassword = v)
-        case (cfg, Vector("--data-dir", v))    => cfg.copy(dataDir = v)
-        case (cfg, _)                          => cfg
 
   // ── File handling ───────────────────────────────────────────────────────────
   def processFile(fileType: GleifFileType, config: Config): Unit =
@@ -174,13 +157,9 @@ object GleifImporter extends OxApp:
 
   // ── XML streaming ───────────────────────────────────────────────────────────
 
-  /** Wraps a StAX reader into a lazy [[Flow]] of [[XmlEvent]]s. The file and reader are closed automatically after the flow is run.
+  /** Wraps a StAX reader into a lazy [[Flow]] of [[XmlEvent]]s using Woodstox for better performance.
     */
   def xmlFlow(file: Path): Flow[XmlEvent] =
-    // Lift JDK XML entity size limits – GLEIF files contain large text nodes
-    System.setProperty("jdk.xml.maxGeneralEntitySizeLimit", "0")
-    System.setProperty("jdk.xml.totalEntitySizeLimit", "0")
-
     val factory = XMLInputFactory.newInstance().tap: f =>
       f.setProperty(XMLInputFactory.IS_COALESCING, true)
       f.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false)
@@ -193,7 +172,7 @@ object GleifImporter extends OxApp:
         while reader.hasNext do
           reader.next match
             case C.START_ELEMENT =>
-              val attrs = (0 until reader.getAttributeCount)
+              val attrs: Map[String, String] = (0 until reader.getAttributeCount)
                 .map(i => reader.getAttributeLocalName(i) -> reader.getAttributeValue(i))
                 .toMap
               emit(XmlEvent.Open(reader.getLocalName, attrs))
