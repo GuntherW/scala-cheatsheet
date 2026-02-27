@@ -48,6 +48,7 @@ The script uses Flyway migrations in `migrations/` to create:
 
 ## Data Source
 
-- **URL**: https://www.gleif.org/en/lei-data/gleif-concatenated-file
-- **API**: https://database.gleif.org/api/v1/concatenated-files
+- **Concatenated Files API**: https://leidata.gleif.org/api/v1/concatenated-files/
+- **LEI Data (latest)**: https://leidata.gleif.org/api/v1/concatenated-files/lei2/latest/zip
+- **Relationship Data (latest)**: https://leidata.gleif.org/api/v1/concatenated-files/rr/latest/zip
 - **Files**: Updated daily, contain all historical LEI data

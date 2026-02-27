@@ -5,7 +5,8 @@
 //> using dep com.lihaoyi::os-lib:0.11.9-M6
 //> using dep com.softwaremill.sttp.client4::core:4.0.19
 //> using dep com.softwaremill.ox::core:1.0.4
-//> using dep com.zaxxer:HikariCP:6.2.1
+//> using dep com.zaxxer:HikariCP:7.0.2
+//> using dep com.augustnagro::magnum:1.3.1
 //> using file Database.scala
 
 import java.io.FileInputStream
@@ -36,11 +37,11 @@ object GleifImporter extends OxApp:
   enum GleifFileType(val name: String, val url: String):
     case Lei extends GleifFileType(
           "lei-cdf-concatenated",
-          "https://leidata.gleif.org/api/v1/concatenated-files/lei2/get/40402/zip"
+          "https://leidata.gleif.org/api/v1/concatenated-files/lei2/latest/zip"
         )
     case Rr  extends GleifFileType(
           "rr-cdf-concatenated",
-          "https://leidata.gleif.org/api/v1/concatenated-files/rr/get/40405/zip"
+          "https://leidata.gleif.org/api/v1/concatenated-files/rr/latest/zip"
         )
 
   def run(args: Vector[String])(using Ox): ExitCode =
