@@ -21,31 +21,30 @@ The **Concatenated Files** contain **historical data** (all LEIs ever published)
 ## Usage
 
 ```bash
-# Run with defaults (localhost:5434, esap_hub database)
-scala-cli run gleif-importer.sc
+# Run with defaults (localhost:5434, gleif database)
+scala-cli run GleifImporter.scala
 
 # Custom database connection
-scala-cli run gleif-importer.sc -- --db-url jdbc:postgresql://host:port/db --db-user user --db-password pass
+scala-cli run GleifImporter.scala -- --db-url jdbc:postgresql://host:port/db --db-user user --db-password pass
 
 # With custom data directory
-scala-cli run gleif-importer.sc -- --data-dir /path/to/data
+scala-cli run GleifImporter.scala -- --data-dir /path/to/data
 ```
 
 ## Database Schema
 
-The script creates the following tables:
-- `gleif_lei_records` - Main LEI data
-- `gleif_lei_history` - Historical changes
-- `gleif_registration_authorities` - LOU information
-- `gleif_legal_forms` - Legal form codes
-- `gleif_relationships` - Ownership relationships
-- `gleif_import_log` - Import metadata
+The script uses Flyway migrations in `migrations/` to create:
+- `gleif_lei_records` - Main LEI data (id, legal_name, legal_name_language, initial_registration_date, last_update_date, status, next_renewal_date, imported_at)
 
 ## Requirements
 
 - Scala CLI 1.0+
 - Java 25
 - PostgreSQL 16+ with Flyway support
+- Running PostgreSQL container from `~/projekte/ba/esap-hub-service/docker-compose.yml`
+  - Database: `gleif` (created automatically on container init)
+  - Credentials: `esap_user` / `esap_password`
+  - Port: `5434`
 
 ## Data Source
 

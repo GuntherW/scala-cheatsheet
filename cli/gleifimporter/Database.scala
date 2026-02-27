@@ -1,5 +1,6 @@
 import com.zaxxer.hikari.{HikariConfig, HikariDataSource}
-import java.sql.Connection
+import java.sql.{Connection, Timestamp}
+import java.time.{Instant, LocalDateTime, ZoneOffset}
 import org.flywaydb.core.Flyway
 import org.postgresql.ds.PGSimpleDataSource
 import os.Path
@@ -16,6 +17,12 @@ object Database:
       status: String,
       nextRenewalDate: String
   )
+
+  private def parseTimestamp(iso: String): Timestamp =
+    if iso == null || iso.isEmpty then null
+    else
+      val instant = Instant.parse(iso)
+      Timestamp.from(instant)
 
   private def withConnection[A](url: String, user: String, password: String)(f: Connection => A): A =
     val cfg = HikariConfig()
@@ -53,10 +60,10 @@ object Database:
           stmt.setString(1, record.id)
           stmt.setString(2, record.legalName)
           stmt.setString(3, record.legalNameLanguage)
-          stmt.setString(4, record.initialRegistrationDate)
-          stmt.setString(5, record.lastUpdateDate)
+          stmt.setTimestamp(4, parseTimestamp(record.initialRegistrationDate))
+          stmt.setTimestamp(5, parseTimestamp(record.lastUpdateDate))
           stmt.setString(6, record.status)
-          stmt.setString(7, record.nextRenewalDate)
+          stmt.setTimestamp(7, parseTimestamp(record.nextRenewalDate))
           stmt.addBatch()
 
         stmt.executeBatch()

@@ -3,7 +3,7 @@
 //> using dep org.flywaydb:flyway-core:12.0.2
 //> using dep org.flywaydb:flyway-database-postgresql:12.0.2
 //> using dep com.lihaoyi::os-lib:0.11.9-M6
-//> using dep com.softwaremill.sttp.client4::core:4.0.12
+//> using dep com.softwaremill.sttp.client4::core:4.0.19
 //> using dep com.softwaremill.ox::core:1.0.4
 //> using dep com.zaxxer:HikariCP:6.2.1
 //> using file Database.scala
@@ -25,7 +25,7 @@ enum XmlEvent:
 
 case class Config(
     dataDir: String = "./gleif_data",
-    dbUrl: String = "jdbc:postgresql://localhost:5434/esap_hub",
+    dbUrl: String = "jdbc:postgresql://localhost:5434/gleif",
     dbUser: String = "esap_user",
     dbPassword: String = "esap_password"
 )
@@ -53,7 +53,7 @@ object GleifImporter extends OxApp:
     println("=" * 60)
 
     println("\n[1/3] Setting up database with Flyway...")
-    Database.setupDatabase(config.dbUrl, config.dbUser, config.dbPassword, os.pwd / os.up / "gleif-scala" / "migrations")
+    Database.setupDatabase(config.dbUrl, config.dbUser, config.dbPassword, os.pwd / "migrations")
 
     println("\n[2/3] Downloading and importing GLEIF data (parallel)...")
     par(
