@@ -22,7 +22,7 @@ object Renderer:
     val timeStr       = state.time.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(Locale.GERMANY)).color(Color.BrightBlack)
 
     val header = row(
-      s"${state.storageMode}".color(Color.BrightBlack),
+      "Container".color(Color.BrightBlack),
       space(65),
       timeStr.color(Color.BrightBlack)
     )
@@ -30,7 +30,7 @@ object Renderer:
     val helpText = buildHelpText(items, state.selectedIndex)
 
     layout(
-      box("")(
+      box("▶" + state.storageMode.toString)(
         header,
         "",
         Layout(itemElements),
