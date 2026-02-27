@@ -7,11 +7,12 @@
 //> using dep com.softwaremill.ox::core:1.0.4
 //> using dep com.zaxxer:HikariCP:7.0.2
 //> using dep com.augustnagro::magnum:1.3.1
-//> using dep com.fasterxml.woodstox:woodstox-core:7.1.1
+//> using dep com.fasterxml:aalto-xml:1.3.4
 //> using file Database.scala
 
 import java.io.FileInputStream
 import javax.xml.stream.{XMLInputFactory, XMLStreamConstants as C}
+import com.fasterxml.aalto.stax.InputFactoryImpl
 import org.postgresql.ds.PGSimpleDataSource
 import os.Path
 import ox.*
@@ -59,7 +60,7 @@ object GleifImporter extends OxApp:
     println("\n[3/3] Verifying import...")
     Database.verifyImport(config.dbUrl, config.dbUser, config.dbPassword)
 
-    println("\n" + "=" * 60)
+    println(s"\n${"=" * 60}")
     println("Import complete!")
     println("=" * 60)
     ExitCode.Success
@@ -157,17 +158,14 @@ object GleifImporter extends OxApp:
 
   // ── XML streaming ───────────────────────────────────────────────────────────
 
-  /** Wraps a StAX reader into a lazy [[Flow]] of [[XmlEvent]]s using Woodstox for better performance.
+  /** Wraps a StAX reader into a lazy [[Flow]] of [[XmlEvent]]s using Aalto XML for better performance.
     */
   def xmlFlow(file: Path): Flow[XmlEvent] =
-    val factory = XMLInputFactory.newInstance().tap: f =>
-      f.setProperty(XMLInputFactory.IS_COALESCING, true)
-      f.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false)
-      f.setProperty(XMLInputFactory.SUPPORT_DTD, false)
+    val inputFactory = new InputFactoryImpl()
 
     Flow.usingEmit: emit =>
       val stream = FileInputStream(file.toString)
-      val reader = factory.createXMLStreamReader(stream)
+      val reader = inputFactory.createXMLStreamReader(stream)
       try
         while reader.hasNext do
           reader.next match

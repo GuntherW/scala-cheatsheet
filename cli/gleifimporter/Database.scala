@@ -9,7 +9,8 @@ import com.augustnagro.magnum.*
 import com.augustnagro.magnum.SqlNameMapper.CamelToSnakeCase
 import javax.sql.DataSource
 import java.sql.Timestamp
-import java.time.Instant
+import java.time.{Instant, LocalDateTime, ZoneId}
+import java.time.format.DateTimeFormatter
 import scala.util.chaining.scalaUtilChainingOps
 
 object Database:
@@ -67,7 +68,8 @@ object Database:
             next_renewal_date         = EXCLUDED.next_renewal_date,
             imported_at               = CURRENT_TIMESTAMP
         """.update
-    println("    " + green("✓") + " " + green("Inserted") + " " + yellow(chunk.size) + " records")
+    val ts = LocalDateTime.now(ZoneId.systemDefault).format(DateTimeFormatter.ofPattern("HH:mm:ss"))
+    println(s"    ${green("✓")} ${green("Inserted")} ${yellow(chunk.size)} records [$ts]")
     chunk.size
 
   def insertRecords(records: List[LeiRecord], url: String, user: String, password: String): Unit =
@@ -79,7 +81,7 @@ object Database:
     transact(xa):
       val totalVec = sql"SELECT COUNT(*) FROM gleif_lei_records".query[Long].run()
       val total    = totalVec.head
-      println(green("✓") + " " + green("Total LEI records:") + " " + yellow(total))
+      println(s"${green("✓")} ${green("Total LEI records:")} ${yellow(total)}")
 
       println(blue("╔═══ Status Distribution ════╗"))
       val byStatus = sql"SELECT status, COUNT(*) FROM gleif_lei_records GROUP BY status ORDER BY COUNT(*) DESC".query[(String, Long)].run()
