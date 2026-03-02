@@ -15,16 +15,6 @@ import scala.util.chaining.scalaUtilChainingOps
 
 object Database:
 
-  object colors:
-    val green  = "\u001B[32m"
-    val yellow = "\u001B[33m"
-    val blue   = "\u001B[34m"
-    val reset  = "\u001B[0m"
-
-  def green(s: Any): String  = colors.green + s + colors.reset
-  def yellow(s: Any): String = colors.yellow + s + colors.reset
-  def blue(s: Any): String   = colors.blue + s + colors.reset
-
   case class LeiRecord(
       id: String,
       legalName: String,
@@ -79,14 +69,14 @@ object Database:
     transact(xa):
       val totalVec = sql"SELECT COUNT(*) FROM gleif_lei_records".query[Long].run()
       val total    = totalVec.head
-      println(s"${green("✓")} ${green("Total LEI records:")} ${yellow(total)}")
+      println(s"✓ Total LEI records: $total")
 
-      println(blue("╔═══ Status Distribution ════╗"))
+      println("╔═══ Status Distribution ════╗")
       val byStatus = sql"SELECT status, COUNT(*) FROM gleif_lei_records GROUP BY status ORDER BY COUNT(*) DESC".query[(String, Long)].run()
       for (status, count) <- byStatus do
         val pct = (count.toDouble / total * 100).round
-        println(s"  $status: ${yellow(count)} ($pct%)")
-      println(blue("╚════════════════════════════╝"))
+        println(s"  $status: $count ($pct%)")
+      println("╚════════════════════════════╝")
 
   def setupDatabase(configUrl: String, configUser: String, configPassword: String, migrationsPath: os.Path): Unit =
     import org.flywaydb.core.Flyway

@@ -10,70 +10,39 @@
 //> using dep com.fasterxml:aalto-xml:1.3.4
 //> using file Database.scala
 
-import java.io.FileInputStream
-import java.util.concurrent.atomic.AtomicInteger
-import javax.xml.stream.{XMLInputFactory, XMLStreamConstants as C}
 import com.fasterxml.aalto.stax.InputFactoryImpl
-import org.postgresql.ds.PGSimpleDataSource
 import os.Path
 import ox.*
 import ox.flow.Flow
 import sttp.client4.*
 import sttp.client4.httpclient.HttpClientSyncBackend
 
+import java.io.FileInputStream
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDateTime, ZoneId}
-
-// ── XML event model ──────────────────────────────────────────────────────────
-enum XmlEvent:
-  case Open(name: String, attrs: Map[String, String])
-  case Close(name: String)
-  case Text(value: String)
-
-// ── XSD-derived constants for LEI-CDF v3.1 ─────────────────────────────────
-object LeiTags:
-  val LEIRecord               = "LEIRecord"
-  val LEI                     = "LEI"
-  val LegalName               = "LegalName"
-  val LegalNameLang           = "LegalName@lang"
-  val InitialRegistrationDate = "InitialRegistrationDate"
-  val LastUpdateDate          = "LastUpdateDate"
-  val RegistrationStatus      = "RegistrationStatus"
-  val NextRenewalDate         = "NextRenewalDate"
-
-case class Config(
-    dataDir: String = "./data",
-    dbUrl: String = "jdbc:postgresql://localhost:5434/gleif",
-    dbUser: String = "esap_user",
-    dbPassword: String = "esap_password"
-)
+import java.util.concurrent.atomic.AtomicInteger
+import javax.xml.stream.XMLStreamConstants as C
 
 // ── Main application ─────────────────────────────────────────────────────────
 object GleifImporter extends OxApp:
 
-  enum GleifFileType(val name: String, val url: String, val xsdUrl: String):
-    case Lei extends GleifFileType(
-          "lei-cdf-concatenated",
-          "https://leidata.gleif.org/api/v1/concatenated-files/lei2/latest/zip",
-          "https://www.gleif.org/lei-data/access-and-use-lei-data/level-1-data-lei-cdf-3-1-format/2021-03-04_lei-cdf-v3-1.xsd"
-        )
-
   def run(args: Vector[String])(using Ox): ExitCode =
-    val config  = Config()
-    val dataDir = os.Path(config.dataDir, os.pwd)
+    val config                       = Config()
+    val dataDir                      = os.Path(config.dataDir, os.pwd)
     if !os.exists(dataDir) then os.makeDir(dataDir)
+    val gleifFileType: GleifFileType = GleifFileType.GoldenCopyDelta(DeltaType.LastMonth)
 
     println("=" * 60)
-    println("GLEIF Data Importer")
+    println(s"GLEIF Data Importer for $gleifFileType")
     println("=" * 60)
 
     println("\n[1/3] Setting up database with Flyway...")
     Database.setupDatabase(config.dbUrl, config.dbUser, config.dbPassword, os.pwd / "migrations")
 
-    downloadXsd(dataDir, GleifFileType.Lei)
+    downloadXsd(dataDir, gleifFileType)
 
     println("\n[2/3] Downloading and importing GLEIF data...")
-    processFile(GleifFileType.Lei, config)
+    processFile(gleifFileType, config)
 
     println("\n[3/3] Verifying import...")
     Database.verifyImport(config.dbUrl, config.dbUser, config.dbPassword)
@@ -146,14 +115,12 @@ object GleifImporter extends OxApp:
     else if os.exists(zipFile) then
       println(s"  [${fileType.name}] Using cached ZIP, extracting...")
       extractZip(zipFile, xmlFile)
-      // os.remove(zipFile)
       xmlFile
     else
-      println(s"  [${fileType.name}] Downloading from ${fileType.url}...")
+      println(s"  [${fileType.name}] Downloading ZIP from ${fileType.url}...")
       downloadFile(fileType.url, zipFile)
       println(s"  [${fileType.name}] Extracting ZIP...")
       extractZip(zipFile, xmlFile)
-      // os.remove(zipFile)
       xmlFile
 
   def downloadFile(url: String, target: Path): Unit =
@@ -226,3 +193,50 @@ object GleifImporter extends OxApp:
   )
 
 end GleifImporter
+
+// ── XML event model ──────────────────────────────────────────────────────────
+enum XmlEvent:
+  case Open(name: String, attrs: Map[String, String])
+  case Close(name: String)
+  case Text(value: String)
+
+// ── XSD-derived constants for LEI-CDF v3.1 ─────────────────────────────────
+object LeiTags:
+  val LEIRecord               = "LEIRecord"
+  val LEI                     = "LEI"
+  val LegalName               = "LegalName"
+  val LegalNameLang           = "LegalName@lang"
+  val InitialRegistrationDate = "InitialRegistrationDate"
+  val LastUpdateDate          = "LastUpdateDate"
+  val RegistrationStatus      = "RegistrationStatus"
+  val NextRenewalDate         = "NextRenewalDate"
+
+case class Config(
+    dataDir: String = "./data",
+    dbUrl: String = "jdbc:postgresql://localhost:5434/gleif",
+    dbUser: String = "esap_user",
+    dbPassword: String = "esap_password"
+)
+
+enum DeltaType(val param: String, val suffix: String):
+  case LastMonth extends DeltaType("LastMonth", "delta-last-month")
+  case LastWeek  extends DeltaType("LastWeek", "delta-last-week")
+  case LastDay   extends DeltaType("LastDay", "delta-last-day")
+  case IntraDay  extends DeltaType("IntraDay", "delta-intraday")
+
+enum GleifFileType(val name: String, val url: String, val xsdUrl: String):
+  case GoldenCopy                            extends GleifFileType(
+        "lei-golden-copy",
+        "https://leidata-preview.gleif.org/api/v2/golden-copies/publishes/lei2/latest.xml",
+        "https://www.gleif.org/lei-data/access-and-use-lei-data/level-1-data-lei-cdf-3-1-format/2021-03-04_lei-cdf-v3-1.xsd"
+      )
+  case Concatenated                          extends GleifFileType(
+        "lei-cdf-concatenated",
+        "https://leidata.gleif.org/api/v1/concatenated-files/lei2/latest/zip",
+        "https://www.gleif.org/lei-data/access-and-use-lei-data/level-1-data-lei-cdf-3-1-format/2021-03-04_lei-cdf-v3-1.xsd"
+      )
+  case GoldenCopyDelta(deltaType: DeltaType) extends GleifFileType(
+        s"lei-golden-copy-${deltaType.suffix}",
+        s"https://leidata-preview.gleif.org/api/v2/golden-copies/publishes/lei2/latest.xml?delta=${deltaType.param}",
+        "https://www.gleif.org/lei-data/access-and-use-lei-data/level-1-data-lei-cdf-3-1-format/2021-03-04_lei-cdf-v3-1.xsd"
+      )
