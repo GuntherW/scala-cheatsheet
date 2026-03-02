@@ -1,7 +1,7 @@
 //> using jvm 25
 //> using dep org.postgresql:postgresql:42.7.10
-//> using dep org.flywaydb:flyway-core:12.0.2
-//> using dep org.flywaydb:flyway-database-postgresql:12.0.2
+//> using dep org.flywaydb:flyway-core:12.0.3
+//> using dep org.flywaydb:flyway-database-postgresql:12.0.3
 //> using dep com.lihaoyi::os-lib:0.11.9-M6
 //> using dep com.softwaremill.sttp.client4::core:4.0.19
 //> using dep com.softwaremill.ox::core:1.0.4
@@ -11,6 +11,7 @@
 //> using file Database.scala
 
 import java.io.FileInputStream
+import java.util.concurrent.atomic.AtomicInteger
 import javax.xml.stream.{XMLInputFactory, XMLStreamConstants as C}
 import com.fasterxml.aalto.stax.InputFactoryImpl
 import org.postgresql.ds.PGSimpleDataSource
@@ -20,14 +21,28 @@ import ox.flow.Flow
 import sttp.client4.*
 import sttp.client4.httpclient.HttpClientSyncBackend
 
+import java.time.format.DateTimeFormatter
+import java.time.{LocalDateTime, ZoneId}
+
 // ── XML event model ──────────────────────────────────────────────────────────
 enum XmlEvent:
   case Open(name: String, attrs: Map[String, String])
   case Close(name: String)
   case Text(value: String)
 
+// ── XSD-derived constants for LEI-CDF v3.1 ─────────────────────────────────
+object LeiTags:
+  val LEIRecord               = "LEIRecord"
+  val LEI                     = "LEI"
+  val LegalName               = "LegalName"
+  val LegalNameLang           = "LegalName@lang"
+  val InitialRegistrationDate = "InitialRegistrationDate"
+  val LastUpdateDate          = "LastUpdateDate"
+  val RegistrationStatus      = "RegistrationStatus"
+  val NextRenewalDate         = "NextRenewalDate"
+
 case class Config(
-    dataDir: String = "./gleif_data",
+    dataDir: String = "./data",
     dbUrl: String = "jdbc:postgresql://localhost:5434/gleif",
     dbUser: String = "esap_user",
     dbPassword: String = "esap_password"
@@ -36,10 +51,11 @@ case class Config(
 // ── Main application ─────────────────────────────────────────────────────────
 object GleifImporter extends OxApp:
 
-  enum GleifFileType(val name: String, val url: String):
+  enum GleifFileType(val name: String, val url: String, val xsdUrl: String):
     case Lei extends GleifFileType(
           "lei-cdf-concatenated",
-          "https://leidata.gleif.org/api/v1/concatenated-files/lei2/latest/zip"
+          "https://leidata.gleif.org/api/v1/concatenated-files/lei2/latest/zip",
+          "https://www.gleif.org/lei-data/access-and-use-lei-data/level-1-data-lei-cdf-3-1-format/2021-03-04_lei-cdf-v3-1.xsd"
         )
 
   def run(args: Vector[String])(using Ox): ExitCode =
@@ -53,6 +69,8 @@ object GleifImporter extends OxApp:
 
     println("\n[1/3] Setting up database with Flyway...")
     Database.setupDatabase(config.dbUrl, config.dbUser, config.dbPassword, os.pwd / "migrations")
+
+    downloadXsd(dataDir, GleifFileType.Lei)
 
     println("\n[2/3] Downloading and importing GLEIF data...")
     processFile(GleifFileType.Lei, config)
@@ -73,31 +91,35 @@ object GleifImporter extends OxApp:
 
     println(s"  $tag Parsing XML and inserting ($sizeMb MB)...")
 
+    val totalInserted = AtomicInteger(0)
+
     xmlFlow(xmlFile)
       .mapStateful(RecordState()): (state, event) =>
         val next = event match
-          case XmlEvent.Open("LEIRecord", _)                                       => RecordState(active = true)
-          case XmlEvent.Close("LEIRecord")                                         => state.copy(active = false)
+          case XmlEvent.Open(LeiTags.LEIRecord, _)                                 =>
+            RecordState(active = true)
+          case XmlEvent.Close(LeiTags.LEIRecord)                                   =>
+            state.copy(active = false)
           case XmlEvent.Open(name, attrs) if state.active                          =>
-            val lang = if name == "LegalName" then attrs.get("lang") else None
+            val lang = if name == LeiTags.LegalName then attrs.get("lang") else None
             state.copy(
               currentField = name,
-              fields = lang.fold(state.fields)(l => state.fields + ("LegalName@lang" -> l))
+              fields = lang.fold(state.fields)(l => state.fields + (LeiTags.LegalNameLang -> l))
             )
           case XmlEvent.Text(value) if state.active && state.currentField.nonEmpty =>
             state.copy(fields = state.fields + (state.currentField -> value))
           case _                                                                   => state
 
         val maybeRecord =
-          if event == XmlEvent.Close("LEIRecord") && state.active && state.fields.contains("LEI") then
+          if event == XmlEvent.Close(LeiTags.LEIRecord) && state.active && state.fields.contains(LeiTags.LEI) then
             Some(Database.LeiRecord(
-              id = state.fields("LEI"),
-              legalName = state.fields.getOrElse("LegalName", ""),
-              legalNameLanguage = state.fields.getOrElse("LegalName@lang", ""),
-              initialRegistrationDate = state.fields.getOrElse("InitialRegistrationDate", ""),
-              lastUpdateDate = state.fields.getOrElse("LastUpdateDate", ""),
-              status = state.fields.getOrElse("RegistrationStatus", ""),
-              nextRenewalDate = state.fields.getOrElse("NextRenewalDate", "")
+              id = state.fields(LeiTags.LEI),
+              legalName = state.fields.getOrElse(LeiTags.LegalName, ""),
+              legalNameLanguage = state.fields.getOrElse(LeiTags.LegalNameLang, ""),
+              initialRegistrationDate = state.fields.getOrElse(LeiTags.InitialRegistrationDate, ""),
+              lastUpdateDate = state.fields.getOrElse(LeiTags.LastUpdateDate, ""),
+              status = state.fields.getOrElse(LeiTags.RegistrationStatus, ""),
+              nextRenewalDate = state.fields.getOrElse(LeiTags.NextRenewalDate, "")
             ))
           else None
 
@@ -105,7 +127,10 @@ object GleifImporter extends OxApp:
       .collect { case Some(r) => r }
       .grouped(50_000)
       .mapPar(4): chunk =>
-        Database.insertChunk(chunk, config.dbUrl, config.dbUser, config.dbPassword)
+        val count    = Database.insertChunk(chunk, config.dbUrl, config.dbUser, config.dbPassword)
+        val newTotal = totalInserted.addAndGet(count)
+        val ts       = LocalDateTime.now(ZoneId.systemDefault).format(DateTimeFormatter.ofPattern("HH:mm:ss"))
+        println(s"    Total inserted: $newTotal records [$ts]")
       .runDrain()
 
     println(s"  $tag Done.")
@@ -146,6 +171,16 @@ object GleifImporter extends OxApp:
         case Left(err)    =>
           throw RuntimeException(s"HTTP ${backend} failed: $err")
     finally backend.close()
+
+  def downloadXsd(dataDir: Path, fileType: GleifFileType): Unit =
+    val xsdFileName = fileType.xsdUrl.split("/").last
+    val xsdFile     = dataDir / xsdFileName
+    if os.exists(xsdFile) then
+      println(s"  [XSD] Using cached: ${xsdFile.last}")
+    else
+      println(s"  [XSD] Downloading XSD schema...")
+      downloadFile(fileType.xsdUrl, xsdFile)
+      println(s"  [XSD] Saved to ${xsdFile.last}")
 
   def extractZip(zipPath: Path, targetXml: Path): Unit =
     val tempDir = zipPath / os.up / "temp_extract"

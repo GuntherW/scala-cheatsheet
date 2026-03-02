@@ -48,7 +48,7 @@ The script uses Flyway migrations in `migrations/` to create:
 
 ## Data Source
 
+- **LEI-CDF XSD Schema**: https://www.gleif.org/lei-data/access-and-use-lei-data/level-1-data-lei-cdf-3-1-format/2021-03-04_lei-cdf-v3-1.xsd
 - **Concatenated Files API**: https://leidata.gleif.org/api/v1/concatenated-files/
 - **LEI Data (latest)**: https://leidata.gleif.org/api/v1/concatenated-files/lei2/latest/zip
-- **Relationship Data (latest)**: https://leidata.gleif.org/api/v1/concatenated-files/rr/latest/zip
 - **Files**: Updated daily, contain all historical LEI data
