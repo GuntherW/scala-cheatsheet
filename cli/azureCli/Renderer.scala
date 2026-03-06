@@ -77,7 +77,7 @@ object Renderer:
     countRecursive(dir)
 
   private def directoryIcon(dir: DirView, state: AppState): String =
-    if dir.depth == 0 then "🗄️ "
+    if dir.depth == 0 then "⛃  "
     else if state.expandedPaths.contains(dir.fullPath) then "📂 "
     else "📁 "
 
