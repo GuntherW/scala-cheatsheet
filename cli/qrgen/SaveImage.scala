@@ -1,5 +1,5 @@
 //> using dep eu.joaocosta::qrgen::0.1.0
-//> using dep eu.joaocosta::minart::0.6.4
+//> using dep eu.joaocosta::minart::0.6.5
 
 import eu.joaocosta.minart.backend.defaults.given
 import eu.joaocosta.minart.graphics.*

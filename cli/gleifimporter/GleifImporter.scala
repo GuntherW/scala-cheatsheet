@@ -30,7 +30,7 @@ object GleifImporter extends OxApp:
     val config                       = Config()
     val dataDir                      = os.Path(config.dataDir, os.pwd)
     if !os.exists(dataDir) then os.makeDir(dataDir)
-    val gleifFileType: GleifFileType = GleifFileType.GoldenCopyDelta(DeltaType.LastMonth)
+    val gleifFileType: GleifFileType = GleifFileType.GoldenCopyDelta(DeltaType.IntraDay)
 
     println("=" * 60)
     println(s"GLEIF Data Importer for $gleifFileType")
@@ -139,7 +139,7 @@ object GleifImporter extends OxApp:
           throw RuntimeException(s"HTTP ${backend} failed: $err")
     finally backend.close()
 
-  def downloadXsd(dataDir: Path, fileType: GleifFileType): Unit =
+  def   downloadXsd(dataDir: Path, fileType: GleifFileType): Unit =
     val xsdFileName = fileType.xsdUrl.split("/").last
     val xsdFile     = dataDir / xsdFileName
     if os.exists(xsdFile) then

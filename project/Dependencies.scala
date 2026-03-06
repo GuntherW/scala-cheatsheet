@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.8"
-  val aws                     = "2.240.0"
+  val aws                     = "2.241.0"
   val avro4s                  = "5.0.15"
   val borer                   = "1.16.2"
   val bouncyCastle            = "1.83"
@@ -56,7 +56,7 @@ object Version {
   val sttpOAuth               = "0.18.0"
   val sttpOpenAi              = "0.3.10"
   val squants                 = "1.8.3"
-  val tapir                   = "1.13.9"
+  val tapir                   = "1.13.10"
   val toml                    = "0.3.0"
   val tyqu                    = "0.1.0"
   val upickle                 = "4.4.3"
@@ -64,11 +64,11 @@ object Version {
   val xml                     = "2.4.0"
   val zio                     = "2.1.24"
   val zioBlocks               = "0.0.27"
-  val zioJson                 = "0.7.45"
+  val zioJson                 = "0.9.0"
   val zioKafka                = "3.3.0"
-  val zioHttp                 = "3.8.1"
+  val zioHttp                 = "3.9.0"
   val zioPrelude              = "1.0.0-RC46"
-  val zioSchema               = "1.8.1"
+  val zioSchema               = "1.8.2"
   val zioOpenAI               = "0.4.1"
 
   // ScalaJS
@@ -76,12 +76,12 @@ object Version {
   val uTest      = "0.9.5"
 
   // Test
-  val cucumber              = "7.34.2"
+  val cucumber              = "7.34.3"
   val cucumberScala         = "8.39.0"
   val junit                 = "6.0.3"
   val junitJupiterInterface = "0.17.0"
   val mockito               = "5.22.0"
-  val munit                 = "1.2.3"
+  val munit                 = "1.2.4"
   val munitScalaCheck       = "1.2.0"
   val scalaCheck            = "1.19.0"
   val scalaMock             = "7.5.5"

@@ -30,7 +30,7 @@ object Renderer:
     val helpText = buildHelpText(items, state.selectedIndex)
 
     layout(
-      box("▶" + state.storageMode.toString)(
+      box(state.storageMode.toString)(
         header,
         "",
         Layout(itemElements),
@@ -56,7 +56,7 @@ object Renderer:
 
   private def formatItemLine(item: NodeView, isSelected: Boolean, state: AppState): String =
     val indent        = "  " * item.depth
-    val cursor        = if isSelected then "▶ " else "  "
+    val cursor        = if isSelected then "> " else "  "
     val (icon, label) = item match
       case d: DirView  =>
         val count    = countFiles(d)
