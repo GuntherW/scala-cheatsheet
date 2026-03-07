@@ -12,8 +12,7 @@ object Renderer:
     then renderUploadDialog(state)
     else renderMainView(state, computeFlatItems)
 
-  private def renderError(error: String): Element =
-    layout(s"❌ Fehler: $error")
+  private def renderError(error: String): Element = layout(s"${Icons.Error} Fehler: $error")
 
   private def renderMainView(state: AppState, computeFlatItems: AppState => List[NodeView]): Element =
     val items         = computeFlatItems(state)
@@ -56,19 +55,23 @@ object Renderer:
 
   private def formatItemLine(item: NodeView, isSelected: Boolean, state: AppState): String =
     val indent        = "  " * item.depth
-    val cursor        = if isSelected then "> " else "  "
+    val cursor        = if isSelected then Icons.Cursor else "  "
     val (icon, label) = item match
       case d: DirView  =>
         val count    = countFiles(d)
-        val sizeMB   = d.totalSize / (1024.0 * 1024.0)
+        val sizeStr  = formatSize(d.totalSize)
         val countStr = if count > 0 then s" [$count]" else ""
-        val sizeStr  = if sizeMB > 0 then s" (${f"$sizeMB%.2f"} MB)" else ""
         (directoryIcon(d, state), d.name + countStr + sizeStr)
       case f: FileView =>
-        val sizeMB  = f.size / (1024.0 * 1024.0)
-        val sizeStr = if sizeMB > 0 then s" (${f"$sizeMB%.2f"} MB)" else ""
+        val sizeStr = formatSize(f.size)
         (fileIcon(f.name), f.name + sizeStr)
     s"$indent$cursor$icon$label"
+
+  private def formatSize(bytes: Long): String =
+    if bytes <= 0 then ""
+    else
+      val mb = bytes / (1024.0 * 1024.0)
+      s" (${f"$mb%.2f"} MB)"
 
   private def countFiles(dir: DirView): Int =
     def countRecursive(node: NodeView): Int = node match
@@ -77,14 +80,9 @@ object Renderer:
     countRecursive(dir)
 
   private def directoryIcon(dir: DirView, state: AppState): String =
-    if dir.depth == 0 then "⛃  "
-    else if state.expandedPaths.contains(dir.fullPath) then "📂 "
-    else "📁 "
+    Icons.forDirectory(dir.depth == 0, state.expandedPaths.contains(dir.fullPath))
 
-  private def fileIcon(fileName: String): String =
-    if fileName.endsWith(".zip")
-    then "🗜️  "
-    else "📎 "
+  private def fileIcon(fileName: String): String = Icons.forFile(fileName)
 
   private def renderStatus(status: Option[StatusMessage]): Element = status match
     case Some(msg) => statusCard("Info", msg.text).border(Border.Thick).color(Color.BrightYellow)
@@ -95,12 +93,12 @@ object Renderer:
       case None         => layout("")
       case Some(upload) =>
         val itemElements = upload.localItems.zipWithIndex.map { (item, idx) =>
-          val cursor = if idx == upload.localSelectedIndex then "▶ " else "  "
-          val icon   = item match
-            case _: DirLocal  => "📂 "
-            case _: FileLocal => "📎 "
-          val line   = s"$cursor$icon${item.name}"
-          Text(line).color(if idx == upload.localSelectedIndex then Color.Yellow else Color.White)
+          val isSelected = idx == upload.localSelectedIndex
+          val cursor     = if isSelected then Icons.Cursor else "  "
+          val icon       = item match
+            case _: DirLocal  => Icons.FolderClosed
+            case _: FileLocal => Icons.Document
+          Text(s"$cursor$icon${item.name}").color(if isSelected then Color.Yellow else Color.White)
         }
         layout(
           box("Datei hochladen")(
@@ -113,3 +111,19 @@ object Renderer:
             Text("↑↓ Navigieren   Enter = Öffnen/Hochladen   z = Zurück   q = Abbrechen").color(Color.BrightBlack)
           ).color(Color.Cyan)
         )
+
+object Icons:
+  val RootContainer = "⛃ "
+  val FolderOpen    = "📂 "
+  val FolderClosed  = "📁 "
+  val Document      = "📎 "
+  val Zip           = "🗜️ "
+  val Cursor        = "> "
+  val Error         = "❌ "
+
+  def forFile(name: String): String = if name.endsWith(".zip") then Zip else Document
+
+  def forDirectory(isRoot: Boolean, isExpanded: Boolean): String =
+    if isRoot then RootContainer
+    else if isExpanded then FolderOpen
+    else FolderClosed
