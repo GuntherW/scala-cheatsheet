@@ -119,17 +119,6 @@ object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
             case _                     => (state, Cmd.none)
         case None         => (state, Cmd.none)
 
-    case UploadBack =>
-      state.pendingUpload match
-        case Some(upload) if upload.localPath != "." =>
-          val parentPath = upload.localPath.lastIndexOf('/') match
-            case -1  => "."
-            case idx => upload.localPath.substring(0, idx)
-          val newItems   = loadLocalItems(parentPath)
-          val newUpload  = upload.copy(localItems = newItems, localSelectedIndex = 0, localPath = parentPath)
-          (state.copy(pendingUpload = Some(newUpload)), Cmd.none)
-        case _                                       => (state, Cmd.none)
-
     case CancelUpload => (state.copy(pendingUpload = None), Cmd.none)
 
   def subscriptions(state: AppState): Sub[AppMsg] = Sub.batch(
@@ -142,7 +131,6 @@ object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
       case CharKey('u') => Some(RequestUpload)
       case CharKey('l') => Some(DeleteFile)
       case CharKey('m') => Some(SwitchMode)
-      case CharKey('z') => state.pendingUpload.map(_ => UploadBack)
       case CharKey('q') => Some(CancelUpload)
       case _            => None
     }

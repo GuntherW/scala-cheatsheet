@@ -76,5 +76,4 @@ enum AppMsg:
   case UploadMoveUp
   case UploadMoveDown
   case UploadEnter
-  case UploadBack
   case CancelUpload

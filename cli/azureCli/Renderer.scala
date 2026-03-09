@@ -108,7 +108,7 @@ object Renderer:
             Text("").color(Color.White),
             Layout(itemElements),
             Text("").color(Color.White),
-            Text("↑↓ Navigieren   Enter = Öffnen/Hochladen   z = Zurück   q = Abbrechen").color(Color.BrightBlack)
+            Text("↑↓ Navigieren   Enter = Öffnen/Hochladen   q = Abbrechen").color(Color.BrightBlack)
           ).color(Color.Cyan)
         )
 
