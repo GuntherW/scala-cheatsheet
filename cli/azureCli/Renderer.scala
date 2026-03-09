@@ -104,7 +104,7 @@ object Renderer:
           box("Datei hochladen")(
             Text(s"Container: ${upload.containerName}").color(Color.White),
             Text(s"Zielordner: ${upload.blobFolderPath}").color(Color.White),
-            Text(s"Lokal: ${upload.localCurrentPath}").color(Color.White),
+            Text(s"Lokal: ${upload.localPath}").color(Color.White),
             Text("").color(Color.White),
             Layout(itemElements),
             Text("").color(Color.White),

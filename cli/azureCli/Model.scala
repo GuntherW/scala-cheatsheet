@@ -61,7 +61,7 @@ case class UploadState(
     blobFolderPath: String,
     localItems: List[ItemLocal],
     localSelectedIndex: Int,
-    localCurrentPath: String
+    localPath: String
 )
 
 enum AppMsg:

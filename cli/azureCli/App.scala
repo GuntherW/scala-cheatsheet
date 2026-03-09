@@ -28,13 +28,12 @@ object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
     val mode = getStorageMode()
     blobClient = createBlobServiceClient(mode)
     loadContainerData(blobClient) match
-      case Success(data) =>
-        val expandedPaths = data.keys.map(c => s"$c:").toSet
-        (AppState(containers = data, time = LocalDateTime.now, storageMode = mode, expandedPaths = expandedPaths), Cmd.none)
-      case Failure(e)    => (AppState(time = LocalDateTime.now, error = Some(e.getMessage), storageMode = mode), Cmd.none)
+      case Success(containers) =>
+        val expandedPaths = containers.keys.map(c => s"$c:").toSet
+        (AppState(containers = containers, time = LocalDateTime.now, storageMode = mode, expandedPaths = expandedPaths), Cmd.none)
+      case Failure(e)          => (AppState(time = LocalDateTime.now, error = Some(e.getMessage), storageMode = mode), Cmd.none)
 
-  def view(state: AppState): Element =
-    Renderer.render(state, computeFlatItems)
+  def view(state: AppState): Element = Renderer.render(state, computeFlatItems)
 
   def update(msg: AppMsg, state: AppState): (AppState, Cmd[AppMsg]) = msg match
 
@@ -83,7 +82,7 @@ object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
               blobFolderPath = blobFolderPath,
               localItems = localItems,
               localSelectedIndex = 0,
-              localCurrentPath = "."
+              localPath = "."
             )
             (state.copy(pendingUpload = Some(uploadState)), Cmd.none)
         case _                => (state, Cmd.none)
@@ -105,44 +104,33 @@ object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
         case Some(upload) =>
           upload.localItems.lift(upload.localSelectedIndex) match
             case Some(item: DirLocal)  =>
-              val newPath   = if upload.localCurrentPath == "." then item.name else s"${upload.localCurrentPath}/${item.name}"
+              val newPath   = if upload.localPath == "." then item.name else s"${upload.localPath}/${item.name}"
               val newItems  = loadLocalItems(newPath)
-              val newUpload = upload.copy(
-                localItems = newItems,
-                localSelectedIndex = 0,
-                localCurrentPath = newPath
-              )
+              val newUpload = upload.copy(localItems = newItems, localSelectedIndex = 0, localPath = newPath)
               (state.copy(pendingUpload = Some(newUpload)), Cmd.none)
             case Some(item: FileLocal) =>
-              val localFilePath = if upload.localCurrentPath == "." then item.name else s"${upload.localCurrentPath}/${item.name}"
+              val localFilePath = if upload.localPath == "." then item.name else s"${upload.localPath}/${item.name}"
               Try {
                 val blobPath = upload.blobFolderPath + item.name
                 uploadBlob(blobClient, upload.containerName, blobPath, localFilePath)
               } match
-                case Success(path) =>
-                  withRefreshedContainers(state.copy(statusMessage = Some(StatusMessage.Uploaded(path)), pendingUpload = None))
-                case Failure(e)    =>
-                  (state.copy(statusMessage = Some(StatusMessage.UploadFailed(e.getMessage)), pendingUpload = None), Cmd.none)
+                case Success(path) => withRefreshedContainers(state.copy(statusMessage = Some(StatusMessage.Uploaded(path)), pendingUpload = None))
+                case Failure(e)    => (state.copy(statusMessage = Some(StatusMessage.UploadFailed(e.getMessage)), pendingUpload = None), Cmd.none)
             case _                     => (state, Cmd.none)
         case None         => (state, Cmd.none)
 
     case UploadBack =>
       state.pendingUpload match
-        case Some(upload) if upload.localCurrentPath != "." =>
-          val parentPath = upload.localCurrentPath.lastIndexOf('/') match
+        case Some(upload) if upload.localPath != "." =>
+          val parentPath = upload.localPath.lastIndexOf('/') match
             case -1  => "."
-            case idx => upload.localCurrentPath.substring(0, idx)
+            case idx => upload.localPath.substring(0, idx)
           val newItems   = loadLocalItems(parentPath)
-          val newUpload  = upload.copy(
-            localItems = newItems,
-            localSelectedIndex = 0,
-            localCurrentPath = parentPath
-          )
+          val newUpload  = upload.copy(localItems = newItems, localSelectedIndex = 0, localPath = parentPath)
           (state.copy(pendingUpload = Some(newUpload)), Cmd.none)
-        case _                                              => (state, Cmd.none)
+        case _                                       => (state, Cmd.none)
 
-    case CancelUpload =>
-      (state.copy(pendingUpload = None), Cmd.none)
+    case CancelUpload => (state.copy(pendingUpload = None), Cmd.none)
 
   def subscriptions(state: AppState): Sub[AppMsg] = Sub.batch(
     Sub.time.every(5000, Refresh),
@@ -198,9 +186,7 @@ object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
     val items = par(
       state.containers.toList
         .sortBy(_._1)
-        .map { (containerName, blobs) => () =>
-          (containerName, buildTreeStructure(containerName, blobs))
-        }
+        .map { (containerName, blobs) => () => (containerName, buildTreeStructure(containerName, blobs)) }
     )
     items.toList
       .sortBy(_._1)
