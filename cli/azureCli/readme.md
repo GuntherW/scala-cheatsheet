@@ -1,9 +1,9 @@
 Package
 
-```shell
+```bash
 scala-cli package App.scala -o az
 ```
 
-```shell
+```bash
 mv ./az ~/bin
 ```

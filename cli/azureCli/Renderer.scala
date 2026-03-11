@@ -54,24 +54,24 @@ object Renderer:
     Text(line).color(if isSelected then Color.Yellow else Color.White)
 
   private def formatItemLine(item: NodeView, isSelected: Boolean, state: AppState): String =
-    val indent        = "  " * item.depth
-    val cursor        = if isSelected then Icons.Cursor else "  "
-    val (icon, label) = item match
+    val indent              = "  " * item.depth
+    val cursor              = if isSelected then Icons.Cursor else "  "
+    val (icon, label, size) = item match
       case d: DirView  =>
         val count    = countFiles(d)
         val sizeStr  = formatSize(d.totalSize)
         val countStr = if count > 0 then s" [$count]" else ""
-        (directoryIcon(d, state), d.name + countStr + sizeStr)
+        (directoryIcon(d, state), d.name + countStr, sizeStr)
       case f: FileView =>
         val sizeStr = formatSize(f.size)
-        (fileIcon(f.name), f.name + sizeStr)
-    s"$indent$cursor$icon$label"
+        (fileIcon(f.name), f.name, sizeStr)
+    s"$indent$cursor$icon$label$size"
 
   private def formatSize(bytes: Long): String =
     if bytes <= 0 then ""
     else
       val mb = bytes / (1024.0 * 1024.0)
-      s" (${f"$mb%.2f"} MB)"
+      f" $mb%.2f MB"
 
   private def countFiles(dir: DirView): Int =
     def countRecursive(node: NodeView): Int = node match
@@ -117,7 +117,7 @@ object Icons:
   val FolderOpen    = "📂 "
   val FolderClosed  = "📁 "
   val Document      = "📎 "
-  val Zip           = "🗜️ "
+  val Zip           = "📦 "
   val Cursor        = "> "
   val Error         = "❌ "
 

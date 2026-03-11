@@ -2,7 +2,7 @@
 //> using dep com.azure:azure-identity:1.18.1
 //> using dep com.azure:azure-storage-blob:12.32.0
 //> using dep xyz.matthieucourt::layoutz::0.6.0
-//> using dep com.lihaoyi::os-lib:0.11.9-M6
+//> using dep com.lihaoyi::os-lib:0.11.9-M7
 //> using file Model.scala
 
 import com.azure.identity.ClientCertificateCredentialBuilder
