@@ -14,6 +14,8 @@ import layoutz.*
 import ox.*
 
 import java.time.LocalDateTime
+import scala.collection.SortedMap
+import scala.collection.immutable.TreeMap
 import scala.compiletime.uninitialized
 import scala.util.{Failure, Success, Try}
 
@@ -45,8 +47,9 @@ object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
 
     case SwitchMode =>
       val newMode = state.storageMode match
-        case StorageMode.Azurite => StorageMode.Azure
-        case StorageMode.Azure   => StorageMode.Azurite
+        case StorageMode.Azurite   => StorageMode.AzureTest
+        case StorageMode.AzureTest => StorageMode.AzureProd
+        case StorageMode.AzureProd => StorageMode.Azurite
       blobClient = createBlobServiceClient(newMode)
       withRefreshedContainers(state.copy(storageMode = newMode, statusMessage = Some(StatusMessage.ModeSwitched(newMode))))
 
@@ -136,10 +139,15 @@ object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
     }
   )
 
-  private def loadContainerData(client: BlobServiceClient): Try[Map[String, List[BlobInfo]]] = Try {
+  private def loadContainerData(client: BlobServiceClient): Try[SortedMap[String, List[BlobInfo]]] = Try {
     val containers = listContainers(client)
     val results    = par(containers.map(name => () => { name -> loadBlobs(client, name) }))
-    results.toMap
+
+    given Ordering[String] = Ordering.by { name =>
+      if name == "esapsdeunr" then (0, "")
+      else (1, name.toLowerCase)
+    }
+    TreeMap.from(results)
   }
 
   /** Reloads all container data and merges it into the given state. On failure, sets the error field. */
@@ -173,11 +181,9 @@ object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
   private def computeFlatItems(state: AppState): List[NodeView] =
     val items = par(
       state.containers.toList
-        .sortBy(_._1)
         .map { (containerName, blobs) => () => (containerName, buildTreeStructure(containerName, blobs)) }
     )
     items.toList
-      .sortBy(_._1)
       .flatMap { (_, root) =>
         flattenNode(root, state.expandedPaths)
       }

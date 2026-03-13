@@ -1,10 +1,12 @@
 import java.time.LocalDateTime
+import scala.collection.SortedMap
 
 case class AzuriteConfig(accountName: String, accountKey: String, storageEndpoint: String)
 case class AzureConfig(blobUrl: String, tenantId: String, clientId: String, pfxBase64: String, pfxPassword: String)
+case class AzureProdConfig(blobUrl: String, tenantId: String, clientId: String, pfxBase64: String, pfxPassword: String)
 
 enum StorageMode:
-  case Azurite, Azure
+  case Azurite, AzureTest, AzureProd
 
 case class BlobInfo(path: String, name: String, size: Long = 0L)
 
@@ -46,7 +48,7 @@ enum StatusMessage:
     case DeleteFailed(e)   => s"❌ Löschen fehlgeschlagen: $e"
 
 case class AppState(
-    containers: Map[String, List[BlobInfo]] = Map.empty,
+    containers: SortedMap[String, List[BlobInfo]] = SortedMap.empty,
     time: LocalDateTime = LocalDateTime.now,
     error: Option[String] = None,
     selectedIndex: Int = 0,
