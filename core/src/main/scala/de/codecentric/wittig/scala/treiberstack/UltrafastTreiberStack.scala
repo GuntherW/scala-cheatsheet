@@ -21,7 +21,7 @@ object StackNodes:
 
 import StackNodes.*
 
-class UltraFastStack[T]:
+class UltraFastTreiberStack[T] extends Stack[T]:
   // Nutze die Factory 'empty'
   private val head = new AtomicReference[NodeOpt[T]](StackNodes.empty)
 

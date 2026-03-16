@@ -1,101 +1,65 @@
 package de.codecentric.wittig.scala.treiberstack
 
 import org.openjdk.jmh.annotations.*
-import org.openjdk.jmh.infra.Blackhole
 import java.util.concurrent.ThreadLocalRandom
-import java.util.concurrent.TimeUnit
 
 import scala.compiletime.uninitialized
+import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.duration.DurationInt
 
-@State(Scope.Thread)
-@BenchmarkMode(Array(Mode.Throughput))
-@OutputTimeUnit(TimeUnit.MILLISECONDS)
+@State(Scope.Benchmark)
+@BenchmarkMode(Array(Mode.AverageTime))
+@OutputTimeUnit(java.util.concurrent.TimeUnit.MILLISECONDS)
 @Warmup(iterations = 3, time = 1)
 @Measurement(iterations = 5, time = 2)
 @Fork(2)
 class TreiberStackBenchmarks:
 
-  private var treiberStack: TreiberStack[Int]        = uninitialized
-  private var backoffStack: BackoffTreiberStack[Int] = uninitialized
-  private var ultraFastStack: UltraFastStack[Int]    = uninitialized
+  @Param(Array("10000"))
+  var iterations: Int = 10000
+
+  private var treiber: TreiberStack[Int]        = uninitialized
+  private var backoff: BackoffTreiberStack[Int] = uninitialized
+  private var ultra: UltraFastTreiberStack[Int] = uninitialized
+  private var ec: ExecutionContext              = uninitialized
 
   @Setup
   def setup(): Unit =
-    treiberStack = TreiberStack()
-    backoffStack = BackoffTreiberStack()
-    ultraFastStack = UltraFastStack()
+    ec = ExecutionContext.fromExecutorService(java.util.concurrent.Executors.newFixedThreadPool(8))
+    treiber = TreiberStack()
+    backoff = BackoffTreiberStack()
+    ultra = UltraFastTreiberStack()
 
-  @Setup(Level.Invocation)
-  def resetStacks(): Unit =
-    while (treiberStack.pop().isDefined) {}
-    while (backoffStack.pop().isDefined) {}
-    while (ultraFastStack.pop().isDefined) {}
+  @TearDown
+  def shutdown(): Unit =
+    ec.asInstanceOf[java.util.concurrent.ExecutorService].shutdown()
 
-  @Benchmark
-  def pushTreiberStack(): Unit =
-    treiberStack.push(ThreadLocalRandom.current().nextInt())
-
-  @Benchmark
-  def pushBackoffStack(): Unit =
-    backoffStack.push(ThreadLocalRandom.current().nextInt())
+  @TearDown(Level.Iteration)
+  def reset(): Unit =
+    while (treiber.pop().isDefined) {}
+    while (backoff.pop().isDefined) {}
+    while (ultra.pop().isDefined) {}
 
   @Benchmark
-  def pushUltraFastStack(): Unit =
-    ultraFastStack.push(ThreadLocalRandom.current().nextInt())
+  def treiberStack(): Unit =
+    given ExecutionContext = ec
+    runBenchmark(treiber)
 
   @Benchmark
-  def popTreiberStack(blackhole: Blackhole): Unit =
-    blackhole.consume(treiberStack.pop())
+  def backoffStack(): Unit =
+    given ExecutionContext = ec
+    runBenchmark(backoff)
 
   @Benchmark
-  def popBackoffStack(blackhole: Blackhole): Unit =
-    blackhole.consume(backoffStack.pop())
+  def ultraFastStack(): Unit =
+    given ExecutionContext = ec
+    runBenchmark(ultra)
 
-  @Benchmark
-  def popUltraFastStack(blackhole: Blackhole): Unit =
-    blackhole.consume(ultraFastStack.pop())
+  private def runBenchmark(stack: Stack[Int])(using ec: ExecutionContext): Unit =
+    val range = 0 until iterations
 
-  @Benchmark
-  def mixedTreiberStack(): Unit =
-    if ThreadLocalRandom.current().nextBoolean() then
-      treiberStack.push(ThreadLocalRandom.current().nextInt())
-    else
-      treiberStack.pop()
+    val pushTasks = Future.sequence(range.map(_ => Future(stack.push(ThreadLocalRandom.current().nextInt()))))
+    val popTasks  = Future.sequence(range.map(_ => Future(stack.pop())))
 
-  @Benchmark
-  def mixedBackoffStack(): Unit =
-    if ThreadLocalRandom.current().nextBoolean() then
-      backoffStack.push(ThreadLocalRandom.current().nextInt())
-    else
-      backoffStack.pop()
-
-  @Benchmark
-  def mixedUltraFastStack(): Unit =
-    if ThreadLocalRandom.current().nextBoolean() then
-      ultraFastStack.push(ThreadLocalRandom.current().nextInt())
-    else
-      ultraFastStack.pop()
-
-  @Benchmark
-  @OperationsPerInvocation(10000)
-  def push1000TreiberStack(): Unit =
-    var i = 0
-    while i < 1000 do
-      treiberStack.push(i)
-      i += 1
-
-  @Benchmark
-  @OperationsPerInvocation(10000)
-  def push1000BackoffStack(): Unit =
-    var i = 0
-    while i < 1000 do
-      backoffStack.push(i)
-      i += 1
-
-  @Benchmark
-  @OperationsPerInvocation(10000)
-  def push1000UltraFastStack(): Unit =
-    var i = 0
-    while i < 1000 do
-      ultraFastStack.push(i)
-      i += 1
+    Await.result(pushTasks, 10.seconds)
+    Await.result(popTasks, 10.seconds)

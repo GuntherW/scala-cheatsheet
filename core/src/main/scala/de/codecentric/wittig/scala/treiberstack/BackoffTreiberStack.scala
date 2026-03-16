@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicReference
 import java.util.concurrent.locks.LockSupport
 import scala.annotation.tailrec
 
-class BackoffTreiberStack[T]:
+class BackoffTreiberStack[T] extends Stack[T]:
   private case class Node(value: T, next: Option[Node])
   private val head = new AtomicReference[Option[Node]](None)
 

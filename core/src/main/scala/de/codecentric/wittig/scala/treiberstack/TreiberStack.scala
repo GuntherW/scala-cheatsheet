@@ -3,7 +3,7 @@ package de.codecentric.wittig.scala.treiberstack
 import java.util.concurrent.atomic.AtomicReference
 import scala.annotation.tailrec
 
-class TreiberStack[T]:
+class TreiberStack[T] extends Stack[T]:
   // Ein einfacher Knoten im Stack
   private case class Node(value: T, next: Option[Node])
 
