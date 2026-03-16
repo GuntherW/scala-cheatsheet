@@ -18,10 +18,11 @@ layout {
         pane stacked=true {
             pane name="opencode" command="firejail" {
                 args "--noprofile" \
-                "--read-only=~" \
-                "--read-write=." \
-                "--read-write=~/.local/share/opencode" \
-                "--read-write=~/.config/opencode" \
+                "--read-only=/" \
+                "--read-write=/home/gunther/projekte/scala/scala-cheatsheet" \
+                "--read-write=/home/gunther/.local/share/opencode" \
+                "--read-write=/home/gunther/.config/opencode" \
+                "--read-write=/tmp/" \
                 "/home/gunther/.opencode/bin/opencode" "."
             }
         }

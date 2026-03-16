@@ -101,9 +101,17 @@ lazy val cdk = project
 lazy val core = project
   .settings(
     commonSettings,
-    scalafixOnCompile := false, // Capture Checking syntax not yet supported by scalafix
+    scalafixOnCompile := false,
     libraryDependencies ++= Dependencies.dependencies ++ Dependencies.testDependencies,
-    Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-s", "4") // scalacheck should emit 4 examples only
+    Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-s", "4")
+  )
+  .enablePlugins(JmhPlugin)
+  .settings(
+    // JMH dependencies for running benchmarks
+    libraryDependencies ++= Seq(
+      "org.openjdk.jmh" % "jmh-core" % "1.37",
+      "org.openjdk.jmh" % "jmh-generator-annprocess" % "1.37"
+    )
   )
 
 lazy val config = project
