@@ -124,6 +124,7 @@ object direct extends CommonSbtModule:
 object json extends CommonSbtModule:
   def mvnDeps = Seq(
     Dependency.avro4s,
+    Dependency.bouncyCastle,
     Dependency.borerCore,
     Dependency.borerCirce,
     Dependency.borerScodec,
@@ -133,6 +134,7 @@ object json extends CommonSbtModule:
     Dependency.circeParser,
     Dependency.jsoniter,
     Dependency.jsoniterMacros,
+    Dependency.jwtScala,
     Dependency.upickle,
     Dependency.zioJson,
   )
@@ -199,6 +201,7 @@ object sttp extends CommonSbtModule:
     Dependency.jsoniter,
     Dependency.openTelemtry,
     Dependency.openTelemtryAutoConfigure,
+    Dependency.resilience4j,
     Dependency.sttpCore,
     Dependency.sttpBEZio,
     Dependency.sttpCirce,
