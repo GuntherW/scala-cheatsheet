@@ -22,13 +22,11 @@ object StackNodes:
 import StackNodes.*
 
 class UltraFastTreiberStack[T] extends Stack[T]:
-  // Nutze die Factory 'empty'
   private val head = new AtomicReference[NodeOpt[T]](StackNodes.empty)
 
   @tailrec
   final def push(value: T): Unit =
     val current = head.get()
-    // Nutze die Factory 'create'
     val newNode = StackNodes.create(value, current)
     if !head.compareAndSet(current, newNode) then push(value)
 

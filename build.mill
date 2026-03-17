@@ -1,4 +1,7 @@
+//| mvnDeps: ["com.lihaoyi::mill-contrib-jmh:1.1.2"]
+
 import mill._, scalalib._
+import contrib.jmh.JmhModule
 
 trait CommonSbtModule extends SbtModule:
   def scalaVersion  = Version.scala
@@ -6,7 +9,8 @@ trait CommonSbtModule extends SbtModule:
     "-experimental"
   )
 
-object core extends CommonSbtModule:
+object core extends CommonSbtModule with JmhModule:
+  def jmhCoreVersion = "1.37"
   def mvnDeps = Seq(
     Dependency.catsCore,
     Dependency.catsEffectCps,
@@ -31,6 +35,7 @@ object core extends CommonSbtModule:
     Dependency.zio,
     Dependency.jacksonCore,
     Dependency.jacksonScala,
+    Dependency.jmhCore,
   )
 
   object test extends SbtTests:
@@ -90,6 +95,16 @@ object datatransformation extends CommonSbtModule:
   def mvnDeps = Seq(
     Dependency.ducktape,
     Dependency.chimney,
+  )
+
+object hash extends CommonSbtModule:
+  def mvnDeps = Seq(
+    Dependency.bouncyCastle,
+    Dependency.blake3,
+    Dependency.xxhash,
+    Dependency.circeCore,
+    Dependency.circeGeneric,
+    Dependency.circeParser,
   )
 
 object direct extends CommonSbtModule:
@@ -203,7 +218,9 @@ object Version:
   val akka                    = "2.8.8"
   val avro4s                  = "5.0.15"
   val aws                     = "2.173.4"
+  val blake3                  = "3.1.2"
   val borer                   = "1.16.2"
+  val bouncyCastle            = "1.83"
   val caliban                 = "2.9.1"
   val catsEffectCps           = "0.5.0"
   val catsVersion             = "2.13.0"
@@ -252,12 +269,13 @@ object Version:
   val sttpOAuth               = "0.18.0"
   val sttpOpenAi              = "0.2.6"
   val squants                 = "1.8.3"
-  val tapir                   = "1.13.11"
+  val tapir                   = "1.13.12"
   val toml                    = "0.3.0"
   val tyqu                    = "0.1.0"
   val upickle                 = "4.4.3"
   val xstream                 = "1.4.21"
   val xml                     = "2.4.0"
+  val xxhash                  = "1.10.4"
   val zio                     = "2.1.24"
   val zioJson                 = "0.9.0"
   val zioKafka                = "3.3.0"
@@ -276,6 +294,7 @@ object Version:
   val cucumberScala         = "8.39.1"
   val junit                 = "6.0.3"
   val junitJupiterInterface = "0.17.1"
+  val jmh                   = "1.37"
   val mockito               = "5.23.0"
   val munit                 = "1.2.4"
   val munitScalaCheck       = "1.2.0"
@@ -289,6 +308,8 @@ object Dependency:
   val akka                      = mvn"com.typesafe.akka::akka-actor-typed:${Version.akka}"
   val avro4s                    = mvn"com.sksamuel.avro4s::avro4s-core:${Version.avro4s}"
   val awsCdk                    = mvn"software.amazon.awscdk:aws-cdk-lib:${Version.aws}"
+  val blake3                    = mvn"pt.kcry::blake3:${Version.blake3}"
+  val bouncyCastle              = mvn"org.bouncycastle:bcpkix-jdk18on:${Version.bouncyCastle}"
   val borerCore                 = mvn"io.bullet::borer-core:${Version.borer}"
   val borerDerivation           = mvn"io.bullet::borer-derivation:${Version.borer}"
   val borerCirce                = mvn"io.bullet::borer-compat-circe:${Version.borer}"
@@ -390,6 +411,7 @@ object Dependency:
   val upickle                   = mvn"com.lihaoyi::upickle:${Version.upickle}"
   val xstream                   = mvn"com.thoughtworks.xstream:xstream:${Version.xstream}"
   val xml                       = mvn"org.scala-lang.modules::scala-xml:${Version.xml}"
+  val xxhash                    = mvn"at.yawk.lz4:lz4-java:${Version.xxhash}"
   val zio                       = mvn"dev.zio::zio:${Version.zio}"
   val zioKafka                  = mvn"dev.zio::zio-kafka:${Version.zioKafka}"
   val zioStreams                = mvn"dev.zio::zio-streams:${Version.zio}"
@@ -403,6 +425,10 @@ object Dependency:
   val zioHttp                   = mvn"dev.zio::zio-http:${Version.zioHttp}"
   val zioCli                    = mvn"dev.zio::zio-cli:${Version.zioCli}"
   val zioOpenAI                 = mvn"dev.zio::zio-openai:${Version.zioOpenAI}"
+
+  // JMH
+  val jmh                       = mvn"com.lihaoyi::mill-contrib-jmh:${Version.jmh}"
+  val jmhCore                   = mvn"org.openjdk.jmh:jmh-core:${Version.jmh}"
 
   // test
   val cucumberScala         = mvn"io.cucumber::cucumber-scala:${Version.cucumberScala}"

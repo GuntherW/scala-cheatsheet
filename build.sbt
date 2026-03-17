@@ -44,6 +44,7 @@ lazy val `scala-cheatsheet` = (project in file("."))
     cucumber,
     database,
     datatransformation,
+    hash,
     http4s,
     gatling,
     grpcFs2,
@@ -102,17 +103,10 @@ lazy val core = project
   .settings(
     commonSettings,
     scalafixOnCompile := false,
-    libraryDependencies ++= Dependencies.dependencies ++ Dependencies.testDependencies,
+    libraryDependencies ++= Dependencies.dependencies ++ Dependencies.testDependencies ++ Seq(Library.ox),
     Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-s", "4")
   )
   .enablePlugins(JmhPlugin)
-  .settings(
-    // JMH dependencies for running benchmarks
-    libraryDependencies ++= Seq(
-      "org.openjdk.jmh" % "jmh-core" % "1.37",
-      "org.openjdk.jmh" % "jmh-generator-annprocess" % "1.37"
-    )
-  )
 
 lazy val config = project
   .settings(
@@ -220,6 +214,19 @@ lazy val grpcFs2 = project
       Library.weaverCats % Test
     )
   ).enablePlugins(Fs2Grpc)
+
+lazy val hash = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.bouncyCastle,
+      Library.blake3,
+      Library.xxhash,
+      Library.circeCore,
+      Library.circeGeneric,
+      Library.circeParser,
+    )
+  )
 
 lazy val http4s = project
   .settings(

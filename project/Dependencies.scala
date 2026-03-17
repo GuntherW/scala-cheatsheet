@@ -4,6 +4,7 @@ object Version {
   val akka                    = "2.8.8"
   val aws                     = "2.243.0"
   val avro4s                  = "5.0.15"
+  val blake3                  = "3.1.2"
   val borer                   = "1.16.2"
   val bouncyCastle            = "1.83"
   val caliban                 = "3.0.0"
@@ -56,10 +57,11 @@ object Version {
   val sttpOAuth               = "0.18.0"
   val sttpOpenAi              = "0.3.10"
   val squants                 = "1.8.3"
-  val tapir                   = "1.13.11"
+  val tapir                   = "1.13.12"
   val toml                    = "0.3.0"
   val tyqu                    = "0.1.0"
   val upickle                 = "4.4.3"
+  val xxHash                  = "1.10.4"
   val xstream                 = "1.4.21"
   val xml                     = "2.4.0"
   val zio                     = "2.1.24"
@@ -99,6 +101,7 @@ object Library {
   val borerCirce                = "io.bullet"                             %% "borer-compat-circe"                        % Version.borer
   val borerScodec               = "io.bullet"                             %% "borer-compat-scodec"                       % Version.borer
   val bouncyCastle              = "org.bouncycastle"                       % "bcpkix-jdk18on"                            % Version.bouncyCastle
+  val blake3                    = "pt.kcry"                               %% "blake3"                                    % Version.blake3
   val calibanQuick              = "com.github.ghostdogpr"                 %% "caliban-quick"                             % Version.caliban
   val calibanClient             = "com.github.ghostdogpr"                 %% "caliban-client"                            % Version.caliban
   val catsCore                  = "org.typelevel"                         %% "cats-core"                                 % Version.catsVersion
@@ -197,6 +200,7 @@ object Library {
   val toml                      = "com.indoorvivants"                     %% "toml"                                      % Version.toml
   val tyqu                      = "ch.epfl.tyqu"                          %% "tyqu"                                      % Version.tyqu
   val upickle                   = "com.lihaoyi"                           %% "upickle"                                   % Version.upickle
+  val xxhash                    = "at.yawk.lz4"                            % "lz4-java"                                  % Version.xxHash
   val xstream                   = "com.thoughtworks.xstream"               % "xstream"                                   % Version.xstream
   val xml                       = "org.scala-lang.modules"                %% "scala-xml"                                 % Version.xml
   val zio                       = "dev.zio"                               %% "zio"                                       % Version.zio
