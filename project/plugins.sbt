@@ -4,10 +4,10 @@ addSbtPlugin("org.scalameta"         % "sbt-mdoc"              % "2.8.2")
 addSbtPlugin("com.typesafe.sbt"      % "sbt-git"               % "1.0.2")
 addSbtPlugin("org.scala-js"          % "sbt-scalajs"           % "1.20.2")
 addSbtPlugin("ch.epfl.scala"         % "sbt-scalafix"          % "0.14.6")
-addSbtPlugin("io.gatling"            % "gatling-sbt"           % "4.18.0")
+addSbtPlugin("io.gatling"            % "gatling-sbt"           % "4.18.1")
 addSbtPlugin("org.typelevel"         % "sbt-fs2-grpc"          % "3.0.0")
 addSbtPlugin("com.github.ghostdogpr" % "caliban-codegen-sbt"   % "3.0.0")
-addSbtPlugin("com.github.sbt.junit"  % "sbt-jupiter-interface" % "0.17.1")
+addSbtPlugin("com.github.sbt.junit"  % "sbt-jupiter-interface" % "0.18.0")
 addSbtPlugin("pl.project13.scala"    % "sbt-jmh"               % "0.4.8")
 
 libraryDependencies += "org.scala-js" %% "scalajs-env-jsdom-nodejs" % "1.1.1"

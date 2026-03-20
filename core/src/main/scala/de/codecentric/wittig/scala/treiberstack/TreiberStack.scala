@@ -21,7 +21,7 @@ class TreiberStack[T] extends Stack[T]:
   @tailrec
   final def pop(): Option[T] =
     head.get() match
-      case None                 => None // Stack ist leer
+      case None                     => None // Stack ist leer
       case currentHead @ Some(node) =>
         val nextNode = node.next
         if head.compareAndSet(currentHead, nextNode) then // Versuche atomar den Head auf den nächsten Knoten zu setzen
