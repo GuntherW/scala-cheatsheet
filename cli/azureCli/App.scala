@@ -188,11 +188,25 @@ object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
         flattenNode(root, state.expandedPaths)
       }
 
+  private def extractTimestamp(name: String): String =
+    val withoutExt = name.lastIndexOf('.') match
+      case -1  => name
+      case idx => name.substring(0, idx)
+    withoutExt.split('_').lastOption.getOrElse("")
+
   private def flattenNode(node: NodeView, expandedPaths: Set[String]): List[NodeView] = node match
     case file: FileView => List(file)
     case dir: DirView   =>
       if expandedPaths.contains(dir.fullPath)
-      then dir :: dir.children.values.toList.sortBy(_.name).flatMap(child => flattenNode(child, expandedPaths))
+      then
+        dir :: dir.children.values.toList
+          .sortWith { (a, b) =>
+            (a, b) match
+              case (fa: FileView, fb: FileView) => extractTimestamp(fa.name) > extractTimestamp(fb.name)
+              case _                            => a.name < b.name
+          }
+          .take(10)
+          .flatMap(child => flattenNode(child, expandedPaths))
       else List(dir)
 
   private def loadLocalItems(path: String): List[ItemLocal] =

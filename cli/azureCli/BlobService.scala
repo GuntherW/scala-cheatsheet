@@ -84,7 +84,7 @@ def listContainers(client: BlobServiceClient): List[String] = {
     .flatMap(_.getValue.asScala)
     .map(_.getName)
     .toList
-//    .filter(_.startsWith("esapsdeunr")) // temporär. Nur "unsere" Container anzeigen.
+    .filter(_.startsWith("esapsdeunr")) // temporär. Nur "unsere" Container anzeigen.
 }
 
 def loadBlobs(client: BlobServiceClient, containerName: String): List[BlobInfo] = {

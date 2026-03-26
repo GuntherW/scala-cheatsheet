@@ -1,8 +1,8 @@
 //> using dep com.augustnagro::magnum:1.3.1
 //> using dep org.postgresql:postgresql:42.7.10
 //> using dep com.zaxxer:HikariCP:7.0.2
-//> using dep org.flywaydb:flyway-core:12.0.3
-//> using dep org.flywaydb:flyway-database-postgresql:12.0.3
+//> using dep org.flywaydb:flyway-core:12.1.1
+//> using dep org.flywaydb:flyway-database-postgresql:12.1.1
 //> using dep com.lihaoyi::os-lib:0.11.9-M6
 
 import com.augustnagro.magnum.*

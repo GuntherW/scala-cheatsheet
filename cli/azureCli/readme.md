@@ -1,7 +1,7 @@
 Package
 
 ```bash
-scala-cli package App.scala -o az
+scala-cli package App.scala -o az --assembly
 ```
 
 ```bash

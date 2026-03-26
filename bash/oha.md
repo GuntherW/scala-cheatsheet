@@ -1,4 +1,4 @@
-### Install
+### Install Oha https://github.com/hatoo/oha
 
 ```shell
 sudo wget -qO /usr/local/bin/oha https://github.com/hatoo/oha/releases/latest/download/oha-linux-amd64

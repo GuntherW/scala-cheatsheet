@@ -87,7 +87,7 @@ object Version {
   val munitScalaCheck       = "1.2.0"
   val scalaCheck            = "1.19.0"
   val scalaMock             = "7.5.5"
-  val scalaTest             = "3.2.19"
+  val scalaTest             = "3.2.20"
   val testContainer         = "0.44.1"
   val weaverCats            = "0.8.4"
 }
