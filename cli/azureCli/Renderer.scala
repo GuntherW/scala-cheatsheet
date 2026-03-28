@@ -10,6 +10,8 @@ object Renderer:
     then renderError(state.error.get)
     else if state.pendingUpload.isDefined
     then renderUploadDialog(state)
+    else if state.pendingZipView.isDefined
+    then renderZipDialog(state)
     else renderMainView(state, computeFlatItems)
 
   private def renderError(error: String): Element = layout(s"${Icons.Error} Fehler: $error")
@@ -41,11 +43,12 @@ object Renderer:
     )
 
   private def buildHelpText(items: List[NodeView], selectedIndex: Int): String =
-    val base = "↑↓ Navigieren   Enter Öffnen/Download   m Modus   a Aktualisieren"
+    val base = "↑↓ Navigieren   d Download   Enter Öffnen/Zip   m Modus   a Aktualisieren"
     items.lift(selectedIndex) match
-      case Some(_: FileView) => s"$base   l Löschen"
-      case Some(_: DirView)  => s"$base   u Upload"
-      case None              => base
+      case Some(f: FileView) if f.name.endsWith(".zip") => s"$base   l Löschen"
+      case Some(_: FileView)                            => s"$base   l Löschen"
+      case Some(_: DirView)                             => s"$base   u Upload"
+      case None                                         => base
 
   private def renderItem(state: AppState, computeFlatItems: AppState => List[NodeView])(itemWithIndex: (NodeView, Int)): Element =
     val (item, idx) = itemWithIndex
@@ -110,6 +113,55 @@ object Renderer:
             Text("").color(Color.White),
             Text("↑↓ Navigieren   Enter = Öffnen/Hochladen   q = Abbrechen").color(Color.BrightBlack)
           ).color(Color.Cyan)
+        )
+
+  private def renderZipDialog(state: AppState): Element =
+    state.pendingZipView match
+      case None      => layout("")
+      case Some(zip) =>
+        def normalizeXml(s: String): String =
+          s
+            .replace("\r\n", "\n")
+            .replace("\r", "\n")
+            .replaceAll("\n{3,}", "\n\n")
+            .split("\n")
+            .filter(_.trim.nonEmpty)
+            .mkString("\n")
+
+        val xmlText =
+          if zip.xmlContent.isEmpty then "Keine passende XML-Datei gefunden"
+          else normalizeXml(zip.xmlContent)
+
+        val allLines     = xmlText.split("\n").toList
+        val visibleLines = allLines.drop(zip.scrollOffset).take(25)
+        val visibleText  = visibleLines.mkString("\n")
+        val scrollInfo   =
+          if allLines.length > 25 then s" [Zeile ${zip.scrollOffset + 1}-${zip.scrollOffset + visibleLines.length} von ${allLines.length}]"
+          else ""
+
+        val xmlBlock = Text(visibleText).color(Color.BrightGreen)
+
+        val otherElements = zip.otherEntries.zipWithIndex.map { (entry, idx) =>
+          val isSelected = idx == zip.selectedIndex
+          val cursor     = if isSelected then Icons.Cursor else "  "
+          val icon       = if entry.isXml then Icons.Zip else Icons.Document
+          Text(s"$cursor$icon${entry.name}").color(if isSelected then Color.Yellow else Color.White)
+        }
+
+        layout(
+          box(s"📦 ${zip.zipName}")(
+            Text("XML-Inhalt:").color(Color.BrightCyan),
+            Text(scrollInfo).color(Color.BrightBlack),
+            Text("").color(Color.White),
+            xmlBlock,
+            Text("").color(Color.White),
+            Text("Weitere Dateien:").color(Color.BrightCyan),
+            Text("").color(Color.White),
+            if otherElements.isEmpty then Text("  (keine weiteren Dateien)").color(Color.BrightBlack)
+            else Layout(otherElements),
+            Text("").color(Color.White),
+            Text("↑↓ Scrollen   q/Escape = Schließen").color(Color.BrightBlack)
+          ).color(Color.Magenta)
         )
 
 object Icons:

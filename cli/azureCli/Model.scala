@@ -36,6 +36,8 @@ enum StatusMessage:
   case UploadFailed(error: String)
   case Deleted(name: String)
   case DeleteFailed(error: String)
+  case ZipViewOpened(name: String)
+  case ZipViewFailed(error: String)
 
   def text: String = this match
     case Info(m)           => m
@@ -46,6 +48,20 @@ enum StatusMessage:
     case UploadFailed(e)   => s"❌ Upload fehlgeschlagen: $e"
     case Deleted(n)        => s"✅ Gelöscht: $n"
     case DeleteFailed(e)   => s"❌ Löschen fehlgeschlagen: $e"
+    case ZipViewOpened(n)  => s"📦 $n"
+    case ZipViewFailed(e)  => s"❌ Zip-Ansicht fehlgeschlagen: $e"
+
+case class ZipEntryInfo(name: String, isXml: Boolean, isSelectedXml: Boolean)
+
+case class ZipViewState(
+    containerName: String,
+    blobPath: String,
+    zipName: String,
+    xmlContent: String,
+    otherEntries: List[ZipEntryInfo],
+    selectedIndex: Int,
+    scrollOffset: Int = 0
+)
 
 case class AppState(
     containers: SortedMap[String, List[BlobInfo]] = SortedMap.empty,
@@ -55,6 +71,7 @@ case class AppState(
     expandedPaths: Set[String] = Set.empty,
     statusMessage: Option[StatusMessage] = None,
     pendingUpload: Option[UploadState] = None,
+    pendingZipView: Option[ZipViewState] = None,
     storageMode: StorageMode = StorageMode.Azurite
 )
 
@@ -79,3 +96,10 @@ enum AppMsg:
   case UploadMoveDown
   case UploadEnter
   case CancelUpload
+  case ViewZip
+  case ZipMoveUp
+  case ZipMoveDown
+  case ZipScrollUp
+  case ZipScrollDown
+  case ToggleDirectory
+  case CloseZipView

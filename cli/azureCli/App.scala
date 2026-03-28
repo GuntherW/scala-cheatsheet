@@ -42,7 +42,7 @@ object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
     case LoadError(error) => (state.copy(error = Some(error)), Cmd.none)
 
     case Refresh =>
-      if state.pendingUpload.isDefined then (state, Cmd.none)
+      if state.pendingUpload.isDefined || state.pendingZipView.isDefined then (state, Cmd.none)
       else withRefreshedContainers(state.copy(error = None, statusMessage = None))
 
     case SwitchMode =>
@@ -124,17 +124,98 @@ object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
 
     case CancelUpload => (state.copy(pendingUpload = None), Cmd.none)
 
+    case ViewZip =>
+      val items = computeFlatItems(state)
+      items.lift(state.selectedIndex) match
+        case Some(f: FileView) if f.name.endsWith(".zip") =>
+          readZipContents(blobClient, f.containerName, f.path) match
+            case scala.util.Success(result) =>
+              val xmlContent   = result._1
+              val otherEntries = result._2
+              val zipState     = ZipViewState(
+                containerName = f.containerName,
+                blobPath = f.path,
+                zipName = f.name,
+                xmlContent = xmlContent,
+                otherEntries = otherEntries,
+                selectedIndex = 0
+              )
+              (state.copy(pendingZipView = Some(zipState)), Cmd.none)
+            case scala.util.Failure(e)      =>
+              (state.copy(statusMessage = Some(StatusMessage.ZipViewFailed(e.getMessage))), Cmd.none)
+        case Some(f: FileView)                            =>
+          (state.copy(statusMessage = Some(StatusMessage.Info(s"Keine ZIP-Datei: ${f.name}"))), Cmd.none)
+        case _                                            => (state, Cmd.none)
+
+    case ZipMoveUp =>
+      state.pendingZipView.fold((state, Cmd.none)) { zip =>
+        val newIdx = moveIndex(zip.selectedIndex, -1, zip.otherEntries.length)
+        (state.copy(pendingZipView = Some(zip.copy(selectedIndex = newIdx))), Cmd.none)
+      }
+
+    case ZipMoveDown =>
+      state.pendingZipView.fold((state, Cmd.none)) { zip =>
+        val newIdx = moveIndex(zip.selectedIndex, 1, zip.otherEntries.length)
+        (state.copy(pendingZipView = Some(zip.copy(selectedIndex = newIdx))), Cmd.none)
+      }
+
+    case ZipScrollUp =>
+      state.pendingZipView.fold((state, Cmd.none)) { zip =>
+        val newOffset = (zip.scrollOffset - 5).max(0)
+        (state.copy(pendingZipView = Some(zip.copy(scrollOffset = newOffset))), Cmd.none)
+      }
+
+    case ZipScrollDown =>
+      state.pendingZipView.fold((state, Cmd.none)) { zip =>
+        val newOffset = zip.scrollOffset + 5
+        (state.copy(pendingZipView = Some(zip.copy(scrollOffset = newOffset))), Cmd.none)
+      }
+
+    case CloseZipView => (state.copy(pendingZipView = None), Cmd.none)
+
+    case ToggleDirectory =>
+      val items = computeFlatItems(state)
+      items.lift(state.selectedIndex) match
+        case Some(d: DirView) =>
+          val key         = d.fullPath
+          val newExpanded =
+            if state.expandedPaths.contains(key)
+            then state.expandedPaths - key
+            else state.expandedPaths + key
+          (state.copy(expandedPaths = newExpanded), Cmd.none)
+        case _                => (state, Cmd.none)
+
   def subscriptions(state: AppState): Sub[AppMsg] = Sub.batch(
     Sub.time.every(5000, Refresh),
     Sub.onKeyPress {
-      case ArrowUpKey   => state.pendingUpload.map(_ => UploadMoveUp).orElse(Some(MoveUp))
-      case ArrowDownKey => state.pendingUpload.map(_ => UploadMoveDown).orElse(Some(MoveDown))
-      case EnterKey     => state.pendingUpload.map(_ => UploadEnter).orElse(Some(Select))
+      case ArrowUpKey   =>
+        state.pendingUpload
+          .map(_ => UploadMoveUp)
+          .orElse(state.pendingZipView.map(_ => ZipScrollUp))
+          .orElse(Some(MoveUp))
+      case ArrowDownKey =>
+        state.pendingUpload
+          .map(_ => UploadMoveDown)
+          .orElse(state.pendingZipView.map(_ => ZipScrollDown))
+          .orElse(Some(MoveDown))
+      case EnterKey     =>
+        state.pendingUpload
+          .map(_ => UploadEnter)
+          .orElse(state.pendingZipView.map(_ => CloseZipView))
+          .orElse {
+            val items = computeFlatItems(state)
+            items.lift(state.selectedIndex) match
+              case Some(d: DirView)                             => Some(ToggleDirectory)
+              case Some(f: FileView) if f.name.endsWith(".zip") => Some(ViewZip)
+              case _                                            => None
+          }
       case CharKey('a') => Some(Refresh)
+      case CharKey('d') => Some(Select) // Download
       case CharKey('u') => Some(RequestUpload)
       case CharKey('l') => Some(DeleteFile)
       case CharKey('m') => Some(SwitchMode)
-      case CharKey('q') => Some(CancelUpload)
+      case CharKey('q') => state.pendingUpload.map(_ => CancelUpload).orElse(state.pendingZipView.map(_ => CloseZipView)).orElse(Some(CancelUpload))
+      case EscapeKey    => state.pendingZipView.map(_ => CloseZipView)
       case _            => None
     }
   )

@@ -10,7 +10,15 @@ import com.azure.storage.blob.*
 import com.azure.storage.common.StorageSharedKeyCredential
 
 import java.util.Base64
+import java.util.zip.ZipFile
+import javax.xml.transform.{TransformerFactory}
+import javax.xml.transform.stream.StreamResult
+import javax.xml.transform.dom.DOMSource
+import javax.xml.parsers.DocumentBuilderFactory
+import org.xml.sax.InputSource
+import java.io.{StringReader, StringWriter}
 import scala.jdk.CollectionConverters.*
+import scala.util.Try
 
 // Azurite Konfiguration (lokaler Azure Storage Emulator)
 lazy val azuriteConfig = AzuriteConfig(
@@ -154,3 +162,74 @@ def buildTreeStructure(containerName: String, blobs: List[BlobInfo]): DirView = 
   }
   tree
 }
+
+def readZipContents(client: BlobServiceClient, containerName: String, blobPath: String): Try[(String, List[ZipEntryInfo])] = Try {
+  val tempDir  = os.Path(java.io.File.createTempFile("temp", ".tmp").getParentFile)
+  val fileName = blobPath.split("/").last
+  val tempFile = tempDir / fileName
+
+  try
+    val containerClient = client.getBlobContainerClient(containerName)
+    val blobClient      = containerClient.getBlobClient(blobPath)
+    blobClient.downloadToFile(tempFile.toString, true)
+
+    val zipFile    = new ZipFile(tempFile.toString)
+    val zipEntries = zipFile.entries().asScala.toList
+    val baseName   = fileName.stripSuffix(".zip")
+
+    def stripTimestamp(name: String): String =
+      val lastUnderscore = name.lastIndexOf('_')
+      if lastUnderscore > 0 && lastUnderscore < name.length - 1 && name.substring(lastUnderscore + 1).forall(_.isDigit)
+      then name.substring(0, lastUnderscore)
+      else name
+
+    val baseNameNoTimestamp = stripTimestamp(baseName)
+    val matchingXmlExact    = s"$baseName.xml"
+    val matchingXmlNoTs     = s"$baseNameNoTimestamp.xml"
+
+    val xmlEntry = zipEntries.find(e =>
+      e.getName == matchingXmlExact || e.getName == matchingXmlNoTs ||
+        e.getName.endsWith(".xml") && (e.getName.startsWith(baseName) || e.getName.startsWith(baseNameNoTimestamp))
+    )
+
+    val xmlContent = xmlEntry match
+      case Some(entry) =>
+        val stream = zipFile.getInputStream(entry)
+        val bytes  = stream.readNBytes(Integer.MAX_VALUE)
+        stream.close()
+        new String(bytes, java.nio.charset.StandardCharsets.UTF_8)
+      case None        => ""
+
+    val otherEntries = zipEntries
+      .filter(e =>
+        !e.isDirectory &&
+          e.getName != matchingXmlExact &&
+          e.getName != matchingXmlNoTs &&
+          !e.getName.startsWith(baseName) &&
+          !e.getName.startsWith(baseNameNoTimestamp)
+      )
+      .map(e => ZipEntryInfo(e.getName, e.getName.endsWith(".xml"), false))
+      .sortBy(_.name)
+
+    zipFile.close()
+    (formatXml(xmlContent), otherEntries)
+  finally if os.exists(tempFile) then os.remove(tempFile)
+}
+
+def formatXml(xml: String): String =
+  if xml.isEmpty then ""
+  else
+    try
+      val builder = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder()
+      val doc     = builder.parse(new org.xml.sax.InputSource(new StringReader(xml)))
+      doc.getDocumentElement.normalize()
+
+      val transformer = TransformerFactory.newInstance().newTransformer()
+      transformer.setOutputProperty(javax.xml.transform.OutputKeys.INDENT, "yes")
+      transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2")
+      transformer.setOutputProperty(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes")
+
+      val writer = new StringWriter()
+      transformer.transform(new DOMSource(doc), new StreamResult(writer))
+      writer.toString
+    catch case _: Exception => xml
