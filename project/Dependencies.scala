@@ -69,7 +69,7 @@ object Version {
   val zioJson                 = "0.9.0"
   val zioKafka                = "3.3.0"
   val zioHttp                 = "3.10.1"
-  val zioPrelude              = "1.0.0-RC46"
+  val zioPrelude              = "1.0.0-RC47"
   val zioSchema               = "1.8.3"
   val zioOpenAI               = "0.4.1"
 
