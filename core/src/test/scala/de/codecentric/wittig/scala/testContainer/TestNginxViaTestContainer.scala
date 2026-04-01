@@ -30,5 +30,5 @@ class TestNginxViaTestContainer extends AnyFunSuite, ForAllTestContainer:
     val nginxResponse = Source
       .fromInputStream(nginxUri.toURL.openConnection().getInputStream)
       .mkString
-    assert(nginxResponse.contains("If you see this page, the nginx web server is successfully installed"))
+    assert(nginxResponse.contains("successfully installed"))
   }

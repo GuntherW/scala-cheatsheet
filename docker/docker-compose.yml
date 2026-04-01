@@ -92,7 +92,7 @@ services:
       KAFKA_BROKERS: kafka:29092
 
   postgres:
-    image: postgres:17-alpine
+    image: postgres:18-alpine
     container_name: postgres-cheatsheet
     deploy:
       resources:
@@ -125,7 +125,7 @@ services:
     entrypoint: "bin/pulsar standalone"
 
   mongodb:
-    image: mongo:8.0
+    image: mongo:8.2
     container_name: mongodb-cheatsheet
     ports:
       - '27117:27017'
