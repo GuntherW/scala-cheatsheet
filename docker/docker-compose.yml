@@ -80,16 +80,16 @@ services:
       SCHEMA_REGISTRY_LISTENERS: "http://0.0.0.0:8081"
     ports:
       - 8082:8081
-
-  kowl:
-    container_name: kowl
-    image: rsmnarts/kowl:latest
-    depends_on:
-      - kafka-connect
-    ports:
-      - "7777:8080"
-    environment:
-      KAFKA_BROKERS: kafka:29092
+  #
+  #  kowl:
+  #    container_name: kowl
+  #    image: rsmnarts/kowl:latest
+  #    depends_on:
+  #      - kafka-connect
+  #    ports:
+  #      - "7777:8080"
+  #    environment:
+  #      KAFKA_BROKERS: kafka:29092
 
   postgres:
     image: postgres:18-alpine
@@ -116,6 +116,25 @@ services:
 
     command: [ "postgres", "-c", "log_statement=all", "-c", "log_destination=stderr" ]
 
+  postgres-pgmq:
+    image: ghcr.io/pgmq/pg18-pgmq:latest
+    container_name: postgres-pgmq
+    ports:
+      - "6433:5432"
+    expose:
+      - "6433"
+    env_file:
+      - ./.env
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: 'testdb'
+
+    volumes:
+      - dataPgmq:/var/lib/postgres/testdb/data
+
+    command: [ "postgres", "-c", "log_statement=all", "-c", "log_destination=stderr" ]
+
   pulsar:
     image: apachepulsar/pulsar
     container_name: pulsar
@@ -134,5 +153,7 @@ services:
 
 volumes:
   data:
+    driver: local
+  dataPgmq:
     driver: local
   dbdata6:
