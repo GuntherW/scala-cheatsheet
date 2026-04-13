@@ -14,8 +14,7 @@ def matchTypes(): Unit =
   val anElement: ConstituentPartOf[List[String]] = "Hallo"
 
   /** Folgende drei Methoden haben das gleich Muster: */
-  def lastDigitOf(number: BigInt): Int =
-    (number % 10).toInt
+  def lastDigitOf(number: BigInt): Int = (number % 10).toInt
 
   def lastCharOf(string: String): Char =
     if (string.isEmpty) throw new NoSuchElementException

@@ -10,9 +10,9 @@ def main1: Unit =
 
     // Wichtige Funktion: Methoden direkt im Enum definieren
     def description: String = this match
-      case A(i) => s"Fall A mit Wert $i"
+      case A(i)    => s"Fall A mit Wert $i"
       case B(s, d) => s"Fall B mit Text '$s' und Zahl $d"
-      case C => "Fall C (Singleton)"
+      case C       => "Fall C (Singleton)"
 
   // Wichtige Funktion: Companion Object für Factory-Methoden oder Konstanten
   object MeinEnum:
@@ -34,9 +34,9 @@ def main1: Unit =
   println("\n--- Pattern Matching (extern) ---")
   val examples = List(a, b, c)
   examples.foreach {
-    case MeinEnum.A(i) => println(s"A gefunden: $i")
+    case MeinEnum.A(i)    => println(s"A gefunden: $i")
     case MeinEnum.B(s, _) => println(s"B gefunden mit String: $s")
-    case MeinEnum.C => println("C gefunden")
+    case MeinEnum.C       => println("C gefunden")
   }
 
   println("\n--- Ordinal Values (Index) ---")

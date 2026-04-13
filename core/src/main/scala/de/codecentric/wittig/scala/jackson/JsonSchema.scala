@@ -19,7 +19,7 @@ object JsonSchema:
   private val mapper = JsonMapper.builder()
     .addModule(DefaultScalaModule)
     .build()
-  
+
   private val factory: SchemaRegistry = SchemaRegistry.withDialect(Dialects.getDraft202012)
   val jsonSchema: Schema              = factory.getSchema(getClass.getResourceAsStream("/jsonschema/productSchema.json"))
   val jsonNodeValid: JsonNode         = mapper.readTree(getClass.getResourceAsStream("/jsonschema/productValid.json"))

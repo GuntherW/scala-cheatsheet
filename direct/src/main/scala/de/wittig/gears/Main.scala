@@ -24,10 +24,9 @@ def main(): Unit =
 
   inline def sleepExample(): Unit =
     /** Counts to [[n]], sleeping for 100milliseconds in between. */
-    def countTo(n: Int)(using Async): Unit =
-      (1 to n).foreach: i =>
-        AsyncOperations.sleep(100) /*(using Async)*/
-        println(s"counted $i")
+    def countTo(n: Int)(using Async): Unit = (1 to n).foreach: i =>
+      AsyncOperations.sleep(100) /*(using Async)*/
+      println(s"counted $i")
 
     Async.blocking:
       countTo(10)

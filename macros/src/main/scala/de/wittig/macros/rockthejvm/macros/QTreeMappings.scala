@@ -43,12 +43,12 @@ object QTreeMappings:
         tree match
           case vd @ ValDef(_, typeTree, Some(rhs)) if typeTree.tpe =:= TypeRepr.of[Boolean] =>
             given Quotes = vd.symbol.asQuotes
-            val newRhs   = '{ !${ rhs.asExprOf[Boolean] } }.asTerm
+            val newRhs   = '{ ! ${ rhs.asExprOf[Boolean] } }.asTerm
             ValDef(vd.symbol, Some(newRhs))
 
           case dd @ DefDef(_, params, typeTree, Some(rhs)) if typeTree.tpe =:= TypeRepr.of[Boolean] =>
             given Quotes = dd.symbol.asQuotes
-            val newRhs   = '{ !${ rhs.asExprOf[Boolean] } }.asTerm
+            val newRhs   = '{ ! ${ rhs.asExprOf[Boolean] } }.asTerm
             DefDef(dd.symbol, _ => Some(newRhs))
 
           case _ => super.transformStatement(tree)(owner)

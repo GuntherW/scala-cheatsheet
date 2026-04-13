@@ -26,5 +26,5 @@ object objectMapper:
   private val mapper: ObjectMapper = JsonMapper.builder()
     .addModule(DefaultScalaModule)
     .build()
-  
+
   def writeValueAsString(value: Any): String = mapper.writeValueAsString(value)

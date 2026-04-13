@@ -22,4 +22,4 @@ def fInterpolator(): Unit =
   println(f"$c%#.2f")                                 // # Alternate output format, Nachkommastellen
   println(f"$a%#.2f")                                 // # Alternate output format, Nachkommastellen
   println(f"$a%#x")                                   // # Alternate output format, In Hexadezimalschreibweise
-  println(f"$c%.3e")                                  // # Alternate output format, In Oktalschreibweise
+  println(f"$c%.3e") // # Alternate output format, In Oktalschreibweise
