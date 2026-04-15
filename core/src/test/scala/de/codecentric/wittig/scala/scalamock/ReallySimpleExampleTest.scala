@@ -6,7 +6,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalamock.stubs.Stubs
 
 class ReallySimpleExampleTest extends AnyFunSuite, Matchers, Stubs:
-  
+
   test("sayHello"):
     val formatterStub = stub[Formatter]
 

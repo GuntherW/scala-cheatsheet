@@ -8,26 +8,17 @@ import cats.effect.*
 import cats.effect.std.Console
 import cats.syntax.all.*
 import fs2.io.net.Network
-import natchez.Trace
-import natchez.Trace.Implicits.noop
+import org.typelevel.otel4s.metrics.Meter
+import org.typelevel.otel4s.metrics.Meter.Implicits.noop
+import org.typelevel.otel4s.trace.Tracer
+import org.typelevel.otel4s.trace.Tracer.Implicits.noop
 import pureconfig.{ConfigReader, ConfigSource}
 import skunk.*
 import skunk.codec.all.*
 import skunk.syntax.all.*
 
-final case class User(
-    id: UUID,
-    name: String,
-    email: String
-)
-
-final case class Config(
-    host: String,
-    port: Int,
-    username: String,
-    password: String,
-    database: String
-) derives ConfigReader
+final case class User(id: UUID, name: String, email: String)
+final case class Config(host: String, port: Int, username: String, password: String, database: String) derives ConfigReader
 
 trait UserRepository[F[_]]:
   def createUser(user: User): F[Unit]
@@ -63,14 +54,13 @@ object UserRepositoryLive:
 
 object SkunkDemo extends IOApp.Simple:
 
-  private def getSession[F[_]: {Temporal, Trace, Network, Console}](config: Config): Resource[F, Session[F]] =
-    Session.single(
-      host = config.host,
-      port = config.port,
-      user = config.username,
-      password = Some(config.password),
-      database = config.database
-    )
+  private def getSession[F[_]: {Temporal, Tracer, Meter, Network, Console}](config: Config): Resource[F, Session[F]] =
+    Session.Builder[F]
+      .withHost(config.host)
+      .withPort(config.port)
+      .withUserAndPassword(config.username, config.password)
+      .withDatabase(config.database)
+      .single
 
   override def run: IO[Unit] =
     ConfigSource.default.at("db").load[Config] match
