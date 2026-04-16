@@ -25,7 +25,7 @@ trait UserRepository[F[_]]:
   def findByName(name: String): F[List[User]]
 
 class UserRepositoryLive[F[_]: {Concurrent, Console}](session: Session[F]) extends UserRepository[F]:
-  val codec: Codec[User] = (uuid, varchar, varchar).tupled.imap {
+  private val codec: Codec[User] = (uuid, varchar, varchar).tupled.imap {
     case (id, name, email) => User(id, name, email)
   } {
     case User(id, name, email) => (id, name, email)
