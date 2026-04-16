@@ -4,7 +4,6 @@
 //> using file BlobService.scala
 //> using file XmlProcessor.scala
 
-import java.io.File
 import scala.io.StdIn
 
 // ─── Pfade ───────────────────────────────────────────────────────────────────
@@ -18,8 +17,6 @@ val remotePrefixArchive  = "archive/outgoing/"
 val remotePrefixOutgoing = "outgoing/"
 
 // ─── Menü-Hilfsfunktionen ────────────────────────────────────────────────────
-
-def clearLine(): Unit = print("\r" + " " * 60 + "\r")
 
 def printSeparator(): Unit = println("-" * 60)
 
@@ -62,7 +59,7 @@ def chooseStep(): Int =
 // ─── Schritt 1: Download ─────────────────────────────────────────────────────
 
 def stepDownload(mode: StorageMode): Unit =
-  println(s"\n[Schritt 1] Download von esapsdeunr/${remotePrefixArchive} ($mode)")
+  println(s"\n[Schritt 1] Download von esapsdeunr/$remotePrefixArchive ($mode)")
   printSeparator()
 
   val client = createBlobServiceClient(mode)
@@ -78,18 +75,16 @@ def stepDownload(mode: StorageMode): Unit =
 
   os.makeDir.all(archiveOutgoing)
 
-  var ok    = 0
-  var error = 0
-  blobs.foreach { blob =>
+  val (ok, error) = blobs.foldLeft((0, 0)) { case ((ok, err), blob) =>
     print(s"  Lade herunter: ${blob.name} ... ")
     try
       downloadBlob(client, blob.path, archiveOutgoing.toString)
       println("OK")
-      ok += 1
+      (ok + 1, err)
     catch
       case e: Exception =>
         println(s"FEHLER: ${e.getMessage}")
-        error += 1
+        (ok, err + 1)
   }
 
   printSeparator()
@@ -100,27 +95,23 @@ def stepDownload(mode: StorageMode): Unit =
 case class ProcessLogEntry(originalZip: String, newXmlName: String, newZipName: String, oldSeq: Int, newSeq: Int, status: String, message: String)
 
 def writeProcessedMd(entries: List[ProcessLogEntry], timestamp: String): Unit =
-  val mdPath = baseDir / "processed.md"
-  val sb     = new StringBuilder
+  def orDash(s: String)  = if s.nonEmpty then s else "-"
+  def seqOrDash(n: Int)  = if n > 0 then n.toString else "-"
 
-  sb.append(s"# Verarbeitungsprotokoll\n\n")
-  sb.append(s"**Zeitpunkt:** $timestamp\n\n")
-  sb.append("| Original-ZIP | Neue XML | Neue ZIP | Seq alt | Seq neu | Status | Hinweis |\n")
-  sb.append("|---|---|---|---|---|---|---|\n")
-
-  entries.foreach { e =>
-    val seqAlt  = if e.oldSeq > 0 then e.oldSeq.toString else "-"
-    val seqNeu  = if e.newSeq > 0 then e.newSeq.toString else "-"
-    val xmlName = if e.newXmlName.nonEmpty then e.newXmlName else "-"
-    val zipName = if e.newZipName.nonEmpty then e.newZipName else "-"
-    val msg     = e.message.replace("|", "\\|")
-    sb.append(s"| ${e.originalZip} | $xmlName | $zipName | $seqAlt | $seqNeu | ${e.status} | $msg |\n")
+  val header = "| Original-ZIP | Neue XML | Neue ZIP | Seq alt | Seq neu | Status | Hinweis |"
+  val divider = "|---|---|---|---|---|---|---|"
+  val rows = entries.map { e =>
+    s"| ${e.originalZip} | ${orDash(e.newXmlName)} | ${orDash(e.newZipName)} | ${seqOrDash(e.oldSeq)} | ${seqOrDash(e.newSeq)} | ${e.status} | ${e.message.replace("|", "\\|")} |"
   }
 
-  os.write.over(mdPath, sb.toString)
+  val content = (
+    List(s"# Verarbeitungsprotokoll", "", s"**Zeitpunkt:** $timestamp", "", header, divider) ++ rows
+  ).mkString("\n")
+
+  os.write.over(baseDir / "processed.md", content)
 
 def stepProcess(): Unit =
-  println(s"\n[Schritt 2] Verarbeitung der ZIPs in ${archiveOutgoing}")
+  println(s"\n[Schritt 2] Verarbeitung der ZIPs in $archiveOutgoing")
   printSeparator()
 
   os.makeDir.all(localOutgoing)
@@ -134,43 +125,37 @@ def stepProcess(): Unit =
   zipFiles.foreach(f => println(s"  - ${f.last}"))
   println()
 
-  var ok      = 0
-  var skipped = 0
-  var error   = 0
-  val logEntries = scala.collection.mutable.ListBuffer[ProcessLogEntry]()
+  case class Acc(ok: Int, skipped: Int, error: Int, log: List[ProcessLogEntry])
 
-  zipFiles.foreach { zipPath =>
+  val result = zipFiles.foldLeft(Acc(0, 0, 0, Nil)) { (acc, zipPath) =>
     print(s"  Verarbeite: ${zipPath.last} ... ")
     processZip(zipPath.toString, localOutgoing.toString, sequenceFile) match
-      case Left(msg) if msg.contains("uebersprungen") =>
-        println(s"UEBERSPRUNGEN")
+      case Left(msg) if msg.contains("übersprungen") =>
+        println("UEBERSPRUNGEN")
         println(s"    Grund:    $msg")
-        skipped += 1
-        logEntries += ProcessLogEntry(zipPath.last, "", "", 0, 0, "UEBERSPRUNGEN", msg)
+        acc.copy(skipped = acc.skipped + 1, log = acc.log :+ ProcessLogEntry(zipPath.last, "", "", 0, 0, "UEBERSPRUNGEN", msg))
       case Left(msg) =>
         println(s"FEHLER: $msg")
-        error += 1
-        logEntries += ProcessLogEntry(zipPath.last, "", "", 0, 0, "FEHLER", msg)
-      case Right(result) =>
-        println(s"OK")
-        println(s"    XML:      ${result.newXmlName}")
-        println(s"    ZIP:      ${result.newZipName}")
-        println(s"    Sequenz:  ${result.oldSequence} -> ${result.newSequence}")
-        ok += 1
-        logEntries += ProcessLogEntry(result.originalZip, result.newXmlName, result.newZipName, result.oldSequence, result.newSequence, "OK", "")
+        acc.copy(error = acc.error + 1, log = acc.log :+ ProcessLogEntry(zipPath.last, "", "", 0, 0, "FEHLER", msg))
+      case Right(r) =>
+        println("OK")
+        println(s"    XML:      ${r.newXmlName}")
+        println(s"    ZIP:      ${r.newZipName}")
+        println(s"    Sequenz:  ${r.oldSequence} -> ${r.newSequence}")
+        acc.copy(ok = acc.ok + 1, log = acc.log :+ ProcessLogEntry(r.originalZip, r.newXmlName, r.newZipName, r.oldSequence, r.newSequence, "OK", ""))
   }
 
   val timestamp = java.time.LocalDateTime.now().toString.replace("T", " ").take(19)
-  writeProcessedMd(logEntries.toList, timestamp)
+  writeProcessedMd(result.log, timestamp)
   println(s"\n  Protokoll gespeichert: processed.md")
 
   printSeparator()
-  println(s"Verarbeitung abgeschlossen: $ok erfolgreich, $skipped uebersprungen, $error fehlgeschlagen.")
+  println(s"Verarbeitung abgeschlossen: ${result.ok} erfolgreich, ${result.skipped} uebersprungen, ${result.error} fehlgeschlagen.")
 
 // ─── Schritt 3: Upload ───────────────────────────────────────────────────────
 
 def stepUpload(mode: StorageMode): Unit =
-  println(s"\n[Schritt 3] Upload von ${localOutgoing} nach esapsdeunr/${remotePrefixOutgoing} ($mode)")
+  println(s"\n[Schritt 3] Upload von $localOutgoing nach esapsdeunr/$remotePrefixOutgoing ($mode)")
   printSeparator()
 
   val zipFiles = os.list(localOutgoing).filter(_.ext == "zip").sorted
@@ -184,19 +169,17 @@ def stepUpload(mode: StorageMode): Unit =
 
   val client = createBlobServiceClient(mode)
 
-  var ok    = 0
-  var error = 0
-  zipFiles.foreach { zipPath =>
+  val (ok, error) = zipFiles.foldLeft((0, 0)) { case ((ok, err), zipPath) =>
     val blobPath = s"$remotePrefixOutgoing${zipPath.last}"
     print(s"  Lade hoch: ${zipPath.last} -> $blobPath ... ")
     try
       uploadBlob(client, blobPath, zipPath.toString)
       println("OK")
-      ok += 1
+      (ok + 1, err)
     catch
       case e: Exception =>
         println(s"FEHLER: ${e.getMessage}")
-        error += 1
+        (ok, err + 1)
   }
 
   printSeparator()
@@ -213,14 +196,12 @@ def main(): Unit =
   val mode = chooseStorageMode()
   println(s"\nUmgebung: $mode")
 
-  var running = true
-  while running do
-    val step = chooseStep()
-    step match
+  LazyList.continually(chooseStep())
+    .takeWhile(_ != 0)
+    .foreach {
       case 1 => stepDownload(mode)
       case 2 => stepProcess()
       case 3 => stepUpload(mode)
-      case 0 =>
-        println("\nBeendet.")
-        running = false
-      case _ => ()
+    }
+
+  println("\nBeendet.")
