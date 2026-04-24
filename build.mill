@@ -11,7 +11,7 @@ trait CommonSbtModule extends SbtModule:
 
 object core extends CommonSbtModule with JmhModule:
   def jmhCoreVersion = "1.37"
-  def mvnDeps = Seq(
+  def mvnDeps        = Seq(
     Dependency.catsCore,
     Dependency.catsEffectCps,
     Dependency.catsFree,
@@ -242,7 +242,7 @@ object Version:
   val jackson                 = "3.1.2"
   val jwtHttp4s               = "2.0.2"
   val jwtScala                = "11.0.4"
-  val jsonSchemaValidator     = "3.0.1"
+  val jsonSchemaValidator     = "3.0.2"
   val jsoniter                = "2.38.9"
   val kafka                   = "3.9.0"
   val kyo                     = "0.19.0"
@@ -267,12 +267,12 @@ object Version:
   val scalaParallelCollection = "1.2.0"
   val scalasql                = "0.3.0"
   val scodec                  = "2.3.3"
-  val skunk                   = "0.6.5"
-  val sttp                    = "4.0.22"
+  val skunk                   = "1.0.0"
+  val sttp                    = "4.0.23"
   val sttpOAuth               = "0.18.0"
   val sttpOpenAi              = "0.2.6"
   val squants                 = "1.8.3"
-  val tapir                   = "1.13.15"
+  val tapir                   = "1.13.17"
   val toml                    = "0.3.0"
   val tyqu                    = "0.1.0"
   val upickle                 = "4.4.3"
@@ -280,7 +280,7 @@ object Version:
   val xml                     = "2.4.0"
   val xxhash                  = "1.11.0"
   val zio                     = "2.1.25"
-  val zioJson                 = "0.9.1"
+  val zioJson                 = "0.9.2"
   val zioKafka                = "3.3.0"
   val zioHttp                 = "3.10.0"
   val zioPrelude              = "1.0.0-RC41"
@@ -430,8 +430,8 @@ object Dependency:
   val zioOpenAI                 = mvn"dev.zio::zio-openai:${Version.zioOpenAI}"
 
   // JMH
-  val jmh                       = mvn"com.lihaoyi::mill-contrib-jmh:${Version.jmh}"
-  val jmhCore                   = mvn"org.openjdk.jmh:jmh-core:${Version.jmh}"
+  val jmh     = mvn"com.lihaoyi::mill-contrib-jmh:${Version.jmh}"
+  val jmhCore = mvn"org.openjdk.jmh:jmh-core:${Version.jmh}"
 
   // test
   val cucumberScala         = mvn"io.cucumber::cucumber-scala:${Version.cucumberScala}"

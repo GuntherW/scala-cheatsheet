@@ -13,11 +13,11 @@ Funktionalität: Arithmetik
 
   Szenario: Addition mit Wertetabellen
     Angenommen ich habe die Wertetabelle
-    |2|3|
-    |2|4|
-    |2|5|
+      | 2 | 3 |
+      | 2 | 4 |
+      | 2 | 5 |
     Wenn ich diese Werte jeweils addiere
     Dann erhalte ich die Werte
-    |5|
-    |6|
-    |7|
+      | 5 |
+      | 6 |
+      | 7 |
