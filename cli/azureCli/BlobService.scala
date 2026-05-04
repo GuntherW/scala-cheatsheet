@@ -7,15 +7,17 @@
 
 import com.azure.identity.ClientCertificateCredentialBuilder
 import com.azure.storage.blob.*
+import com.azure.storage.blob.models.ListBlobsOptions
 import com.azure.storage.common.StorageSharedKeyCredential
 
 import java.util.Base64
 import java.util.zip.ZipFile
-import javax.xml.transform.{TransformerFactory}
+import javax.xml.transform.TransformerFactory
 import javax.xml.transform.stream.StreamResult
 import javax.xml.transform.dom.DOMSource
 import javax.xml.parsers.DocumentBuilderFactory
 import org.xml.sax.InputSource
+
 import java.io.{StringReader, StringWriter}
 import scala.jdk.CollectionConverters.*
 import scala.util.Try
@@ -132,6 +134,16 @@ def deleteBlob(client: BlobServiceClient, containerName: String, blobPath: Strin
   val blobClient      = containerClient.getBlobClient(blobPath)
   blobClient.delete()
   blobPath
+}
+
+def deleteFolder(client: BlobServiceClient, containerName: String, folderPath: String): Int = {
+  val containerClient = client.getBlobContainerClient(containerName)
+  val prefix          = folderPath + "/"
+  val blobs           = containerClient.listBlobs().asScala.toList.filter(_.getName.startsWith(prefix))
+  blobs.foreach { blobItem =>
+    containerClient.getBlobClient(blobItem.getName).delete()
+  }
+  blobs.length
 }
 
 // Erstellt eine Baumstruktur aus den Blob-Pfaden

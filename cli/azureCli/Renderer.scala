@@ -47,6 +47,7 @@ object Renderer:
     items.lift(selectedIndex) match
       case Some(f: FileView) if f.name.endsWith(".zip") => s"$base   l Löschen"
       case Some(_: FileView)                            => s"$base   l Löschen"
+      case Some(d: DirView) if d.path.nonEmpty          => s"$base   u Upload   l Löschen"
       case Some(_: DirView)                             => s"$base   u Upload"
       case None                                         => base
 

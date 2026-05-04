@@ -70,7 +70,11 @@ object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
           Try(deleteBlob(blobClient, f.containerName, f.path)) match
             case Success(_) => withRefreshedContainers(state.copy(statusMessage = Some(StatusMessage.Deleted(f.name))))
             case Failure(e) => (state.copy(statusMessage = Some(StatusMessage.DeleteFailed(e.getMessage))), Cmd.none)
-        case _                 => (state, Cmd.none)
+        case Some(d: DirView) if d.path.nonEmpty =>
+          Try(deleteFolder(blobClient, d.containerName, d.path)) match
+            case Success(count) => withRefreshedContainers(state.copy(statusMessage = Some(StatusMessage.Deleted(s"${d.name}/ ($count Dateien)"))))
+            case Failure(e)     => (state.copy(statusMessage = Some(StatusMessage.DeleteFailed(e.getMessage))), Cmd.none)
+        case _ => (state, Cmd.none)
 
     case RequestUpload =>
       val items = computeFlatItems(state)
