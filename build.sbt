@@ -481,6 +481,8 @@ lazy val zioBlocks = project
       Library.zioBlocksMessagepack,
       Library.zioBlocksThrift,
       Library.zioBocksToon,
+      Library.zioBlocksContext,
+      Library.zioBlocksRingbuffer,
     ),
   )
 

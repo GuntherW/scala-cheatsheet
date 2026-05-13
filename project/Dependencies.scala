@@ -27,7 +27,7 @@ object Version {
   val jwtHttp4s               = "2.0.15"
   val jwtScala                = "11.0.4"
   val jsonSchemaValidator     = "3.0.2"
-  val jsoniter                = "2.38.11"
+  val jsoniter                = "2.38.12"
   val kafka                   = "4.2.0"
   val kyo                     = "0.19.0"
   val logback                 = "1.5.32"
@@ -210,6 +210,8 @@ object Library {
   val zioBlocksMessagepack      = "dev.zio"                               %% "zio-blocks-schema-messagepack"             % Version.zioBlocks
   val zioBlocksThrift           = "dev.zio"                               %% "zio-blocks-schema-thrift"                  % Version.zioBlocks
   val zioBlocksBson             = "dev.zio"                               %% "zio-blocks-schema-bson"                    % Version.zioBlocks
+  val zioBlocksContext          = "dev.zio"                               %% "zio-blocks-context"                        % Version.zioBlocks
+  val zioBlocksRingbuffer       = "dev.zio"                               %% "zio-blocks-ringbuffer"                     % Version.zioBlocks
   val zioKafka                  = "dev.zio"                               %% "zio-kafka"                                 % Version.zioKafka
   val zioStreams                = "dev.zio"                               %% "zio-streams"                               % Version.zio
   val zioJson                   = "dev.zio"                               %% "zio-json"                                  % Version.zioJson
