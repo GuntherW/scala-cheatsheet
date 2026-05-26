@@ -6,7 +6,7 @@ addSbtPlugin("org.scala-js"          % "sbt-scalajs"           % "1.21.0")
 addSbtPlugin("ch.epfl.scala"         % "sbt-scalafix"          % "0.14.6")
 addSbtPlugin("io.gatling"            % "gatling-sbt"           % "4.18.2")
 addSbtPlugin("org.typelevel"         % "sbt-fs2-grpc"          % "3.1.1")
-addSbtPlugin("com.github.ghostdogpr" % "caliban-codegen-sbt"   % "3.1.0")
+addSbtPlugin("com.github.ghostdogpr" % "caliban-codegen-sbt"   % "3.1.1")
 addSbtPlugin("com.github.sbt.junit"  % "sbt-jupiter-interface" % "0.19.0")
 addSbtPlugin("pl.project13.scala"    % "sbt-jmh"               % "0.4.8")
 
