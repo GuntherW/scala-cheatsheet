@@ -3,11 +3,11 @@
 //> using dep org.flywaydb:flyway-core:12.0.3
 //> using dep org.flywaydb:flyway-database-postgresql:12.0.3
 //> using dep com.lihaoyi::os-lib:0.11.9-M6
-//> using dep com.softwaremill.sttp.client4::core:4.0.19
+//> using dep com.softwaremill.sttp.client4::core:4.0.25
 //> using dep com.softwaremill.ox::core:1.0.4
 //> using dep com.zaxxer:HikariCP:7.0.2
 //> using dep com.augustnagro::magnum:1.3.1
-//> using dep com.fasterxml:aalto-xml:1.3.4
+//> using dep com.fasterxml:aalto-xml:1.4.0
 //> using file Database.scala
 
 import com.fasterxml.aalto.stax.InputFactoryImpl
