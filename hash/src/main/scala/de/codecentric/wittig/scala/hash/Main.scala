@@ -4,18 +4,14 @@ import java.security.MessageDigest
 import scala.util.hashing.MurmurHash3
 import com.dynatrace.hash4j.hashing.Hashing
 
-import io.circe.*
-import io.circe.syntax.*
+import com.github.plokhotnyuk.jsoniter_scala.core.*
 
 import net.jpountz.xxhash.{XXHash64, XXHashFactory}
 import pt.kcry.blake3.Blake3
 
 @main
 def main(): Unit =
-  val bytes = Person("Alice", 30, Address("Main St", "Berlin"), List("zumba", "reading", "cooking"))
-    .asJson
-    .noSpaces
-    .getBytes
+  val bytes = writeToArray(Person("Alice", 30, Address("Main St", "Berlin"), List("zumba", "reading", "cooking").sorted))
 
   println("---- nicht kryptographische Hashes ----")
   println(s"murmur3:         ${murmur3(bytes)}")

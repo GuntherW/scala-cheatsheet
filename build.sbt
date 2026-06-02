@@ -223,9 +223,8 @@ lazy val hash = project
       Library.blake3,
       Library.hash4j,
       Library.xxhash,
-      Library.circeCore,
-      Library.circeGeneric,
-      Library.circeParser,
+      Library.jsoniter,
+      Library.jsoniterMacros,
     )
   )
 
