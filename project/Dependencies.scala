@@ -21,6 +21,7 @@ object Version {
   val fs2                     = "3.13.0"
   val gatling                 = "3.15.1"
   val gears                   = "0.3.1"
+  val hash4j                  = "0.30.0"
   val h2                      = "2.4.240"
   val http4s                  = "0.23.34"
   val jackson                 = "3.1.4"
@@ -123,6 +124,7 @@ object Library {
   val fs2IO                     = "co.fs2"                                %% "fs2-io"                                    % Version.fs2
   val fs2ReactiveStreams        = "co.fs2"                                %% "fs2-reactive-streams"                      % Version.fs2
   val gears                     = "ch.epfl.lamp"                          %% "gears"                                     % Version.gears
+  val hash4j                    = "com.dynatrace.hash4j"                   % "hash4j"                                    % Version.hash4j
   val h2                        = "com.h2database"                         % "h2"                                        % Version.h2
   val http4s                    = "org.http4s"                            %% "http4s-dsl"                                % Version.http4s
   val http4sEmberServer         = "org.http4s"                            %% "http4s-ember-server"                       % Version.http4s

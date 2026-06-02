@@ -20,10 +20,6 @@ case class Query(
     character: CharacterArgs => Option[Character]
 )
 
-val schema = render[Query]
-os.write.over(os.pwd / "schema.graphql", schema)
-println(schema)
-
 // 2. Some data and business logic for our example
 val sampleCharacters = List(
   Character("James Holden", List("Jim", "Hoss"), Origin.EARTH),
@@ -51,6 +47,13 @@ val queryResolver =
 // 4. Turn the resolver into an API
 val api = graphQL(RootResolver(queryResolver))
 
-// 5. Start a server for our API
-import caliban.quick.*
-api.unsafe.runServer(8088, "/api/graphql")
+@main
+def main(): Unit =
+
+  val schema = render[Query]
+  os.write.over(os.pwd / "schema.graphql", schema)
+  println(schema)
+
+  // 5. Start a server for our API
+  import caliban.quick.*
+  api.unsafe.runServer(8088, "/api/graphql")

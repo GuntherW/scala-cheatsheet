@@ -221,6 +221,7 @@ lazy val hash = project
     libraryDependencies ++= Seq(
       Library.bouncyCastle,
       Library.blake3,
+      Library.hash4j,
       Library.xxhash,
       Library.circeCore,
       Library.circeGeneric,
