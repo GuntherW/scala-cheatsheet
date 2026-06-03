@@ -10,9 +10,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v6
-    - name: Set up GraalVM for JDK 23
-      uses: actions/setup-java@v5
+      - uses: actions/checkout@v4
+      - name: Set up GraalVM for JDK 25
+        uses: actions/setup-java@v5
         with:
           java-version: 25
           distribution: graalvm
@@ -25,3 +25,4 @@ jobs:
       - uses: japgolly/setup-scalajs@v1
       - name: Run tests
         run: sbt test
+
