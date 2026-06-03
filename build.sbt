@@ -58,6 +58,7 @@ lazy val `scala-cheatsheet` = (project in file("."))
     openAI,
     osLib,
     parsers,
+    proteus,
     scalacheck,
     scalajs,
     spring,
@@ -179,7 +180,8 @@ lazy val direct = project
       Library.kyoTapir,
       Library.ox,
       Library.tapirNettyServerSync,
-      Library.sttpCore
+      Library.sttpCore,
+      Library.yaesCore
     )
   )
 
@@ -350,6 +352,15 @@ lazy val parsers = project
     libraryDependencies ++= Seq(
       Library.parserCombinators,
       Library.munit % Test
+    )
+  )
+
+lazy val proteus = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      Library.proteusGrpc,
+      Library.grpcNetty,
     )
   )
 

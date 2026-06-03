@@ -43,12 +43,13 @@ object Version {
   val osLib                   = "0.11.8"
   val ox                      = "1.0.4"
   val parserCombinators       = "2.4.0"
+  val proteus                 = "0.5.0"
   val postgres                = "42.7.11"
   val pureConfig              = "0.17.10"
   val pulsar4s                = "2.12.0.1"
   val refined                 = "0.11.3"
   val resilience4j            = "2.4.0"
-  val scala                   = "3.8.3"
+  val scala                   = "3.8.4"
   val scalaParallelCollection = "1.2.0"
   val scalasql                = "0.3.1"
   val scodec                  = "2.3.3"
@@ -63,6 +64,7 @@ object Version {
   val tyqu                    = "0.1.0"
   val upickle                 = "4.4.3"
   val xxHash                  = "1.11.0"
+  val yaes                    = "0.20.0"
   val xstream                 = "1.4.21"
   val xml                     = "2.4.0"
   val zio                     = "2.1.26"
@@ -84,7 +86,7 @@ object Version {
   val junit                 = "6.1.0"
   val junitJupiterInterface = "0.19.0"
   val mockito               = "5.23.0"
-  val munit                 = "1.3.1"
+  val munit                 = "1.3.2"
   val munitScalaCheck       = "1.3.0"
   val scalaCheck            = "1.19.0"
   val scalaMock             = "7.5.5"
@@ -165,6 +167,8 @@ object Library {
   val osLib                     = "com.lihaoyi"                           %% "os-lib"                                    % Version.osLib
   val ox                        = "com.softwaremill.ox"                   %% "core"                                      % Version.ox
   val parserCombinators         = "org.scala-lang.modules"                %% "scala-parser-combinators"                  % Version.parserCombinators
+  val proteusGrpc               = "com.github.ghostdogpr"                 %% "proteus-grpc"                              % Version.proteus
+  val grpcNetty                 = "io.grpc"                                % "grpc-netty"                                % "1.81.0"
   val postgres                  = "org.postgresql"                         % "postgresql"                                % Version.postgres
   val pureConfig                = "com.github.pureconfig"                 %% "pureconfig-generic-scala3"                 % Version.pureConfig
   val pulsar4s                  = "com.clever-cloud.pulsar4s"             %% "pulsar4s-core"                             % Version.pulsar4s
@@ -204,6 +208,7 @@ object Library {
   val upickle                   = "com.lihaoyi"                           %% "upickle"                                   % Version.upickle
   val xxhash                    = "at.yawk.lz4"                            % "lz4-java"                                  % Version.xxHash
   val xstream                   = "com.thoughtworks.xstream"               % "xstream"                                   % Version.xstream
+  val yaesCore                  = "in.rcard.yaes"                         %% "yaes-core"                                 % Version.yaes
   val xml                       = "org.scala-lang.modules"                %% "scala-xml"                                 % Version.xml
   val zio                       = "dev.zio"                               %% "zio"                                       % Version.zio
   val zioBlocks                 = "dev.zio"                               %% "zio-blocks-schema"                         % Version.zioBlocks
