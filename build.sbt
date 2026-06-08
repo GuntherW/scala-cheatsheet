@@ -221,12 +221,12 @@ lazy val hash = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(
-      Library.bouncyCastle,
       Library.blake3,
+      Library.bouncyCastle,
       Library.hash4j,
-      Library.xxhash,
       Library.jsoniter,
       Library.jsoniterMacros,
+      Library.xxhash,
     )
   )
 

@@ -99,12 +99,12 @@ object datatransformation extends CommonSbtModule:
 
 object hash extends CommonSbtModule:
   def mvnDeps = Seq(
-    Dependency.bouncyCastle,
     Dependency.blake3,
+    Dependency.bouncyCastle,
+    Dependency.hash4j,
+    Dependency.jsoniter,
+    Dependency.jsoniterMacros,
     Dependency.xxhash,
-    Dependency.circeCore,
-    Dependency.circeGeneric,
-    Dependency.circeParser,
   )
 
 object direct extends CommonSbtModule:
@@ -118,7 +118,8 @@ object direct extends CommonSbtModule:
     Dependency.kyoTapir,
     Dependency.ox,
     Dependency.tapirNettyServerSync,
-    Dependency.sttpCore
+    Dependency.sttpCore,
+    Dependency.yaesCore
   )
 
 object json extends CommonSbtModule:
@@ -234,7 +235,7 @@ object Version:
   val catsVersion             = "2.13.0"
   val catsConsole             = "0.8.1"
   val circeVersion            = "0.14.15"
-  val cirisVersion            = "3.14.1"
+  val cirisVersion            = "3.15.0"
   val chimney                 = "1.10.0"
   val doobie                  = "1.0.0-RC12"
   val duckdb                  = "1.5.3.0"
@@ -242,6 +243,7 @@ object Version:
   val fs2                     = "3.13.0"
   val gatling                 = "3.13.1"
   val gears                   = "0.3.1"
+  val hash4j                  = "0.30.0"
   val h2                      = "2.4.240"
   val http4s                  = "0.23.30"
   val jackson                 = "3.1.4"
@@ -259,7 +261,7 @@ object Version:
   val mongo                   = "5.2.1"
   val monocle                 = "3.3.0"
   val neotype                 = "0.5.0"
-  val openTelemetry           = "1.62.0"
+  val openTelemetry           = "1.63.0"
   val osLib                   = "0.11.8"
   val ox                      = "1.0.4"
   val proteus                 = "0.5.0"
@@ -285,6 +287,7 @@ object Version:
   val xstream                 = "1.4.21"
   val xml                     = "2.4.0"
   val xxhash                  = "1.11.0"
+  val yaes                    = "0.20.0"
   val zio                     = "2.1.26"
   val zioJson                 = "0.9.2"
   val zioKafka                = "3.6.0"
@@ -343,6 +346,7 @@ object Dependency:
   val fs2IO                     = mvn"co.fs2::fs2-io:${Version.fs2}"
   val fs2ReactiveStreams        = mvn"co.fs2::fs2-reactive-streams:${Version.fs2}"
   val gears                     = mvn"ch.epfl.lamp::gears:${Version.gears}"
+  val hash4j                    = mvn"com.dynatrace.hash4j:hash4j:${Version.hash4j}"
   val h2                        = mvn"com.h2database:h2:${Version.h2}"
   val http4s                    = mvn"org.http4s::http4s-dsl:${Version.http4s}"
   val http4sEmberServer         = mvn"org.http4s::http4s-ember-server:${Version.http4s}"
@@ -423,6 +427,7 @@ object Dependency:
   val xstream                   = mvn"com.thoughtworks.xstream:xstream:${Version.xstream}"
   val xml                       = mvn"org.scala-lang.modules::scala-xml:${Version.xml}"
   val xxhash                    = mvn"at.yawk.lz4:lz4-java:${Version.xxhash}"
+  val yaesCore                  = mvn"in.rcard.yaes::yaes-core:${Version.yaes}"
   val zio                       = mvn"dev.zio::zio:${Version.zio}"
   val zioKafka                  = mvn"dev.zio::zio-kafka:${Version.zioKafka}"
   val zioStreams                = mvn"dev.zio::zio-streams:${Version.zio}"

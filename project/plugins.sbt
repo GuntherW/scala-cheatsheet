@@ -1,7 +1,7 @@
 addSbtPlugin("com.github.sbt"        % "sbt-native-packager"   % "1.11.7")
 addSbtPlugin("org.scalameta"         % "sbt-scalafmt"          % "2.6.1")
 addSbtPlugin("org.scalameta"         % "sbt-mdoc"              % "2.9.0")
-addSbtPlugin("com.typesafe.sbt"      % "sbt-git"               % "1.0.2")
+addSbtPlugin("com.github.sbt"        % "sbt-git"               % "2.1.0")
 addSbtPlugin("org.scala-js"          % "sbt-scalajs"           % "1.21.0")
 addSbtPlugin("ch.epfl.scala"         % "sbt-scalafix"          % "0.14.6")
 addSbtPlugin("io.gatling"            % "gatling-sbt"           % "4.18.3")
