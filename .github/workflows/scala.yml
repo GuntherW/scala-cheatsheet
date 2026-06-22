@@ -9,19 +9,24 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up GraalVM for JDK 23
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21 (LTS)
         uses: actions/setup-java@v4
         with:
-          java-version: 23
-          distribution: graalvm
-          cache: sbt
-      - uses: actions/setup-node@v4
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Setup sbt launcher
+
+      - name: Set up sbt
         uses: sbt/setup-sbt@v1
-      - uses: japgolly/setup-scalajs@v1
+
       - name: Run tests
         run: sbt test
