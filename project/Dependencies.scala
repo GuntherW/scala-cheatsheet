@@ -12,7 +12,7 @@ object Version {
   val catsEffectCps           = "0.5.0"
   val catsVersion             = "2.13.0"
   val catsConsole             = "0.8.1"
-  val circeVersion            = "0.14.15"
+  val circeVersion            = "0.14.16"
   val cirisVersion            = "3.15.0"
   val chimney                 = "1.10.0"
   val doobie                  = "1.0.0-RC12"
@@ -29,9 +29,9 @@ object Version {
   val jwtScala                = "11.0.4"
   val jsonSchemaValidator     = "3.0.5"
   val jsoniter                = "2.38.16"
-  val kafka                   = "4.3.0"
+  val kafka                   = "4.3.1"
   val kyo                     = "0.19.0"
-  val logback                 = "1.5.34"
+  val logback                 = "1.5.37"
   val log4j                   = "2.26.0"
   val macwire                 = "2.6.7"
   val magnolia                = "1.3.21"
@@ -43,7 +43,7 @@ object Version {
   val osLib                   = "0.11.8"
   val ox                      = "1.0.5"
   val parserCombinators       = "2.4.0"
-  val proteus                 = "0.5.0"
+  val proteus                 = "0.5.1"
   val postgres                = "42.7.11"
   val pureConfig              = "0.17.10"
   val pulsar4s                = "2.12.0.1"
@@ -59,7 +59,7 @@ object Version {
   val sttpOAuth               = "0.18.0"
   val sttpOpenAi              = "0.3.10"
   val squants                 = "1.8.3"
-  val tapir                   = "1.13.23"
+  val tapir                   = "1.13.25"
   val toml                    = "0.3.0"
   val tyqu                    = "0.1.0"
   val upickle                 = "4.4.3"
@@ -71,7 +71,7 @@ object Version {
   val zioBlocks               = "0.0.43"
   val zioJson                 = "0.9.2"
   val zioKafka                = "3.6.0"
-  val zioHttp                 = "3.11.2"
+  val zioHttp                 = "3.11.3"
   val zioPrelude              = "1.0.0-RC47"
   val zioSchema               = "1.8.5"
   val zioOpenAI               = "0.4.1"
@@ -81,9 +81,9 @@ object Version {
   val uTest      = "0.9.5"
 
   // Test
-  val cucumber              = "7.34.3"
+  val cucumber              = "7.34.4"
   val cucumberScala         = "8.39.1"
-  val junit                 = "6.1.0"
+  val junit                 = "6.1.1"
   val junitJupiterInterface = "0.19.0"
   val mockito               = "5.23.0"
   val munit                 = "1.3.3"
@@ -168,7 +168,7 @@ object Library {
   val ox                        = "com.softwaremill.ox"                   %% "core"                                      % Version.ox
   val parserCombinators         = "org.scala-lang.modules"                %% "scala-parser-combinators"                  % Version.parserCombinators
   val proteusGrpc               = "com.github.ghostdogpr"                 %% "proteus-grpc"                              % Version.proteus
-  val grpcNetty                 = "io.grpc"                                % "grpc-netty"                                % "1.82.0"
+  val grpcNetty                 = "io.grpc"                                % "grpc-netty"                                % "1.82.1"
   val postgres                  = "org.postgresql"                         % "postgresql"                                % Version.postgres
   val pureConfig                = "com.github.pureconfig"                 %% "pureconfig-generic-scala3"                 % Version.pureConfig
   val pulsar4s                  = "com.clever-cloud.pulsar4s"             %% "pulsar4s-core"                             % Version.pulsar4s
