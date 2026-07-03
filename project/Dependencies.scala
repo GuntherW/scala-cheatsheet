@@ -2,12 +2,12 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.8"
-  val aws                     = "2.260.0"
+  val aws                     = "2.261.0"
   val avro4s                  = "5.0.15"
   val blake3                  = "3.1.2"
   val borer                   = "1.16.2"
   val bouncyCastle            = "1.84"
-  val caliban                 = "3.1.3"
+  val caliban                 = "3.1.4"
   val catsEffect              = "3.7.0"
   val catsEffectCps           = "0.5.0"
   val catsVersion             = "2.13.0"
@@ -32,7 +32,7 @@ object Version {
   val kafka                   = "4.3.1"
   val kyo                     = "0.19.0"
   val logback                 = "1.5.37"
-  val log4j                   = "2.26.0"
+  val log4j                   = "2.26.1"
   val macwire                 = "2.6.7"
   val magnolia                = "1.3.21"
   val magnum                  = "2.0.0-M3"

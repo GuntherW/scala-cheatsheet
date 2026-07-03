@@ -1,7 +1,6 @@
 package de.wittig.client
 
 import caliban.*
-import caliban.client.Operations.RootQuery
 import de.wittig.client.generated.Client.*
 import sttp.client4.*
 
