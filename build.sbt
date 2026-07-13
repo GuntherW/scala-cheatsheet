@@ -487,6 +487,7 @@ lazy val zioBlocks = project
     commonSettings,
     libraryDependencies ++= Seq(
       Library.zioBlocks,
+      Library.zioBlocksAsync,
       Library.zioBlocksAvro,
       Library.zioBlocksBson,
       Library.zioBlocksMessagepack,
