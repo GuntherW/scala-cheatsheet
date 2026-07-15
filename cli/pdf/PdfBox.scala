@@ -1,4 +1,4 @@
-//> using dep org.apache.pdfbox:pdfbox:3.0.7
+//> using dep org.apache.pdfbox:pdfbox:3.0.8
 
 import org.apache.pdfbox.Loader
 import org.apache.pdfbox.pdmodel.PDDocument

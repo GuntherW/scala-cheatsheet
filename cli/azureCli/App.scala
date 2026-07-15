@@ -1,9 +1,9 @@
 //> using dep com.azure:azure-sdk-bom:1.3.3
 //> using dep com.azure:azure-identity:1.18.1
 //> using dep com.azure:azure-storage-blob:12.32.0
-//> using dep xyz.matthieucourt::layoutz:0.7.0
+//> using dep xyz.matthieucourt::layoutz:0.8.0
 //> using dep com.lihaoyi::os-lib:0.11.9-M7
-//> using dep com.softwaremill.ox::core:1.0.4
+//> using dep com.softwaremill.ox::core:1.0.5
 //> using file BlobService.scala
 //> using file Model.scala
 //> using file Renderer.scala
@@ -190,19 +190,19 @@ object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
         case _                => (state, Cmd.none)
 
   def subscriptions(state: AppState): Sub[AppMsg] = Sub.batch(
-    Sub.time.every(5000, Refresh),
+    Sub.time.everyMs(5000, Refresh),
     Sub.onKeyPress {
-      case ArrowUpKey   =>
+      case Key.Up       =>
         state.pendingUpload
           .map(_ => UploadMoveUp)
           .orElse(state.pendingZipView.map(_ => ZipScrollUp))
           .orElse(Some(MoveUp))
-      case ArrowDownKey =>
+      case Key.Down     =>
         state.pendingUpload
           .map(_ => UploadMoveDown)
           .orElse(state.pendingZipView.map(_ => ZipScrollDown))
           .orElse(Some(MoveDown))
-      case EnterKey     =>
+      case Key.Enter    =>
         state.pendingUpload
           .map(_ => UploadEnter)
           .orElse(state.pendingZipView.map(_ => CloseZipView))
@@ -213,13 +213,13 @@ object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
               case Some(f: FileView) if f.name.endsWith(".zip") => Some(ViewZip)
               case _                                            => None
           }
-      case CharKey('a') => Some(Refresh)
-      case CharKey('d') => Some(Select) // Download
-      case CharKey('u') => Some(RequestUpload)
-      case CharKey('l') => Some(DeleteFile)
-      case CharKey('m') => Some(SwitchMode)
-      case CharKey('q') => state.pendingUpload.map(_ => CancelUpload).orElse(state.pendingZipView.map(_ => CloseZipView)).orElse(Some(CancelUpload))
-      case EscapeKey    => state.pendingZipView.map(_ => CloseZipView)
+      case Key.Char('a') => Some(Refresh)
+      case Key.Char('d') => Some(Select) // Download
+      case Key.Char('u') => Some(RequestUpload)
+      case Key.Char('l') => Some(DeleteFile)
+      case Key.Char('m') => Some(SwitchMode)
+      case Key.Char('q') => state.pendingUpload.map(_ => CancelUpload).orElse(state.pendingZipView.map(_ => CloseZipView)).orElse(Some(CancelUpload))
+      case Key.Escape    => state.pendingZipView.map(_ => CloseZipView)
       case _            => None
     }
   )
