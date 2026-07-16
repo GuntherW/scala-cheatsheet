@@ -43,7 +43,7 @@ object Renderer:
     )
 
   private def buildHelpText(items: List[NodeView], selectedIndex: Int): String =
-    val base = "↑↓ Navigieren   d Download   Enter Öffnen/Zip   m Modus   a Aktualisieren"
+    val base = "↑↓ Navigieren   d Download   Enter Öffnen/Zip   m Modus   a Aktualisieren   r Markdown"
     items.lift(selectedIndex) match
       case Some(f: FileView) if f.name.endsWith(".zip") => s"$base   l Löschen"
       case Some(_: FileView)                            => s"$base   l Löschen"

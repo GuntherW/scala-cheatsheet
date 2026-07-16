@@ -86,6 +86,7 @@ case class UploadState(
 enum AppMsg:
   case LoadError(error: String)
   case Refresh
+  case GenerateMarkdownReport
   case SwitchMode
   case MoveUp
   case MoveDown

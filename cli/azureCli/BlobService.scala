@@ -79,7 +79,7 @@ def createBlobServiceClient(mode: StorageMode = getStorageMode()): BlobServiceCl
       .credential(credential)
       .buildClient()
 
-def listContainers(client: BlobServiceClient): List[String] = {
+def listAllContainers(client: BlobServiceClient): List[String] =
   client
     .listBlobContainers()
     .iterableByPage()
@@ -87,8 +87,10 @@ def listContainers(client: BlobServiceClient): List[String] = {
     .flatMap(_.getValue.asScala)
     .map(_.getName)
     .toList
+
+def listContainers(client: BlobServiceClient): List[String] =
+  listAllContainers(client)
     .filter(_.startsWith("esapsdeunr")) // temporär. Nur "unsere" Container anzeigen.
-}
 
 def loadBlobs(client: BlobServiceClient, containerName: String): List[BlobInfo] = {
   val containerClient = client.getBlobContainerClient(containerName)

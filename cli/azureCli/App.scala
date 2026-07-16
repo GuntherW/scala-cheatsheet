@@ -6,6 +6,7 @@
 //> using dep com.softwaremill.ox::core:1.0.5
 //> using file BlobService.scala
 //> using file Model.scala
+//> using file MarkdownReportGenerator.scala
 //> using file Renderer.scala
 
 import AppMsg.*
@@ -45,6 +46,13 @@ object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
       if state.pendingUpload.isDefined || state.pendingZipView.isDefined then (state, Cmd.none)
       else withRefreshedContainers(state.copy(error = None, statusMessage = None))
 
+    case GenerateMarkdownReport =>
+      MarkdownReportGenerator.generate(state.storageMode, blobClient) match
+        case Success(targetPath) =>
+          (state.copy(statusMessage = Some(StatusMessage.Info(s"✅ Markdown-Report erzeugt: $targetPath"))), Cmd.none)
+        case Failure(e)          =>
+          (state.copy(statusMessage = Some(StatusMessage.Info(s"❌ Markdown-Report fehlgeschlagen: ${e.getMessage}"))), Cmd.none)
+
     case SwitchMode =>
       val newMode = state.storageMode match
         case StorageMode.Azurite   => StorageMode.AzureTest
@@ -66,7 +74,7 @@ object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
     case DeleteFile =>
       val items = computeFlatItems(state)
       items.lift(state.selectedIndex) match
-        case Some(f: FileView) =>
+        case Some(f: FileView)                   =>
           Try(deleteBlob(blobClient, f.containerName, f.path)) match
             case Success(_) => withRefreshedContainers(state.copy(statusMessage = Some(StatusMessage.Deleted(f.name))))
             case Failure(e) => (state.copy(statusMessage = Some(StatusMessage.DeleteFailed(e.getMessage))), Cmd.none)
@@ -74,7 +82,7 @@ object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
           Try(deleteFolder(blobClient, d.containerName, d.path)) match
             case Success(count) => withRefreshedContainers(state.copy(statusMessage = Some(StatusMessage.Deleted(s"${d.name}/ ($count Dateien)"))))
             case Failure(e)     => (state.copy(statusMessage = Some(StatusMessage.DeleteFailed(e.getMessage))), Cmd.none)
-        case _ => (state, Cmd.none)
+        case _                                   => (state, Cmd.none)
 
     case RequestUpload =>
       val items = computeFlatItems(state)
@@ -192,17 +200,17 @@ object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
   def subscriptions(state: AppState): Sub[AppMsg] = Sub.batch(
     Sub.time.everyMs(5000, Refresh),
     Sub.onKeyPress {
-      case Key.Up       =>
+      case Key.Up        =>
         state.pendingUpload
           .map(_ => UploadMoveUp)
           .orElse(state.pendingZipView.map(_ => ZipScrollUp))
           .orElse(Some(MoveUp))
-      case Key.Down     =>
+      case Key.Down      =>
         state.pendingUpload
           .map(_ => UploadMoveDown)
           .orElse(state.pendingZipView.map(_ => ZipScrollDown))
           .orElse(Some(MoveDown))
-      case Key.Enter    =>
+      case Key.Enter     =>
         state.pendingUpload
           .map(_ => UploadEnter)
           .orElse(state.pendingZipView.map(_ => CloseZipView))
@@ -214,13 +222,14 @@ object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
               case _                                            => None
           }
       case Key.Char('a') => Some(Refresh)
+      case Key.Char('r') => Some(GenerateMarkdownReport)
       case Key.Char('d') => Some(Select) // Download
       case Key.Char('u') => Some(RequestUpload)
       case Key.Char('l') => Some(DeleteFile)
       case Key.Char('m') => Some(SwitchMode)
       case Key.Char('q') => state.pendingUpload.map(_ => CancelUpload).orElse(state.pendingZipView.map(_ => CloseZipView)).orElse(Some(CancelUpload))
       case Key.Escape    => state.pendingZipView.map(_ => CloseZipView)
-      case _            => None
+      case _             => None
     }
   )
 

@@ -96,7 +96,7 @@ lazy val cdk = project
     commonSettings,
     libraryDependencies ++= Seq(
       Library.awsCdk,
-      "software.constructs" % "constructs" % "10.6.0"
+      "software.constructs" % "constructs" % Version.constructs
     )
   )
 
@@ -209,7 +209,7 @@ lazy val grpcFs2 = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(
-      "io.grpc"          % "grpc-netty-shaded" % scalapb.compiler.Version.grpcJavaVersion,
+      "io.grpc"          % "grpc-netty-shaded" % Version.grpcNetty,
       Library.http4sEmberServer,
       Library.http4sDsl,
       Library.http4sCirce,
