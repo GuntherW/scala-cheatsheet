@@ -1,0 +1,16 @@
+@(title: String)
+@main(title) {
+    <main class="app">
+      <h1>@title</h1>
+      <p>Kleines Demo-Projekt mit Cask-Backend und Scala.js-Frontend.</p>
+      <p><a href="/about">Zur About-Seite</a></p>
+      <p><a href="/secured">Zur Secured-Seite</a></p>
+      <div class="row">
+        <input id="name" placeholder="Dein Name" value="Scala">
+        <button id="hello-btn">Sagen hallo</button>
+      </div>
+      <p id="result">Noch kein Request gesendet.</p>
+    </main>
+
+    <script type="module" src="/static/main.js"></script>
+}

@@ -1,0 +1,52 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "IBM Plex Sans", sans-serif;
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  color: #0f172a;
+}
+
+.app {
+  max-width: 680px;
+  margin: 56px auto;
+  padding: 24px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.1);
+}
+
+h1 {
+  margin-top: 0;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+input,
+button {
+  font: inherit;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+}
+
+input {
+  flex: 1;
+}
+
+button {
+  background: #0f766e;
+  color: #ffffff;
+  border-color: #0f766e;
+  cursor: pointer;
+}
+
+#result {
+  margin-bottom: 0;
+  font-weight: 600;
+}

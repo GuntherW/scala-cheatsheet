@@ -15,7 +15,7 @@ object Version {
   val circeVersion            = "0.14.16"
   val cirisVersion            = "3.15.0"
   val chimney                 = "1.11.0"
-  val constructs              = "10.7.0"
+  val constructs              = "10.7.1"
   val doobie                  = "1.0.0-RC12"
   val ducktape                = "0.2.13"
   val duckdb                  = "1.5.4.0"
