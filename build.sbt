@@ -424,6 +424,7 @@ lazy val scalajs = project
       "org.scala-js" % "scalajs-dom_sjs1_3" % Version.scalaJsDom,
       "com.lihaoyi"  % "utest_sjs1_3"       % Version.uTest % Test
     ),
+    Test / jsEnv                      := Def.uncached(new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv()),
     testFrameworks += new TestFramework("utest.runner.Framework"),
     Test / fork                     := false,
     fork                            := false
