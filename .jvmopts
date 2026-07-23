@@ -1,5 +1,5 @@
 -Dwebdriver.gecko.driver=/home/gunther/projekte/scala/scala-cheatsheet/core/src/it/resources/geckodriver
--Djava.net.preferIPv6Addresses=true
+-Djava.net.preferIPv6Addresses=false
 -Xms512M
 -Xmx4096M
 -Xss2M
