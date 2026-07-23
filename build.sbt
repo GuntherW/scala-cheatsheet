@@ -2,6 +2,19 @@ import sbt.*
 
 import scala.collection.immutable.Seq
 
+lazy val commonTestJvmOptions = {
+  val runtimeJavaFeature = java.lang.Runtime.version().feature()
+  val reflectiveAccessOptions =
+    if runtimeJavaFeature >= 26 then
+      Seq(
+        "--enable-final-field-mutation=ALL-UNNAMED",
+        "--sun-misc-unsafe-memory-access=allow"
+      )
+    else Seq.empty
+
+  Seq("-XX:+EnableDynamicAgentLoading") ++ reflectiveAccessOptions
+}
+
 lazy val commonSettings = Seq(
   version           := "1.0",
   organization      := "de.wittig",
@@ -25,6 +38,15 @@ lazy val commonSettings = Seq(
   turbo             := true,
   usePipelining     := true,
   Test / fork       := true, // subprojects won't run in parallel then
+  Test / javaOptions ++= {
+    val byteBuddyAgent = (Test / update).value
+      .matching(moduleFilter(organization = "net.bytebuddy", name = "byte-buddy-agent"))
+      .headOption
+      .map(agent => s"-javaagent:${agent.getAbsolutePath}")
+      .toSeq
+
+    commonTestJvmOptions ++ byteBuddyAgent
+  },
   Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oF"), // Showing full stack trace
 )
 
@@ -426,6 +448,7 @@ lazy val scalajs = project
     ),
     Test / jsEnv                      := Def.uncached(new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv()),
     testFrameworks += new TestFramework("utest.runner.Framework"),
+    Test / javaOptions               := Nil,
     Test / fork                     := false,
     fork                            := false
   )
