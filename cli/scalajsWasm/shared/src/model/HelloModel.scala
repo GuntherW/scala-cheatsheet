@@ -1,13 +1,7 @@
 package model
 
-import upickle.default.{ReadWriter, macroRW}
+import upickle.default.ReadWriter
 
-case class HelloRequest(name: String)
+case class HelloRequest(name: String) derives ReadWriter
 
-object HelloRequest:
-  given ReadWriter[HelloRequest] = macroRW
-
-case class HelloResponse(message: String)
-
-object HelloResponse:
-  given ReadWriter[HelloResponse] = macroRW
+case class HelloResponse(message: String) derives ReadWriter
