@@ -47,7 +47,6 @@ lazy val `scala-cheatsheet` = (project in file("."))
     hash,
     http4s,
     gatling,
-    grpcFs2,
     json,
     kafka,
     macros,
@@ -204,18 +203,6 @@ lazy val gatling = project
       Library.gatlingCharts,
     )
   )
-
-lazy val grpcFs2 = project
-  .settings(
-    commonSettings,
-    libraryDependencies ++= Seq(
-      "io.grpc"          % "grpc-netty-shaded" % Version.grpcNetty,
-      Library.http4sEmberServer,
-      Library.http4sDsl,
-      Library.http4sCirce,
-      Library.weaverCats % Test
-    )
-  ).enablePlugins(Fs2Grpc)
 
 lazy val hash = project
   .settings(
@@ -434,10 +421,9 @@ lazy val scalajs = project
     commonSettings,
     scalaJSUseMainModuleInitializer := true,
     libraryDependencies ++= Seq(
-      "org.scala-js" %%% "scalajs-dom" % Version.scalaJsDom,
-      "com.lihaoyi"  %%% "utest"       % Version.uTest % Test
+      "org.scala-js" % "scalajs-dom_sjs1_3" % Version.scalaJsDom,
+      "com.lihaoyi"  % "utest_sjs1_3"       % Version.uTest % Test
     ),
-    jsEnv                           := new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv(),
     testFrameworks += new TestFramework("utest.runner.Framework"),
     Test / fork                     := false,
     fork                            := false
