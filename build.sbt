@@ -15,47 +15,45 @@ lazy val commonTestJvmOptions = {
   Seq("-XX:+EnableDynamicAgentLoading") ++ reflectiveAccessOptions
 }
 
-lazy val commonSettings = Seq(
-  version           := "1.0",
-  organization      := "de.wittig",
-  semanticdbEnabled := true,
-  scalaVersion      := Version.scala,
-  scalacOptions ++= Seq(
-    "-feature",
-    "-language:higherKinds",
-    "-deprecation",
-//    "-source:future",   // deprecates all scala 2 features
-    "-Ybackend-parallelism:8",
-    "-experimental",
-    "-unchecked",
-    "-Wunused:imports", // for scalafix
-//    "-language:strictEquality",
-//    "-Yprofile-enabled",
-//    "-Yprofile-trace:compiler.trace",
-  ),
-  publish / skip    := true,
-  scalafixOnCompile := true,
-  turbo             := true,
-  usePipelining     := true,
-  Test / fork       := true, // subprojects won't run in parallel then
-  Test / javaOptions ++= {
-    val byteBuddyAgent = (Test / update).value
-      .matching(moduleFilter(organization = "net.bytebuddy", name = "byte-buddy-agent"))
-      .headOption
-      .map(agent => s"-javaagent:${agent.getAbsolutePath}")
-      .toSeq
+version           := "1.0"
+organization      := "de.wittig"
+semanticdbEnabled := true
+scalaVersion      := Version.scala
+scalacOptions ++= Seq(
+  "-feature",
+  "-language:higherKinds",
+  "-deprecation",
+//  "-source:future",   // deprecates all scala 2 features
+  "-Ybackend-parallelism:8",
+  "-experimental",
+  "-unchecked",
+  "-Wunused:imports", // for scalafix
+//  "-language:strictEquality",
+//  "-Yprofile-enabled",
+//  "-Yprofile-trace:compiler.trace",
+)
+publish / skip    := true
+scalafixOnCompile := true
+turbo             := true
+usePipelining     := true
+Test / fork       := true // subprojects won't run in parallel then
+Test / javaOptions ++= {
+  val byteBuddyAgent = (Test / update).value
+    .matching(moduleFilter(organization = "net.bytebuddy", name = "byte-buddy-agent"))
+    .headOption
+    .map(agent => s"-javaagent:${agent.getAbsolutePath}")
+    .toSeq
 
-    commonTestJvmOptions ++ byteBuddyAgent
-  },
-  Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oF"), // Showing full stack trace
+  commonTestJvmOptions ++ byteBuddyAgent
+}
+Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oF") // Showing full stack trace
+
+ThisBuild / concurrentRestrictions := Seq(
+  Tags.limit(Tags.ForkedTestGroup, 2),
+  Tags.limit(Tags.Test, 1),
 )
 
-ThisBuild / concurrentRestrictions := Seq(Tags.limit(Tags.ForkedTestGroup, 2))
-Global / concurrentRestrictions += Tags.limit(Tags.Test, 1)
-Global / onChangedBuildSource      := ReloadOnSourceChanges
-
-lazy val `scala-cheatsheet` = (project in file("."))
-  .settings(commonSettings)
+lazy val `scala-cheatsheet` = rootProject
   .aggregate(
     akka,
     caliban,
@@ -94,7 +92,6 @@ lazy val `scala-cheatsheet` = (project in file("."))
 
 lazy val akka = project
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.akka,
       Library.logback
@@ -103,7 +100,6 @@ lazy val akka = project
 
 lazy val caliban = project
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.calibanQuick,
       Library.calibanClient,
@@ -114,7 +110,6 @@ lazy val caliban = project
 
 lazy val cdk = project
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.awsCdk,
       "software.constructs" % "constructs" % Version.constructs
@@ -123,7 +118,6 @@ lazy val cdk = project
 
 lazy val core = project
   .settings(
-    commonSettings,
     scalafixOnCompile := false,
     libraryDependencies ++= Dependencies.dependencies ++ Dependencies.testDependencies ++ Seq(Library.ox),
     Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-s", "4")
@@ -132,7 +126,6 @@ lazy val core = project
 
 lazy val config = project
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.pureConfig,
       Library.ciris,
@@ -142,7 +135,6 @@ lazy val config = project
 
 lazy val cucumber = project
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.cucumberScala         % Test,
       Library.cucumberJunit         % Test,
@@ -158,7 +150,6 @@ lazy val cucumber = project
 
 lazy val database = project
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.doobieCore,
       Library.doobiePostgres,
@@ -181,7 +172,6 @@ lazy val database = project
 
 lazy val datatransformation = project
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.ducktape,
       Library.chimney,
@@ -190,7 +180,6 @@ lazy val datatransformation = project
 
 lazy val direct = project
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.gears,
       Library.kyoCore,
@@ -209,7 +198,6 @@ lazy val direct = project
 lazy val docs = project // new documentation project
   .in(file("mdocs")) // important: it must not be docs/
   .settings(
-    commonSettings,
     mdocVariables := Map( // Update mdocVariables to include site variables like @VERSION@.
       "VERSION" -> version.value
     )
@@ -219,7 +207,6 @@ lazy val docs = project // new documentation project
 lazy val gatling = project
   .enablePlugins(GatlingPlugin)
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.gatling,
       Library.gatlingCharts,
@@ -228,7 +215,6 @@ lazy val gatling = project
 
 lazy val hash = project
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.blake3,
       Library.bouncyCastle,
@@ -241,7 +227,6 @@ lazy val hash = project
 
 lazy val http4s = project
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.ciris,
       Library.cirisCirce,
@@ -260,7 +245,6 @@ lazy val http4s = project
 
 lazy val json = project
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.avro4s,
       Library.borerCore,
@@ -281,7 +265,6 @@ lazy val json = project
 
 lazy val macros = project
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.postgres
     ),
@@ -293,7 +276,6 @@ lazy val macros = project
 
 lazy val macwire = project
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.macwire,
     )
@@ -301,13 +283,11 @@ lazy val macwire = project
 
 lazy val magnolia = project
   .settings(
-    commonSettings,
     libraryDependencies += Library.magnolia
   )
 
 lazy val mongo = project
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.mongoDriverSync,
       Library.logback,
@@ -323,7 +303,6 @@ lazy val mongo = project
 
 lazy val munit = project
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.munit           % Test,
       Library.scalatest       % Test,
@@ -333,14 +312,12 @@ lazy val munit = project
       Library.circeParser     % Test,
     ),
     testFrameworks += new TestFramework("munit.Framework"),
-    Test / fork := true, //  subprojects tests will run parallel with other subprojects
     Test / testOptions += Tests.Cleanup(() => println("+++++++++++++cleaned++++++++++++++++")) // Einfacher Hook
     //    Test / testOptions += Tests.Cleanup(loader => loader.loadClass("munit.Cleaner").newInstance) // Laden einer Klasse // Funktioniert nur mit fork := false
   )
 
 lazy val osLib = project
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.osLib
     )
@@ -348,7 +325,6 @@ lazy val osLib = project
 
 lazy val openAI = project
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.zioOpenAI,
       Library.sttpOpenAi,
@@ -357,7 +333,6 @@ lazy val openAI = project
 
 lazy val parsers = project
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.parserCombinators,
       Library.munit % Test
@@ -366,7 +341,6 @@ lazy val parsers = project
 
 lazy val proteus = project
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.proteusGrpc,
       Library.grpcNetty,
@@ -375,14 +349,11 @@ lazy val proteus = project
 
 lazy val scalacheck = project
   .settings(
-    commonSettings,
     libraryDependencies += Library.scalaCheck % Test,
-    Test / fork                              := true, //  subprojects tests will run parallel with other subprojects
   )
 
 lazy val spring = project
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.springBootStarterJson,
       Library.springBootStarterWeb,
@@ -395,7 +366,6 @@ lazy val spring = project
 
 lazy val sttp = project
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.jsoniterMacros,
       Library.openTelemtry,
@@ -419,7 +389,6 @@ lazy val sttp = project
 
 lazy val tapir = project
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.http4sEmberServer,
       Library.tapirAwsLambda,
@@ -440,7 +409,6 @@ lazy val tapir = project
 lazy val scalajs = project
   .enablePlugins(ScalaJSPlugin)
   .settings(
-    commonSettings,
     scalaJSUseMainModuleInitializer := true,
     libraryDependencies ++= Seq(
       "org.scala-js" % "scalajs-dom_sjs1_3" % Version.scalaJsDom,
@@ -455,7 +423,6 @@ lazy val scalajs = project
 
 lazy val kafka = project
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.kafkaClients,
       Library.kafkaStreams,
@@ -470,7 +437,6 @@ lazy val kafka = project
 
 lazy val zio = project
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.zio,
       Library.zioStreams,
@@ -485,7 +451,6 @@ lazy val zio = project
 
 lazy val zioKafka = project
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.zioKafka,
       Library.zioJson
@@ -494,7 +459,6 @@ lazy val zioKafka = project
 
 lazy val zioBlocks = project
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.zioBlocks,
       Library.zioBlocksAsync,
@@ -510,7 +474,6 @@ lazy val zioBlocks = project
 
 lazy val zioHttp = project
   .settings(
-    commonSettings,
     libraryDependencies ++= Seq(
       Library.zio,
       Library.zioStreams,
@@ -521,7 +484,6 @@ lazy val zioHttp = project
 
 lazy val zioSchema = project
   .settings(
-    commonSettings,
     libraryDependencies += Library.zioSchema,
     libraryDependencies += Library.zioSchemaJson,
     libraryDependencies += Library.zioSchemaBson,
