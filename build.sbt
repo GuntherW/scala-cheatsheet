@@ -46,7 +46,10 @@ Test / javaOptions ++= {
 
   commonTestJvmOptions ++ byteBuddyAgent
 }
+
 Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oF") // Showing full stack trace
+
+Global / lintUnusedKeysOnLoad := false
 
 ThisBuild / concurrentRestrictions := Seq(
   Tags.limit(Tags.ForkedTestGroup, 2),
