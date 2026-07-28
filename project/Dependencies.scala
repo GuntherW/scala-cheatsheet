@@ -40,7 +40,7 @@ object Version {
   val magnum                  = "2.0.0-M3"
   val mongo                   = "5.9.1"
   val monocle                 = "3.3.0"
-  val neotype                 = "0.5.0"
+  val neotype                 = "0.6.0"
   val openTelemetry           = "1.64.0"
   val osLib                   = "0.11.8"
   val ox                      = "1.0.6"

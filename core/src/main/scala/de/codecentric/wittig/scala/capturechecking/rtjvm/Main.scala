@@ -1,7 +1,6 @@
 package de.codecentric.wittig.scala.capturechecking.rtjvm
 
 import language.experimental.captureChecking
-import caps.*
 
 /**
  * `->` vs `=>`  in Scala 3 Capture Checking

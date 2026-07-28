@@ -33,7 +33,7 @@ def main(): Unit =
       case (x, y) => Some((x, (y, x + y)))
     }
     println(fibonacci.take(10).toList)
-    println(fibonacci.drop(90).next)
+    println(fibonacci.drop(90).next())
 
   def scanLeft(): Unit =
     val list    = List(1, 2, 3, 4, 5)

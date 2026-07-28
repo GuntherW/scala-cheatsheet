@@ -2,17 +2,17 @@ package de.codecentric.wittig.scala.capturechecking
 
 import language.experimental.captureChecking
 import java.io.*
-import caps.*
 
 @main
 def main(): Unit =
 
-  // auskommentiert, weil scalafmt noch hinfällt.
+// auskommentiert, weil scalafmt noch hinfällt.
+//  import caps.*
 //  def withFileCap[T](name: String)(f: OutputStream^ => T): T =
-//    val out    = new FileOutputStream(name)
-//    val result = f(out)
-//    out.close()
-//    result
+//      val out    = new FileOutputStream(name)
+//      val result = f(out)
+//      out.close()
+//      result
 
   def withFile[T](name: String)(f: OutputStream => T): T =
     val out    = new FileOutputStream(name)
