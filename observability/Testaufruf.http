@@ -1,0 +1,9 @@
+### POST request to example server
+POST  http://localhost:8081/fibonacci
+Content-Type: application/json
+
+{
+  "n": 10
+}
+
+###

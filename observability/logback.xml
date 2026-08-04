@@ -1,0 +1,31 @@
+<configuration>
+
+  <!-- Konsolen-Ausgabe mit Timestamp, Level, Logger-Name und MDC-Werten -->
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%level] [%logger{20}] [%X{host}] %message%n</pattern>
+    </encoder>
+  </appender>
+
+  <!--
+    OTel Logback Appender: leitet alle Logback-Logs an das OTel SDK weiter.
+    Das SDK sendet sie per OTLP an den Collector -> Loki.
+    captureMarkerAttribute: Logback-Marker als OTel-Attribut exportieren.
+    captureKeyValuePairAttributes: MDC-Keys (z.B. "host") als OTel-Attribute exportieren.
+  -->
+  <appender name="OTEL" class="io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender">
+    <captureMarkerAttribute>true</captureMarkerAttribute>
+    <captureKeyValuePairAttributes>true</captureKeyValuePairAttributes>
+    <captureCodeAttributes>true</captureCodeAttributes>
+  </appender>
+
+  <root level="INFO">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="OTEL"/>
+  </root>
+
+  <!-- Tapir/Netty intern auf WARN reduzieren - sonst zu viel Rauschen -->
+  <logger name="sttp.tapir" level="WARN"/>
+  <logger name="io.netty"   level="WARN"/>
+
+</configuration>
