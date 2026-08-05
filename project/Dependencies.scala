@@ -2,10 +2,10 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.8"
-  val aws                     = "2.262.1"
+  val aws                     = "2.263.0"
   val avro4s                  = "5.0.15"
   val blake3                  = "3.1.2"
-  val borer                   = "1.16.2"
+  val borer                   = "1.17.0"
   val bouncyCastle            = "1.85"
   val caliban                 = "3.1.5"
   val catsEffect              = "3.7.0"
@@ -15,14 +15,14 @@ object Version {
   val circeVersion            = "0.14.16"
   val cirisVersion            = "3.15.0"
   val chimney                 = "1.11.0"
-  val constructs              = "10.7.1"
+  val constructs              = "10.8.1"
   val doobie                  = "1.0.0-RC12"
   val ducktape                = "0.2.13"
-  val duckdb                  = "1.5.5.0"
+  val duckdb                  = "1.5.5.1"
   val fs2                     = "3.13.0"
   val gatling                 = "3.15.1"
   val gears                   = "0.3.1"
-  val grpcNetty               = "1.83.0"
+  val grpcNetty               = "1.83.1"
   val hash4j                  = "0.30.0"
   val h2                      = "2.4.240"
   val http4s                  = "0.23.36"
@@ -33,14 +33,14 @@ object Version {
   val jsoniter                = "2.39.1"
   val kafka                   = "4.3.1"
   val kyo                     = "0.19.0"
-  val logback                 = "1.6.0"
+  val logback                 = "1.6.1"
   val log4j                   = "2.26.1"
   val macwire                 = "2.6.7"
   val magnolia                = "1.3.23"
   val magnum                  = "2.0.0-M3"
   val mongo                   = "5.9.1"
   val monocle                 = "3.3.0"
-  val neotype                 = "0.6.0"
+  val neotype                 = "0.7.0"
   val openTelemetry           = "1.64.0"
   val osLib                   = "0.11.8"
   val ox                      = "1.0.6"
@@ -61,7 +61,7 @@ object Version {
   val sttpOAuth               = "0.18.0"
   val sttpOpenAi              = "0.3.10"
   val squants                 = "1.8.3"
-  val tapir                   = "1.13.29"
+  val tapir                   = "1.13.30"
   val toml                    = "0.3.0"
   val tyqu                    = "0.1.0"
   val upickle                 = "4.4.3"
@@ -70,7 +70,7 @@ object Version {
   val xstream                 = "1.4.21"
   val xml                     = "2.4.0"
   val zio                     = "2.1.26"
-  val zioBlocks               = "0.0.47"
+  val zioBlocks               = "0.0.51"
   val zioJson                 = "0.9.2"
   val zioKafka                = "3.7.0"
   val zioHttp                 = "3.11.3"
@@ -84,7 +84,7 @@ object Version {
 
   // Test
   val cucumber              = "7.34.6"
-  val cucumberScala         = "8.39.1"
+  val cucumberScala         = "8.39.3"
   val junit                 = "6.1.2"
   val junitJupiterInterface = "0.19.0"
   val mockito               = "5.23.0"
@@ -153,6 +153,8 @@ object Library {
   val kyoStat                   = "io.getkyo"                             %% "kyo-stats-otel"                            % Version.kyo
   val kyoSttp                   = "io.getkyo"                             %% "kyo-sttp"                                  % Version.kyo
   val kyoTapir                  = "io.getkyo"                             %% "kyo-tapir"                                 % Version.kyo
+  val kyoSql                    = "io.getkyo"                             %% "kyo-sql"                                   % Version.kyo
+  val kyoSqlPostgres            = "io.getkyo"                             %% "kyo-sql-postgres"                          % Version.kyo
   val logback                   = "ch.qos.logback"                         % "logback-classic"                           % Version.logback
   val log4jApi                  = "org.apache.logging.log4j"               % "log4j-api"                                 % Version.log4j
   val log4jCore                 = "org.apache.logging.log4j"               % "log4j-core"                                % Version.log4j

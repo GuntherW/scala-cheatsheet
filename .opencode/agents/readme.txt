@@ -1,0 +1,1 @@
+Der Dateiname (scala-reviewer.md) wird der Agent-Name — aufrufbar mit @scala-reviewer.

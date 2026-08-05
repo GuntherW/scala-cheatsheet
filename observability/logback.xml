@@ -17,9 +17,11 @@
     <captureMarkerAttribute>true</captureMarkerAttribute>
     <captureKeyValuePairAttributes>true</captureKeyValuePairAttributes>
     <captureCodeAttributes>true</captureCodeAttributes>
+    <!-- Alle MDC-Keys als OTel-Attribute exportieren ("*" = alle, oder kommaseparierte Liste) -->
+    <captureMdcAttributes>*</captureMdcAttributes>
   </appender>
 
-  <root level="INFO">
+  <root level="DEBUG">
     <appender-ref ref="CONSOLE"/>
     <appender-ref ref="OTEL"/>
   </root>

@@ -37,13 +37,13 @@ case class ProcessResult(n: Int, result: Long, steps: List[String])
 
 @main
 def service2Processor(): Unit =
-  val port      = 8082
-  val svcName   = "service2-processor"
-  val svc3Url   = sys.env.getOrElse("SERVICE3_URL", "http://localhost:8083")
-  val otel      = setupOtel(svcName)
-  val meter     = otel.getMeter(svcName)
-  val backend   = DefaultSyncBackend()
-  val log       = LoggerFactory.getLogger(svcName)
+  val port    = 8082
+  val svcName = "service2-processor"
+  val svc3Url = sys.env.getOrElse("SERVICE3_URL", "http://localhost:8083")
+  val otel    = setupOtel(svcName)
+  val meter   = otel.getMeter(svcName)
+  val backend = DefaultSyncBackend()
+  val log     = LoggerFactory.getLogger(svcName)
 
   val requestCounter: LongCounter = meter
     .counterBuilder("processor.requests.total")
@@ -60,6 +60,12 @@ def service2Processor(): Unit =
     log.info("Processing request from '{}' for n={}", req.requestedBy, req.n)
     requestCounter.add(1)
 
+    // Den aktuellen OTel-Context VOR raceEither auf dem Handler-Thread lesen.
+    // raceEither startet intern neue Virtual Threads (via ox.unsupervised) - der OTel
+    // Context ist thread-lokal und wird nicht automatisch übertragen. Deshalb den
+    // Context hier einmal lesen und als unveränderliche Map in beide Lambdas schließen.
+    val traceHeaders = otel.currentTraceHeaders
+
     // Hilfsfunktion: eine Anfrage an Service3 abschicken.
     // Exceptions werden in Left gewandelt - raceEither erwartet Either, keine Exceptions.
     def callService3(attempt: Int): Either[String, FibResult] =
@@ -67,14 +73,14 @@ def service2Processor(): Unit =
       try
         basicRequest
           .post(uri"$svc3Url/fibonacci")
-          .headers(otel.currentTraceHeaders)
+          .headers(traceHeaders) // vorgefangener Context - korrekte traceId auf jedem Thread
           .body(asJson(FibRequest(req.n)))
           .response(asJson[FibResult])
           .send(backend)
           .body
-          .left.map(err => s"attempt $attempt: $err")
-      catch
-        case ex: Exception => Left(s"attempt $attempt: ${ex.getMessage}")
+          .left
+          .map(err => s"attempt $attempt: $err")
+      catch case ex: Exception => Left(s"attempt $attempt: ${ex.getMessage}")
 
     // === OX: raceEither ===
     // Startet zwei identische Anfragen an Service3 parallel (auf je einem Virtual Thread).
@@ -85,16 +91,18 @@ def service2Processor(): Unit =
     raceEither(callService3(1), callService3(2)) match
       case Right(result) =>
         log.info("Received from service3: fibonacci({}) = {}", req.n, result.result)
-        Right(ProcessResult(
-          n      = req.n,
-          result = result.result,
-          steps  = List(
-            s"service2-processor: received request from '${req.requestedBy}'",
-            s"service2-processor: forwarded to service3-calculator (raced 2 requests)",
-            s"service3-calculator: computed fibonacci(${req.n}) = ${result.result}",
-          ),
-        ))
-      case Left(errMsg) =>
+        Right(
+          ProcessResult(
+            n = req.n,
+            result = result.result,
+            steps = List(
+              s"service2-processor: received request from '${req.requestedBy}'",
+              s"service2-processor: forwarded to service3-calculator (raced 2 requests)",
+              s"service3-calculator: computed fibonacci(${req.n}) = ${result.result}"
+            )
+          )
+        )
+      case Left(errMsg)  =>
         log.warn("Downstream error from service3: {}", errMsg)
         Left(s"service3 error: $errMsg")
 

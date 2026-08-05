@@ -4,7 +4,7 @@ layout {
             plugin location="tab-bar"
         }
         pane split_direction="vertical" {
-            pane name="Sbt" command="sbt"
+            pane name="Sbt"
             pane name="Mill"
         }
         pane size=1 borderless=true {

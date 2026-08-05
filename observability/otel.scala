@@ -19,6 +19,7 @@ import io.opentelemetry.sdk.trace.`export`.BatchSpanProcessor
 import io.opentelemetry.semconv.ServiceAttributes
 import org.slf4j.{Logger, MDC}
 import ox.{Ox, supervised}
+import sttp.tapir.server.interceptor.RequestInterceptor
 import sttp.tapir.server.interceptor.log.DefaultServerLog
 import sttp.tapir.server.netty.sync.{NettySyncServer, NettySyncServerOptions}
 import sttp.tapir.server.tracing.opentelemetry.OpenTelemetryTracing
@@ -90,17 +91,20 @@ def otelServerLog(log: Logger) =
     )
 
 // Baut die NettySyncServerOptions mit OTel Tracing und Server-Log zusammen.
-def buildServerOptions(otel: OpenTelemetrySdk, log: Logger): NettySyncServerOptions =
+// mdcInterceptor: setzt MDC-Werte (host) auf jedem Request-Handler-Thread,
+// da Ox Virtual Threads den MDC-Context des Eltern-Threads nicht erben.
+def buildServerOptions(otel: OpenTelemetrySdk, log: Logger, hostname: String): NettySyncServerOptions =
+  val mdcInterceptor = RequestInterceptor.transformServerRequest[Identity]: req =>
+    MDC.put("host", hostname)
+    req
   NettySyncServerOptions.customiseInterceptors
     .prependInterceptor(OpenTelemetryTracing(otel))
     .serverLog(otelServerLog(log))
+    .appendInterceptor(mdcInterceptor)
     .options
 
 // --- Server starten ---
 
-// Kapselt den supervised-Block + NettySyncServer-Lifecycle.
-// MDC.put("host", ...) bringt den Hostnamen in jeden Logback-Log-Eintrag
-// und damit automatisch in den OTel Logback Appender → Loki.
 def runServer(
   port: Int,
   svcName: String,
@@ -108,15 +112,13 @@ def runServer(
   endpoint: ServerEndpoint[Any, Identity],
 )(log: Logger): Unit =
   val hostname = InetAddress.getLocalHost.getHostName
-  val options  = buildServerOptions(otel, log)
-  MDC.put("host", hostname)
+  val options  = buildServerOptions(otel, log, hostname)
   supervised: ox ?=>
     log.info("{} starting on port {}", svcName, port)
     val binding = NettySyncServer(options).port(port).addEndpoint(endpoint).start()
     println(s"$svcName running. Press ENTER to stop...")
     scala.io.StdIn.readLine()
     binding.stop()
-  MDC.remove("host")
 
 // --- Context Propagation: Inject ---
 

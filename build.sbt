@@ -159,6 +159,8 @@ lazy val database = project
       Library.doobieHirari,
       Library.duckdb,
       Library.h2,
+//      Library.kyoSql,
+//      Library.kyoSqlPostgres,
       Library.logback,
       Library.magnum,
       Library.magnumpg,

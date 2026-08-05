@@ -27,10 +27,10 @@ def main(): Unit =
 
   // retry a computation
   def computationR: Int =
-    if (Random.nextBoolean) {
+    if (Random.nextBoolean()) {
       throw new RuntimeException("boom!")
     } else {
-      Random.nextInt
+      Random.nextInt()
     }
 
   val resultRetry = retry(Schedule.exponentialBackoff(100.millis))(computationR)
