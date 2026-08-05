@@ -227,42 +227,58 @@ file.close()
 
 ## Dateien in diesem Projekt
 
-| Datei            | Beschreibung |
-|------------------|-------------|
-| `project.scala`  | Scala CLI Projektkonfiguration (Scala-Version, JVM, Default-Main) |
-| `JfrEvents.scala` | Custom JFR-Event-Klassen (Instrumentierung, keine Geschäftslogik) |
-| `JfrMain1.scala` | Demonstriert das Aufzeichnen von Custom-Events |
-| `JfrMain2.scala` | Liest `recording.jfr` programmatisch mit der `RecordingFile`-API aus |
-| `recording.jfr`  | Aufgezeichnete JFR-Datei vom letzten Run |
+| Datei             | Beschreibung |
+|-------------------|-------------|
+| `project.scala`   | Scala CLI Projektkonfiguration (Scala-Version, JVM, Default-Main) |
+| `JfrEvents.scala` | `DbQueryEvent` - einziges Custom-Event, misst Queries mit @Threshold("10ms") |
+| `JfrMain1.scala`  | Simuliert DB-Abfragen unter GC-Druck (ReportingService + FakeDatabase) |
+| `JfrMain2.scala`  | Programmatische Korrelationsanalyse: langsame Queries vs. GC-Pausen |
+| `recording.jfr`   | Aufgezeichnete JFR-Datei vom letzten Run |
+
+## Szenario: Slow Query + GC-Korrelation
+
+Der Kernpunkt: Warum ist JFR hier besser als ein Query-Logger oder OpenTelemetry?
+
+Ein Query-Logger sagt: *"Query X dauerte 120ms."*
+JFR sagt: *"Query X dauerte 120ms - und im selben Zeitfenster fand eine GC-Pause von 80ms statt."*
+
+`JfrMain1` simuliert einen `ReportingService` der regelmäßig Queries abfeuert.
+Zwischen den Runden wird Heap-Druck aufgebaut (simulierte Caches/Buffer).
+Queries die dadurch den 10ms-Threshold überschreiten erscheinen in der JFR-Datei -
+zusammen mit den `jdk.GCPhasePause`-Events der JVM, die automatisch mitaufgezeichnet werden.
+
+`JfrMain2` liest die Datei programmatisch aus und korreliert beide Event-Typen zeitlich.
 
 ## Schnellstart
 
 ```shell
 cd cli/jfr
 
-# 1. Aufzeichnung erstellen (Default-Main: jfrMain1)
+# 1. Aufzeichnung erstellen - SerialGC für deutlichere GC-Pausen, kleiner Heap
 scala-cli run . \
-  --java-opt "-XX:StartFlightRecording=name=Demo,settings=profile,dumponexit=true,filename=recording.jfr"
+  --java-opt "-XX:StartFlightRecording=name=Demo,settings=profile,dumponexit=true,filename=recording.jfr" \
+  --java-opt "-Xmx32m" \
+  --java-opt "-XX:+UseSerialGC"
 
-# Explizit eine bestimmte Main-Methode wählen:
-scala-cli run . --main-class de.codecentric.wittig.scala.jfr.jfrMain1 \
-  --java-opt "-XX:StartFlightRecording=name=Demo,settings=profile,dumponexit=true,filename=recording.jfr"
-
-# 2. Überblick
+# 2. Überblick: welche Event-Typen wurden aufgezeichnet?
 jfr summary recording.jfr
 
-# 3. Eigene Events anschauen
-jfr view de.codecentric.wittig.scala.jfr.GreetingEvent recording.jfr
-jfr print --events "de.codecentric.*" recording.jfr
+# 3. Nur die langsamen Queries (über dem Threshold)
+jfr print --events de.codecentric.wittig.scala.jfr.DbQueryEvent recording.jfr
 
-# 4. JVM-Analyse
-jfr view jvm-information recording.jfr
+# 4. GC-Aktivität im selben Zeitfenster
 jfr view gc recording.jfr
-jfr view hot-methods recording.jfr
+jfr print --events GarbageCollection,GCPhasePause recording.jfr
 
-# 5. Metadaten der eigenen Events
-jfr metadata --events "de.codecentric.*" recording.jfr
+# 5. Alles zusammen im Zeitstrahl - hier sieht man die Überlappung
+jfr print --events 'de.codecentric.*,jdk.GCPhasePause,jdk.GarbageCollection' recording.jfr
 
-# 6. Programmatisch auswerten
+# 6. Heap und Allokationen
+jfr view allocation-by-class recording.jfr
+
+# 7. Programmatische Korrelationsanalyse (JfrMain2)
 scala-cli run . --main-class de.codecentric.wittig.scala.jfr.jfrMain2
+
+# 8. Metadaten des Custom-Events
+jfr metadata --events "de.codecentric.*" recording.jfr
 ```

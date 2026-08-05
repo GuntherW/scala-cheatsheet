@@ -1,67 +1,99 @@
 package de.codecentric.wittig.scala.jfr
 
-import jdk.jfr.consumer.RecordingFile
+import jdk.jfr.consumer.{RecordedEvent, RecordingFile}
 import java.nio.file.Path
-import java.time.Duration
+import java.time.Instant
 
-/** Liest eine .jfr-Datei programmatisch aus und gibt interessante Informationen
-  * aus. Dies entspricht dem, was `jfr print` / `jfr view` auf der CLI tut -
-  * aber mit voller programmatischer Kontrolle.
-  */
+// ---------------------------------------------------------------------------
+// Programmatische Korrelationsanalyse: Slow Queries vs. GC-Pausen
+//
+// Was die JFR-CLI nicht kann: Events aus verschiedenen Typen zeitlich
+// in Beziehung setzen und daraus eine Diagnose ableiten.
+// Genau das macht diese Datei: Für jede langsame Query wird geprüft,
+// ob im selben Zeitfenster eine GC-Pause stattfand - und wenn ja, wie viel
+// der Query-Dauer durch GC erklärt werden kann.
+// ---------------------------------------------------------------------------
+
+case class SlowQuery(
+  sql: String,
+  table: String,
+  startTime: Instant,
+  durationMs: Long,
+  gcDuringMs: Long // wie viel davon war GC-Pause
+)
+
+case class GcPause(
+  startTime: Instant,
+  durationMs: Long,
+  cause: String
+)
+
 @main
 def jfrMain2(): Unit =
 
   val path = Path.of("recording.jfr")
-  println(s"Lese: $path\n")
+  println(s"Korrelationsanalyse: $path\n")
 
-  // RecordingFile gibt einen Iterator über alle Events
-  val file = RecordingFile(path)
+  val file      = RecordingFile(path)
+  val slowQueries = collection.mutable.ListBuffer.empty[SlowQuery]
+  val gcPauses    = collection.mutable.ListBuffer.empty[GcPause]
 
-  var totalEvents  = 0
-  var customEvents = 0
-  var slowOps      = 0
-
+  // Einmal über alle Events iterieren, zwei Listen aufbauen
   while file.hasMoreEvents do
     val event    = file.readEvent()
     val typeName = event.getEventType.getName
-    totalEvents += 1
 
     typeName match
-      case "de.codecentric.wittig.scala.jfr.GreetingEvent" =>
-        customEvents += 1
-        val msg     = event.getString("message")
-        val counter = event.getInt("counter")
-        println(s"[GreetingEvent] message='$msg', counter=$counter")
+      case "de.codecentric.wittig.scala.jfr.DbQueryEvent" =>
+        // DbQueryEvent ist nur in der Datei wenn > Threshold (50ms)
+        slowQueries += SlowQuery(
+          sql        = event.getString("sql"),
+          table      = event.getString("table"),
+          startTime  = event.getStartTime,
+          durationMs = event.getDuration.toMillis,
+          gcDuringMs = 0 // wird unten berechnet
+        )
 
-      case "de.codecentric.wittig.scala.jfr.SlowOperationEvent" =>
-        slowOps += 1
-        val name = event.getString("operationName")
-        val size = event.getInt("resultSize")
-        val dur  = event.getDuration // java.time.Duration
-        println(s"[SlowOperationEvent] op='$name', size=$size, duration=${dur.toMillis}ms")
+      case "jdk.GCPhasePause" =>
+        // Stop-the-World-Pausen: in dieser Zeit sind ALLE Threads eingefroren
+        gcPauses += GcPause(
+          startTime  = event.getStartTime,
+          durationMs = event.getDuration.toMillis,
+          cause      = event.getString("name")
+        )
 
-      case "de.codecentric.wittig.scala.jfr.BusinessErrorEvent" =>
-        customEvents += 1
-        val code = event.getString("errorCode")
-        val msg  = event.getString("errorMessage")
-        println(s"[BusinessErrorEvent] code='$code', msg='$msg'")
-
-      case "jdk.GarbageCollection" =>
-        val gcName = event.getString("name")
-        val cause  = event.getString("cause")
-        val dur    = event.getDuration
-        println(s"[GC] name='$gcName', cause='$cause', duration=${dur.toMillis}ms")
-
-      case "jdk.CPULoad" =>
-        val jvm  = event.getFloat("jvmUser")
-        val sys  = event.getFloat("machineTotal")
-        println(f"[CPULoad] jvmUser=${jvm * 100}%.1f%%, machineTotal=${sys * 100}%.1f%%")
-
-      case _ => // andere Events ignorieren
+      case _ =>
 
   file.close()
 
-  println(s"\n--- Zusammenfassung ---")
-  println(s"Events gesamt:       $totalEvents")
-  println(s"Custom App-Events:   $customEvents")
-  println(s"Slow Operations:     $slowOps")
+  // Korrelation berechnen: Wie viel GC-Zeit fiel in das Zeitfenster jeder Query?
+  val correlated = slowQueries.map: q =>
+    val queryEnd = q.startTime.plusMillis(q.durationMs)
+    val gcOverlap = gcPauses
+      .filter: gc =>
+        val gcEnd = gc.startTime.plusMillis(gc.durationMs)
+        // Zeitfenster überlappen sich?
+        gc.startTime.isBefore(queryEnd) && gcEnd.isAfter(q.startTime)
+      .map(_.durationMs)
+      .sum
+    q.copy(gcDuringMs = gcOverlap)
+
+  // Ausgabe
+  println(s"Langsame Queries (>10ms Threshold): ${correlated.size}")
+  println(s"GC-Pausen gesamt:                       ${gcPauses.size}")
+  println()
+
+  if correlated.isEmpty then
+    println("Keine langsamen Queries aufgezeichnet - alle unter dem Threshold.")
+  else
+    println(f"${"Tabelle"}%-15s ${"Query-Zeit"}%10s ${"davon GC"}%10s ${"GC-Anteil"}%10s  SQL")
+    println("-" * 90)
+    correlated.foreach: q =>
+      val gcShare = if q.durationMs > 0 then q.gcDuringMs * 100 / q.durationMs else 0
+      val marker  = if gcShare > 50 then " <-- GC-Verdacht!" else ""
+      println(f"${q.table}%-15s ${q.durationMs}%8d ms ${q.gcDuringMs}%8d ms ${gcShare}%8d %%  ${q.sql.take(40)}$marker")
+
+  println()
+  println("GC-Pausen:")
+  gcPauses.foreach: gc =>
+    println(f"  ${gc.startTime} ${gc.durationMs}%6d ms  ${gc.cause}")
