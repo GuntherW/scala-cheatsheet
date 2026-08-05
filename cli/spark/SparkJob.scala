@@ -1,12 +1,12 @@
-//> using dep org.apache.spark::spark-sql:4.1.1
-//> using scala 2.13.11
+//> using dep org.apache.spark::spark-sql:4.2.0
+//> using scala 2.13.18
 
 import org.apache.spark._
 import org.apache.spark.sql._
 
 object SparkJob extends App {
 
-  val spark = SparkSession.builder().appName("Test job").getOrCreate()
+  val spark = SparkSession.builder().appName("Test job").master("local[*]").getOrCreate()
   import spark.implicits._
   def sc    = spark.sparkContext
 

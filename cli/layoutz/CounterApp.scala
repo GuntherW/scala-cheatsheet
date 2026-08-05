@@ -1,4 +1,4 @@
-//> using dep xyz.matthieucourt::layoutz::0.6.0
+//> using dep xyz.matthieucourt::layoutz::0.8.0
 
 import layoutz.*
 
