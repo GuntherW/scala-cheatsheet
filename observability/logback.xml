@@ -3,7 +3,7 @@
   <!-- Konsolen-Ausgabe mit Timestamp, Level, Logger-Name und MDC-Werten -->
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
-      <pattern>%d{HH:mm:ss.SSS} [%level] [%logger{20}] [%X{host}] %message%n</pattern>
+      <pattern>%d{HH:mm:ss.SSS} [%level] [%logger{20}] [%mdc] %message%n</pattern>
     </encoder>
   </appender>
 

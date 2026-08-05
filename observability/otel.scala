@@ -94,8 +94,12 @@ def otelServerLog(log: Logger) =
 // mdcInterceptor: setzt MDC-Werte (host) auf jedem Request-Handler-Thread,
 // da Ox Virtual Threads den MDC-Context des Eltern-Threads nicht erben.
 def buildServerOptions(otel: OpenTelemetrySdk, log: Logger, hostname: String): NettySyncServerOptions =
+  // Setzt MDC-Werte pro Request-Thread - Ox Virtual Threads erben den MDC nicht vom Eltern-Thread.
   val mdcInterceptor = RequestInterceptor.transformServerRequest[Identity]: req =>
     MDC.put("host", hostname)
+    // traceparent aus dem eingehenden Request in den MDC schreiben.
+    // Tapir stellt req.header(name) als direkten Zugriff bereit.
+    req.header("traceparent").foreach(MDC.put("traceparent", _))
     req
   NettySyncServerOptions.customiseInterceptors
     .prependInterceptor(OpenTelemetryTracing(otel))

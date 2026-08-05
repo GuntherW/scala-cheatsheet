@@ -11,6 +11,18 @@ processors:
     timeout: 1s
     send_batch_size: 1024
 
+  # Kopiert Log-Attribute (MDC-Werte) als Resource-Attribute.
+  # Loki indiziert Resource-Attribute als echte Labels - damit wird "host"
+  # in Grafana als Label-Filter verfügbar (genauso wie "service_name").
+  resource/logs:
+    attributes:
+      - action: upsert
+        key: host
+        from_attribute: host
+      - action: upsert
+        key: traceparent
+        from_attribute: traceparent
+
 exporters:
   # Metriken -> Prometheus
   prometheus:
@@ -53,5 +65,5 @@ service:
 
     logs:
       receivers: [otlp]
-      processors: [batch]
+      processors: [batch, resource/logs]
       exporters: [otlp_http/loki, debug]
