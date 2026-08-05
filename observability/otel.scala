@@ -17,14 +17,15 @@ import io.opentelemetry.sdk.resources.Resource
 import io.opentelemetry.sdk.trace.SdkTracerProvider
 import io.opentelemetry.sdk.trace.`export`.BatchSpanProcessor
 import io.opentelemetry.semconv.ServiceAttributes
-import org.slf4j.{Logger, LoggerFactory, MDC}
-import ox.{ForkLocal, Ox}
+import org.slf4j.{Logger, MDC}
+import ox.{Ox, supervised}
 import sttp.tapir.server.interceptor.log.DefaultServerLog
 import sttp.tapir.server.netty.sync.{NettySyncServer, NettySyncServerOptions}
 import sttp.tapir.server.tracing.opentelemetry.OpenTelemetryTracing
 import sttp.tapir.server.ServerEndpoint
 import sttp.shared.Identity
 
+import java.net.InetAddress
 import java.time.Duration
 
 // --- OTel SDK Setup ---
@@ -97,32 +98,25 @@ def buildServerOptions(otel: OpenTelemetrySdk, log: Logger): NettySyncServerOpti
 
 // --- Server starten ---
 
-// Kapselt den supervisedWhere-Block + NettySyncServer-Lifecycle.
-// hostLocal: Ox ForkLocal mit dem Hostnamen - wird per MDC in jeden Log-Eintrag eingebettet,
-// sodass Logback (und damit OTel/Loki) den Host automatisch als Attribut bekommt.
+// Kapselt den supervised-Block + NettySyncServer-Lifecycle.
+// MDC.put("host", ...) bringt den Hostnamen in jeden Logback-Log-Eintrag
+// und damit automatisch in den OTel Logback Appender → Loki.
 def runServer(
   port: Int,
   svcName: String,
   otel: OpenTelemetrySdk,
-  hostLocal: ForkLocal[String],
-  hostname: String,
   endpoint: ServerEndpoint[Any, Identity],
 )(log: Logger): Unit =
-  val options = buildServerOptions(otel, log)
-  hostLocal.supervisedWhere(hostname) { (scope: Ox) ?=>
-    // MDC.put: setzt den Hostnamen als Logback-MDC-Wert für den aktuellen Thread.
-    // Logback schreibt ihn automatisch in jede Log-Zeile (Pattern: %X{host}).
-    // Der OTel Appender exportiert MDC-Keys als OTel-Attribute (captureKeyValuePairAttributes).
-    // Da Ox Virtual Threads verwendet, gilt der MDC-Wert für alle Request-Handler-Threads
-    // innerhalb dieses supervisedWhere-Scopes.
-    MDC.put("host", hostname)
+  val hostname = InetAddress.getLocalHost.getHostName
+  val options  = buildServerOptions(otel, log)
+  MDC.put("host", hostname)
+  supervised: ox ?=>
     log.info("{} starting on port {}", svcName, port)
     val binding = NettySyncServer(options).port(port).addEndpoint(endpoint).start()
     println(s"$svcName running. Press ENTER to stop...")
     scala.io.StdIn.readLine()
     binding.stop()
-    MDC.remove("host")
-  }
+  MDC.remove("host")
 
 // --- Context Propagation: Inject ---
 

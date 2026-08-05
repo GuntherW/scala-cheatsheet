@@ -17,7 +17,7 @@
 import io.circe.generic.auto.*
 import io.opentelemetry.api.metrics.LongCounter
 import org.slf4j.LoggerFactory
-import ox.ForkLocal
+import ox.raceEither
 import sttp.client4.*
 import sttp.client4.circe.*
 import sttp.tapir.*
@@ -42,8 +42,6 @@ def service2Processor(): Unit =
   val svc3Url   = sys.env.getOrElse("SERVICE3_URL", "http://localhost:8083")
   val otel      = setupOtel(svcName)
   val meter     = otel.getMeter(svcName)
-  val hostLocal = ForkLocal("unknown-host")
-  val hostname  = InetAddress.getLocalHost.getHostName
   val backend   = DefaultSyncBackend()
   val log       = LoggerFactory.getLogger(svcName)
 
@@ -62,28 +60,43 @@ def service2Processor(): Unit =
     log.info("Processing request from '{}' for n={}", req.requestedBy, req.n)
     requestCounter.add(1)
 
-    basicRequest
-      .post(uri"$svc3Url/fibonacci")
-      .headers(otel.currentTraceHeaders)
-      .body(asJson(FibRequest(req.n)))
-      .response(asJson[FibResult])
-      .send(backend)
-      .body match
-        case Right(fibResult) =>
-          log.info("Received from service3: fibonacci({}) = {}", req.n, fibResult.result)
-          Right(ProcessResult(
-            n      = req.n,
-            result = fibResult.result,
-            steps  = List(
-              s"service2-processor: received request from '${req.requestedBy}'",
-              s"service2-processor: forwarded to service3-calculator",
-              s"service3-calculator: computed fibonacci(${req.n}) = ${fibResult.result}",
-            ),
-          ))
-        case Left(err) =>
-          log.warn("Downstream error from service3: {}", err)
-          Left(s"service3 error: $err")
+    // Hilfsfunktion: eine Anfrage an Service3 abschicken.
+    // Exceptions werden in Left gewandelt - raceEither erwartet Either, keine Exceptions.
+    def callService3(attempt: Int): Either[String, FibResult] =
+      log.debug("Calling service3, attempt {}", attempt)
+      try
+        basicRequest
+          .post(uri"$svc3Url/fibonacci")
+          .headers(otel.currentTraceHeaders)
+          .body(asJson(FibRequest(req.n)))
+          .response(asJson[FibResult])
+          .send(backend)
+          .body
+          .left.map(err => s"attempt $attempt: $err")
+      catch
+        case ex: Exception => Left(s"attempt $attempt: ${ex.getMessage}")
 
-  println(s"$svcName starting on port $port (host: $hostname)...")
-  runServer(port, svcName, otel, hostLocal, hostname, processServerEndpoint)(log)
+    // === OX: raceEither ===
+    // Startet zwei identische Anfragen an Service3 parallel (auf je einem Virtual Thread).
+    // Die erste Anfrage die ein Right liefert gewinnt - die andere wird sofort abgebrochen.
+    // Liefern beide Left, wird das Left des letzten Verlierers zurückgegeben.
+    // Typischer Anwendungsfall: Hedged Requests - Latenz-Ausreißer absichern,
+    // indem man eine Duplikat-Anfrage leicht verzögert nachschickt und die schnellste Antwort nimmt.
+    raceEither(callService3(1), callService3(2)) match
+      case Right(result) =>
+        log.info("Received from service3: fibonacci({}) = {}", req.n, result.result)
+        Right(ProcessResult(
+          n      = req.n,
+          result = result.result,
+          steps  = List(
+            s"service2-processor: received request from '${req.requestedBy}'",
+            s"service2-processor: forwarded to service3-calculator (raced 2 requests)",
+            s"service3-calculator: computed fibonacci(${req.n}) = ${result.result}",
+          ),
+        ))
+      case Left(errMsg) =>
+        log.warn("Downstream error from service3: {}", errMsg)
+        Left(s"service3 error: $errMsg")
+
+  runServer(port, svcName, otel, processServerEndpoint)(log)
   otel.close()

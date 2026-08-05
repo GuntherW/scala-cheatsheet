@@ -16,12 +16,9 @@ import io.circe.generic.auto.*
 import io.opentelemetry.api.common.{AttributeKey, Attributes}
 import io.opentelemetry.api.metrics.{LongCounter, LongHistogram}
 import org.slf4j.LoggerFactory
-import ox.ForkLocal
 import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
-
-import java.net.InetAddress
 
 // --- Domain ---
 
@@ -41,8 +38,6 @@ def service3Calculator(): Unit =
   val svcName   = "service3-calculator"
   val otel      = setupOtel(svcName)
   val meter     = otel.getMeter(svcName)
-  val hostLocal = ForkLocal("unknown-host")
-  val hostname  = InetAddress.getLocalHost.getHostName
   val log       = LoggerFactory.getLogger(svcName)
 
   val requestCounter: LongCounter = meter
@@ -75,6 +70,5 @@ def service3Calculator(): Unit =
       log.info("fibonacci({}) = {} (took {}ms)", req.n, result, duration)
       Right(FibResult(req.n, result, svcName))
 
-  println(s"$svcName starting on port $port (host: $hostname)...")
-  runServer(port, svcName, otel, hostLocal, hostname, fibServerEndpoint)(log)
+  runServer(port, svcName, otel, fibServerEndpoint)(log)
   otel.close()

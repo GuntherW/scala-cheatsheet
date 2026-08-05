@@ -17,7 +17,6 @@
 import io.circe.generic.auto.*
 import io.opentelemetry.api.metrics.{LongCounter, LongHistogram}
 import org.slf4j.LoggerFactory
-import ox.ForkLocal
 import sttp.client4.*
 import sttp.client4.circe.*
 import sttp.tapir.*
@@ -42,8 +41,6 @@ def service1Gateway(): Unit =
   val svc2Url   = sys.env.getOrElse("SERVICE2_URL", "http://localhost:8082")
   val otel      = setupOtel(svcName)
   val meter     = otel.getMeter(svcName)
-  val hostLocal = ForkLocal("unknown-host")
-  val hostname  = InetAddress.getLocalHost.getHostName
   val backend   = DefaultSyncBackend()
   val log       = LoggerFactory.getLogger(svcName)
 
@@ -88,7 +85,7 @@ def service1Gateway(): Unit =
 
   println(s"""
     |=========================================
-    | $svcName starting on port $port (host: $hostname)
+    | $svcName starting on port $port
     |
     | Example:
     |   curl -X POST http://localhost:$port/fibonacci \\
@@ -97,5 +94,5 @@ def service1Gateway(): Unit =
     |=========================================
     |""".stripMargin)
 
-  runServer(port, svcName, otel, hostLocal, hostname, fibServerEndpoint)(log)
+  runServer(port, svcName, otel, fibServerEndpoint)(log)
   otel.close()
