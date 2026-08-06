@@ -1,0 +1,86 @@
+import scala.util.Try
+
+// --- Datentypen (fachlich) ---
+
+case class DirEntry(name: String, isDirectory: Boolean, sizeBytes: Option[Long])
+case class FileContent(path: os.Path, sizeBytes: Long, text: String)
+case class SearchMatch(file: os.Path, lineNumber: Int, line: String)
+case class FileMetadata(path: os.Path, isDirectory: Boolean, sizeBytes: Option[Long], lastModified: String, readable: Boolean, writable: Boolean)
+
+// --- Hilfsfunktionen ---
+
+def safePath(raw: String): Either[String, os.Path] =
+  Try(os.Path(raw)).toEither.left.map(_.getMessage)
+
+def formatSize(bytes: Long): String =
+  if bytes < 1024 then s"${bytes} B"
+  else if bytes < 1024 * 1024 then f"${bytes / 1024.0}%.1f KB"
+  else if bytes < 1024 * 1024 * 1024 then f"${bytes / (1024.0 * 1024)}%.1f MB"
+  else f"${bytes / (1024.0 * 1024 * 1024)}%.1f GB"
+
+// --- Fachliche Operationen ---
+
+def listDirectory(path: os.Path): Either[String, List[DirEntry]] =
+  if !os.exists(path) then Left(s"Path does not exist: $path")
+  else if !os.isDir(path) then Left(s"Not a directory: $path")
+  else
+    Try {
+      os.list(path).toList
+        .sortBy(p => (!os.isDir(p), p.last))
+        .map: p =>
+          DirEntry(
+            name = p.last,
+            isDirectory = os.isDir(p),
+            sizeBytes = if os.isDir(p) then None else Some(os.size(p))
+          )
+    }.toEither.left.map(_.getMessage)
+
+def readFile(path: os.Path): Either[String, FileContent] =
+  if !os.exists(path) then Left(s"File does not exist: $path")
+  else if os.isDir(path) then Left(s"Path is a directory, not a file: $path")
+  else
+    val size = os.size(path)
+    if size > 1024 * 1024 then Left(s"File too large (${formatSize(size)}). Limit is 1 MB.")
+    else
+      Try(os.read(path)).toEither
+        .left.map(e => s"Could not read file (might be binary): ${e.getMessage}")
+        .map(text => FileContent(path, size, text))
+
+def searchInFiles(basePath: os.Path, pattern: String, fileExtension: String, maxResults: Int): Either[String, List[SearchMatch]] =
+  if !os.exists(basePath) then Left(s"Directory does not exist: $basePath")
+  else if !os.isDir(basePath) then Left(s"Not a directory: $basePath")
+  else
+    Try {
+      val regex = pattern.r
+      val allFiles = os.walk(basePath)
+        .filter(os.isFile(_))
+        .filter(p => fileExtension == "*" || p.last.endsWith(s".$fileExtension"))
+
+      val results      = scala.collection.mutable.ArrayBuffer.empty[SearchMatch]
+      var totalMatches = 0
+
+      allFiles.takeWhile(_ => totalMatches < maxResults).foreach: file =>
+        Try {
+          os.read.lines(file).zipWithIndex.foreach: (line, idx) =>
+            if totalMatches < maxResults && regex.findFirstIn(line).isDefined then
+              results += SearchMatch(file, idx + 1, line)
+              totalMatches += 1
+        }
+
+      results.toList
+    }.toEither.left.map(_.getMessage)
+
+def fileInfo(path: os.Path): Either[String, FileMetadata] =
+  if !os.exists(path) then Left(s"Path does not exist: $path")
+  else
+    Try {
+      val stat = os.stat(path)
+      FileMetadata(
+        path = path,
+        isDirectory = os.isDir(path),
+        sizeBytes = if os.isDir(path) then None else Some(stat.size),
+        lastModified = stat.mtime.toString,
+        readable = path.toIO.canRead,
+        writable = path.toIO.canWrite
+      )
+    }.toEither.left.map(_.getMessage)
