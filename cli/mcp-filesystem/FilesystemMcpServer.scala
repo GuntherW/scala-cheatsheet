@@ -1,5 +1,5 @@
 import chimp.server.*
-import chimp.server.ox.OxServerHttpTransport
+import chimp.server.ox.{OxServerHttpTransport, OxServerStdioTransport}
 import io.circe.Codec
 import sttp.shared.Identity
 import sttp.tapir.*
@@ -101,15 +101,19 @@ val fileInfoTool = tool("file_info")
             )
             ToolResult.structured(output)
 
-// --- Server (Ox / direct style) ---
-@main def filesystemMcpServer(): Unit =
-  val server = StreamingMcpServer[Identity]()
+def mcpServer: StreamingMcpServer[Identity] =
+  StreamingMcpServer[Identity]()
     .addTool(listDirTool)
     .addTool(readFileTool)
     .addTool(searchInFilesTool)
     .addTool(fileInfoTool)
 
-  val endpoint = OxServerHttpTransport(List("mcp")).serve(server)
-
+// HTTP – für manuelle Nutzung / Tests
+@main def filesystemMcpServer(): Unit =
+  val endpoint = OxServerHttpTransport(List("mcp")).serve(mcpServer)
   println("Filesystem MCP Server (Ox) starting on http://localhost:8181/mcp")
   NettySyncServer().port(8181).addEndpoint(endpoint).startAndWait()
+
+// stdio – für OpenCode / MCP-Clients die den Prozess selbst starten
+@main def filesystemMcpServerStdio(): Unit =
+  OxServerStdioTransport().serve(mcpServer)

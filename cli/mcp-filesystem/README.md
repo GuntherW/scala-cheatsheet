@@ -10,88 +10,113 @@ Gebaut mit [Chimp](https://github.com/softwaremill/chimp) (`chimp-server-ox`) un
 
 LLMs haben von sich aus keinen Zugriff auf das lokale Dateisystem. Dieser MCP-Server stellt vier Tools bereit:
 
-| Tool               | Beschreibung |
-|--------------------|--------------|
-| `list_directory`   | Listet den Inhalt eines Verzeichnisses auf (Dateien + Unterordner, mit Größen) |
-| `read_file`        | Liest den Textinhalt einer Datei (max. 1 MB) |
-| `search_in_files`  | Sucht per Regex rekursiv in Dateien eines Verzeichnisses, filterbar nach Dateiendung |
-| `file_info`        | Gibt Metadaten zu einer Datei oder einem Verzeichnis aus (Größe, Datum, Rechte) |
+| Tool              | Beschreibung                                                                         |
+|-------------------|--------------------------------------------------------------------------------------|
+| `list_directory`  | Listet den Inhalt eines Verzeichnisses auf (Dateien + Unterordner, mit Größen)       |
+| `read_file`       | Liest den Textinhalt einer Datei (max. 1 MB)                                         |
+| `search_in_files` | Sucht per Regex rekursiv in Dateien eines Verzeichnisses, filterbar nach Dateiendung |
+| `file_info`       | Gibt Metadaten zu einer Datei oder einem Verzeichnis aus (Größe, Datum, Rechte)      |
 
 ---
 
 ## Server starten
 
-```bash
-scala-cli run cli/mcp-filesystem
-```
-
-Oder aus dem Ordner direkt:
+### HTTP-Modus (für manuelle Nutzung / Tests)
 
 ```bash
-scala-cli run .
+scala-cli run . --main-class filesystemMcpServer
 ```
 
-Der Server läuft dann auf:
+Der Server läuft dann auf `http://localhost:8181/mcp`.
 
+### stdio-Modus (für OpenCode)
+
+```bash
+scala-cli run . --main-class filesystemMcpServerStdio
 ```
-http://localhost:8181/mcp
-```
+
+Im stdio-Modus kommuniziert der Server über stdin/stdout – OpenCode startet ihn automatisch als Subprozess.
 
 ---
 
 ## Technischer Aufbau
 
-- **Transport:** HTTP via `OxServerHttpTransport` (direct style, kein ZIO)
-- **Effect-System:** `Identity` (synchron, Ox-kompatibel)
-- **Server-Framework:** Tapir + Netty (`NettySyncServer`)
-- **Protokoll:** MCP über streamable HTTP (SSE-fähig für zukünftige Progress-Notifications)
+Der Server hat zwei Einstiegspunkte:
 
-Die Tools sind mit `StreamingMcpServer[Identity]().addTool(...)` registriert – das erlaubt später jederzeit die Erweiterung um Streaming-Tools mit Progress-Updates.
+| `@main`                    | Transport                          | Verwendung             |
+|----------------------------|------------------------------------|------------------------|
+| `filesystemMcpServer`      | HTTP via `OxServerHttpTransport`   | Manuell / Tests        |
+| `filesystemMcpServerStdio` | stdio via `OxServerStdioTransport` | OpenCode / MCP-Clients |
+
+Beide nutzen dieselbe `mcpServer`-Definition mit allen vier Tools.
+
+- **Effect-System:** `Identity` (synchron, Ox-kompatibel)
+- **Server-Framework:** Tapir + Netty (`NettySyncServer`) für HTTP; JDK stdio für stdio
+- **Protokoll:** MCP (JSON-RPC)
 
 ---
 
-## Einbindung in OpenCode (lokal)
+## Einbindung in OpenCode
 
-Damit OpenCode diesen MCP-Server als Tool nutzen kann, sind zwei Schritte nötig:
+### Empfehlung: stdio (`local`)
 
-### 1. MCP-Server in `opencode.json` registrieren
+OpenCode startet den Server automatisch beim Start als Subprozess – kein manueller Start nötig. Die Kommunikation läuft
+über stdin/stdout, kein Port wird belegt.
 
-OpenCode liest MCP-Server-Konfigurationen aus `~/.config/opencode/opencode.json` (global) oder aus einer `opencode.json` im Projektroot (projektlokal).
-
-Folgendes eintragen:
+`opencode.jsonc` im Projektroot:
 
 ```json
 {
+  "$schema": "https://opencode.ai/config.json",
   "mcp": {
     "filesystem": {
-      "command": "scala-cli",
-      "args": ["run", "/absoluter/pfad/zu/cli/mcp-filesystem/FilesystemMcpServer.scala"],
-      "type": "local"
+      "type": "local",
+      "command": [
+        "scala-cli", "run",
+        "/home/gunther/projekte/scala/scala-cheatsheet/cli/mcp-filesystem",
+        "--main-class", "filesystemMcpServerStdio"
+      ],
+      "enabled": true
     }
+  },
+  "experimental": {
+    "mcp_timeout": 120000
   }
 }
 ```
 
-> **Hinweis:** `type: "local"` bedeutet, OpenCode startet den Prozess selbst. Alternativ kann der Server vorab gestartet werden und als `type: "remote"` mit `url: "http://localhost:8181/mcp"` eingebunden werden.
+> **Wichtig:** `mcp_timeout` auf mindestens `120000` (2 Minuten) setzen.
+> Beim ersten Start kompiliert Scala CLI den Server (~30–60 Sekunden).
+> Danach startet er aus dem Cache in wenigen Sekunden.
 
-Für den Remote-Fall (Server läuft bereits):
+> **Wichtig:** `command` muss ein Array sein, kein einzelner String.
+> Den absoluten Pfad zu `cli/mcp-filesystem` angeben.
+
+### Alternative: HTTP (`remote`)
+
+Server einmal manuell starten, OpenCode verbindet sich per HTTP. Vorteil: kein Compile-Timeout beim OpenCode-Start.
 
 ```json
 {
+  "$schema": "https://opencode.ai/config.json",
   "mcp": {
     "filesystem": {
       "type": "remote",
-      "url": "http://localhost:8181/mcp"
+      "url": "http://localhost:8181/mcp",
+      "enabled": true
     }
   }
 }
 ```
 
-### 2. `AGENTS.md` anpassen (optional aber empfohlen)
+### Vergleich der Transportarten
 
-Die Datei `AGENTS.md` im Projektroot (oder `~/.config/opencode/AGENTS.md` global) gibt dem Agenten Kontext darüber, welche Tools verfügbar sind und wie er sie nutzen soll.
+| Modus           | Vorteil                                           | Nachteil                                    |
+|-----------------|---------------------------------------------------|---------------------------------------------|
+| `local` + stdio | Startet automatisch mit OpenCode, kein Port nötig | Erster Start langsam (Scala CLI kompiliert) |
+| `remote` + HTTP | Schnell, Server bereits warm                      | Muss manuell gestartet werden               |
 
-Dort könnte ein Abschnitt ergänzt werden, z.B.:
+### `AGENTS.md` anpassen (optional aber empfohlen)
 
 ```markdown
 ## MCP Tools
@@ -104,27 +129,19 @@ Der MCP-Server `filesystem` gibt Zugriff auf das lokale Dateisystem. Nutze ihn, 
 - In Dateien suchen sollst: Tool `search_in_files` mit `directory`, `pattern`, optional `fileExtension` und `maxResults`
 - Metadaten einer Datei brauchst: Tool `file_info` mit `path`
 
-Alle Pfade müssen absolut sein oder relativ zum Arbeitsverzeichnis des Servers angegeben werden.
+Alle Pfade müssen absolut angegeben werden.
 ```
-
----
-
-## Workflow: Remote vs. Local
-
-| Modus    | Vorteil | Nachteil |
-|----------|---------|----------|
-| `local`  | OpenCode startet/stoppt den Prozess automatisch | Erster Aufruf langsam (Scala CLI kompiliert) |
-| `remote` | Schnell, weil Server bereits warm läuft | Muss manuell gestartet werden |
-
-**Empfehlung für Entwicklung:** Server vorab starten (`scala-cli run ...`), als `remote` einbinden – so entfällt die Compile-Latenz bei jedem OpenCode-Start.
 
 ---
 
 ## Wie der Agent die Tool-Schemas kennt
 
-Der Agent muss die JSON-Struktur der Tools **nicht kennen** – er fragt den Server beim Start automatisch ab. Das ist Teil des MCP-Standards.
+Der Agent muss die JSON-Struktur der Tools **nicht kennen** – er fragt den Server beim Start automatisch ab. Das ist
+Teil des MCP-Standards.
 
-Beim Verbindungsaufbau ruft jeder MCP-Client `tools/list` auf. Der Server antwortet mit Name, Beschreibung und dem vollständigen **JSON-Schema** (Draft 2020-12) für jeden Tool-Input. Chimp generiert dieses Schema automatisch aus den Scala-Typen via `derives Schema` (Tapir).
+Beim Verbindungsaufbau ruft jeder MCP-Client `tools/list` auf. Der Server antwortet mit Name, Beschreibung und dem
+vollständigen **JSON-Schema** (Draft 2020-12) für jeden Tool-Input. Chimp generiert dieses Schema automatisch aus den
+Scala-Typen via `derives Schema` (Tapir).
 
 Beispielantwort des laufenden Servers auf `tools/list`:
 
@@ -164,9 +181,26 @@ Beispielantwort des laufenden Servers auf `tools/list`:
 }
 ```
 
-> **Hinweis zu Default-Werten:** Tapir/Circe kennt keine Scala-Default-Werte zur Laufzeit – daher erscheinen `fileExtension` und `maxResults` als `required` im Schema, obwohl sie in der case class Defaults haben. Der Agent muss diese Felder also immer explizit mitschicken.
+> **Hinweis zu Default-Werten:** Tapir/Circe kennt keine Scala-Default-Werte
+> zur Laufzeit – daher erscheinen `fileExtension` und `maxResults` als
+> `required` im Schema. Der Agent muss diese Felder immer explizit mitschicken.
 
-**Return-Werte** sind ebenfalls standardisiert: jedes Tool gibt ein `CallToolResult` zurück, das eine Liste von `content`-Objekten enthält (meist `{ "type": "text", "text": "..." }`), sowie ein `isError: Boolean`-Flag. Auch das ist Teil des MCP-Standards und dem Agenten beim Verbindungsaufbau bekannt.
+**Return-Werte** sind ebenfalls standardisiert: jedes Tool gibt ein
+`CallToolResult` zurück mit einer Liste von `content`-Objekten und einem
+`isError: Boolean`-Flag. Strukturierte Tools liefern zusätzlich
+`structuredContent` als JSON-Objekt.
+
+---
+
+## Test ausführen
+
+```bash
+scala-cli test cli/mcp-filesystem
+# oder aus dem Ordner:
+scala-cli test .
+```
+
+Der Test startet einen eigenen Server-Instanz auf einem zufälligen Port – der produktive Server muss dafür nicht laufen.
 
 ---
 
