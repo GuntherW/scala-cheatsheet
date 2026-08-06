@@ -2,9 +2,12 @@ import chimp.client.*
 import chimp.client.transport.ClientHttpTransport
 import chimp.protocol.*
 import chimp.server.StreamingMcpServer
+import io.circe.Decoder
 import io.circe.syntax.*
 import munit.{FunFixtures, FunSuite}
-import ox.*
+import os.Path
+import ox.{discard, supervised, useInScope}
+import scala.util.chaining.scalaUtilChainingOps
 import sttp.client4.DefaultSyncBackend
 import sttp.model.Uri.UriContext
 import sttp.shared.Identity
@@ -15,8 +18,8 @@ import java.net.ServerSocket
 class FilesystemMcpServerTest extends FunSuite, FunFixtures:
 
   // --- Testdaten ---
-  val tmpDir: os.Path = os.temp.dir(prefix = "mcp-test-")
-  val tmpFile         = tmpDir / "hello.txt"
+  val tmpDir: Path  = os.temp.dir(prefix = "mcp-test-")
+  val tmpFile: Path = tmpDir / "hello.txt"
   os.write(tmpFile, "Hello, MCP!\nLine two\nLine three")
   os.makeDir(tmpDir / "sub")
   os.write(tmpDir / "sub" / "nested.txt", "nested content with keyword FIND_ME here")
@@ -27,31 +30,29 @@ class FilesystemMcpServerTest extends FunSuite, FunFixtures:
     try s.getLocalPort
     finally s.close()
 
-  var serverFork: CancellableFork[Unit] = null
+  var serverShutdown: () => Unit = () => ()
 
   override def beforeAll(): Unit =
-    val endpoint = chimp.server.ox.OxServerHttpTransport(List("mcp")).serve:
-      StreamingMcpServer[Identity]()
-        .addTool(listDirTool)
-        .addTool(readFileTool)
-        .addTool(searchInFilesTool)
-        .addTool(fileInfoTool)
-
-    val ready = java.util.concurrent.CountDownLatch(1)
+    val ready    = java.util.concurrent.CountDownLatch(1)
+    val shutdown = java.util.concurrent.CountDownLatch(1)
 
     Thread.ofVirtual().start: () =>
-      unsupervised:
-        serverFork = forkCancellable:
-          supervised:
-            useInScope(NettySyncServer().port(port).addEndpoint(endpoint).start())(_.stop()).discard
-            never
+      supervised:
+        val endpoint = chimp.server.ox.OxServerHttpTransport(List("mcp")).serve:
+          StreamingMcpServer[Identity]()
+            .addTool(listDirTool)
+            .addTool(readFileTool)
+            .addTool(searchInFilesTool)
+            .addTool(fileInfoTool)
+        useInScope(NettySyncServer().port(port).addEndpoint(endpoint).start())(_.stop()).discard
+        serverShutdown = () => shutdown.countDown()
         ready.countDown()
-        serverFork.join()
+        shutdown.await()
 
     ready.await()
 
   override def afterAll(): Unit =
-    serverFork.cancel()
+    serverShutdown()
 
   // --- Client-Fixture: frischer Client pro Test, Server läuft durch ---
   val mcpClient = FunFixture[McpClient[Identity]](
@@ -67,17 +68,15 @@ class FilesystemMcpServerTest extends FunSuite, FunFixtures:
   )
 
   // --- Hilfsfunktionen ---
-
   extension (result: CallToolResult)
-    def asText: String             = result.content.collect { case ToolContent.Text(_, text) => text }.mkString
-    def as[A: io.circe.Decoder]: A =
+    def asText: String    = result.content.collect { case ToolContent.Text(_, text) => text }.mkString
+    def as[A: Decoder]: A =
       result.structuredContent
         .toRight("no structuredContent in result")
         .flatMap(_.as[A])
         .fold(e => throw AssertionError(e.toString), identity)
 
   // --- Tests ---
-
   mcpClient.test("list_directory gibt strukturierten Verzeichnisinhalt zurück"): client =>
     val result = client.callTool("list_directory", ListDirInput(tmpDir.toString).asJson)
     assert(!result.isError)
