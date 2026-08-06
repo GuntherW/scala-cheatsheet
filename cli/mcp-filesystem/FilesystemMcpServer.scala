@@ -9,7 +9,12 @@ import sttp.tapir.server.netty.sync.NettySyncServer
 
 case class ListDirInput(path: String) derives Codec, Schema
 case class ReadFileInput(path: String) derives Codec, Schema
-case class SearchInFilesInput(directory: String, pattern: String, fileExtension: String = "*", maxResults: Int = 50) derives Codec, Schema
+case class SearchInFilesInput(
+    directory: String,
+    pattern: String,
+    fileExtension: String = "*",
+    maxResults: Int = 50
+) derives Codec, Schema
 case class FileInfoInput(path: String) derives Codec, Schema
 
 // --- MCP Tools ---
@@ -39,13 +44,18 @@ val readFileTool = tool("read_file")
       case Right(path) =>
         readFile(path) match
           case Left(err) => ToolResult.error(err)
-          case Right(fc) => ToolResult.text(s"File: ${fc.path}\nSize: ${formatSize(fc.sizeBytes)}\n\n${fc.text}")
+          case Right(fc) =>
+            ToolResult.text:
+              s"""|File: ${fc.path}
+                  |Size: ${formatSize(fc.sizeBytes)}
+                  |
+                  |${fc.text}""".stripMargin
 
 val searchInFilesTool = tool("search_in_files")
   .description(
-    "Searches for a regex pattern inside files of a directory (recursively). " +
-      "Use fileExtension to filter by extension (e.g. 'scala', 'md', '*' for all). " +
-      "Returns matching lines with file path and line number."
+    """|Searches for a regex pattern inside files of a directory (recursively).
+       |Use fileExtension to filter by extension (e.g. 'scala', 'md', '*' for all).
+       |Returns matching lines with file path and line number.""".stripMargin
   )
   .input[SearchInFilesInput]
   .handle: input =>
@@ -56,9 +66,9 @@ val searchInFilesTool = tool("search_in_files")
           case Left(err)      => ToolResult.error(err)
           case Right(Nil)     => ToolResult.text(s"No matches found for pattern '${input.pattern}' in $basePath")
           case Right(matches) =>
-            val lines  = matches.map(m => s"${m.file}:${m.lineNumber}:  ${m.line}")
-            val header = s"Found ${matches.size} match(es) for '${input.pattern}' in $basePath:\n\n"
-            ToolResult.text(header + lines.mkString("\n"))
+            val lines = matches.map(m => s"${m.file}:${m.lineNumber}:  ${m.line}")
+            ToolResult.text:
+              s"Found ${matches.size} match(es) for '${input.pattern}' in $basePath:\n\n" + lines.mkString("\n")
 
 val fileInfoTool = tool("file_info")
   .description("Returns metadata about a file or directory: size, last modified date, permissions.")
@@ -70,13 +80,13 @@ val fileInfoTool = tool("file_info")
         fileInfo(path) match
           case Left(err) => ToolResult.error(err)
           case Right(m)  =>
-            val size = m.sizeBytes.map(formatSize).getOrElse("-")
-            ToolResult.text(s"""Path:          ${m.path}
-Kind:          ${if m.isDirectory then "directory" else "file"}
-Size:          $size
-Last modified: ${m.lastModified}
-Readable:      ${m.readable}
-Writable:      ${m.writable}""")
+            ToolResult.text:
+              s"""|Path:          ${m.path}
+                  |Kind:          ${if m.isDirectory then "directory" else "file"}
+                  |Size:          ${m.sizeBytes.map(formatSize).getOrElse("-")}
+                  |Last modified: ${m.lastModified}
+                  |Readable:      ${m.readable}
+                  |Writable:      ${m.writable}""".stripMargin
 
 // --- Server (Ox / direct style) ---
 

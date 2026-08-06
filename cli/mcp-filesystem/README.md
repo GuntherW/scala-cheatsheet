@@ -114,6 +114,56 @@ Alle Pfade müssen absolut sein oder relativ zum Arbeitsverzeichnis des Servers 
 
 ---
 
+## Wie der Agent die Tool-Schemas kennt
+
+Der Agent muss die JSON-Struktur der Tools **nicht kennen** – er fragt den Server beim Start automatisch ab. Das ist Teil des MCP-Standards.
+
+Beim Verbindungsaufbau ruft jeder MCP-Client `tools/list` auf. Der Server antwortet mit Name, Beschreibung und dem vollständigen **JSON-Schema** (Draft 2020-12) für jeden Tool-Input. Chimp generiert dieses Schema automatisch aus den Scala-Typen via `derives Schema` (Tapir).
+
+Beispielantwort des laufenden Servers auf `tools/list`:
+
+```json
+{
+  "tools": [
+    {
+      "name": "list_directory",
+      "description": "Lists the contents of a directory on the local filesystem. Returns files and subdirectories with their types and sizes.",
+      "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "ListDirInput",
+        "type": "object",
+        "required": ["path"],
+        "properties": {
+          "path": { "type": "string" }
+        }
+      }
+    },
+    {
+      "name": "search_in_files",
+      "description": "Searches for a regex pattern inside files of a directory (recursively).\nUse fileExtension to filter by extension (e.g. 'scala', 'md', '*' for all).\nReturns matching lines with file path and line number.",
+      "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "SearchInFilesInput",
+        "type": "object",
+        "required": ["directory", "pattern", "fileExtension", "maxResults"],
+        "properties": {
+          "directory":     { "type": "string" },
+          "pattern":       { "type": "string" },
+          "fileExtension": { "type": "string" },
+          "maxResults":    { "type": "integer", "format": "int32" }
+        }
+      }
+    }
+  ]
+}
+```
+
+> **Hinweis zu Default-Werten:** Tapir/Circe kennt keine Scala-Default-Werte zur Laufzeit – daher erscheinen `fileExtension` und `maxResults` als `required` im Schema, obwohl sie in der case class Defaults haben. Der Agent muss diese Felder also immer explizit mitschicken.
+
+**Return-Werte** sind ebenfalls standardisiert: jedes Tool gibt ein `CallToolResult` zurück, das eine Liste von `content`-Objekten enthält (meist `{ "type": "text", "text": "..." }`), sowie ein `isError: Boolean`-Flag. Auch das ist Teil des MCP-Standards und dem Agenten beim Verbindungsaufbau bekannt.
+
+---
+
 ## Erweiterungsideen
 
 - **Progress-Reporting** bei langen Suchen (via `streamingServerLogic` + `ctx.reportProgress`)
@@ -121,3 +171,15 @@ Alle Pfade müssen absolut sein oder relativ zum Arbeitsverzeichnis des Servers 
 - **`move`/`copy`-Tools**
 - **Glob-Pattern-Suche** (Dateien nach Muster finden, ohne Inhalt zu lesen)
 - **`.gitignore`-Awareness** bei der Suche
+
+---
+
+## Beispiel-Prompts für OpenCode
+
+Sobald der MCP-Server eingebunden ist, lösen folgende Aufträge den Einsatz der Tools aus:
+
+- _„Was liegt alles im Ordner `~/projekte/scala/scala-cheatsheet/cli`?"_
+- _„Lies die Datei `build.sbt` und erkläre mir die Projektstruktur."_
+- _„Suche in `src/` nach allen Stellen, wo `Future` verwendet wird."_
+- _„Wie groß ist die Datei `README.md` im Projektroot und wann wurde sie zuletzt geändert?"_
+- _„Finde alle `.scala`-Dateien im Ordner `core/`, die das Wort `implicit` enthalten."_
