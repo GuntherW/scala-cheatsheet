@@ -22,7 +22,13 @@ LLMs haben von sich aus keinen Zugriff auf das lokale Dateisystem. Dieser MCP-Se
 ## Server starten
 
 ```bash
-scala-cli run FilesystemMcpServer.scala
+scala-cli run cli/mcp-filesystem
+```
+
+Oder aus dem Ordner direkt:
+
+```bash
+scala-cli run .
 ```
 
 Der Server läuft dann auf:

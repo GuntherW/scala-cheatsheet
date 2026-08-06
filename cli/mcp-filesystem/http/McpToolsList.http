@@ -1,0 +1,34 @@
+### tools/list
+POST http://localhost:8181/mcp
+Content-Type: application/json
+Accept: application/json, text/event-stream
+
+{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}
+
+### list_directory
+POST http://localhost:8181/mcp
+Content-Type: application/json
+Accept: application/json, text/event-stream
+
+{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"list_directory","arguments":{"path":"/tmp"}}}
+
+### read_file
+POST http://localhost:8181/mcp
+Content-Type: application/json
+Accept: application/json, text/event-stream
+
+{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"read_file","arguments":{"path":"/tmp/hello.txt"}}}
+
+### search_in_files
+POST http://localhost:8181/mcp
+Content-Type: application/json
+Accept: application/json, text/event-stream
+
+{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"search_in_files","arguments":{"directory":"/tmp","pattern":"hello","fileExtension":"*","maxResults":50}}}
+
+### file_info
+POST http://localhost:8181/mcp
+Content-Type: application/json
+Accept: application/json, text/event-stream
+
+{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"file_info","arguments":{"path":"/tmp"}}}

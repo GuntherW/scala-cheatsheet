@@ -17,11 +17,29 @@ case class SearchInFilesInput(
 ) derives Codec, Schema
 case class FileInfoInput(path: String) derives Codec, Schema
 
+// --- MCP Output-Typen (strukturierte Rückgaben) ---
+
+case class DirEntryOutput(name: String, kind: String, size: Option[String])       derives Codec, Schema
+case class DirListOutput(path: String, count: Int, entries: List[DirEntryOutput]) derives Codec, Schema
+
+case class SearchMatchOutput(file: String, line: Int, text: String)                       derives Codec, Schema
+case class SearchResultOutput(pattern: String, count: Int, matches: List[SearchMatchOutput]) derives Codec, Schema
+
+case class FileInfoOutput(
+    path: String,
+    kind: String,
+    size: Option[String],
+    lastModified: String,
+    readable: Boolean,
+    writable: Boolean
+) derives Codec, Schema
+
 // --- MCP Tools ---
 
 val listDirTool = tool("list_directory")
   .description("Lists the contents of a directory on the local filesystem. Returns files and subdirectories with their types and sizes.")
   .input[ListDirInput]
+  .output[DirListOutput]
   .handle: input =>
     safePath(input.path) match
       case Left(err)   => ToolResult.error(err)
@@ -29,11 +47,17 @@ val listDirTool = tool("list_directory")
         listDirectory(path) match
           case Left(err)      => ToolResult.error(err)
           case Right(entries) =>
-            val lines = entries.map: e =>
-              val kind = if e.isDirectory then "[DIR] " else "[FILE]"
-              val size = e.sizeBytes.map(b => s"  (${formatSize(b)})").getOrElse("")
-              s"$kind  ${e.name}$size"
-            ToolResult.text(s"Contents of $path (${entries.size} entries):\n" + lines.mkString("\n"))
+            val output = DirListOutput(
+              path    = path.toString,
+              count   = entries.size,
+              entries = entries.map: e =>
+                DirEntryOutput(
+                  name = e.name,
+                  kind = if e.isDirectory then "directory" else "file",
+                  size = e.sizeBytes.map(formatSize)
+                )
+            )
+            ToolResult.structured(output)
 
 val readFileTool = tool("read_file")
   .description("Reads the full content of a text file on the local filesystem. Returns an error for binary files or files larger than 1 MB.")
@@ -58,21 +82,25 @@ val searchInFilesTool = tool("search_in_files")
        |Returns matching lines with file path and line number.""".stripMargin
   )
   .input[SearchInFilesInput]
+  .output[SearchResultOutput]
   .handle: input =>
     safePath(input.directory) match
       case Left(err)       => ToolResult.error(err)
       case Right(basePath) =>
         searchInFiles(basePath, input.pattern, input.fileExtension, input.maxResults) match
-          case Left(err)      => ToolResult.error(err)
-          case Right(Nil)     => ToolResult.text(s"No matches found for pattern '${input.pattern}' in $basePath")
-          case Right(matches) =>
-            val lines = matches.map(m => s"${m.file}:${m.lineNumber}:  ${m.line}")
-            ToolResult.text:
-              s"Found ${matches.size} match(es) for '${input.pattern}' in $basePath:\n\n" + lines.mkString("\n")
+          case Left(err)    => ToolResult.error(err)
+          case Right(found) =>
+            val output = SearchResultOutput(
+              pattern = input.pattern,
+              count   = found.size,
+              matches = found.map(m => SearchMatchOutput(m.file.toString, m.lineNumber, m.line))
+            )
+            ToolResult.structured(output)
 
 val fileInfoTool = tool("file_info")
   .description("Returns metadata about a file or directory: size, last modified date, permissions.")
   .input[FileInfoInput]
+  .output[FileInfoOutput]
   .handle: input =>
     safePath(input.path) match
       case Left(err)   => ToolResult.error(err)
@@ -80,13 +108,15 @@ val fileInfoTool = tool("file_info")
         fileInfo(path) match
           case Left(err) => ToolResult.error(err)
           case Right(m)  =>
-            ToolResult.text:
-              s"""|Path:          ${m.path}
-                  |Kind:          ${if m.isDirectory then "directory" else "file"}
-                  |Size:          ${m.sizeBytes.map(formatSize).getOrElse("-")}
-                  |Last modified: ${m.lastModified}
-                  |Readable:      ${m.readable}
-                  |Writable:      ${m.writable}""".stripMargin
+            val output = FileInfoOutput(
+              path         = m.path.toString,
+              kind         = if m.isDirectory then "directory" else "file",
+              size         = m.sizeBytes.map(formatSize),
+              lastModified = m.lastModified,
+              readable     = m.readable,
+              writable     = m.writable
+            )
+            ToolResult.structured(output)
 
 // --- Server (Ox / direct style) ---
 

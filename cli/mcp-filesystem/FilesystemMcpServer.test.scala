@@ -73,8 +73,12 @@ class FilesystemMcpServerTest extends FunSuite:
       client.close()
       backend.close()
 
+  // strukturierte Ergebnisse werden von Chimp auch als JSON-Text serialisiert
   def textOf(result: CallToolResult): String =
     result.content.collect { case ToolContent.Text(_, text) => text }.mkString
+
+  def jsonOf(result: CallToolResult): Json =
+    result.structuredContent.getOrElse(Json.Null)
 
   // --- Testdaten ---
 
@@ -86,12 +90,15 @@ class FilesystemMcpServerTest extends FunSuite:
 
   // --- Tests ---
 
-  test("list_directory gibt Verzeichnisinhalt zurück"):
+  test("list_directory gibt strukturierten Verzeichnisinhalt zurück"):
     withClient: client =>
-      val text = textOf(client.callTool("list_directory", Json.obj("path" -> Json.fromString(tmpDir.toString))))
-      assert(text.contains("hello.txt"), s"Erwartet 'hello.txt' in:\n$text")
-      assert(text.contains("[DIR]"),     s"Erwartet '[DIR]' in:\n$text")
-      assert(text.contains("sub"),       s"Erwartet 'sub' in:\n$text")
+      val result = client.callTool("list_directory", Json.obj("path" -> Json.fromString(tmpDir.toString)))
+      assert(!result.isError)
+      val json = jsonOf(result).toString
+      assert(json.contains("hello.txt"), s"Erwartet 'hello.txt' in:\n$json")
+      assert(json.contains("directory"), s"Erwartet 'directory' in:\n$json")
+      assert(json.contains("sub"),       s"Erwartet 'sub' in:\n$json")
+      assert(json.contains("entries"),   s"Erwartet 'entries' in:\n$json")
 
   test("list_directory meldet Fehler bei nicht-existentem Pfad"):
     withClient: client =>
@@ -107,43 +114,50 @@ class FilesystemMcpServerTest extends FunSuite:
     withClient: client =>
       assert(client.callTool("read_file", Json.obj("path" -> Json.fromString(tmpDir.toString))).isError)
 
-  test("search_in_files findet Treffer per Regex"):
+  test("search_in_files gibt strukturierte Treffer zurück"):
     withClient: client =>
-      val text = textOf:
-        client.callTool(
-          "search_in_files",
-          Json.obj(
-            "directory"     -> Json.fromString(tmpDir.toString),
-            "pattern"       -> Json.fromString("FIND_ME"),
-            "fileExtension" -> Json.fromString("txt"),
-            "maxResults"    -> Json.fromInt(50)
-          )
+      val result = client.callTool(
+        "search_in_files",
+        Json.obj(
+          "directory"     -> Json.fromString(tmpDir.toString),
+          "pattern"       -> Json.fromString("FIND_ME"),
+          "fileExtension" -> Json.fromString("txt"),
+          "maxResults"    -> Json.fromInt(50)
         )
-      assert(text.contains("nested.txt"), s"Erwartet 'nested.txt' in:\n$text")
-      assert(text.contains("FIND_ME"),    s"Erwartet 'FIND_ME' in:\n$text")
+      )
+      assert(!result.isError)
+      val json = jsonOf(result).toString
+      assert(json.contains("nested.txt"), s"Erwartet 'nested.txt' in:\n$json")
+      assert(json.contains("FIND_ME"),    s"Erwartet 'FIND_ME' in:\n$json")
+      assert(json.contains("matches"),    s"Erwartet 'matches' in:\n$json")
 
   test("search_in_files meldet keine Treffer wenn Muster fehlt"):
     withClient: client =>
-      val text = textOf:
-        client.callTool(
-          "search_in_files",
-          Json.obj(
-            "directory"     -> Json.fromString(tmpDir.toString),
-            "pattern"       -> Json.fromString("GIBT_ES_NICHT_XYZ"),
-            "fileExtension" -> Json.fromString("*"),
-            "maxResults"    -> Json.fromInt(50)
-          )
+      val result = client.callTool(
+        "search_in_files",
+        Json.obj(
+          "directory"     -> Json.fromString(tmpDir.toString),
+          "pattern"       -> Json.fromString("GIBT_ES_NICHT_XYZ"),
+          "fileExtension" -> Json.fromString("*"),
+          "maxResults"    -> Json.fromInt(50)
         )
-      assert(text.contains("No matches found"), s"Erwartet 'No matches found' in:\n$text")
+      )
+      assert(!result.isError)
+      val json = jsonOf(result)
+      assertEquals(json.hcursor.downField("count").as[Int], Right(0))
 
-  test("file_info gibt Metadaten für Datei zurück"):
+  test("file_info gibt strukturierte Metadaten für Datei zurück"):
     withClient: client =>
-      val text = textOf(client.callTool("file_info", Json.obj("path" -> Json.fromString(tmpFile.toString))))
-      assert(text.contains("file"),      s"Erwartet 'file' in:\n$text")
-      assert(text.contains("hello.txt"), s"Erwartet Dateiname in:\n$text")
-      assert(text.contains("Readable"),  s"Erwartet 'Readable' in:\n$text")
+      val result = client.callTool("file_info", Json.obj("path" -> Json.fromString(tmpFile.toString)))
+      assert(!result.isError)
+      val json = jsonOf(result)
+      assertEquals(json.hcursor.downField("kind").as[String],     Right("file"))
+      assert(json.hcursor.downField("path").as[String].exists(_.contains("hello.txt")))
+      assertEquals(json.hcursor.downField("readable").as[Boolean], Right(true))
 
-  test("file_info gibt Metadaten für Verzeichnis zurück"):
+  test("file_info gibt strukturierte Metadaten für Verzeichnis zurück"):
     withClient: client =>
-      val text = textOf(client.callTool("file_info", Json.obj("path" -> Json.fromString(tmpDir.toString))))
-      assert(text.contains("directory"), s"Erwartet 'directory' in:\n$text")
+      val result = client.callTool("file_info", Json.obj("path" -> Json.fromString(tmpDir.toString)))
+      assert(!result.isError)
+      val json = jsonOf(result)
+      assertEquals(json.hcursor.downField("kind").as[String], Right("directory"))
