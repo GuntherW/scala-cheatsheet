@@ -24,5 +24,7 @@ jobs:
           node-version: '24'
       - name: Set up sbt
         uses: sbt/setup-sbt@v1
+      - name: Install jsdom
+        run: npm install jsdom
       - name: Run tests
         run: sbt testFull
