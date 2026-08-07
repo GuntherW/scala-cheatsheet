@@ -6,15 +6,14 @@
 import scala.scalajs.js
 import scala.scalajs.js.annotation.*
 
-// AWS Lambda Event types (API Gateway v2 / Function URL format)
+// AWS Lambda Event (API Gateway v2 / Function URL)
 @js.native
 trait LambdaEvent extends js.Object:
-  val requestContext: js.UndefOr[js.Dynamic]     = js.native
-  val rawPath: js.UndefOr[String]                = js.native
-  val rawQueryString: js.UndefOr[String]         = js.native
+  val rawPath: js.UndefOr[String]            = js.native
+  val rawQueryString: js.UndefOr[String]     = js.native
   val headers: js.UndefOr[js.Dictionary[String]] = js.native
-  val body: js.UndefOr[String]                   = js.native
-  val isBase64Encoded: js.UndefOr[Boolean]       = js.native
+  val body: js.UndefOr[String]               = js.native
+  val isBase64Encoded: js.UndefOr[Boolean]   = js.native
 
 @js.native
 trait LambdaContext extends js.Object:
@@ -23,31 +22,36 @@ trait LambdaContext extends js.Object:
   val awsRequestId: String    = js.native
   val memoryLimitInMB: String = js.native
 
-// Response type for API Gateway / Function URL
-class LambdaResponse(val statusCode: Int, val headers: js.Dictionary[String], val body: String) extends js.Object
+class LambdaResponse(
+  val statusCode: Int,
+  val headers: js.Dictionary[String],
+  val body: String
+) extends js.Object
 
 @JSExportTopLevel("handler")
 def handler(event: LambdaEvent, context: LambdaContext): js.Promise[LambdaResponse] =
-  js.Promise.resolve[LambdaResponse] {
-    val path    = event.rawPath.getOrElse("/")
-    val name    = extractName(event.rawQueryString.getOrElse(""))
-    val message = s"Hello, $name! You called: $path (requestId: ${context.awsRequestId})"
+  val path = event.rawPath.getOrElse("/")
+  val name = event.rawQueryString
+    .toOption
+    .flatMap(extractQueryParam(_, "name"))
+    .getOrElse("World")
 
-    println(s"[Lambda] function=${context.functionName} requestId=${context.awsRequestId} path=$path")
+  println(s"[Lambda] function=${context.functionName} requestId=${context.awsRequestId} path=$path")
 
+  val responseBody = s"""{"message":"Hello, $name! You called: $path","path":"$path","name":"$name"}"""
+
+  js.Promise.resolve[LambdaResponse]:
     new LambdaResponse(
       statusCode = 200,
-      headers = js.Dictionary(
+      headers    = js.Dictionary(
         "Content-Type" -> "application/json",
         "X-Powered-By" -> "Scala 3 / Scala.js"
       ),
-      body = s"""{"message":"$message","path":"$path","name":"$name"}"""
+      body = responseBody
     )
-  }
 
-private def extractName(queryString: String): String =
+private def extractQueryParam(queryString: String, param: String): Option[String] =
   queryString
     .split("&")
     .map(_.split("=", 2))
-    .collectFirst { case Array("name", v) => v }
-    .getOrElse("World")
+    .collectFirst { case Array(k, v) if k == param => v }

@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 # Build script für AWS Lambda Scala Native (Custom Runtime)
-# Kompiliert Scala 3 -> native Linux x86_64 Binary via Docker (Amazon Linux 2023)
-# Das erzeugte 'bootstrap' Binary läuft auf der provided.al2023 Lambda Runtime.
+# Kompiliert Scala 3 -> native Linux x86_64 Binary lokal via scala-cli.
+#
+# Voraussetzungen (einmalig installieren):
+#   sudo apt install -y clang libcurl4-openssl-dev libidn2-dev zlib1g-dev
+#   # Java 17+ und scala-cli müssen ebenfalls installiert sein
 
 set -euo pipefail
 
@@ -11,49 +14,15 @@ ZIP_FILE="$SCRIPT_DIR/lambda.zip"
 
 mkdir -p "$OUT_DIR"
 
-echo "==> Baue Scala Native Binary via Docker (Amazon Linux 2023)..."
+echo "==> Kompiliere handler.scala -> dist/bootstrap..."
+scala-cli --power package "$SCRIPT_DIR/handler.scala" \
+  --native \
+  -o "$OUT_DIR/bootstrap" \
+  --force
 
-docker run --rm \
-  -v "$SCRIPT_DIR":/workspace \
-  -w /workspace \
-  --platform linux/amd64 \
-  amazonlinux:2023 \
-  bash -c '
-    set -euo pipefail
-
-    echo "--- Installiere Abhängigkeiten..."
-    dnf install -y --allowerasing \
-      java-21-amazon-corretto-headless \
-      clang \
-      llvm \
-      libstdc++-devel \
-      libstdc++-static \
-      zlib-devel \
-      libcurl-devel \
-      openssl-devel \
-      curl \
-      gzip \
-      which \
-      2>&1 | tail -3
-
-    echo "--- Installiere Scala CLI..."
-    curl -fL \
-      https://github.com/VirtusLab/scala-cli/releases/latest/download/scala-cli-x86_64-pc-linux.gz \
-      | gunzip -c > /usr/local/bin/scala-cli
-    chmod +x /usr/local/bin/scala-cli
-    echo "scala-cli: $(/usr/local/bin/scala-cli --version)"
-
-    echo "--- Kompiliere handler.scala -> dist/bootstrap..."
-    /usr/local/bin/scala-cli --power package handler.scala \
-      --native \
-      -o dist/bootstrap \
-      --force \
-      -J -Xmx2g
-
-    echo "--- Binary Info:"
-    file dist/bootstrap
-    ls -lh dist/bootstrap
-  '
+echo "==> Binary Info:"
+file "$OUT_DIR/bootstrap"
+ls -lh "$OUT_DIR/bootstrap"
 
 echo "==> Erstelle deployment ZIP (bootstrap muss im Root liegen)..."
 cd "$OUT_DIR"

@@ -9,7 +9,7 @@ Eine AWS Lambda Function, geschrieben in **Scala 3.3.8** und kompiliert mit **Sc
 | Scala            | 3.3.8 LTS             |
 | Scala Native     | 0.5.12                |
 | Lambda Runtime   | provided.al2023       |
-| Build-Umgebung   | Docker (amazonlinux:2023) |
+| Build-Umgebung   | lokal (clang 18+)     |
 | Terraform        | >= 1.9                |
 
 ## Architektur
@@ -45,11 +45,25 @@ awsLambdaNative/
 
 ## Voraussetzungen
 
-- [Docker](https://docs.docker.com/get-docker/) (für den Build via amazonlinux:2023)
+### Lokaler Build (Linux/Ubuntu)
+
+```bash
+# Einmalig installieren:
+sudo apt install -y clang libcurl4-openssl-dev libidn2-dev zlib1g-dev
+```
+
+| Paket                  | Zweck                                      |
+|------------------------|--------------------------------------------|
+| `clang`                | C/LLVM Compiler (von Scala Native benötigt) |
+| `libcurl4-openssl-dev` | STTP curl-Backend (HTTP-Client)            |
+| `libidn2-dev`          | Internationale Domain-Namen (curl-Abhängigkeit) |
+| `zlib1g-dev`           | Komprimierung (Scala Native Runtime)       |
+
+Außerdem:
+- [Scala CLI](https://scala-cli.virtuslab.org/) installiert
+- Java 17+
 - [Terraform](https://developer.hashicorp.com/terraform/install) >= 1.9
 - AWS Credentials in `~/.aws/credentials`
-
-Kein lokales Clang/LLVM nötig – der Build läuft vollständig in Docker.
 
 ## Build
 
@@ -57,13 +71,7 @@ Kein lokales Clang/LLVM nötig – der Build läuft vollständig in Docker.
 ./build.sh
 ```
 
-Das Skript:
-1. Startet einen `amazonlinux:2023` Docker-Container
-2. Installiert Java 21, Clang 15, Scala CLI
-3. Kompiliert `handler.scala` zu `dist/bootstrap` (native ELF x86_64)
-4. Packt es als `lambda.zip`
-
-Beim ersten Durchlauf dauert es ca. 2-3 Minuten (Downloads). Folgeläufe sind schneller da Docker-Layer gecacht sind.
+Das Skript kompiliert `handler.scala` via Scala CLI direkt lokal zu `dist/bootstrap` (native ELF x86_64) und packt es als `lambda.zip`.
 
 ## Deployment
 
@@ -97,7 +105,7 @@ Antwort:
 | Binary-Größe (ZIP) | ~40 KB                 | ~756 KB                     |
 | Cold Start         | ~150ms                 | **<10ms** (kein VM-Start)   |
 | Memory             | 256 MB                 | **128 MB** (ausreichend)    |
-| Build-Tool         | scala-cli direkt       | scala-cli via Docker        |
+| Build-Tool         | scala-cli direkt       | scala-cli direkt (lokal) |
 | HTTP-Client        | `java.net.URL`         | POSIX Sockets               |
 
 ## Aufräumen

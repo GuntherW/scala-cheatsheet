@@ -9,7 +9,7 @@ import sttp.client4.*
 import sttp.client4.curl.CurlBackend
 
 // AWS Lambda Custom Runtime Bootstrap
-// Nutzt STTP mit CurlBackend für HTTP-Kommunikation mit dem Lambda Runtime API
+// Kommuniziert via Long-Poll mit dem Lambda Runtime API (blockierendes GET bis Event eintrifft)
 @main def bootstrap(): Unit =
   val runtimeApi = sys.env.getOrElse("AWS_LAMBDA_RUNTIME_API", "localhost:9001")
   val baseUrl    = s"http://$runtimeApi/2018-06-01/runtime"
@@ -19,10 +19,10 @@ import sttp.client4.curl.CurlBackend
   val backend = CurlBackend()
 
   try
-    while true do
-      val (requestId, body) = nextInvocation(baseUrl, backend)
-      val result            = handleEvent(body)
-      postResponse(baseUrl, requestId, result, backend)
+    Iterator
+      .continually(nextInvocation(baseUrl, backend))
+      .foreach: (requestId, body) =>
+        postResponse(baseUrl, requestId, handleEvent(body), backend)
   finally
     backend.close()
 
@@ -33,8 +33,7 @@ def nextInvocation(baseUrl: String, backend: SyncBackend): (String, String) =
     .send(backend)
 
   val requestId = response.header("Lambda-Runtime-Aws-Request-Id").getOrElse("unknown")
-  val body      = response.body
-  (requestId, body)
+  (requestId, response.body)
 
 def postResponse(baseUrl: String, requestId: String, body: String, backend: SyncBackend): Unit =
   basicRequest
@@ -51,26 +50,24 @@ def handleEvent(body: String): String =
 
   System.err.println(s"[Native Lambda] path=$path name=$name")
 
-  s"""{
-  "statusCode": 200,
-  "headers": {
-    "Content-Type": "application/json",
-    "X-Powered-By": "Scala 3.3.8 / Scala Native 0.5.12 / sttp"
-  },
-  "body": "{\\"message\\":\\"Hello, $name! You called: $path\\",\\"path\\":\\"$path\\",\\"name\\":\\"$name\\"}"
-}"""
+  s"""|{
+      |  "statusCode": 200,
+      |  "headers": {
+      |    "Content-Type": "application/json",
+      |    "X-Powered-By": "Scala 3.3.8 / Scala Native 0.5.12 / sttp"
+      |  },
+      |  "body": "{\\"message\\":\\"Hello, $name! You called: $path\\",\\"path\\":\\"$path\\",\\"name\\":\\"$name\\"}"
+      |}""".stripMargin
 
 def extractQueryParam(json: String, param: String): Option[String] =
   extractJsonField(json, "rawQueryString").flatMap: qs =>
-    qs.split("&").map(_.split("=", 2)).collectFirst:
-      case Array(k, v) if k == param => v
+    qs.split("&")
+      .map(_.split("=", 2))
+      .collectFirst { case Array(k, v) if k == param => v }
 
 def extractJsonField(json: String, field: String): Option[String] =
   val key = s""""$field":""""
   val idx = json.indexOf(key)
-  if idx < 0 then None
-  else
-    val start  = idx + key.length
-    val endIdx = json.indexOf('"', start)
-    if endIdx < 0 then None
-    else Some(json.substring(start, endIdx))
+  Option.when(idx >= 0):
+    val start = idx + key.length
+    json.substring(start, json.indexOf('"', start))
