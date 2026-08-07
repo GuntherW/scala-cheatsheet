@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# code-maat Analyse-Pipeline für esap-hub-service
+# code-maat Analyse-Pipeline für scala-cheatsheet
 #
 # Voraussetzungen:
 #   - Java im PATH
@@ -34,7 +34,7 @@ do_log() {
     echo "=== [1] Git-Log erzeugen ==="
     git -C "${REPO_ROOT}" log --all --numstat --date=short \
         --pretty=format:'--%H--%ad--%aN' \
-        -- "service/src" "contract/src" "esap-types/src" \
+        -- "core/src" "zio/src" "zioHttp/src" "http4s/src" "munit/src" \
         > "${LOG}"
     echo "Commits im Log: $(grep -c '^--[a-f0-9]\{40\}' "${LOG}")"
 }
@@ -70,12 +70,13 @@ do_analyse() {
 do_loc() {
     echo "=== LOC zählen ==="
     echo "entity,lines" > "${DATA}/lines.csv"
-    find "${REPO_ROOT}/service/src/main/kotlin" \
-         "${REPO_ROOT}/contract/src/main/java" \
-         -name "*.kt" -o -name "*.java" 2>/dev/null | \
+    find "${REPO_ROOT}" \
+         -path "${REPO_ROOT}/target" -prune -o \
+         -path "${REPO_ROOT}/out" -prune -o \
+         -name "*.scala" -print 2>/dev/null | \
     xargs wc -l 2>/dev/null | \
     grep -v "^[[:space:]]*0\|total$" | \
-    awk '{gsub(/^[[:space:]]+/,""); gsub(/^.*esap-hub-service\//,"",$2); print $2","$1}' \
+    awk -v root="${REPO_ROOT}/" '{gsub(/^[[:space:]]+/,""); gsub(root,"",$2); print $2","$1}' \
     >> "${DATA}/lines.csv"
     echo "  $(wc -l < "${DATA}/lines.csv") Dateien erfasst"
 }

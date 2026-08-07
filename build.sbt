@@ -414,7 +414,8 @@ lazy val tapir = project
 lazy val scalajs = project
   .enablePlugins(ScalaJSPlugin)
   .settings(
-    scalaJSUseMainModuleInitializer := true,
+    scalaJSUseMainModuleInitializer             := true,
+    Test / scalaJSUseMainModuleInitializer      := false,
     libraryDependencies ++= Seq(
       "org.scala-js" % "scalajs-dom_sjs1_3" % Version.scalaJsDom,
       "com.lihaoyi"  % "utest_sjs1_3"       % Version.uTest % Test

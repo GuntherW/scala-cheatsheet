@@ -74,7 +74,7 @@ Sekunden und umfasst:
 ```bash
 repowise serve
 # oder:
-./documentation/archaeology/repowise/run-analysis.sh serve
+./docs/archaeology/repowise/run-analysis.sh serve
 ```
 
 Browser öffnen: **http://localhost:3000**
@@ -114,12 +114,8 @@ Zeigt:
 **Ergebnis für dieses Repository:**
 
 ```
-Hotspot: 5.57/10 · Average: 8.59/10 · Worst: 1.0/10 (LeiRecordImporter.kt)
-74.3% healthy (429 files) · 22.4% warning (35 files) · 3.4% alert (6 files)
-
-Validierung: 14/20 der schlechtesten Dateien hatten in den letzten 6 Monaten
-einen Bug-Fix — 7.3× häufiger als der Durchschnitt (70% vs. 10%).
-→ Der Score findet tatsächlich die Problemstellen.
+Hotspot: –/10 · Average: –/10 · Worst: –/10
+→ Nach dem ersten `repowise init` werden hier echte Werte stehen.
 ```
 
 ### Refactoring-Kandidaten
@@ -152,7 +148,7 @@ Findet:
 
 **Ergebnis für dieses Repository:**
 ```
-17 nicht erreichbare Dateien · 15 ungenutzte Exports · ~567 löschbare Zeilen
+→ Nach dem ersten `repowise init` werden hier echte Werte stehen.
 ```
 
 ### Change Risk
@@ -183,29 +179,29 @@ repowise hook install
 
 ## Ergebnisse aus diesem Repository
 
+> Diese Tabelle wird nach dem ersten `repowise init` mit echten Werten gefüllt.
+
 | Metrik | Wert |
 |---|---|
-| Analysierte Dateien | 468 |
-| Symbole | 3.410 |
-| Graph-Knoten | 4.736 |
-| Graph-Kanten | 10.437 |
-| Hotspots (Git) | 36 |
-| Durchschnittlicher Health-Score | 8.59/10 |
-| Schlechteste Datei | `LeiRecordImporter.kt` (1.0/10) |
-| Nicht erreichbare Dateien | 17 |
-| Ungenutzte Exports | 15 |
-| Wiki-Seiten | 598 |
-| Analysezeit | 37 Sekunden |
+| Analysierte Dateien | – |
+| Symbole | – |
+| Graph-Knoten | – |
+| Graph-Kanten | – |
+| Hotspots (Git) | – |
+| Durchschnittlicher Health-Score | –/10 |
+| Schlechteste Datei | – |
+| Nicht erreichbare Dateien | – |
+| Ungenutzte Exports | – |
+| Wiki-Seiten | – |
+| Analysezeit | – |
 
 ### Top-Refactoring-Kandidaten
 
+> Nach `repowise health --refactoring-targets` werden hier die Ergebnisse eingetragen.
+
 | Datei | Score | Hauptproblem |
 |---|---|---|
-| `LeiRecordImporter.kt` | 1.0 | `nested_complexity` (CCN 16, 7 Ebenen) |
-| `EsapSubmissionRepository.kt` | 2.9 | `untested_hotspot` |
-| `FeedbackRepository.kt` | 3.3 | `untested_hotspot` |
-| `SubmissionRepository.kt` | 3.6 | `co_change_scatter` |
-| `ValidationResult.kt` | 3.9 | `untested_hotspot` |
+| `…` | – | – |
 
 ---
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# SonarQube Analyse-Pipeline für esap-hub-service
+# SonarQube Analyse-Pipeline für scala-cheatsheet
 #
 # Voraussetzung: SonarQube läuft unter http://localhost:9000
 #   docker run -d --name sonarqube -p 9000:9000 sonarqube:community
@@ -9,7 +9,7 @@
 #   ./run-analysis.sh
 #
 # Optionen:
-#   ./run-analysis.sh build        # Nur Bytecode bauen
+#   ./run-analysis.sh build        # Nur Bytecode bauen (sbt compile)
 #   ./run-analysis.sh scan         # Nur Scanner ausführen (Token muss gesetzt sein)
 #   ./run-analysis.sh setup        # Projekt + Token automatisch anlegen (nur beim ersten Mal)
 #   ./run-analysis.sh open         # Dashboard im Browser öffnen
@@ -19,7 +19,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../../.." && pwd)"
 SONAR_URL="http://localhost:9000"
-PROJECT_KEY="esap-hub-service"
+PROJECT_KEY="scala-cheatsheet"
 
 # SonarScanner: entweder im PATH oder unter ~/tools/
 SCANNER=$(command -v sonar-scanner 2>/dev/null || \
@@ -80,7 +80,7 @@ do_setup() {
   echo "Projekt '${PROJECT_KEY}' angelegt (oder bereits vorhanden)"
 
   # Token erzeugen
-  TOKEN_NAME="esap-scan-$(date +%s)"
+  TOKEN_NAME="scala-cheatsheet-scan-$(date +%s)"
   TOKEN_JSON=$(curl -s -u "admin:${ADMIN_PASS}" \
     -X POST "${SONAR_URL}/api/user_tokens/generate" \
     -d "name=${TOKEN_NAME}&type=PROJECT_ANALYSIS_TOKEN&projectKey=${PROJECT_KEY}")
@@ -104,7 +104,7 @@ do_setup() {
 do_build() {
   echo "=== Bytecode bauen ==="
   cd "${REPO_ROOT}"
-  ./gradlew :service:classes :contract:classes 2>&1 | tail -5
+  sbt --client compile 2>&1 | tail -5
   echo "Build abgeschlossen."
 }
 
@@ -121,25 +121,28 @@ do_scan() {
 
   cd "${REPO_ROOT}"
 
-  # JaCoCo-Report optional einbinden
+  # JaCoCo-Report optional einbinden (sbt jacoco oder coverageReport)
   JACOCO_OPT=""
-  JACOCO_XML="service/build/reports/jacoco/test/jacocoTestReport.xml"
-  if [[ -f "${JACOCO_XML}" ]]; then
-    JACOCO_OPT="-Dsonar.coverage.jacoco.xmlReportPaths=${JACOCO_XML}"
-    echo "JaCoCo-Report gefunden: ${JACOCO_XML}"
+  JACOCO_XML="target/scala-3*/jacoco/report/jacoco.xml"
+  JACOCO_FOUND=$(ls ${REPO_ROOT}/${JACOCO_XML} 2>/dev/null | head -1 || true)
+  if [[ -n "${JACOCO_FOUND}" ]]; then
+    JACOCO_OPT="-Dsonar.coverage.jacoco.xmlReportPaths=${JACOCO_FOUND}"
+    echo "JaCoCo-Report gefunden: ${JACOCO_FOUND}"
   else
     echo "JaCoCo-Report nicht gefunden – Coverage wird nicht angezeigt."
-    echo "  ./gradlew :service:test :service:jacocoTestReport"
+    echo "  sbt --client coverage test coverageReport"
   fi
 
-  # Bytecode optional einbinden
+  # Bytecode optional einbinden (SBT legt classes unter target/scala-3*/classes ab)
   BINARIES_OPT=""
-  if [[ -d "service/build/classes/kotlin/main" ]]; then
-    BINARIES_OPT="-Dsonar.java.binaries=service/build/classes/kotlin/main,contract/build/classes/java/main"
+  CLASSES_DIR=$(ls -d "${REPO_ROOT}"/core/target/scala-3*/classes 2>/dev/null | head -1 || true)
+  if [[ -n "${CLASSES_DIR}" ]]; then
+    # Alle Modul-classes zusammensammeln
+    ALL_CLASSES=$(find "${REPO_ROOT}" -path "*/target/scala-3*/classes" -type d 2>/dev/null | tr '\n' ',' | sed 's/,$//')
+    BINARIES_OPT="-Dsonar.java.binaries=${ALL_CLASSES}"
     echo "Bytecode gefunden – Tiefenanalyse aktiv."
   else
-    echo "Kein Bytecode – nur Quelltextanalyse."
-    echo "  ./gradlew :service:classes :contract:classes"
+    echo "Kein Bytecode – nur Quelltextanalyse (sbt --client compile zuerst ausführen)."
   fi
 
   echo ""
@@ -148,8 +151,11 @@ do_scan() {
     -Dsonar.projectKey="${PROJECT_KEY}" \
     -Dsonar.host.url="${SONAR_URL}" \
     -Dsonar.token="${SONAR_TOKEN}" \
-    -Dsonar.sources=service/src/main/kotlin,contract/src/main/java,esap-types/src/main/kotlin \
-    -Dsonar.tests=service/src/test/kotlin \
+    -Dsonar.sources=. \
+    -Dsonar.inclusions="**/*.scala" \
+    -Dsonar.exclusions="**/target/**,**/out/**,**/node_modules/**" \
+    -Dsonar.tests=. \
+    -Dsonar.test.inclusions="**/*Test.scala,**/*Spec.scala,**/*Suite.scala" \
     ${BINARIES_OPT} \
     ${JACOCO_OPT} \
     2>&1 | grep -v "^$" | grep -E "Sensor|WARN|ERROR|SUCCESS|FAILURE|results at"

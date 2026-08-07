@@ -10,7 +10,7 @@ Das macht es zum idealen Werkzeug um **Risikobereiche** zu identifizieren:
 ## Schnellstart
 
 ```bash
-cd documentation/archaeology/code-maat
+cd docs/archaeology/code-maat
 ./run-analysis.sh          # Alles: Log → LOC → Analysen → Visualisierung
 ./run-analysis.sh open     # Visualisierung im Browser öffnen
 ```
@@ -51,7 +51,7 @@ aktuellen Stand des Repositories erzeugt und können **sofort** verwendet werden
 
 ```bash
 # Visualisierung direkt öffnen:
-xdg-open documentation/archaeology/code-maat/visualize/hotspots.html
+xdg-open docs/archaeology/code-maat/visualize/hotspots.html
 ```
 
 ## Analysen im Detail
@@ -68,15 +68,13 @@ Ausgabe: `entity,n-revs`
 
 **Top-Befunde aus diesem Repository:**
 
-| Datei | Revisionen |
-|---|---|
-| `application.yml` | 90 |
-| `SubmissionProcessor.kt` | 88 |
-| `SubmissionProcessorTest.kt` | 72 |
-| `SubmissionRepository.kt` | 54 |
-| `AdminController.kt` | 40 |
+ Datei | Revisionen |
+---|---|
+ `build.sbt` | – |
+ `core/src/main/scala/…` | – |
+ `zio/src/main/scala/…` | – |
 
-→ `SubmissionProcessor` + `SubmissionRepository` sind die hottest Hotspots.
+> Die Tabelle wird nach dem ersten Ausführen von `run-analysis.sh` mit echten Werten gefüllt.
 
 ### `coupling` – Temporale Kopplung
 
@@ -94,15 +92,11 @@ Ausgabe: `entity,coupled,degree,average-revs`
 
 **Auffällige Kopplung aus diesem Repository:**
 
-| Datei A | Datei B | Grad |
-|---|---|---|
-| `SecurityConfigDisabledTest` | `SecurityConfigEnabledTest` | 100% |
-| `AdminService` | `AdminServiceTest` | 94% |
-| `EsapRequestValidationService` | `EsapRequestValidationServiceTest` | 93% |
-| `metrics.html` | `submissions.html` | 90% |
+> Nach dem ersten Ausführen von `run-analysis.sh` werden hier echte Werte stehen.
 
-→ Die Admin-Templates ändern sich fast immer zusammen: kein Test, aber
-  ein Zeichen dass sie inhaltlich eng verzahnt sind.
+ Datei A | Datei B | Grad |
+---|---|---|
+ `…` | `…` | – |
 
 ### `authors` – Autoren pro Datei
 
@@ -117,8 +111,7 @@ Ausgabe: `entity,n-authors,n-revs`
 Hohe Autorenzahl = geteiltes Wissen (gut) **oder** zu viele Zuständige (schlecht).
 In Kombination mit hohen Revisionen ein Risikosignal.
 
-`application.yml` hat 9 Autoren bei 90 Revisionen → höchste Wissensverteilung,
-aber auch potenzielle Konfigurationskonflikte.
+`build.sbt` oder häufig geänderte Module haben typischerweise viele Autoren → hohes geteiltes Wissen, aber auch potenzielle Merge-Konflikte.
 
 ### `entity-churn` – Code Churn
 
@@ -189,7 +182,7 @@ Manuell:
 ```bash
 git log --all --numstat --date=short \
     --pretty=format:'--%H--%ad--%aN' \
-    -- "service/src" "contract/src" "esap-types/src" \
+    -- "core/src" "zio/src" "zioHttp/src" \
     > data/git.log
 ```
 
@@ -200,7 +193,7 @@ Um den Zeitraum einzuschränken:
 git log --all --numstat --date=short \
     --pretty=format:'--%H--%ad--%aN' \
     --after="6 months ago" \
-    -- "service/src" "contract/src" "esap-types/src" \
+    -- "core/src" "zio/src" "zioHttp/src" \
     > data/git.log
 ```
 

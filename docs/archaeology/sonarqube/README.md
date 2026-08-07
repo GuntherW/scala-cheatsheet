@@ -133,23 +133,16 @@ Bytecode ermöglicht tiefere Analysen (Datenfluss, Null-Checks). Ohne
 Bytecode läuft SonarQube im reinen Quelltextmodus.
 
 ```bash
-# Gradle:
-./gradlew classes
-
-# Maven:
-mvn compile
+# SBT:
+sbt --client compile
 ```
 
 ### 6b – Coverage-Report erzeugen (optional)
 
 ```bash
-# Gradle mit JaCoCo:
-./gradlew test jacocoTestReport
-# Report: build/reports/jacoco/test/jacocoTestReport.xml
-
-# Maven mit JaCoCo:
-mvn test
-# Report: target/site/jacoco/jacoco.xml
+# SBT mit scoverage:
+sbt --client coverage test coverageReport
+# Report: target/scala-3*/scoverage-report/scoverage.xml
 ```
 
 ### 6c – Scanner ausführen
@@ -162,19 +155,21 @@ sonar-scanner \
   -Dsonar.projectKey="${PROJECT_KEY}" \
   -Dsonar.host.url=http://localhost:9000 \
   -Dsonar.token="${SONAR_TOKEN}" \
-  -Dsonar.sources=src/main \
-  -Dsonar.tests=src/test \
-  -Dsonar.java.binaries=build/classes
+  -Dsonar.sources=. \
+  -Dsonar.inclusions="**/*.scala" \
+  -Dsonar.exclusions="**/target/**,**/out/**,**/node_modules/**" \
+  -Dsonar.tests=. \
+  -Dsonar.test.inclusions="**/*Test.scala,**/*Spec.scala,**/*Suite.scala" \
+  -Dsonar.java.binaries=core/target/scala-3.x/classes
 ```
 
 **Projektspezifische Pfade anpassen:**
 
-| Parameter | Gradle/Kotlin | Maven/Java |
-|---|---|---|
-| `sonar.sources` | `src/main/kotlin,src/main/java` | `src/main/java` |
-| `sonar.tests` | `src/test/kotlin` | `src/test/java` |
-| `sonar.java.binaries` | `build/classes/kotlin/main` | `target/classes` |
-| `sonar.coverage.jacoco.xmlReportPaths` | `build/reports/jacoco/test/jacocoTestReport.xml` | `target/site/jacoco/jacoco.xml` |
+| Parameter | SBT / Scala 3 |
+|---|---|
+| `sonar.inclusions` | `**/*.scala` |
+| `sonar.java.binaries` | `<modul>/target/scala-3*/classes` |
+| `sonar.coverage.jacoco.xmlReportPaths` | `target/scala-3*/jacoco/report/jacoco.xml` |
 
 Am Ende der Analyse:
 

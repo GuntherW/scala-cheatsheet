@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# repowise Starter für esap-hub-service
+# repowise Starter für scala-cheatsheet
 #
 # Aufruf:
 #   ./run-analysis.sh install    # repowise installieren
