@@ -1,0 +1,107 @@
+# AWS Lambda mit Scala 3 + Scala Native
+
+Eine AWS Lambda Function, geschrieben in **Scala 3.3.8** und kompiliert mit **Scala Native 0.5.12** zu einer nativen Linux-Binary. Deployed auf der **`provided.al2023` Custom Runtime** (Amazon Linux 2023) – kein JVM, kein Node.js.
+
+## Versionen
+
+| Komponente       | Version               |
+|------------------|-----------------------|
+| Scala            | 3.3.8 LTS             |
+| Scala Native     | 0.5.12                |
+| Lambda Runtime   | provided.al2023       |
+| Build-Umgebung   | Docker (amazonlinux:2023) |
+| Terraform        | >= 1.9                |
+
+## Architektur
+
+```
+handler.scala
+    │
+    ▼ scala-cli --native (Docker: amazonlinux:2023 + clang 15)
+    │
+dist/bootstrap          ← native ELF x86_64 Binary (~2.6 MB)
+    │
+lambda.zip              ← Deployment-Artefakt (~756 KB)
+    │
+    ▼ terraform apply
+    │
+AWS Lambda (provided.al2023)
+    └── HTTP-Loop: GET /invocation/next → handle → POST /response
+```
+
+Die Binary kommuniziert direkt über POSIX-Sockets mit dem [Lambda Runtime API](https://docs.aws.amazon.com/lambda/latest/dg/runtimes-api.html).
+
+## Projektstruktur
+
+```
+awsLambdaNative/
+├── handler.scala     # Lambda Handler (Scala 3 / Scala Native, POSIX HTTP)
+├── build.sh          # Build-Skript via Docker (amazonlinux:2023)
+├── main.tf           # Terraform: Lambda + IAM + Function URL
+├── dist/
+│   └── bootstrap     # Generierte native Binary (nach build.sh)
+└── lambda.zip        # Deployment-Artefakt (nach build.sh)
+```
+
+## Voraussetzungen
+
+- [Docker](https://docs.docker.com/get-docker/) (für den Build via amazonlinux:2023)
+- [Terraform](https://developer.hashicorp.com/terraform/install) >= 1.9
+- AWS Credentials in `~/.aws/credentials`
+
+Kein lokales Clang/LLVM nötig – der Build läuft vollständig in Docker.
+
+## Build
+
+```bash
+./build.sh
+```
+
+Das Skript:
+1. Startet einen `amazonlinux:2023` Docker-Container
+2. Installiert Java 21, Clang 15, Scala CLI
+3. Kompiliert `handler.scala` zu `dist/bootstrap` (native ELF x86_64)
+4. Packt es als `lambda.zip`
+
+Beim ersten Durchlauf dauert es ca. 2-3 Minuten (Downloads). Folgeläufe sind schneller da Docker-Layer gecacht sind.
+
+## Deployment
+
+```bash
+terraform init
+terraform plan
+terraform apply
+# Output: function_url = "https://<id>.lambda-url.eu-central-1.on.aws/"
+```
+
+## Aufruf
+
+```bash
+curl "$(terraform output -raw function_url)?name=Gunther"
+```
+
+Antwort:
+```json
+{
+  "statusCode": 200,
+  "headers": {"Content-Type": "application/json", "X-Powered-By": "Scala 3.3.8 / Scala Native 0.5.12"},
+  "body": "{\"message\":\"Hello, Gunther! You called: /\",\"path\":\"/\",\"name\":\"Gunther\"}"
+}
+```
+
+## Vergleich mit ScalaJS-Version
+
+| Eigenschaft        | awsLambdaScalaJS       | awsLambdaNative             |
+|--------------------|------------------------|-----------------------------|
+| Runtime            | Node.js 22.x           | provided.al2023 (kein JVM)  |
+| Binary-Größe (ZIP) | ~40 KB                 | ~756 KB                     |
+| Cold Start         | ~150ms                 | **<10ms** (kein VM-Start)   |
+| Memory             | 256 MB                 | **128 MB** (ausreichend)    |
+| Build-Tool         | scala-cli direkt       | scala-cli via Docker        |
+| HTTP-Client        | `java.net.URL`         | POSIX Sockets               |
+
+## Aufräumen
+
+```bash
+terraform destroy
+```

@@ -1,0 +1,17 @@
+### AWS Lambda Scala Native - Function URL Requests
+### Nach dem Deployment: terraform output function_url
+### URL hier eintragen:
+
+@baseUrl = https://rrb7ywp2g6x2n6jcxjoiinqhpa0sjvtk.lambda-url.eu-central-1.on.aws
+
+###
+# Hello World (kein Parameter)
+GET {{baseUrl}}/
+
+###
+# Mit name-Parameter
+GET {{baseUrl}}/?name=Gunther
+
+###
+# Mit anderem Pfad
+GET {{baseUrl}}/api/greet?name=World
