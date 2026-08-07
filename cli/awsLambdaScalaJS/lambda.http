@@ -1,0 +1,27 @@
+### AWS Lambda ScalaJS - Function URL Requests
+### Nach dem Deployment: terraform output function_url
+### URL hier eintragen:
+
+@baseUrl = https://brlyqak3ivwfuofdo53zfj2i3e0tvfvn.lambda-url.eu-central-1.on.aws
+
+###
+# Hello World (kein Parameter)
+GET {{baseUrl}}/
+
+###
+# Mit name-Parameter
+GET {{baseUrl}}/?name=Gunther
+
+###
+# Mit anderem Pfad
+GET {{baseUrl}}/api/greet?name=World
+
+###
+# POST (body wird ignoriert, demonstriert aber POST-Handling)
+POST {{baseUrl}}/
+Content-Type: application/json
+
+{
+  "name": "Gunther",
+  "action": "greet"
+}
