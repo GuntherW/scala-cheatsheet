@@ -1,9 +1,8 @@
-//> using dep tech.neander::cue4s::latest.release
+//> using dep tech.neander::cue4s::0.0.13
 
 import cue4s.*
 
 Prompts.sync.use: prompts =>
-
   val day = prompts
     .singleChoice("How was your day?", List("great", "okay"))
     .getOrThrow
