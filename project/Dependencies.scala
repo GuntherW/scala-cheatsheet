@@ -58,7 +58,7 @@ object Version {
   val skunk                   = "1.0.0"
   val springBoot              = "4.1.0"
   val sttp                    = "4.0.26"
-  val sttpOAuth               = "0.18.0"
+  val sttpOAuth               = "0.21.0"
   val sttpOpenAi              = "0.3.10"
   val squants                 = "1.8.3"
   val tapir                   = "1.13.30"
@@ -194,7 +194,7 @@ object Library {
   val sttpJsoniter              = "com.softwaremill.sttp.client4"         %% "jsoniter"                                  % Version.sttp
   val sttpsSlf4j                = "com.softwaremill.sttp.client4"         %% "slf4j-backend"                             % Version.sttp
   val sttpsOpenTelemetry        = "com.softwaremill.sttp.client4"         %% "opentelemetry-backend"                     % Version.sttp
-  val sttpOAuth                 = "com.ocadotechnology"                   %% "sttp-oauth2"                               % Version.sttpOAuth
+  val sttpOAuth                 = "org.polyvariant"                       %% "sttp-oauth2"                               % Version.sttpOAuth
   val sttpOpenAi                = "com.softwaremill.sttp.openai"          %% "core"                                      % Version.sttpOpenAi
   val squants                   = "org.typelevel"                         %% "squants"                                   % Version.squants
   val tapirAwsLambda            = "com.softwaremill.sttp.tapir"           %% "tapir-aws-lambda"                          % Version.tapir
