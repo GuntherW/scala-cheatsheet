@@ -4,12 +4,12 @@ import java.util.UUID
 import cats.effect.*
 import cats.implicits.*
 import CustomSupport.ActorName
-import doobie.util.transactor.Transactor
-import doobie.implicits.*
-import doobie.*
-import doobie.hikari.HikariTransactor
-import doobie.util.update.Update
-import doobie.util.{Get, Put, Read, Write}
+import org.typelevel.doobie.util.transactor.Transactor
+import org.typelevel.doobie.implicits.*
+import org.typelevel.doobie.*
+import org.typelevel.doobie.hikari.HikariTransactor
+import org.typelevel.doobie.util.update.Update
+import org.typelevel.doobie.util.{Get, Put, Read, Write}
 
 /** https://blog.rockthejvm.com/doobie/
   *
@@ -102,8 +102,8 @@ object DoobieDemo extends IOApp.Simple:
     sql"select name from actors".query[ActorName].to[List].transact(xa)
 
   // large queries
-  import doobie.postgres.*
-  import doobie.postgres.implicits.*
+  import org.typelevel.doobie.postgres.*
+  import org.typelevel.doobie.postgres.implicits.*
   def findMovieByTitle(title: String): IO[Option[Movie]] =
     val statement =
       sql"""

@@ -16,7 +16,7 @@ object Version {
   val cirisVersion            = "3.15.0"
   val chimney                 = "1.11.0"
   val constructs              = "10.8.1"
-  val doobie                  = "1.0.0-RC12"
+  val doobie                  = "1.0.0-RC13"
   val ducktape                = "0.2.13"
   val duckdb                  = "1.5.5.1"
   val fs2                     = "3.13.0"
@@ -119,9 +119,9 @@ object Library {
   val ciris                     = "is.cir"                                %% "ciris"                                     % Version.cirisVersion
   val cirisCirce                = "is.cir"                                %% "ciris-circe"                               % Version.cirisVersion
   val chimney                   = "io.scalaland"                          %% "chimney"                                   % Version.chimney
-  val doobieCore                = "org.tpolecat"                          %% "doobie-core"                               % Version.doobie
-  val doobiePostgres            = "org.tpolecat"                          %% "doobie-postgres"                           % Version.doobie
-  val doobieHirari              = "org.tpolecat"                          %% "doobie-hikari"                             % Version.doobie
+  val doobieCore                = "org.typelevel"                         %% "doobie-core"                               % Version.doobie
+  val doobiePostgres            = "org.typelevel"                         %% "doobie-postgres"                           % Version.doobie
+  val doobieHirari              = "org.typelevel"                         %% "doobie-hikari"                             % Version.doobie
   val ducktape                  = "io.github.arainko"                     %% "ducktape"                                  % Version.ducktape
   val duckdb                    = "org.duckdb"                             % "duckdb_jdbc"                               % Version.duckdb
   val fs2Core                   = "co.fs2"                                %% "fs2-core"                                  % Version.fs2
