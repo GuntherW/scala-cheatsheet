@@ -1,6 +1,6 @@
 //> using dep com.azure:azure-identity:1.18.1
 //> using dep com.azure:azure-storage-blob:12.32.0
-//> using dep com.lihaoyi::os-lib:0.11.9-M7
+//> using dep com.lihaoyi::os-lib:0.11.9-M8
 //> using file BlobService.scala
 //> using file XmlProcessor.scala
 
@@ -95,12 +95,12 @@ def stepDownload(mode: StorageMode): Unit =
 case class ProcessLogEntry(originalZip: String, newXmlName: String, newZipName: String, oldSeq: Int, newSeq: Int, status: String, message: String)
 
 def writeProcessedMd(entries: List[ProcessLogEntry], timestamp: String): Unit =
-  def orDash(s: String)  = if s.nonEmpty then s else "-"
-  def seqOrDash(n: Int)  = if n > 0 then n.toString else "-"
+  def orDash(s: String) = if s.nonEmpty then s else "-"
+  def seqOrDash(n: Int) = if n > 0 then n.toString else "-"
 
-  val header = "| Original-ZIP | Neue XML | Neue ZIP | Seq alt | Seq neu | Status | Hinweis |"
+  val header  = "| Original-ZIP | Neue XML | Neue ZIP | Seq alt | Seq neu | Status | Hinweis |"
   val divider = "|---|---|---|---|---|---|---|"
-  val rows = entries.map { e =>
+  val rows    = entries.map { e =>
     s"| ${e.originalZip} | ${orDash(e.newXmlName)} | ${orDash(e.newZipName)} | ${seqOrDash(e.oldSeq)} | ${seqOrDash(e.newSeq)} | ${e.status} | ${e.message.replace("|", "\\|")} |"
   }
 
@@ -134,10 +134,10 @@ def stepProcess(): Unit =
         println("UEBERSPRUNGEN")
         println(s"    Grund:    $msg")
         acc.copy(skipped = acc.skipped + 1, log = acc.log :+ ProcessLogEntry(zipPath.last, "", "", 0, 0, "UEBERSPRUNGEN", msg))
-      case Left(msg) =>
+      case Left(msg)                                 =>
         println(s"FEHLER: $msg")
         acc.copy(error = acc.error + 1, log = acc.log :+ ProcessLogEntry(zipPath.last, "", "", 0, 0, "FEHLER", msg))
-      case Right(r) =>
+      case Right(r)                                  =>
         println("OK")
         println(s"    XML:      ${r.newXmlName}")
         println(s"    ZIP:      ${r.newZipName}")

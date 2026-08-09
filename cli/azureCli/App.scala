@@ -2,7 +2,7 @@
 //> using dep com.azure:azure-identity:1.18.1
 //> using dep com.azure:azure-storage-blob:12.32.0
 //> using dep xyz.matthieucourt::layoutz:0.8.0
-//> using dep com.lihaoyi::os-lib:0.11.9-M7
+//> using dep com.lihaoyi::os-lib:0.11.9-M8
 //> using dep com.softwaremill.ox::core:1.0.6
 //> using file BlobService.scala
 //> using file Model.scala
@@ -235,7 +235,7 @@ object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
 
   private def loadContainerData(client: BlobServiceClient): Try[SortedMap[String, List[BlobInfo]]] = Try {
     val containers = listContainers(client)
-    val results    = par(containers.map(name => () => { name -> loadBlobs(client, name) }))
+    val results    = par(containers.map(name => () => name -> loadBlobs(client, name)))
 
     given Ordering[String] = Ordering.by { name =>
       if name == "esapsdeunr" then (0, "")
@@ -275,7 +275,7 @@ object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
   private def computeFlatItems(state: AppState): List[NodeView] =
     val items = par(
       state.containers.toList
-        .map { (containerName, blobs) => () => (containerName, buildTreeStructure(containerName, blobs)) }
+        .map((containerName, blobs) => () => (containerName, buildTreeStructure(containerName, blobs)))
     )
     items.toList
       .flatMap { (_, root) =>
@@ -293,14 +293,15 @@ object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
     case dir: DirView   =>
       if expandedPaths.contains(dir.fullPath)
       then
-        dir :: dir.children.values.toList
-          .sortWith { (a, b) =>
-            (a, b) match
-              case (fa: FileView, fb: FileView) => extractTimestamp(fa.name) > extractTimestamp(fb.name)
-              case _                            => a.name < b.name
-          }
-          .take(10)
-          .flatMap(child => flattenNode(child, expandedPaths))
+        dir ::
+          dir.children.values.toList
+            .sortWith { (a, b) =>
+              (a, b) match
+                case (fa: FileView, fb: FileView) => extractTimestamp(fa.name) > extractTimestamp(fb.name)
+                case _                            => a.name < b.name
+            }
+            .take(10)
+            .flatMap(child => flattenNode(child, expandedPaths))
       else List(dir)
 
   private def loadLocalItems(path: String): List[ItemLocal] =
