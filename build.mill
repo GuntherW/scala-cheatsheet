@@ -262,7 +262,7 @@ object Version:
   val mongo                   = "5.2.1"
   val monocle                 = "3.3.0"
   val neotype                 = "0.7.0"
-  val openTelemetry           = "1.64.0"
+  val openTelemetry           = "1.65.0"
   val osLib                   = "0.11.8"
   val ox                      = "1.0.6"
   val proteus                 = "0.6.0"
