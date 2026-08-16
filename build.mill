@@ -304,7 +304,7 @@ object Version:
 
   // Test
   val cucumber              = "7.34.6"
-  val cucumberScala         = "8.39.3"
+  val cucumberScala         = "8.39.5"
   val junit                 = "6.1.2"
   val junitJupiterInterface = "0.19.0"
   val jmh                   = "1.37"
