@@ -75,7 +75,7 @@ object Version {
   val zioKafka                = "3.7.0"
   val zioHttp                 = "3.11.3"
   val zioPrelude              = "1.0.0-RC48"
-  val zioSchema               = "1.8.5"
+  val zioSchema               = "1.8.6"
   val zioOpenAI               = "0.4.1"
 
   // ScalaJS
