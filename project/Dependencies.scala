@@ -33,7 +33,7 @@ object Version {
   val jsoniter                = "2.40.1"
   val kafka                   = "4.3.1"
   val kyo                     = "0.19.0"
-  val logback                 = "1.6.1"
+  val logback                 = "1.6.3"
   val log4j                   = "2.26.1"
   val macwire                 = "2.6.7"
   val magnolia                = "1.3.23"
