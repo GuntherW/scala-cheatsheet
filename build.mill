@@ -291,7 +291,7 @@ object Version:
   val yaes                    = "0.21.0"
   val zio                     = "2.1.26"
   val zioJson                 = "0.10.0"
-  val zioKafka                = "3.7.0"
+  val zioKafka                = "3.7.1"
   val zioHttp                 = "3.10.0"
   val zioPrelude              = "1.0.0-RC41"
   val zioSchema               = "1.5.0"
