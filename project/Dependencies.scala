@@ -83,7 +83,7 @@ object Version {
   val uTest      = "0.9.5"
 
   // Test
-  val cucumber              = "7.34.6"
+  val cucumber              = "7.34.7"
   val cucumberScala         = "8.39.3"
   val junit                 = "6.1.2"
   val junitJupiterInterface = "0.19.0"
