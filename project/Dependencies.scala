@@ -56,7 +56,7 @@ object Version {
   val scalasql                = "0.3.1"
   val scodec                  = "2.3.3"
   val skunk                   = "1.0.0"
-  val springBoot              = "4.1.0"
+  val springBoot              = "4.1.1"
   val sttp                    = "4.0.26"
   val sttpOAuth               = "0.18.0"
   val sttpOpenAi              = "0.3.10"
