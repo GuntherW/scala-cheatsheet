@@ -90,7 +90,7 @@ object Version {
   val mockito               = "5.23.0"
   val munit                 = "1.3.4"
   val munitScalaCheck       = "1.3.0"
-  val scalaCheck            = "1.19.0"
+  val scalaCheck            = "1.20.0"
   val scalaMock             = "7.5.5"
   val scalaTest             = "3.2.20"
   val testContainer         = "0.44.1"
