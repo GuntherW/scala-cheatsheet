@@ -1,6 +1,7 @@
 # Filesystem MCP Server
 
-Ein lokaler MCP-Server in Scala 3 (Scala CLI), der dem KI-Assistenten Zugriff auf das lokale Dateisystem gibt.
+Ein lokaler MCP-Server (Model Context Protokoll) in Scala 3 (Scala CLI), der dem KI-Assistenten Zugriff auf das lokale
+Dateisystem gibt.
 
 Gebaut mit [Chimp](https://github.com/softwaremill/chimp) (`chimp-server-ox`) und Ox (direct style).
 

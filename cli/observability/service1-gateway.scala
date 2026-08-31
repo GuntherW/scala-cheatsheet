@@ -1,18 +1,17 @@
-//> using scala 3.8.4
 //> using file otel.scala
 //> using resourceDir .
 //> using dep com.softwaremill.sttp.tapir::tapir-netty-server-sync:1.13.30
-//> using dep com.softwaremill.sttp.tapir::tapir-json-circe:1.13.30
-//> using dep com.softwaremill.sttp.tapir::tapir-opentelemetry-tracing:1.13.30
+//> using dep com.softwaremill.sttp.tapir::tapir-json-circe:1.13.31
+//> using dep com.softwaremill.sttp.tapir::tapir-opentelemetry-tracing:1.13.31
 //> using dep com.softwaremill.sttp.client4::core:4.0.26
 //> using dep com.softwaremill.sttp.client4::circe:4.0.26
 //> using dep io.circe::circe-generic:0.14.16
-//> using dep io.opentelemetry:opentelemetry-api:1.64.0
-//> using dep io.opentelemetry:opentelemetry-sdk:1.64.0
-//> using dep io.opentelemetry:opentelemetry-exporter-otlp:1.64.0
+//> using dep io.opentelemetry:opentelemetry-api:1.65.0
+//> using dep io.opentelemetry:opentelemetry-sdk:1.65.0
+//> using dep io.opentelemetry:opentelemetry-exporter-otlp:1.65.0
 //> using dep io.opentelemetry.semconv:opentelemetry-semconv:1.43.0
 //> using dep io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:2.30.0-alpha
-//> using dep ch.qos.logback:logback-classic:1.6.1
+//> using dep ch.qos.logback:logback-classic:1.6.3
 
 import io.circe.generic.auto.*
 import io.opentelemetry.api.metrics.{LongCounter, LongHistogram}
