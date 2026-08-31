@@ -2,19 +2,21 @@ import chimp.client.*
 import chimp.client.transport.ClientHttpTransport
 import chimp.protocol.*
 import chimp.server.StreamingMcpServer
+import chimp.server.ox.OxServerHttpTransport
 import io.circe.Decoder
 import io.circe.syntax.*
 import munit.FunSuite
 import os.Path
-import ox.{discard, supervised, useInScope}
+import ox.{supervised, useInScope}
 import sttp.client4.{DefaultSyncBackend, SyncBackend}
 import sttp.model.Uri.UriContext
 import sttp.shared.Identity
 import sttp.tapir.server.netty.sync.NettySyncServer
 
-import java.net.ServerSocket
 import java.util.concurrent.CountDownLatch
+import java.util.concurrent.atomic.AtomicInteger
 import scala.util.chaining.scalaUtilChainingOps
+import scala.util.Try
 
 class FilesystemMcpServerTest extends FunSuite:
 
@@ -26,10 +28,6 @@ class FilesystemMcpServerTest extends FunSuite:
   os.write(tmpDir / "sub" / "nested.txt", "nested content with keyword FIND_ME here")
 
   // --- Server + Client Lifecycle ---
-  val port: Int =
-    val s = ServerSocket(0)
-    try s.getLocalPort finally s.close()
-
   var client: McpClient[Identity] = null
   var serverShutdown: () => Unit  = () => ()
   var backend: SyncBackend        = null
@@ -37,25 +35,28 @@ class FilesystemMcpServerTest extends FunSuite:
   override def beforeAll(): Unit =
     val ready    = CountDownLatch(1)
     val shutdown = CountDownLatch(1)
+    val portRef  = new AtomicInteger(0)
 
     Thread.ofVirtual().start: () =>
       supervised:
-        val endpoint = chimp.server.ox.OxServerHttpTransport(List("mcp")).serve:
+        val endpoint = OxServerHttpTransport(List("mcp")).serve:
           StreamingMcpServer[Identity]()
             .addTool(listDirTool)
             .addTool(readFileTool)
             .addTool(searchInFilesTool)
             .addTool(fileInfoTool)
-        useInScope(NettySyncServer().port(port).addEndpoint(endpoint).start())(_.stop()).discard
+        val binding  = useInScope(NettySyncServer().port(0).addEndpoint(endpoint).start())(_.stop())
+        portRef.set(binding.port)
         serverShutdown = () => shutdown.countDown()
         ready.countDown()
         shutdown.await()
 
     ready.await()
+    val port = portRef.get()
 
     backend = DefaultSyncBackend()
     val transport = ClientHttpTransport[Identity](backend, uri"http://localhost:$port/mcp")
-    client = Iterator.continually(scala.util.Try(McpClient[Identity](transport, Implementation("test-client", "0.0.1"))))
+    client = Iterator.continually(Try(McpClient[Identity](transport, Implementation("test-client", "0.0.1"))))
       .flatMap(_.toOption)
       .tap(_ => Thread.sleep(50))
       .next()
@@ -64,6 +65,7 @@ class FilesystemMcpServerTest extends FunSuite:
     client.close()
     backend.close()
     serverShutdown()
+//    os.remove.all(tmpDir)
 
   // --- Hilfsfunktionen ---
   extension (result: CallToolResult)
@@ -81,7 +83,7 @@ class FilesystemMcpServerTest extends FunSuite:
     val output = result.as[DirListOutput]
     assert(output.entries.exists(_.name == "hello.txt"), s"Erwartet 'hello.txt' in: $output")
     assert(output.entries.exists(_.kind == "directory"), s"Erwartet kind=directory in: $output")
-    assert(output.entries.exists(_.name == "sub"),       s"Erwartet 'sub' in: $output")
+    assert(output.entries.exists(_.name == "sub"), s"Erwartet 'sub' in: $output")
 
   test("list_directory meldet Fehler bei nicht-existentem Pfad"):
     assert(client.callTool("list_directory", ListDirInput("/pfad/existiert/nicht").asJson).isError)
@@ -89,7 +91,7 @@ class FilesystemMcpServerTest extends FunSuite:
   test("read_file liest Dateiinhalt korrekt"):
     val text = client.callTool("read_file", ReadFileInput(tmpFile.toString).asJson).asText
     assert(text.contains("Hello, MCP!"), s"Erwartet Dateiinhalt in:\n$text")
-    assert(text.contains("Line two"),    s"Erwartet 'Line two' in:\n$text")
+    assert(text.contains("Line two"), s"Erwartet 'Line two' in:\n$text")
 
   test("read_file meldet Fehler bei Verzeichnis-Pfad"):
     assert(client.callTool("read_file", ReadFileInput(tmpDir.toString).asJson).isError)
@@ -102,7 +104,7 @@ class FilesystemMcpServerTest extends FunSuite:
     assert(!result.isError)
     val output = result.as[SearchResultOutput]
     assert(output.matches.exists(_.file.contains("nested.txt")), s"Erwartet 'nested.txt' in: $output")
-    assert(output.matches.exists(_.text.contains("FIND_ME")),    s"Erwartet 'FIND_ME' in: $output")
+    assert(output.matches.exists(_.text.contains("FIND_ME")), s"Erwartet 'FIND_ME' in: $output")
 
   test("search_in_files meldet keine Treffer wenn Muster fehlt"):
     val result = client.callTool("search_in_files", SearchInFilesInput(tmpDir.toString, "GIBT_ES_NICHT_XYZ").asJson)
@@ -113,7 +115,7 @@ class FilesystemMcpServerTest extends FunSuite:
     val result = client.callTool("file_info", FileInfoInput(tmpFile.toString).asJson)
     assert(!result.isError)
     val output = result.as[FileInfoOutput]
-    assertEquals(output.kind,     "file")
+    assertEquals(output.kind, "file")
     assertEquals(output.readable, true)
     assert(output.path.contains("hello.txt"), s"Erwartet 'hello.txt' in: ${output.path}")
 
