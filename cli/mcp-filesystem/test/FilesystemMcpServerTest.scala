@@ -9,8 +9,14 @@ class FilesystemMcpServerTest extends FunSuite:
   val server = McpServerFixture:
     _.addTool(listDirTool)
       .addTool(readFileTool)
+      .addTool(writeFileTool)
+      .addTool(editFileTool)
       .addTool(searchInFilesTool)
+      .addTool(globTool)
       .addTool(fileInfoTool)
+      .addTool(createDirectoryTool)
+      .addTool(moveTool)
+      .addTool(copyTool)
 
   override def munitFixtures = List(server)
 
@@ -68,6 +74,89 @@ class FilesystemMcpServerTest extends FunSuite:
     val result = server().callTool("file_info", FileInfoInput(tmpDir.toString).asJson)
     assert(!result.isError)
     assertEquals(result.as[FileInfoOutput].kind, "directory")
+
+  // --- write_file ---
+  test("write_file erstellt neue Datei"):
+    val newFile = tmpDir / "created.txt"
+    val result  = server().callTool("write_file", WriteFileInput(newFile.toString, "hello write").asJson)
+    assert(!result.isError)
+    assert(os.exists(newFile))
+    assertEquals(os.read(newFile), "hello write")
+
+  test("write_file überschreibt bestehende Datei"):
+    val f = tmpDir / "overwrite.txt"
+    os.write(f, "old content")
+    assert(!server().callTool("write_file", WriteFileInput(f.toString, "new content").asJson).isError)
+    assertEquals(os.read(f), "new content")
+
+  test("write_file erstellt fehlende Verzeichnisse"):
+    val deep = tmpDir / "a" / "b" / "c.txt"
+    assert(!server().callTool("write_file", WriteFileInput(deep.toString, "deep").asJson).isError)
+    assert(os.exists(deep))
+
+  // --- edit_file ---
+  test("edit_file ersetzt eindeutigen String"):
+    val f = tmpDir / "edit.txt"
+    os.write(f, "foo bar baz")
+    assert(!server().callTool("edit_file", EditFileInput(f.toString, "bar", "QUX").asJson).isError)
+    assertEquals(os.read(f), "foo QUX baz")
+
+  test("edit_file meldet Fehler wenn oldString nicht gefunden"):
+    val f = tmpDir / "edit2.txt"
+    os.write(f, "some content")
+    assert(server().callTool("edit_file", EditFileInput(f.toString, "NICHT_DA", "x").asJson).isError)
+
+  test("edit_file meldet Fehler bei mehrfachem Match"):
+    val f = tmpDir / "edit3.txt"
+    os.write(f, "x x x")
+    assert(server().callTool("edit_file", EditFileInput(f.toString, "x", "y").asJson).isError)
+
+  // --- glob ---
+  test("glob findet Dateien nach Erweiterung"):
+    val result = server().callTool("glob", GlobInput(tmpDir.toString, "*.txt").asJson)
+    assert(!result.isError)
+    val output = result.as[GlobOutput]
+    assert(output.files.exists(_.contains("hello.txt")), s"Erwartet 'hello.txt' in: $output")
+
+  test("glob gibt leere Liste bei keinem Treffer"):
+    val result = server().callTool("glob", GlobInput(tmpDir.toString, "*.xyz").asJson)
+    assert(!result.isError)
+    assertEquals(result.as[GlobOutput].count, 0)
+
+  // --- create_directory ---
+  test("create_directory legt Verzeichnis an"):
+    val newDir = tmpDir / "newdir" / "sub"
+    assert(!server().callTool("create_directory", CreateDirectoryInput(newDir.toString).asJson).isError)
+    assert(os.isDir(newDir))
+
+  // --- move ---
+  test("move verschiebt eine Datei"):
+    val src = tmpDir / "move_src.txt"
+    val dst = tmpDir / "move_dst.txt"
+    os.write(src, "move me")
+    assert(!server().callTool("move", MoveInput(src.toString, dst.toString).asJson).isError)
+    assert(!os.exists(src))
+    assert(os.exists(dst))
+    assertEquals(os.read(dst), "move me")
+
+  test("move meldet Fehler bei nicht-existenter Quelle"):
+    assert(server().callTool("move", MoveInput((tmpDir / "ghost.txt").toString, (tmpDir / "x.txt").toString).asJson).isError)
+
+  // --- copy ---
+  test("copy kopiert eine Datei"):
+    val src = tmpDir / "copy_src.txt"
+    val dst = tmpDir / "copy_dst.txt"
+    os.write(src, "copy me")
+    assert(!server().callTool("copy", CopyInput(src.toString, dst.toString).asJson).isError)
+    assert(os.exists(src))
+    assert(os.exists(dst))
+    assertEquals(os.read(dst), "copy me")
+
+  // --- read_file mit offset/limit ---
+  test("read_file liest mit offset und limit"):
+    val text = server().callTool("read_file", ReadFileInput(tmpFile.toString, offset = 2, limit = Some(1)).asJson).asText
+    assert(text.contains("Line two"), s"Erwartet 'Line two' in:\n$text")
+    assert(!text.contains("Hello, MCP!"), s"Erwartet keine erste Zeile in:\n$text")
 
   // --- Hilfsfunktionen ---
   extension (result: CallToolResult)

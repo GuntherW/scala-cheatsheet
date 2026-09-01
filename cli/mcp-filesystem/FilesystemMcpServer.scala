@@ -7,9 +7,15 @@ import sttp.tapir.server.netty.sync.NettySyncServer
 
 // --- MCP Input-Typen ---
 case class ListDirInput(path: String) derives Codec, Schema
-case class ReadFileInput(path: String) derives Codec, Schema
+case class ReadFileInput(path: String, offset: Int = 1, limit: Option[Int] = None) derives Codec, Schema
+case class WriteFileInput(path: String, content: String, createDirs: Boolean = true) derives Codec, Schema
+case class EditFileInput(path: String, oldString: String, newString: String) derives Codec, Schema
 case class SearchInFilesInput(directory: String, pattern: String, fileExtension: String = "*", maxResults: Int = 50) derives Codec, Schema
+case class GlobInput(path: String, pattern: String) derives Codec, Schema
 case class FileInfoInput(path: String) derives Codec, Schema
+case class CreateDirectoryInput(path: String) derives Codec, Schema
+case class MoveInput(from: String, to: String, createDirs: Boolean = true) derives Codec, Schema
+case class CopyInput(from: String, to: String, createDirs: Boolean = true) derives Codec, Schema
 
 // --- MCP Output-Typen (strukturierte Rückgaben) ---
 case class DirEntryOutput(name: String, kind: String, size: Option[String]) derives Codec, Schema
@@ -17,6 +23,7 @@ case class DirListOutput(path: String, count: Int, entries: List[DirEntryOutput]
 case class SearchMatchOutput(file: String, line: Int, text: String) derives Codec, Schema
 case class SearchResultOutput(pattern: String, count: Int, matches: List[SearchMatchOutput]) derives Codec, Schema
 case class FileInfoOutput(path: String, kind: String, size: Option[String], lastModified: String, readable: Boolean, writable: Boolean) derives Codec, Schema
+case class GlobOutput(pattern: String, count: Int, files: List[String]) derives Codec, Schema
 
 // --- MCP Tools ---
 val listDirTool = tool("list_directory")
@@ -43,18 +50,22 @@ val listDirTool = tool("list_directory")
             ToolResult.structured(output)
 
 val readFileTool = tool("read_file")
-  .description("Reads the full content of a text file on the local filesystem. Returns an error for binary files or files larger than 1 MB.")
+  .description(
+    """|Reads the content of a text file on the local filesystem. Returns an error for binary files or files larger than 10 MB.
+       |Use offset (1-indexed line number) and limit to read specific sections of large files.""".stripMargin
+  )
   .input[ReadFileInput]
   .handle: input =>
     safePath(input.path) match
       case Left(err)   => ToolResult.error(err)
       case Right(path) =>
-        readFile(path) match
+        readFile(path, input.offset, input.limit) match
           case Left(err) => ToolResult.error(err)
           case Right(fc) =>
+            val rangeInfo = s"Lines ${input.offset}-${input.offset + fc.text.linesIterator.length - 1} of ${fc.totalLines}"
             ToolResult.text:
               s"""|File: ${fc.path}
-                  |Size: ${formatSize(fc.sizeBytes)}
+                  |Size: ${formatSize(fc.sizeBytes)} | $rangeInfo
                   |
                   |${fc.text}""".stripMargin
 
@@ -101,12 +112,94 @@ val fileInfoTool = tool("file_info")
             )
             ToolResult.structured(output)
 
+val writeFileTool = tool("write_file")
+  .description("Creates or overwrites a file with the given content. Creates parent directories if createDirs is true (default).")
+  .input[WriteFileInput]
+  .handle: input =>
+    safePath(input.path) match
+      case Left(err)   => ToolResult.error(err)
+      case Right(path) =>
+        writeFile(path, input.content, input.createDirs) match
+          case Left(err) => ToolResult.error(err)
+          case Right(_)  => ToolResult.text(s"File written: $path")
+
+val editFileTool = tool("edit_file")
+  .description(
+    """|Performs an exact string replacement in a file (oldString → newString).
+       |Fails if oldString is not found or matches more than once — provide more surrounding context in that case.""".stripMargin
+  )
+  .input[EditFileInput]
+  .handle: input =>
+    safePath(input.path) match
+      case Left(err)   => ToolResult.error(err)
+      case Right(path) =>
+        editFile(path, input.oldString, input.newString) match
+          case Left(err) => ToolResult.error(err)
+          case Right(_)  => ToolResult.text(s"Edit applied: $path")
+
+val globTool = tool("glob")
+  .description(
+    """|Fast file pattern matching. Supports glob patterns like "*.scala" or "**/*.ts".
+       |Returns matching file paths relative to the given base path.""".stripMargin
+  )
+  .input[GlobInput]
+  .output[GlobOutput]
+  .handle: input =>
+    safePath(input.path) match
+      case Left(err)   => ToolResult.error(err)
+      case Right(path) =>
+        globFiles(path, input.pattern) match
+          case Left(err)    => ToolResult.error(err)
+          case Right(files) =>
+            ToolResult.structured(GlobOutput(input.pattern, files.size, files.map(_.toString)))
+
+val createDirectoryTool = tool("create_directory")
+  .description("Creates a directory and all its parent directories if they do not exist.")
+  .input[CreateDirectoryInput]
+  .handle: input =>
+    safePath(input.path) match
+      case Left(err)   => ToolResult.error(err)
+      case Right(path) =>
+        createDirectory(path) match
+          case Left(err) => ToolResult.error(err)
+          case Right(_)  => ToolResult.text(s"Directory created: $path")
+
+val moveTool = tool("move")
+  .description("Moves or renames a file or directory. Creates parent directories of the target if createDirs is true (default).")
+  .input[MoveInput]
+  .handle: input =>
+    (safePath(input.from), safePath(input.to)) match
+      case (Left(err), _)         => ToolResult.error(err)
+      case (_, Left(err))         => ToolResult.error(err)
+      case (Right(from), Right(to)) =>
+        movePath(from, to, input.createDirs) match
+          case Left(err) => ToolResult.error(err)
+          case Right(_)  => ToolResult.text(s"Moved: $from → $to")
+
+val copyTool = tool("copy")
+  .description("Copies a file or directory to a new location. Creates parent directories of the target if createDirs is true (default).")
+  .input[CopyInput]
+  .handle: input =>
+    (safePath(input.from), safePath(input.to)) match
+      case (Left(err), _)         => ToolResult.error(err)
+      case (_, Left(err))         => ToolResult.error(err)
+      case (Right(from), Right(to)) =>
+        copyPath(from, to, input.createDirs) match
+          case Left(err) => ToolResult.error(err)
+          case Right(_)  => ToolResult.text(s"Copied: $from → $to")
+
 def mcpServer: StreamingMcpServer[Identity] =
   StreamingMcpServer[Identity]()
     .addTool(listDirTool)
     .addTool(readFileTool)
+    .addTool(writeFileTool)
+    .addTool(editFileTool)
     .addTool(searchInFilesTool)
+    .addTool(globTool)
     .addTool(fileInfoTool)
+    .addTool(createDirectoryTool)
+    .addTool(moveTool)
+    .addTool(copyTool)
 
 // HTTP – für manuelle Nutzung / Tests
 @main def filesystemMcpServer(): Unit =

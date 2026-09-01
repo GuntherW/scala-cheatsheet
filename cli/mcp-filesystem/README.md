@@ -9,14 +9,20 @@ Gebaut mit [Chimp](https://github.com/softwaremill/chimp) (`chimp-server-ox`) un
 
 ## Was tut dieser Server?
 
-LLMs haben von sich aus keinen Zugriff auf das lokale Dateisystem. Dieser MCP-Server stellt vier Tools bereit:
+LLMs haben von sich aus keinen Zugriff auf das lokale Dateisystem. Dieser MCP-Server stellt folgende Tools bereit:
 
-| Tool              | Beschreibung                                                                         |
-|-------------------|--------------------------------------------------------------------------------------|
-| `list_directory`  | Listet den Inhalt eines Verzeichnisses auf (Dateien + Unterordner, mit Größen)       |
-| `read_file`       | Liest den Textinhalt einer Datei (max. 1 MB)                                         |
-| `search_in_files` | Sucht per Regex rekursiv in Dateien eines Verzeichnisses, filterbar nach Dateiendung |
-| `file_info`       | Gibt Metadaten zu einer Datei oder einem Verzeichnis aus (Größe, Datum, Rechte)      |
+| Tool                | Beschreibung                                                                                         |
+|---------------------|------------------------------------------------------------------------------------------------------|
+| `list_directory`    | Listet den Inhalt eines Verzeichnisses auf (Dateien + Unterordner, mit Größen)                       |
+| `read_file`         | Liest den Textinhalt einer Datei (max. 10 MB); optional mit `offset` und `limit` (Zeilennummern)    |
+| `write_file`        | Erstellt oder überschreibt eine Datei; legt fehlende Elternverzeichnisse automatisch an              |
+| `edit_file`         | Ersetzt einen eindeutigen String in einer Datei (`oldString` → `newString`)                          |
+| `search_in_files`   | Sucht per Regex rekursiv in Dateien eines Verzeichnisses, filterbar nach Dateiendung                 |
+| `glob`              | Findet Dateien per Glob-Pattern (z. B. `*.scala`, `**/*.ts`) ohne Inhalt zu lesen                   |
+| `file_info`         | Gibt Metadaten zu einer Datei oder einem Verzeichnis aus (Größe, Datum, Rechte)                      |
+| `create_directory`  | Legt ein Verzeichnis inkl. aller fehlenden Elternverzeichnisse an                                    |
+| `move`              | Verschiebt oder benennt eine Datei oder ein Verzeichnis um                                           |
+| `copy`              | Kopiert eine Datei oder ein Verzeichnis an einen neuen Ort                                           |
 
 ---
 
@@ -49,7 +55,7 @@ Der Server hat zwei Einstiegspunkte:
 | `filesystemMcpServer`      | HTTP via `OxServerHttpTransport`   | Manuell / Tests        |
 | `filesystemMcpServerStdio` | stdio via `OxServerStdioTransport` | OpenCode / MCP-Clients |
 
-Beide nutzen dieselbe `mcpServer`-Definition mit allen vier Tools.
+Beide nutzen dieselbe `mcpServer`-Definition mit allen zehn Tools.
 
 - **Effect-System:** `Identity` (synchron, Ox-kompatibel)
 - **Server-Framework:** Tapir + Netty (`NettySyncServer`) für HTTP; JDK stdio für stdio
@@ -125,10 +131,19 @@ Server einmal manuell starten, OpenCode verbindet sich per HTTP. Vorteil: kein C
 ### filesystem (lokal)
 
 Der MCP-Server `filesystem` gibt Zugriff auf das lokale Dateisystem. Nutze ihn, wenn du:
+
 - Verzeichnisinhalte auflisten sollst: Tool `list_directory` mit `path`
 - Dateien lesen sollst: Tool `read_file` mit `path`
+  - Für große Dateien: `offset` (1-basierte Zeilennummer) und `limit` (Anzahl Zeilen) angeben
+- Dateien schreiben oder erstellen sollst: Tool `write_file` mit `path` und `content`
+- Dateien gezielt bearbeiten sollst: Tool `edit_file` mit `path`, `oldString`, `newString`
+  - Schlägt fehl, wenn `oldString` nicht eindeutig ist – dann mehr Kontext im `oldString` angeben
 - In Dateien suchen sollst: Tool `search_in_files` mit `directory`, `pattern`, optional `fileExtension` und `maxResults`
+- Dateien nach Namensmuster finden sollst: Tool `glob` mit `path` und `pattern` (z.B. `*.scala`, `**/*.ts`)
 - Metadaten einer Datei brauchst: Tool `file_info` mit `path`
+- Verzeichnisse anlegen sollst: Tool `create_directory` mit `path`
+- Dateien oder Verzeichnisse verschieben/umbenennen sollst: Tool `move` mit `from` und `to`
+- Dateien oder Verzeichnisse kopieren sollst: Tool `copy` mit `from` und `to`
 
 Alle Pfade müssen absolut angegeben werden.
 ```
@@ -208,10 +223,7 @@ Der Test startet einen eigenen Server-Instanz auf einem zufälligen Port – der
 ## Erweiterungsideen
 
 - **Progress-Reporting** bei langen Suchen (via `streamingServerLogic` + `ctx.reportProgress`)
-- **`write_file`-Tool** zum Schreiben von Dateien
-- **`move`/`copy`-Tools**
-- **Glob-Pattern-Suche** (Dateien nach Muster finden, ohne Inhalt zu lesen)
-- **`.gitignore`-Awareness** bei der Suche
+- **`.gitignore`-Awareness** bei der Suche und beim Glob
 
 ---
 
@@ -224,3 +236,8 @@ Sobald der MCP-Server eingebunden ist, lösen folgende Aufträge den Einsatz der
 - _„Suche in `src/` nach allen Stellen, wo `Future` verwendet wird."_
 - _„Wie groß ist die Datei `README.md` im Projektroot und wann wurde sie zuletzt geändert?"_
 - _„Finde alle `.scala`-Dateien im Ordner `core/`, die das Wort `implicit` enthalten."_
+- _„Schreibe eine neue Datei `Notes.md` mit folgendem Inhalt: …"_
+- _„Ersetze in `Config.scala` den String `localhost` durch `example.com`."_
+- _„Finde alle TypeScript-Dateien im Projekt."_
+- _„Verschiebe `old/Util.scala` nach `new/Util.scala`."_
+- _„Lege das Verzeichnis `src/test/resources` an."_

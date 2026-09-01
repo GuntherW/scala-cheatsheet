@@ -17,7 +17,10 @@ def main(): Unit =
 
   val builder      = person.into[PersonExt]
   val withConstant = builder.transform(Field.const(_.nr, "a"))
-  val withComputed = builder.transform(Field.computed(_.nr, p => s"${p.firstName}-a5"))
+  val withComputed = builder.transform(
+    Field.computed(_.nr, p => s"${p.firstName}-a5"),
+    Field.computed(_.age, _.age + 1)
+  )
   val withRename   = builder.transform(Field.renamed(_.nr, _.firstName))
 
   println(withConstant)
