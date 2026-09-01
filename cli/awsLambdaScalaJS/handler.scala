@@ -1,4 +1,4 @@
-//> using scala "3.8.4"
+//> using scala "3.9.0"
 //> using platform "js"
 //> using jsModuleKind "commonjs"
 //> using dep "org.scala-js::scalajs-dom::2.8.1"
