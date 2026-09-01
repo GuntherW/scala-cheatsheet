@@ -40,12 +40,13 @@ val listDirTool = tool("list_directory")
             val output = DirListOutput(
               path = path.toString,
               count = entries.size,
-              entries = entries.map: e =>
+              entries = entries.map { e =>
                 DirEntryOutput(
                   name = e.name,
                   kind = if e.isDirectory then "directory" else "file",
                   size = e.sizeBytes.map(formatSize)
                 )
+              }
             )
             ToolResult.structured(output)
 
@@ -61,13 +62,11 @@ val readFileTool = tool("read_file")
       case Right(path) =>
         readFile(path, input.offset, input.limit) match
           case Left(err) => ToolResult.error(err)
-          case Right(fc) =>
-            val rangeInfo = s"Lines ${input.offset}-${input.offset + fc.text.linesIterator.length - 1} of ${fc.totalLines}"
-            ToolResult.text:
-              s"""|File: ${fc.path}
-                  |Size: ${formatSize(fc.sizeBytes)} | $rangeInfo
-                  |
-                  |${fc.text}""".stripMargin
+          case Right(fc) => ToolResult.text:
+              s"""File: ${fc.path}
+                 |Size: ${formatSize(fc.sizeBytes)} Lines ${input.offset}-${input.offset + fc.text.linesIterator.length - 1} of ${fc.totalLines}
+                 |
+                 |${fc.text}""".stripMargin
 
 val searchInFilesTool = tool("search_in_files")
   .description(
@@ -83,13 +82,11 @@ val searchInFilesTool = tool("search_in_files")
       case Right(basePath) =>
         searchInFiles(basePath, input.pattern, input.fileExtension, input.maxResults) match
           case Left(err)    => ToolResult.error(err)
-          case Right(found) =>
-            val output = SearchResultOutput(
+          case Right(found) => ToolResult.structured(SearchResultOutput(
               pattern = input.pattern,
               count = found.size,
               matches = found.map(m => SearchMatchOutput(m.file.toString, m.lineNumber, m.line))
-            )
-            ToolResult.structured(output)
+            ))
 
 val fileInfoTool = tool("file_info")
   .description("Returns metadata about a file or directory: size, last modified date, permissions.")
@@ -101,16 +98,14 @@ val fileInfoTool = tool("file_info")
       case Right(path) =>
         fileInfo(path) match
           case Left(err) => ToolResult.error(err)
-          case Right(m)  =>
-            val output = FileInfoOutput(
+          case Right(m)  => ToolResult.structured(FileInfoOutput(
               path = m.path.toString,
               kind = if m.isDirectory then "directory" else "file",
               size = m.sizeBytes.map(formatSize),
               lastModified = m.lastModified,
               readable = m.readable,
               writable = m.writable
-            )
-            ToolResult.structured(output)
+            ))
 
 val writeFileTool = tool("write_file")
   .description("Creates or overwrites a file with the given content. Creates parent directories if createDirs is true (default).")
@@ -118,8 +113,7 @@ val writeFileTool = tool("write_file")
   .handle: input =>
     safePath(input.path) match
       case Left(err)   => ToolResult.error(err)
-      case Right(path) =>
-        writeFile(path, input.content, input.createDirs) match
+      case Right(path) => writeFile(path, input.content, input.createDirs) match
           case Left(err) => ToolResult.error(err)
           case Right(_)  => ToolResult.text(s"File written: $path")
 
@@ -132,8 +126,7 @@ val editFileTool = tool("edit_file")
   .handle: input =>
     safePath(input.path) match
       case Left(err)   => ToolResult.error(err)
-      case Right(path) =>
-        editFile(path, input.oldString, input.newString) match
+      case Right(path) => editFile(path, input.oldString, input.newString) match
           case Left(err) => ToolResult.error(err)
           case Right(_)  => ToolResult.text(s"Edit applied: $path")
 
@@ -147,11 +140,9 @@ val globTool = tool("glob")
   .handle: input =>
     safePath(input.path) match
       case Left(err)   => ToolResult.error(err)
-      case Right(path) =>
-        globFiles(path, input.pattern) match
+      case Right(path) => globFiles(path, input.pattern) match
           case Left(err)    => ToolResult.error(err)
-          case Right(files) =>
-            ToolResult.structured(GlobOutput(input.pattern, files.size, files.map(_.toString)))
+          case Right(files) => ToolResult.structured(GlobOutput(input.pattern, files.size, files.map(_.toString)))
 
 val createDirectoryTool = tool("create_directory")
   .description("Creates a directory and all its parent directories if they do not exist.")
@@ -159,8 +150,7 @@ val createDirectoryTool = tool("create_directory")
   .handle: input =>
     safePath(input.path) match
       case Left(err)   => ToolResult.error(err)
-      case Right(path) =>
-        createDirectory(path) match
+      case Right(path) => createDirectory(path) match
           case Left(err) => ToolResult.error(err)
           case Right(_)  => ToolResult.text(s"Directory created: $path")
 
@@ -169,10 +159,9 @@ val moveTool = tool("move")
   .input[MoveInput]
   .handle: input =>
     (safePath(input.from), safePath(input.to)) match
-      case (Left(err), _)         => ToolResult.error(err)
-      case (_, Left(err))         => ToolResult.error(err)
-      case (Right(from), Right(to)) =>
-        movePath(from, to, input.createDirs) match
+      case (Left(err), _)           => ToolResult.error(err)
+      case (_, Left(err))           => ToolResult.error(err)
+      case (Right(from), Right(to)) => movePath(from, to, input.createDirs) match
           case Left(err) => ToolResult.error(err)
           case Right(_)  => ToolResult.text(s"Moved: $from → $to")
 
@@ -181,10 +170,9 @@ val copyTool = tool("copy")
   .input[CopyInput]
   .handle: input =>
     (safePath(input.from), safePath(input.to)) match
-      case (Left(err), _)         => ToolResult.error(err)
-      case (_, Left(err))         => ToolResult.error(err)
-      case (Right(from), Right(to)) =>
-        copyPath(from, to, input.createDirs) match
+      case (Left(err), _)           => ToolResult.error(err)
+      case (_, Left(err))           => ToolResult.error(err)
+      case (Right(from), Right(to)) => copyPath(from, to, input.createDirs) match
           case Left(err) => ToolResult.error(err)
           case Right(_)  => ToolResult.text(s"Copied: $from → $to")
 
