@@ -51,7 +51,7 @@ object Version {
   val pulsar4s                = "2.12.0.1"
   val refined                 = "0.11.4"
   val resilience4j            = "2.4.0"
-  val scala                   = "3.8.4"
+  val scala                   = "3.9.0"
   val scalaParallelCollection = "1.2.0"
   val scalasql                = "0.3.1"
   val scodec                  = "2.3.3"

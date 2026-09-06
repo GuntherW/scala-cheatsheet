@@ -1,4 +1,4 @@
-//> using scala 3.8.4
+//> using scala 3.9.0
 //> using file otel.scala
 //> using resourceDir .
 //> using dep com.softwaremill.sttp.tapir::tapir-netty-server-sync:1.13.30

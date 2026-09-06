@@ -9,19 +9,19 @@ import mill.scalajslib.api.*
 import mill.twirllib.*
 
 trait AppScalaModule extends ScalaModule:
-  def scalaVersion = "3.8.4"
+  def scalaVersion = "3.9.0"
 
 trait AppScalaJSModule extends AppScalaModule, ScalaJSModule:
-  def scalaJSVersion = "1.22.0"
-  def moduleKind = ModuleKind.ESModule
-  def moduleSplitStyle = ModuleSplitStyle.FewestModules
-  def esFeatures = super.esFeatures().withESVersion(ESVersion.ES2022)
+  def scalaJSVersion        = "1.22.0"
+  def moduleKind            = ModuleKind.ESModule
+  def moduleSplitStyle      = ModuleSplitStyle.FewestModules
+  def esFeatures            = super.esFeatures().withESVersion(ESVersion.ES2022)
   def scalaJSUseWebAssembly = true
 
 object `package` extends AppScalaModule, TwirlModule:
   def moduleDeps = Seq(shared.jvm)
 
-  def twirlVersion = "2.0.9"
+  def twirlVersion               = "2.0.9"
   override def twirlScalaVersion = scalaVersion()
 
   override def generatedSources = Task:
@@ -49,10 +49,10 @@ object `package` extends AppScalaModule, TwirlModule:
       )
 
     object jvm extends SharedModule
-    object js extends SharedModule, AppScalaJSModule
+    object js  extends SharedModule, AppScalaJSModule
 
   object client extends AppScalaJSModule:
     def moduleDeps = Seq(shared.js)
-    def mvnDeps = Seq(
+    def mvnDeps    = Seq(
       mvn"org.scala-js::scalajs-dom::2.8.1"
     )
