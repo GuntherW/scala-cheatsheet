@@ -240,7 +240,7 @@ object Version:
   val doobie                  = "1.0.0-RC12"
   val duckdb                  = "1.5.5.1"
   val ducktape                = "0.2.13"
-  val fs2                     = "3.13.0"
+  val fs2                     = "3.14.0"
   val gatling                 = "3.13.1"
   val gears                   = "0.3.1"
   val grpcNetty               = "1.83.1"
