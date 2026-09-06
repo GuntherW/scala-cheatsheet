@@ -1,4 +1,4 @@
-//> using scala 3.8.4
+//> using scala 3.9.0
 //> using file otel.scala
 //> using resourceDir .
 //> using dep com.softwaremill.sttp.tapir::tapir-netty-server-sync:1.13.30
@@ -34,11 +34,11 @@ def fibonacci(n: Int): Long =
 
 @main
 def service3Calculator(): Unit =
-  val port      = 8083
-  val svcName   = "service3-calculator"
-  val otel      = setupOtel(svcName)
-  val meter     = otel.getMeter(svcName)
-  val log       = LoggerFactory.getLogger(svcName)
+  val port    = 8083
+  val svcName = "service3-calculator"
+  val otel    = setupOtel(svcName)
+  val meter   = otel.getMeter(svcName)
+  val log     = LoggerFactory.getLogger(svcName)
 
   val requestCounter: LongCounter = meter
     .counterBuilder("fibonacci.requests.total")

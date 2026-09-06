@@ -1,4 +1,4 @@
-//> using scala 3.8.4
+//> using scala 3.9.0
 //> using file otel.scala
 //> using resourceDir .
 //> using dep com.softwaremill.sttp.tapir::tapir-netty-server-sync:1.13.30
@@ -36,13 +36,13 @@ case class GatewayResponse(n: Int, fibonacci: Long, traceSteps: List[String], du
 
 @main
 def service1Gateway(): Unit =
-  val port      = 8081
-  val svcName   = "service1-gateway"
-  val svc2Url   = sys.env.getOrElse("SERVICE2_URL", "http://localhost:8082")
-  val otel      = setupOtel(svcName)
-  val meter     = otel.getMeter(svcName)
-  val backend   = DefaultSyncBackend()
-  val log       = LoggerFactory.getLogger(svcName)
+  val port    = 8081
+  val svcName = "service1-gateway"
+  val svc2Url = sys.env.getOrElse("SERVICE2_URL", "http://localhost:8082")
+  val otel    = setupOtel(svcName)
+  val meter   = otel.getMeter(svcName)
+  val backend = DefaultSyncBackend()
+  val log     = LoggerFactory.getLogger(svcName)
 
   val requestCounter: LongCounter = meter
     .counterBuilder("gateway.requests.total")
@@ -74,25 +74,25 @@ def service1Gateway(): Unit =
       .response(asJson[ProcessResult])
       .send(backend)
       .body match
-        case Right(proc) =>
-          val duration = System.currentTimeMillis() - start
-          e2eLatency.record(duration)
-          log.info("Request complete: fibonacci({}) = {}, total {}ms", req.n, proc.result, duration)
-          Right(GatewayResponse(req.n, proc.result, proc.steps, duration))
-        case Left(err) =>
-          log.warn("Downstream error: {}", err)
-          Left(s"service2 error: $err")
+      case Right(proc) =>
+        val duration = System.currentTimeMillis() - start
+        e2eLatency.record(duration)
+        log.info("Request complete: fibonacci({}) = {}, total {}ms", req.n, proc.result, duration)
+        Right(GatewayResponse(req.n, proc.result, proc.steps, duration))
+      case Left(err)   =>
+        log.warn("Downstream error: {}", err)
+        Left(s"service2 error: $err")
 
   println(s"""
-    |=========================================
-    | $svcName starting on port $port
-    |
-    | Example:
-    |   curl -X POST http://localhost:$port/fibonacci \\
-    |        -H 'Content-Type: application/json' \\
-    |        -d '{"n": 10}'
-    |=========================================
-    |""".stripMargin)
+             |=========================================
+             | $svcName starting on port $port
+             |
+             | Example:
+             |   curl -X POST http://localhost:$port/fibonacci \\
+             |        -H 'Content-Type: application/json' \\
+             |        -d '{"n": 10}'
+             |=========================================
+             |""".stripMargin)
 
   runServer(port, svcName, otel, fibServerEndpoint)(log)
   otel.close()
