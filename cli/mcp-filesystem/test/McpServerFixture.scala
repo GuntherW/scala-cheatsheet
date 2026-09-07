@@ -14,6 +14,11 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicInteger
 import scala.util.Try
 
+/** Startet den echten MCP-Server (HTTP, in-process auf einem zufälligen Port) und liefert einen
+  * vollwertigen [[chimp.client.McpClient]], der über HTTP mit ihm spricht. `apply()` gibt also nicht
+  * den Server selbst zurück, sondern den Client dazu — jeder Aufruf wie `client().callTool(...)` ist
+  * bereits ein echter MCP-Client-Request.
+  */
 class McpServerFixture(tools: StreamingMcpServer[Identity] => StreamingMcpServer[Identity])
     extends Fixture[McpClient[Identity]]("McpServer"):
 

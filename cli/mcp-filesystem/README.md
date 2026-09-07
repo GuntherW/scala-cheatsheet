@@ -317,6 +317,21 @@ scala-cli test .
 
 Der Test startet einen eigenen Server-Instanz auf einem zufälligen Port – der produktive Server muss dafür nicht laufen.
 
+### Testdateien im Überblick
+
+| Datei                                        | Prüft |
+|-----------------------------------------------|-------|
+| `FilesystemMcpServerToolsTest.scala`          | Alle Tools, plus `tools/list`, `initialize`-Capabilities und Protokoll-Fehlerfälle |
+| `FilesystemMcpServerResourcesTest.scala`      | `resource` und `resourceTemplate` |
+| `FilesystemMcpServerPromptsTest.scala`        | `prompt` |
+| `FilesystemMcpServerIntegrationTest.scala`    | Mehrschritt-Interaktion: Prompt abrufen → Pfad daraus mit einem Tool weiterverwenden |
+| `FilesystemMcpServerStdioTest.scala`          | Server als echter Subprozess über stdio (der Pfad, den OpenCode nutzt) |
+| `McpServerFixture.scala`                      | Testinfrastruktur: startet den Server per HTTP und liefert einen fertigen `McpClient` |
+
+Alle Tests (außer dem stdio-Test) nutzen einen echten `chimp.client.McpClient`, der per HTTP mit einer
+In-Process-Server-Instanz spricht — `client().callTool(...)` ist also kein Mock, sondern ein vollwertiger
+MCP-Client-Aufruf.
+
 ---
 
 ## Erweiterungsideen
