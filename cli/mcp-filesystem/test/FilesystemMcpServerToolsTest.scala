@@ -4,7 +4,7 @@ import io.circe.syntax.*
 import munit.FunSuite
 import os.Path
 
-class FilesystemMcpServerTest extends FunSuite:
+class FilesystemMcpServerToolsTest extends FunSuite:
 
   val server = McpServerFixture:
     _.addTool(listDirTool)

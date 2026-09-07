@@ -208,6 +208,105 @@ Beispielantwort des laufenden Servers auf `tools/list`:
 
 ---
 
+## MCP Resources (minimales Beispiel)
+
+Neben Tools kennt MCP noch **Resources** – Daten, die der Client (z. B. der Agent) gezielt per URI abrufen kann,
+statt sie über einen Tool-Aufruf mit Parametern anzufordern. Chimp unterstützt zwei Varianten, beide sind hier
+minimal beispielhaft eingebaut (`FilesystemMcpServer.scala`):
+
+| API                | Zweck                                                        | Beispiel in diesem Projekt |
+|---------------------|---------------------------------------------------------------|------------------------------|
+| `resource(uri)`     | Feste, immer gleiche URI                                       | `readmeResource` → `file:///readme` liefert immer die README.md |
+| `resourceTemplate(uriTemplate)` | URI mit `{variable}`-Platzhalter, matcht mehrere konkrete URIs | `fileResourceTemplate` → `file:///{filename}` liefert eine beliebige Datei im Projekt-Root |
+
+**Wichtige Einschränkung:** Eine `{variable}` in Chimp-URI-Templates matcht immer nur **ein Pfadsegment** (kein `/`).
+`file:///{filename}` matcht also `file:///README.md`, aber **nicht** `file:///some/sub/dir/README.md`. Für
+verschachtelte Pfade bräuchte man mehrere Variablen (z. B. `file:///{dir}/{filename}`) oder eine eigene Lösung.
+
+### Wie ich diese Resources jetzt nutzen kann
+
+1. Server im HTTP-Modus starten: `scala-cli run . --main-class filesystemMcpServer`
+2. Verfügbare Resources auflisten (JSON-RPC-Methode `resources/list` für feste Resources,
+   `resources/templates/list` für Templates) – z. B. mit dem [MCP Inspector](#) oder direkt per `curl`:
+   ```bash
+   curl -s http://localhost:8181/mcp -H "Content-Type: application/json" \
+     -H "Accept: application/json, text/event-stream" \
+     -d '{"jsonrpc":"2.0","id":1,"method":"resources/list","params":{}}'
+   ```
+3. Eine Resource lesen (Methode `resources/read`, Parameter `uri`):
+   ```bash
+   curl -s http://localhost:8181/mcp -H "Content-Type: application/json" \
+     -H "Accept: application/json, text/event-stream" \
+     -d '{"jsonrpc":"2.0","id":2,"method":"resources/read","params":{"uri":"file:///readme"}}'
+   ```
+4. Über das Template eine andere Datei im Projekt-Root lesen, z. B. `.scalafmt.conf`:
+   ```bash
+   curl -s http://localhost:8181/mcp -H "Content-Type: application/json" \
+     -H "Accept: application/json, text/event-stream" \
+     -d '{"jsonrpc":"2.0","id":3,"method":"resources/read","params":{"uri":"file:///.scalafmt.conf"}}'
+   ```
+
+Ein MCP-fähiger Agent (z. B. opencode) ruft `resources/list` und `resources/templates/list` automatisch beim
+Verbindungsaufbau ab und kann Resources dann genauso wie Tools referenzieren – der Unterschied ist nur, dass der
+Agent hier gezielt eine URI anfragt, statt Tool-Parameter zu befüllen.
+
+---
+
+## MCP Prompts (minimales Beispiel)
+
+Die dritte MCP-Primitive neben Tools und Resources sind **Prompts**: vordefinierte, parametrisierbare
+Nachrichten-Vorlagen, die der Server anbietet und die der **Nutzer** (nicht das LLM selbst) gezielt auswählt – meist
+über ein Slash-Command o. Ä. in der Host-UI (z. B. `/explain_file` in einem Chat-Client). Der Server liefert dann eine
+fertige Liste von Chat-Nachrichten zurück, die an das LLM geschickt wird.
+
+Chimp bietet dafür `prompt(name)` in `chimp.server`. Beispiel in diesem Projekt (`FilesystemMcpServer.scala`):
+
+```scala
+val explainFilePrompt = prompt("explain_file")
+  .description("Erzeugt einen Prompt, der das LLM bittet, den Inhalt einer Datei zu erklären.")
+  .argument("path", description = Some("Absoluter Pfad zur Datei"), required = true)
+  .handle: args =>
+    val path = args("path")
+    GetPromptResult(
+      messages = List(PromptMessage(role = Role.User, content = ToolContent.Text(text = s"Bitte lies die Datei $path und erkläre mir, was der Code darin tut."))),
+      description = Some(s"Erklärungs-Prompt für $path")
+    )
+```
+
+### Wie ich diesen Prompt jetzt nutzen kann
+
+1. Server im HTTP-Modus starten: `scala-cli run . --main-class filesystemMcpServer`
+2. Verfügbare Prompts auflisten (Methode `prompts/list`):
+   ```bash
+   curl -s http://localhost:8181/mcp -H "Content-Type: application/json" \
+     -H "Accept: application/json, text/event-stream" \
+     -d '{"jsonrpc":"2.0","id":1,"method":"prompts/list","params":{}}'
+   ```
+3. Prompt mit Argument abrufen (Methode `prompts/get`, `arguments` als Map):
+   ```bash
+   curl -s http://localhost:8181/mcp -H "Content-Type: application/json" \
+     -H "Accept: application/json, text/event-stream" \
+     -d '{"jsonrpc":"2.0","id":2,"method":"prompts/get","params":{"name":"explain_file","arguments":{"path":"/absoluter/pfad/zur/Datei.scala"}}}'
+   ```
+   Antwort ist eine fertige `messages`-Liste (hier eine einzelne User-Nachricht), die ein MCP-Client 1:1 als
+   Chat-Prompt an das LLM weiterreichen kann.
+
+In opencode (bzw. jedem MCP-fähigen Chat-Client) erscheinen registrierte Prompts meist als Slash-Commands
+(`/explain_file`) mit einem Eingabefeld für die Argumente – der Nutzer wählt den Prompt aktiv aus, im Gegensatz zu
+Tools, die das LLM selbstständig aufruft.
+
+---
+
+## Tools vs. Resources vs. Prompts – Faustregel
+
+| Primitive   | Wer entscheidet über die Nutzung? | Typischer Zweck                          |
+|-------------|-------------------------------------|-------------------------------------------|
+| **Tool**    | Das LLM (Agent) selbst              | Aktionen/Berechnungen mit Parametern, ggf. Seiteneffekte |
+| **Resource**| Nutzer / Host-Anwendung             | Daten anhängen, rein lesend, keine Logik |
+| **Prompt**  | Nutzer (z. B. via Slash-Command)    | Vorgefertigte, parametrisierte Chat-Vorlage |
+
+---
+
 ## Test ausführen
 
 ```bash

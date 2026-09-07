@@ -1,3 +1,4 @@
+import chimp.protocol.{GetPromptResult, PromptMessage, ResourceContents, Role, ToolContent}
 import chimp.server.*
 import chimp.server.ox.{OxServerHttpTransport, OxServerStdioTransport}
 import io.circe.Codec
@@ -176,6 +177,49 @@ val copyTool = tool("copy")
           case Left(err) => ToolResult.error(err)
           case Right(_)  => ToolResult.text(s"Copied: $from → $to")
 
+// --- MCP Resources (minimal, nur zur Demonstration) ---
+
+// Feste Resource: liefert immer den Inhalt der README.md dieses Projekts.
+val readmeResource = resource("file:///readme")
+  .name("README")
+  .description("Die README.md dieses MCP-Servers")
+  .mimeType("text/markdown")
+  .handle: () =>
+    readFile(os.pwd / "README.md") match
+      case Left(err) => Left(ResourceError(err))
+      case Right(fc) => Right(List(ResourceContents.Text(uri = "file:///readme", text = fc.text, mimeType = Some("text/markdown"))))
+
+// Resource-Template: liefert den Inhalt einer Datei im Projekt-Root über eine Namens-Variable in der URI.
+// Hinweis: Chimp-URI-Templates matchen pro Variable nur ein Pfadsegment (kein "/"),
+// daher hier bewusst auf Dateien im Projekt-Root beschränkt (kein beliebiger Pfad).
+val fileResourceTemplate = resourceTemplate("file:///{filename}")
+  .name("Datei im Projekt-Root")
+  .description("Liest den Inhalt einer Datei im Projekt-Root über ihren Dateinamen")
+  .handle: (vars, uri) =>
+    val path = os.pwd / vars("filename")
+    readFile(path) match
+      case Left(err) => Left(ResourceError(err, Some(uri)))
+      case Right(fc) => Right(List(ResourceContents.Text(uri = uri, text = fc.text)))
+
+// --- MCP Prompts (minimal, nur zur Demonstration) ---
+
+// Ein Prompt-Template mit einem Pflicht-Argument. Der Client (Nutzer/Host-UI) füllt "path" aus,
+// der Server liefert eine fertige Nachrichtenliste, die der Client als User-Prompt an das LLM schickt.
+val explainFilePrompt = prompt("explain_file")
+  .description("Erzeugt einen Prompt, der das LLM bittet, den Inhalt einer Datei zu erklären.")
+  .argument("path", description = Some("Absoluter Pfad zur Datei"), required = true)
+  .handle: args =>
+    val path = args("path")
+    GetPromptResult(
+      messages = List(
+        PromptMessage(
+          role = Role.User,
+          content = ToolContent.Text(text = s"Bitte lies die Datei $path und erkläre mir, was der Code darin tut.")
+        )
+      ),
+      description = Some(s"Erklärungs-Prompt für $path")
+    )
+
 def mcpServer: StreamingMcpServer[Identity] =
   StreamingMcpServer[Identity]()
     .addTool(listDirTool)
@@ -188,6 +232,9 @@ def mcpServer: StreamingMcpServer[Identity] =
     .addTool(createDirectoryTool)
     .addTool(moveTool)
     .addTool(copyTool)
+    .addResource(readmeResource)
+    .addResourceTemplate(fileResourceTemplate)
+    .addPrompt(explainFilePrompt)
 
 // HTTP – für manuelle Nutzung / Tests
 @main def filesystemMcpServer(): Unit =
