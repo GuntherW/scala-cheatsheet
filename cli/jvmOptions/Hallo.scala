@@ -5,8 +5,8 @@ import sttp.client4.quick.*
 import sttp.client4.Response
 import scala.util.chaining.*
 
-  @main
-def hallo(): Unit: Unit =
+@main
+def hallo(): Unit =
   quickRequest
     .get(uri"http://icanhazip.com")
     .send()

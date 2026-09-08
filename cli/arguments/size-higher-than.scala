@@ -3,10 +3,11 @@
 import os.Path
 
 @main
-def sizeHigherThan(dir: String, minSizeMB: Int) =
+def sizeHigherThan(dir: String, minSizeMB: Int): Unit =
+  val minSizeBytes = minSizeMB.toLong * 1_000_000L
   os.walk
     .attrs(Path(dir))
     .collect {
-      case (p, attrs) if attrs.size > minSizeMB * 10e6 => p
+      case (p, attrs) if attrs.size > minSizeBytes => p
     }
     .foreach(println)

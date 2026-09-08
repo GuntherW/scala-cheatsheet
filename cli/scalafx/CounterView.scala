@@ -10,17 +10,17 @@ class CounterView(state: AppState) extends HBox(10):
   private val counterLabel = new Label:
     text <== state.counter.asString("Zähler: %d")
 
+  private def updateCounter(delta: Int, successMessage: Int => String, failMessage: => String): Unit =
+    if delta < 0 && state.counter.value <= 0 then state.statusMessage.value = failMessage
+    else
+      state.counter.value += delta
+      state.statusMessage.value = successMessage(state.counter.value)
+
   private val incrementBtn = new Button("+ Erhöhen"):
-    onAction = _ =>
-      state.counter.value += 1
-      state.statusMessage.value = s"Zähler erhöht auf ${state.counter.value}"
+    onAction = _ => updateCounter(1, n => s"Zähler erhöht auf $n", "")
 
   private val decrementBtn = new Button("- Verringern"):
-    onAction = _ =>
-      if state.counter.value > 0 then
-        state.counter.value -= 1
-        state.statusMessage.value = s"Zähler verringert auf ${state.counter.value}"
-      else state.statusMessage.value = "Zähler ist bereits 0."
+    onAction = _ => updateCounter(-1, n => s"Zähler verringert auf $n", "Zähler ist bereits 0.")
 
   private val resetBtn = new Button("Zurücksetzen"):
     style = "-fx-text-fill: red;"

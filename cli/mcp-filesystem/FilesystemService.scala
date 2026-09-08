@@ -48,18 +48,12 @@ def searchInFiles(basePath: os.Path, pattern: String, fileExtension: String, max
         .filter(os.isFile(_))
         .filter(p => fileExtension == "*" || p.last.endsWith(s".$fileExtension"))
 
-      val results      = scala.collection.mutable.ArrayBuffer.empty[SearchMatch]
-      var totalMatches = 0
-
-      allFiles.takeWhile(_ => totalMatches < maxResults).foreach: file =>
-        Try {
-          os.read.lines(file).zipWithIndex.foreach: (line, idx) =>
-            if totalMatches < maxResults && regex.findFirstIn(line).isDefined then
-              results += SearchMatch(file, idx + 1, line)
-              totalMatches += 1
-        }
-
-      results.toList
+      allFiles.iterator
+        .flatMap: file =>
+          Try(os.read.lines(file)).map(_.iterator.zipWithIndex).getOrElse(Iterator.empty)
+            .collect { case (line, idx) if regex.findFirstIn(line).isDefined => SearchMatch(file, idx + 1, line) }
+        .take(maxResults)
+        .toList
     }.toEither.left.map(_.getMessage)
 
 def fileInfo(path: os.Path): Either[String, FileMetadata] =
@@ -88,7 +82,7 @@ def editFile(path: os.Path, oldString: String, newString: String): Either[String
   else if os.isDir(path) then Left(s"Path is a directory, not a file: $path")
   else
     Try(os.read(path)).toEither.left.map(_.getMessage).flatMap: content =>
-      val count = oldString.r.findAllIn(content).length
+      val count = countOccurrences(content, oldString)
       if count == 0 then Left(s"oldString not found in file: $path")
       else if count > 1 then Left(s"Found $count matches for oldString. Provide more surrounding context to identify the correct match.")
       else
@@ -127,6 +121,16 @@ def copyPath(from: os.Path, to: os.Path, createDirs: Boolean = true): Either[Str
 
 private def safePath(raw: String): Either[String, os.Path] =
   Try(os.Path(raw)).toEither.left.map(_.getMessage)
+
+private def countOccurrences(content: String, target: String): Int =
+  if target.isEmpty then 0
+  else
+    @scala.annotation.tailrec
+    def loop(fromIndex: Int, acc: Int): Int =
+      val idx = content.indexOf(target, fromIndex)
+      if idx == -1 then acc
+      else loop(idx + target.length, acc + 1)
+    loop(0, 0)
 
 private def formatSize(bytes: Long): String =
   if bytes < 1024 then s"${bytes} B"

@@ -7,9 +7,13 @@ import upickle.default.{read, write}
 
 object ClientApp:
   def main(args: Array[String]): Unit =
-    val button = dom.document.getElementById("hello-btn")
-    val nameInput = dom.document.getElementById("name").asInstanceOf[dom.HTMLInputElement]
-    val result = dom.document.getElementById("result")
+    val button = Option(dom.document.getElementById("hello-btn"))
+      .getOrElse(throw new IllegalStateException("Element 'hello-btn' nicht gefunden"))
+    val nameInput = dom.document.getElementById("name") match
+      case el: dom.HTMLInputElement => el
+      case _                        => throw new IllegalStateException("Element 'name' ist kein Input-Feld")
+    val result = Option(dom.document.getElementById("result"))
+      .getOrElse(throw new IllegalStateException("Element 'result' nicht gefunden"))
 
     button.addEventListener(
       "click",
@@ -19,6 +23,7 @@ object ClientApp:
           "/api/hello",
           new dom.RequestInit {
             method = dom.HttpMethod.POST
+            // DOM-Interop erfordert hier einen Cast, da js.Dictionary kein HeadersInit-Subtyp ist.
             headers = js.Dictionary("Content-Type" -> "application/json").asInstanceOf[dom.HeadersInit]
             body = requestBody
           }

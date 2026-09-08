@@ -50,10 +50,10 @@ def findMainXmlEntry(zipFile: ZipFile, zipBaseName: String): Option[ZipEntry] =
     .find(e => !e.isDirectory && e.getName.endsWith(".xml") && e.getName.startsWith(prefix))
 
 /** Liest den Inhalt eines ZIP-Eintrags als String. */
-def readZipEntry(zipFile: ZipFile, entry: ZipEntry): String =
+def readZipEntry(zipFile: ZipFile, entry: ZipEntry): Try[String] =
   Using(zipFile.getInputStream(entry)) { stream =>
     new String(stream.readAllBytes(), UTF_8)
-  }.get
+  }
 
 /** Parst XML-Inhalt zu einem DOM-Document. */
 def parseXml(xmlContent: String): Document =
@@ -73,7 +73,7 @@ def serializeXml(doc: Document): String =
 /** Sucht ein Element anhand seines localName (namespace-unabhängig). */
 def findElementByLocalName(doc: Document, localName: String): Option[org.w3c.dom.Element] =
   val elements = doc.getElementsByTagNameNS("*", localName)
-  Option.when(elements.getLength > 0)(elements.item(0).asInstanceOf[org.w3c.dom.Element])
+  Option.when(elements.getLength > 0)(elements.item(0)).collect { case e: org.w3c.dom.Element => e }
 
 /** Extrahiert die 5-stellige Sequenz aus einem BizMsgIdr-Wert. */
 def extractSequence(bizMsgIdr: String): Option[String] =
@@ -105,7 +105,8 @@ def processZip(
   Using(new ZipFile(zipFile)) { zip =>
     for
       xmlEntry       <- findMainXmlEntry(zip, zipBaseName).toRight(s"Keine XML mit Prefix '$xmlPrefixClean' in ${zipFile.getName} gefunden")
-      doc             = parseXml(readZipEntry(zip, xmlEntry))
+      xmlContent     <- readZipEntry(zip, xmlEntry).toEither.left.map(e => s"Fehler beim Lesen von ${xmlEntry.getName}: ${e.getMessage}")
+      doc             = parseXml(xmlContent)
       submissnTpElem <- findElementByLocalName(doc, "SubmissnTp").toRight(s"Tag 'SubmissnTp' nicht gefunden in ${xmlEntry.getName}")
       _              <- Either.cond(submissnTpElem.getTextContent.trim != "EROR", (), s"SubmissnTp ist bereits EROR in ${xmlEntry.getName} – übersprungen")
       _               = submissnTpElem.setTextContent("EROR")

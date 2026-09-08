@@ -118,12 +118,14 @@ object GleifImporter extends OxApp:
       xmlFile
     else
       println(s"  [${fileType.name}] Downloading ZIP from ${fileType.url}...")
-      downloadFile(fileType.url, zipFile)
+      downloadFile(fileType.url, zipFile) match
+        case Right(_)  =>
+        case Left(err) => throw RuntimeException(s"Download of ${fileType.url} failed: $err")
       println(s"  [${fileType.name}] Extracting ZIP...")
       extractZip(zipFile, xmlFile)
       xmlFile
 
-  def downloadFile(url: String, target: Path): Unit =
+  def downloadFile(url: String, target: Path): Either[String, Unit] =
     val backend = HttpClientSyncBackend()
     try
       basicRequest
@@ -135,19 +137,21 @@ object GleifImporter extends OxApp:
         case Right(bytes) =>
           os.write(target, bytes)
           println(s"    Downloaded ${bytes.length / 1024 / 1024} MB to ${target.last}")
+          Right(())
         case Left(err)    =>
-          throw RuntimeException(s"HTTP ${backend} failed: $err")
+          Left(s"HTTP request to $url failed: $err")
     finally backend.close()
 
-  def   downloadXsd(dataDir: Path, fileType: GleifFileType): Unit =
+  def downloadXsd(dataDir: Path, fileType: GleifFileType): Unit =
     val xsdFileName = fileType.xsdUrl.split("/").last
     val xsdFile     = dataDir / xsdFileName
     if os.exists(xsdFile) then
       println(s"  [XSD] Using cached: ${xsdFile.last}")
     else
       println(s"  [XSD] Downloading XSD schema...")
-      downloadFile(fileType.xsdUrl, xsdFile)
-      println(s"  [XSD] Saved to ${xsdFile.last}")
+      downloadFile(fileType.xsdUrl, xsdFile) match
+        case Right(_)  => println(s"  [XSD] Saved to ${xsdFile.last}")
+        case Left(err) => println(s"  [XSD] WARNING: download failed: $err")
 
   def extractZip(zipPath: Path, targetXml: Path): Unit =
     val tempDir = zipPath / os.up / "temp_extract"
@@ -167,24 +171,24 @@ object GleifImporter extends OxApp:
 
     Flow.usingEmit: emit =>
       val stream = FileInputStream(file.toString)
-      val reader = inputFactory.createXMLStreamReader(stream)
       try
-        while reader.hasNext do
-          reader.next match
-            case C.START_ELEMENT =>
-              val attrs: Map[String, String] = (0 until reader.getAttributeCount)
-                .map(i => reader.getAttributeLocalName(i) -> reader.getAttributeValue(i))
-                .toMap
-              emit(XmlEvent.Open(reader.getLocalName, attrs))
-            case C.END_ELEMENT   =>
-              emit(XmlEvent.Close(reader.getLocalName))
-            case C.CHARACTERS    =>
-              val text = reader.getText.trim
-              if text.nonEmpty then emit(XmlEvent.Text(text))
-            case _               => ()
-      finally
-        reader.close()
-        stream.close()
+        val reader = inputFactory.createXMLStreamReader(stream)
+        try
+          while reader.hasNext do
+            reader.next match
+              case C.START_ELEMENT =>
+                val attrs: Map[String, String] = (0 until reader.getAttributeCount)
+                  .map(i => reader.getAttributeLocalName(i) -> reader.getAttributeValue(i))
+                  .toMap
+                emit(XmlEvent.Open(reader.getLocalName, attrs))
+              case C.END_ELEMENT   =>
+                emit(XmlEvent.Close(reader.getLocalName))
+              case C.CHARACTERS    =>
+                val text = reader.getText.trim
+                if text.nonEmpty then emit(XmlEvent.Text(text))
+              case _               => ()
+        finally reader.close()
+      finally stream.close()
 
   private case class RecordState(
       active: Boolean = false,

@@ -4,15 +4,22 @@
 import org.apache.spark._
 import org.apache.spark.sql._
 
-object SparkJob extends App {
+object SparkJob {
 
-  val spark = SparkSession.builder().appName("Test job").master("local[*]").getOrCreate()
-  import spark.implicits._
-  def sc    = spark.sparkContext
+  def main(args: Array[String]): Unit = {
+    val spark = SparkSession
+      .builder()
+      .appName("Test job")
+      .master("local[*]")
+      .getOrCreate()
+    import spark.implicits._
+    val sc = spark.sparkContext
 
-  val accum = sc.longAccumulator
-  sc
-    .parallelize(1 to 10)
-    .foreach(x => accum.add(x))
-  println("Result: " + accum.value)
+    val accum = sc.longAccumulator
+    sc
+      .parallelize(1 to 10)
+      .foreach(x => accum.add(x))
+    println("Result: " + accum.value)
+    spark.stop()
+  }
 }

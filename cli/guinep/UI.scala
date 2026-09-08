@@ -8,7 +8,7 @@ case class Add(a: Int, b: Int)
 def addObj(add: Add) = add.a + add.b
 
   @main
-def uI(): Unit: Unit =
+def uI(): Unit =
   guinep.web(
     upperCaseText,
     rollDice,

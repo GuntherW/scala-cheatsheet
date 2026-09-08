@@ -22,8 +22,6 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 
-import java.net.InetAddress
-
 // --- Domain ---
 
 case class GatewayRequest(n: Int)

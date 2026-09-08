@@ -34,9 +34,10 @@ case object GameTick      extends GameMessage
 /** Simple game - collect gems, avoid enemies */
 object SimpleGame extends LayoutzApp[GameState, GameMessage] {
 
-  private val GAME_WIDTH  = 15
-  private val GAME_HEIGHT = 10
-  private val random      = new Random()
+  private val GAME_WIDTH        = 15
+  private val GAME_HEIGHT       = 10
+  private val EnemyMoveInterval = 4
+  private val random            = new Random()
 
   private def generateItems(level: Int): Set[(Int, Int)] = {
     val itemCount = 3 + level
@@ -78,33 +79,32 @@ object SimpleGame extends LayoutzApp[GameState, GameMessage] {
   def update(
       msg: GameMessage,
       state: GameState
-  ): (GameState, Cmd[GameMessage]) = {
-    if (state.gameOver && msg != RestartGame) return (state, Cmd.none)
+  ): (GameState, Cmd[GameMessage]) =
+    if state.gameOver && msg != RestartGame then (state, Cmd.none)
+    else
+      msg match {
+        case GameMoveUp =>
+          val newY = math.max(0, state.playerY - 1)
+          (processPlayerMove(state.copy(playerY = newY)), Cmd.none)
 
-    msg match {
-      case GameMoveUp =>
-        val newY = math.max(0, state.playerY - 1)
-        (processPlayerMove(state.copy(playerY = newY)), Cmd.none)
+        case GameMoveDown =>
+          val newY = math.min(state.gameHeight - 1, state.playerY + 1)
+          (processPlayerMove(state.copy(playerY = newY)), Cmd.none)
 
-      case GameMoveDown =>
-        val newY = math.min(state.gameHeight - 1, state.playerY + 1)
-        (processPlayerMove(state.copy(playerY = newY)), Cmd.none)
+        case GameMoveLeft =>
+          val newX = math.max(0, state.playerX - 1)
+          (processPlayerMove(state.copy(playerX = newX)), Cmd.none)
 
-      case GameMoveLeft =>
-        val newX = math.max(0, state.playerX - 1)
-        (processPlayerMove(state.copy(playerX = newX)), Cmd.none)
+        case GameMoveRight =>
+          val newX = math.min(state.gameWidth - 1, state.playerX + 1)
+          (processPlayerMove(state.copy(playerX = newX)), Cmd.none)
 
-      case GameMoveRight =>
-        val newX = math.min(state.gameWidth - 1, state.playerX + 1)
-        (processPlayerMove(state.copy(playerX = newX)), Cmd.none)
+        case RestartGame =>
+          init
 
-      case RestartGame =>
-        init
-
-      case GameTick =>
-        (updateGameTick(state), Cmd.none)
-    }
-  }
+        case GameTick =>
+          (updateGameTick(state), Cmd.none)
+      }
 
   private def processPlayerMove(state: GameState): GameState = {
     val playerPos = (state.playerX, state.playerY)
@@ -137,7 +137,7 @@ object SimpleGame extends LayoutzApp[GameState, GameMessage] {
   private def updateGameTick(state: GameState): GameState = {
     val newTick = state.tickCount + 1
 
-    val newEnemies = if (newTick % 4 == 0) {
+    val newEnemies = if (newTick % EnemyMoveInterval == 0) {
       state.enemies.map(moveEnemy(_, state))
     } else {
       state.enemies

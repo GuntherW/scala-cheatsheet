@@ -6,10 +6,10 @@ import zio.http.*
 
 object MyApp extends ZIOAppDefault:
 
-  val app: App[Any] =
-    Http.collect[Request] { case Method.GET -> !! / "hello" =>
-      Response.text("Hello world!")
-    }
+  val routes: Routes[Any, Response] =
+    Routes(
+      Method.GET / "hello" -> handler(Response.text("Hello world!"))
+    )
 
-  override val run =
-    Server.serve(app).provide(Server.default)
+  override val run: ZIO[Any, Throwable, Nothing] =
+    Server.serve(routes).provide(Server.default)

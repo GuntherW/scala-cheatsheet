@@ -142,8 +142,9 @@ def deleteFolder(client: BlobServiceClient, containerName: String, folderPath: S
 }
 
 // Erstellt eine Baumstruktur aus den Blob-Pfaden
+private val knownDirs = Set("incoming", "outgoing", "forward", "archive", "public")
+
 def buildTreeStructure(containerName: String, blobs: List[BlobInfo]): DirView = {
-  val knownDirs = Set("incoming", "outgoing", "forward", "archive", "public")
 
   def insertPath(root: DirView, parts: List[String], currentPath: String, blobSize: Long): DirView = parts match {
     case Nil             => root
@@ -239,4 +240,7 @@ def formatXml(xml: String): String =
       val writer = new StringWriter()
       transformer.transform(new DOMSource(doc), new StreamResult(writer))
       writer.toString
-    catch case _: Exception => xml
+    catch
+      case e: Exception =>
+        System.err.println(s"XML-Formatierung fehlgeschlagen: ${e.getMessage}")
+        xml

@@ -1,6 +1,6 @@
 //| mvnDeps: [org.jsoup:jsoup:1.7.2]
 import org.jsoup.*
-import scala.collection.JavaConverters.*
+import scala.jdk.CollectionConverters.*
 
 def fetchLinks(title: String): Seq[String] = {
   Jsoup.connect(s"https://en.wikipedia.org/wiki/$title")

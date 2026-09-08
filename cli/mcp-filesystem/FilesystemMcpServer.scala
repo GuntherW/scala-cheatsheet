@@ -32,24 +32,21 @@ val listDirTool = tool("list_directory")
   .input[ListDirInput]
   .output[DirListOutput]
   .handle: input =>
-    safePath(input.path) match
-      case Left(err)   => ToolResult.error(err)
-      case Right(path) =>
-        listDirectory(path) match
-          case Left(err)      => ToolResult.error(err)
-          case Right(entries) =>
-            val output = DirListOutput(
-              path = path.toString,
-              count = entries.size,
-              entries = entries.map { e =>
-                DirEntryOutput(
-                  name = e.name,
-                  kind = if e.isDirectory then "directory" else "file",
-                  size = e.sizeBytes.map(formatSize)
-                )
-              }
-            )
-            ToolResult.structured(output)
+    val result = for
+      path    <- safePath(input.path)
+      entries <- listDirectory(path)
+    yield DirListOutput(
+      path = path.toString,
+      count = entries.size,
+      entries = entries.map { e =>
+        DirEntryOutput(
+          name = e.name,
+          kind = if e.isDirectory then "directory" else "file",
+          size = e.sizeBytes.map(formatSize)
+        )
+      }
+    )
+    result.fold(ToolResult.error, ToolResult.structured)
 
 val readFileTool = tool("read_file")
   .description(
@@ -58,16 +55,14 @@ val readFileTool = tool("read_file")
   )
   .input[ReadFileInput]
   .handle: input =>
-    safePath(input.path) match
-      case Left(err)   => ToolResult.error(err)
-      case Right(path) =>
-        readFile(path, input.offset, input.limit) match
-          case Left(err) => ToolResult.error(err)
-          case Right(fc) => ToolResult.text:
-              s"""File: ${fc.path}
-                 |Size: ${formatSize(fc.sizeBytes)} Lines ${input.offset}-${input.offset + fc.text.linesIterator.length - 1} of ${fc.totalLines}
-                 |
-                 |${fc.text}""".stripMargin
+    val result = for
+      path <- safePath(input.path)
+      fc   <- readFile(path, input.offset, input.limit)
+    yield s"""File: ${fc.path}
+              |Size: ${formatSize(fc.sizeBytes)} Lines ${input.offset}-${input.offset + fc.text.linesIterator.length - 1} of ${fc.totalLines}
+              |
+              |${fc.text}""".stripMargin
+    result.fold(ToolResult.error, ToolResult.text)
 
 val searchInFilesTool = tool("search_in_files")
   .description(
@@ -78,45 +73,43 @@ val searchInFilesTool = tool("search_in_files")
   .input[SearchInFilesInput]
   .output[SearchResultOutput]
   .handle: input =>
-    safePath(input.directory) match
-      case Left(err)       => ToolResult.error(err)
-      case Right(basePath) =>
-        searchInFiles(basePath, input.pattern, input.fileExtension, input.maxResults) match
-          case Left(err)    => ToolResult.error(err)
-          case Right(found) => ToolResult.structured(SearchResultOutput(
-              pattern = input.pattern,
-              count = found.size,
-              matches = found.map(m => SearchMatchOutput(m.file.toString, m.lineNumber, m.line))
-            ))
+    val result = for
+      basePath <- safePath(input.directory)
+      found    <- searchInFiles(basePath, input.pattern, input.fileExtension, input.maxResults)
+    yield SearchResultOutput(
+      pattern = input.pattern,
+      count = found.size,
+      matches = found.map(m => SearchMatchOutput(m.file.toString, m.lineNumber, m.line))
+    )
+    result.fold(ToolResult.error, ToolResult.structured)
 
 val fileInfoTool = tool("file_info")
   .description("Returns metadata about a file or directory: size, last modified date, permissions.")
   .input[FileInfoInput]
   .output[FileInfoOutput]
   .handle: input =>
-    safePath(input.path) match
-      case Left(err)   => ToolResult.error(err)
-      case Right(path) =>
-        fileInfo(path) match
-          case Left(err) => ToolResult.error(err)
-          case Right(m)  => ToolResult.structured(FileInfoOutput(
-              path = m.path.toString,
-              kind = if m.isDirectory then "directory" else "file",
-              size = m.sizeBytes.map(formatSize),
-              lastModified = m.lastModified,
-              readable = m.readable,
-              writable = m.writable
-            ))
+    val result = for
+      path <- safePath(input.path)
+      m    <- fileInfo(path)
+    yield FileInfoOutput(
+      path = m.path.toString,
+      kind = if m.isDirectory then "directory" else "file",
+      size = m.sizeBytes.map(formatSize),
+      lastModified = m.lastModified,
+      readable = m.readable,
+      writable = m.writable
+    )
+    result.fold(ToolResult.error, ToolResult.structured)
 
 val writeFileTool = tool("write_file")
   .description("Creates or overwrites a file with the given content. Creates parent directories if createDirs is true (default).")
   .input[WriteFileInput]
   .handle: input =>
-    safePath(input.path) match
-      case Left(err)   => ToolResult.error(err)
-      case Right(path) => writeFile(path, input.content, input.createDirs) match
-          case Left(err) => ToolResult.error(err)
-          case Right(_)  => ToolResult.text(s"File written: $path")
+    val result = for
+      path <- safePath(input.path)
+      _    <- writeFile(path, input.content, input.createDirs)
+    yield s"File written: $path"
+    result.fold(ToolResult.error, ToolResult.text)
 
 val editFileTool = tool("edit_file")
   .description(
@@ -125,11 +118,11 @@ val editFileTool = tool("edit_file")
   )
   .input[EditFileInput]
   .handle: input =>
-    safePath(input.path) match
-      case Left(err)   => ToolResult.error(err)
-      case Right(path) => editFile(path, input.oldString, input.newString) match
-          case Left(err) => ToolResult.error(err)
-          case Right(_)  => ToolResult.text(s"Edit applied: $path")
+    val result = for
+      path <- safePath(input.path)
+      _    <- editFile(path, input.oldString, input.newString)
+    yield s"Edit applied: $path"
+    result.fold(ToolResult.error, ToolResult.text)
 
 val globTool = tool("glob")
   .description(
@@ -139,43 +132,43 @@ val globTool = tool("glob")
   .input[GlobInput]
   .output[GlobOutput]
   .handle: input =>
-    safePath(input.path) match
-      case Left(err)   => ToolResult.error(err)
-      case Right(path) => globFiles(path, input.pattern) match
-          case Left(err)    => ToolResult.error(err)
-          case Right(files) => ToolResult.structured(GlobOutput(input.pattern, files.size, files.map(_.toString)))
+    val result = for
+      path  <- safePath(input.path)
+      files <- globFiles(path, input.pattern)
+    yield GlobOutput(input.pattern, files.size, files.map(_.toString))
+    result.fold(ToolResult.error, ToolResult.structured)
 
 val createDirectoryTool = tool("create_directory")
   .description("Creates a directory and all its parent directories if they do not exist.")
   .input[CreateDirectoryInput]
   .handle: input =>
-    safePath(input.path) match
-      case Left(err)   => ToolResult.error(err)
-      case Right(path) => createDirectory(path) match
-          case Left(err) => ToolResult.error(err)
-          case Right(_)  => ToolResult.text(s"Directory created: $path")
+    val result = for
+      path <- safePath(input.path)
+      _    <- createDirectory(path)
+    yield s"Directory created: $path"
+    result.fold(ToolResult.error, ToolResult.text)
 
 val moveTool = tool("move")
   .description("Moves or renames a file or directory. Creates parent directories of the target if createDirs is true (default).")
   .input[MoveInput]
   .handle: input =>
-    (safePath(input.from), safePath(input.to)) match
-      case (Left(err), _)           => ToolResult.error(err)
-      case (_, Left(err))           => ToolResult.error(err)
-      case (Right(from), Right(to)) => movePath(from, to, input.createDirs) match
-          case Left(err) => ToolResult.error(err)
-          case Right(_)  => ToolResult.text(s"Moved: $from → $to")
+    val result = for
+      from <- safePath(input.from)
+      to   <- safePath(input.to)
+      _    <- movePath(from, to, input.createDirs)
+    yield s"Moved: $from → $to"
+    result.fold(ToolResult.error, ToolResult.text)
 
 val copyTool = tool("copy")
   .description("Copies a file or directory to a new location. Creates parent directories of the target if createDirs is true (default).")
   .input[CopyInput]
   .handle: input =>
-    (safePath(input.from), safePath(input.to)) match
-      case (Left(err), _)           => ToolResult.error(err)
-      case (_, Left(err))           => ToolResult.error(err)
-      case (Right(from), Right(to)) => copyPath(from, to, input.createDirs) match
-          case Left(err) => ToolResult.error(err)
-          case Right(_)  => ToolResult.text(s"Copied: $from → $to")
+    val result = for
+      from <- safePath(input.from)
+      to   <- safePath(input.to)
+      _    <- copyPath(from, to, input.createDirs)
+    yield s"Copied: $from → $to"
+    result.fold(ToolResult.error, ToolResult.text)
 
 // --- MCP Resources (minimal, nur zur Demonstration) ---
 

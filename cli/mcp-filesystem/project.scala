@@ -1,4 +1,4 @@
-//> using scala 3
+//> using scala 3.3.6
 //> using dep com.softwaremill.chimp::chimp-server-ox:0.5.2
 //> using dep com.softwaremill.sttp.tapir::tapir-netty-server-sync:1.13.31
 //> using dep com.lihaoyi::os-lib:0.11.8

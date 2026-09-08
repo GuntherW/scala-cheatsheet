@@ -11,6 +11,7 @@ import javax.sql.DataSource
 import java.sql.Timestamp
 import java.time.{Instant, LocalDateTime, ZoneId}
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.atomic.AtomicReference
 import scala.util.chaining.scalaUtilChainingOps
 
 object Database:
@@ -25,21 +26,20 @@ object Database:
       nextRenewalDate: String
   )
 
-  private def parseTimestamp(iso: String): Timestamp =
-    if iso == null || iso.isEmpty then null
-    else Timestamp.from(Instant.parse(iso))
+  private def parseTimestamp(iso: String): Option[Timestamp] =
+    Option(iso).filter(_.nonEmpty).map(s => Timestamp.from(Instant.parse(s)))
 
-  private var cachedTransactor: Option[Transactor] = None
+  private val cachedTransactor = new AtomicReference[Option[Transactor]](None)
 
   private def getTransactor(url: String, user: String, password: String): Transactor =
-    cachedTransactor.getOrElse:
+    cachedTransactor.get().getOrElse:
       val xa = createTransactor(url, user, password)
-      cachedTransactor = Some(xa)
-      xa
+      cachedTransactor.compareAndSet(None, Some(xa))
+      cachedTransactor.get().get
 
   def insertChunk(chunk: Seq[LeiRecord], url: String, user: String, password: String): Int =
-    val xa = getTransactor(url, user, password)
-    transact(xa):
+    val xa     = getTransactor(url, user, password)
+    val result = transact(xa):
       batchUpdate(chunk): record =>
         val regDate = parseTimestamp(record.initialRegistrationDate)
         val updDate = parseTimestamp(record.lastUpdateDate)
@@ -58,7 +58,9 @@ object Database:
             next_renewal_date         = EXCLUDED.next_renewal_date,
             imported_at               = CURRENT_TIMESTAMP
         """.update
-    chunk.size
+    result match
+      case BatchUpdateResult.Success(rowsUpdated) => rowsUpdated.toInt
+      case BatchUpdateResult.SuccessNoInfo        => chunk.size
 
   def insertRecords(records: List[LeiRecord], url: String, user: String, password: String): Unit =
     insertChunk(records, url, user, password)
@@ -74,7 +76,7 @@ object Database:
       println("╔═══ Status Distribution ════╗")
       val byStatus = sql"SELECT status, COUNT(*) FROM gleif_lei_records GROUP BY status ORDER BY COUNT(*) DESC".query[(String, Long)].run()
       for (status, count) <- byStatus do
-        val pct = (count.toDouble / total * 100).round
+        val pct = if total > 0 then (count.toDouble / total * 100).round else 0L
         println(s"  $status: $count ($pct%)")
       println("╚════════════════════════════╝")
 

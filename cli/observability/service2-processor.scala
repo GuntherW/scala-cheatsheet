@@ -1,17 +1,17 @@
 //> using file otel.scala
 //> using resourceDir .
 //> using dep com.softwaremill.sttp.tapir::tapir-netty-server-sync:1.13.30
-//> using dep com.softwaremill.sttp.tapir::tapir-json-circe:1.13.30
-//> using dep com.softwaremill.sttp.tapir::tapir-opentelemetry-tracing:1.13.30
+//> using dep com.softwaremill.sttp.tapir::tapir-json-circe:1.13.31
+//> using dep com.softwaremill.sttp.tapir::tapir-opentelemetry-tracing:1.13.31
 //> using dep com.softwaremill.sttp.client4::core:4.0.26
 //> using dep com.softwaremill.sttp.client4::circe:4.0.26
 //> using dep io.circe::circe-generic:0.14.16
-//> using dep io.opentelemetry:opentelemetry-api:1.64.0
-//> using dep io.opentelemetry:opentelemetry-sdk:1.64.0
-//> using dep io.opentelemetry:opentelemetry-exporter-otlp:1.64.0
+//> using dep io.opentelemetry:opentelemetry-api:1.65.0
+//> using dep io.opentelemetry:opentelemetry-sdk:1.65.0
+//> using dep io.opentelemetry:opentelemetry-exporter-otlp:1.65.0
 //> using dep io.opentelemetry.semconv:opentelemetry-semconv:1.43.0
 //> using dep io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:2.30.0-alpha
-//> using dep ch.qos.logback:logback-classic:1.6.1
+//> using dep ch.qos.logback:logback-classic:1.6.3
 
 import io.circe.generic.auto.*
 import io.opentelemetry.api.metrics.LongCounter
@@ -23,7 +23,7 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 
-import java.net.InetAddress
+import scala.util.Try
 
 // --- Domain ---
 
@@ -69,7 +69,7 @@ def service2Processor(): Unit =
     // Exceptions werden in Left gewandelt - raceEither erwartet Either, keine Exceptions.
     def callService3(attempt: Int): Either[String, FibResult] =
       log.debug("Calling service3, attempt {}", attempt)
-      try
+      Try {
         basicRequest
           .post(uri"$svc3Url/fibonacci")
           .headers(traceHeaders) // vorgefangener Context - korrekte traceId auf jedem Thread
@@ -77,9 +77,8 @@ def service2Processor(): Unit =
           .response(asJson[FibResult])
           .send(backend)
           .body
-          .left
-          .map(err => s"attempt $attempt: $err")
-      catch case ex: Exception => Left(s"attempt $attempt: ${ex.getMessage}")
+      }.toEither.left.map(_.getMessage).flatten
+        .left.map(err => s"attempt $attempt: $err")
 
     // === OX: raceEither ===
     // Startet zwei identische Anfragen an Service3 parallel (auf je einem Virtual Thread).

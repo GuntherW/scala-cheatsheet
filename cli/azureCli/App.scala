@@ -141,10 +141,8 @@ object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
       items.lift(state.selectedIndex) match
         case Some(f: FileView) if f.name.endsWith(".zip") =>
           readZipContents(blobClient, f.containerName, f.path) match
-            case scala.util.Success(result) =>
-              val xmlContent   = result._1
-              val otherEntries = result._2
-              val zipState     = ZipViewState(
+            case Success((xmlContent, otherEntries)) =>
+              val zipState = ZipViewState(
                 containerName = f.containerName,
                 blobPath = f.path,
                 zipName = f.name,
@@ -153,7 +151,7 @@ object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
                 selectedIndex = 0
               )
               (state.copy(pendingZipView = Some(zipState)), Cmd.none)
-            case scala.util.Failure(e)      =>
+            case Failure(e)                           =>
               (state.copy(statusMessage = Some(StatusMessage.ZipViewFailed(e.getMessage))), Cmd.none)
         case Some(f: FileView)                            =>
           (state.copy(statusMessage = Some(StatusMessage.Info(s"Keine ZIP-Datei: ${f.name}"))), Cmd.none)
@@ -186,15 +184,8 @@ object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
     case CloseZipView => (state.copy(pendingZipView = None), Cmd.none)
 
     case ToggleDirectory =>
-      val items = computeFlatItems(state)
-      items.lift(state.selectedIndex) match
-        case Some(d: DirView) =>
-          val key         = d.fullPath
-          val newExpanded =
-            if state.expandedPaths.contains(key)
-            then state.expandedPaths - key
-            else state.expandedPaths + key
-          (state.copy(expandedPaths = newExpanded), Cmd.none)
+      computeFlatItems(state).lift(state.selectedIndex) match
+        case Some(d: DirView) => toggleDirectory(state, d)
         case _                => (state, Cmd.none)
 
   def subscriptions(state: AppState): Sub[AppMsg] = Sub.batch(
@@ -273,14 +264,9 @@ object BlobViewerApp extends LayoutzApp[AppState, AppMsg]:
         (state.copy(statusMessage = Some(StatusMessage.DownloadFailed(e.getMessage))), Cmd.none)
 
   private def computeFlatItems(state: AppState): List[NodeView] =
-    val items = par(
-      state.containers.toList
-        .map { (containerName, blobs) => () => (containerName, buildTreeStructure(containerName, blobs)) }
-    )
-    items.toList
-      .flatMap { (_, root) =>
-        flattenNode(root, state.expandedPaths)
-      }
+    state.containers.toList
+      .map { (containerName, blobs) => containerName -> buildTreeStructure(containerName, blobs) }
+      .flatMap { (_, root) => flattenNode(root, state.expandedPaths) }
 
   private def extractTimestamp(name: String): String =
     val withoutExt = name.lastIndexOf('.') match

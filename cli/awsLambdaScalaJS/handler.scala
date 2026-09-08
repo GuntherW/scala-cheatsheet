@@ -9,11 +9,11 @@ import scala.scalajs.js.annotation.*
 // AWS Lambda Event (API Gateway v2 / Function URL)
 @js.native
 trait LambdaEvent extends js.Object:
-  val rawPath: js.UndefOr[String]            = js.native
-  val rawQueryString: js.UndefOr[String]     = js.native
+  val rawPath: js.UndefOr[String]                = js.native
+  val rawQueryString: js.UndefOr[String]         = js.native
   val headers: js.UndefOr[js.Dictionary[String]] = js.native
-  val body: js.UndefOr[String]               = js.native
-  val isBase64Encoded: js.UndefOr[Boolean]   = js.native
+  val body: js.UndefOr[String]                   = js.native
+  val isBase64Encoded: js.UndefOr[Boolean]       = js.native
 
 @js.native
 trait LambdaContext extends js.Object:

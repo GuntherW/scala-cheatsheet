@@ -32,9 +32,9 @@ val dashboard = layout(
       layout(
         kv("Kazushi" -> "Sakuraba", "Jet 李連杰" -> "Li", "Rory" -> "MacDonald"),
         tightRow((0 to 255 by 12).map { i =>
-          val r = if (i < 128) i * 2 else 255;
-          val g = if (i < 128) 255 else (255 - i) * 2
-          val b = if (i > 128) (i - 128) * 2 else 0;
+          val r = if i < 128 then i * 2 else 255
+          val g = if i < 128 then 255 else (255 - i) * 2
+          val b = if i > 128 then (i - 128) * 2 else 0
           "█".color(Color.True(r, g, b))
         }*)
       )

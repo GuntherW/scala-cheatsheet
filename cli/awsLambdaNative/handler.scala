@@ -8,6 +8,8 @@
 import sttp.client4.*
 import sttp.client4.curl.CurlBackend
 
+import scala.util.Using
+
 // AWS Lambda Custom Runtime Bootstrap
 // Kommuniziert via Long-Poll mit dem Lambda Runtime API (blockierendes GET bis Event eintrifft)
 @main def bootstrap(): Unit =
@@ -16,15 +18,11 @@ import sttp.client4.curl.CurlBackend
 
   System.err.println(s"[Native Lambda] Starting, runtime API: $runtimeApi")
 
-  val backend = CurlBackend()
-
-  try
+  Using.resource(CurlBackend()): backend =>
     Iterator
       .continually(nextInvocation(baseUrl, backend))
       .foreach: (requestId, body) =>
         postResponse(baseUrl, requestId, handleEvent(body), backend)
-  finally
-    backend.close()
 
 def nextInvocation(baseUrl: String, backend: SyncBackend): (String, String) =
   val response = basicRequest
@@ -45,8 +43,8 @@ def postResponse(baseUrl: String, requestId: String, body: String, backend: Sync
   ()
 
 def handleEvent(body: String): String =
-  val name = extractQueryParam(body, "name").getOrElse("World")
-  val path = extractJsonField(body, "rawPath").getOrElse("/")
+  val name = jsonEscape(extractQueryParam(body, "name").getOrElse("World"))
+  val path = jsonEscape(extractJsonField(body, "rawPath").getOrElse("/"))
 
   System.err.println(s"[Native Lambda] path=$path name=$name")
 
@@ -58,6 +56,8 @@ def handleEvent(body: String): String =
       |  },
       |  "body": "{\\"message\\":\\"Hello, $name! You called: $path\\",\\"path\\":\\"$path\\",\\"name\\":\\"$name\\"}"
       |}""".stripMargin
+
+def jsonEscape(s: String): String = s.replace("\\", "\\\\").replace("\"", "\\\"")
 
 def extractQueryParam(json: String, param: String): Option[String] =
   extractJsonField(json, "rawQueryString").flatMap: qs =>
