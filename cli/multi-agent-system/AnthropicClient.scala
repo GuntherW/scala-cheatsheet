@@ -144,8 +144,7 @@ object AnthropicClient:
         block.`type` match
           case "text"     => log(s"   [text]      ${truncate(block.text.getOrElse(""))}")
           case "thinking" => log(s"   [thinking]  ${truncate(block.thinking.getOrElse(""))}")
-          case "tool_use" =>
-            log(s"   [tool_use]  name=${block.name.getOrElse("?")} id=${block.id.getOrElse("?")} input=${block.input.map(_.render()).getOrElse("{}")}")
+          case "tool_use" => log(s"   [tool_use]  name=${block.name.getOrElse("?")} id=${block.id.getOrElse("?")} input=${block.input.map(_.render()).getOrElse("{}")}")
           case other      => log(s"   [$other]")
       }
 
