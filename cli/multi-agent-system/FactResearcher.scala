@@ -7,8 +7,7 @@ package agents
   *
   * Nutzt das server-seitige Tool `web_search`, damit die Fakten nicht nur aus dem Trainingswissen des Modells stammen, sondern mit aktuellen Quellen belegt werden können (Grounding).
   */
-object FactResearcher
-    extends Agent(
+object FactResearcher extends Agent(
       name = "Fact-Researcher",
       systemPrompt = """Du bist der Fact-Researcher in einem Multi-Agenten-System.
                        |

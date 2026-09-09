@@ -5,11 +5,11 @@ import AnthropicModels.*
 
 /** Eingabeparameter, wie sie das Modell (passend zum `input_schema` von `RiskAnalystTools.CalculateTcoTool`) liefert.
   */
-final private case class CalculateTcoInput(technology: String, team_size: Int) derives ReadWriter
+case class CalculateTcoInput(technology: String, team_size: Int) derives ReadWriter
 
 /** Rückgabe des Tools - bewusst als eigenes Case-Class-Schema, damit die JSON-Struktur klar erkennbar bleibt.
   */
-final private case class CalculateTcoResult(
+case class CalculateTcoResult(
     technology: String,
     team_size: Int,
     estimated_monthly_cost_eur: Int,
@@ -19,7 +19,7 @@ final private case class CalculateTcoResult(
 /** Definition und Ausführung des client-seitigen (custom) Tools `calculate_tco`. Als eigenes Objekt VOR `RiskAnalyst` definiert, damit es beim Aufbau von `RiskAnalyst extends Agent(...)` bereits
   * vollständig initialisiert zur Verfügung steht (kein Vorwärtsverweis auf `RiskAnalyst` selbst nötig).
   */
-private object CalculateTcoTool:
+object CalculateTcoTool:
 
   /** Client-seitiges (custom) Tool: Definition per JSON-Schema (`input_schema`). Das Modell entscheidet selbst, WANN es dieses Tool mit welchen Parametern aufruft - die eigentliche Ausführung
     * übernimmt `handler` unten.
@@ -67,8 +67,7 @@ private object CalculateTcoTool:
   * Hinweis: `web_search` wurde hier bewusst NICHT zusätzlich eingebunden, da das Mischen von server- und client-seitigen Tools bei diesem Router dazu führt, dass auch für `web_search` ein
   * `tool_result` erwartet wird (statt es automatisch serverseitig aufzulösen) - das würde dieses Beispiel unnötig verkomplizieren.
   */
-object RiskAnalyst
-    extends Agent(
+object RiskAnalyst extends Agent(
       name = "Risk-Analyst",
       systemPrompt = """Du bist der Risk-Analyst in einem Multi-Agenten-System.
                        |
@@ -87,7 +86,7 @@ object RiskAnalyst
                        |- Antworte auf Deutsch.
                        |""".stripMargin,
       clientTools = List(CalculateTcoTool.definition),
-      toolHandlers = Map("calculate_tco" -> CalculateTcoTool.handler),
+      toolHandlers = Map(CalculateTcoTool.definition.name -> CalculateTcoTool.handler),
     ):
 
   def analyze(topic: String): String =

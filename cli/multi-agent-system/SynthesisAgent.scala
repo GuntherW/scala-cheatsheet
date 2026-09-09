@@ -7,8 +7,7 @@ package agents
   * Dieser Agent bekommt KEIN eigenes Tool (kein web_search), da er nicht selbst recherchiert, sondern ausschließlich mit dem bereits gesammelten Kontext (den Outputs der Worker) arbeitet. Das ist ein
   * typisches "Aggregator-Pattern" in Multi-Agenten-Systemen.
   */
-object SynthesisAgent
-    extends Agent(
+object SynthesisAgent extends Agent(
       name = "Synthesis-Agent",
       systemPrompt = """Du bist der Synthesis-Agent in einem Multi-Agenten-System.
                        |
@@ -33,11 +32,13 @@ object SynthesisAgent
     val prompt =
       s"""Thema: $topic
          |
-         |--- Bericht des Fact-Researcher ---
+         |<reportOfFactResearcher>
          |$facts
+         |</reportOfFactResearcher>
          |
-         |--- Bericht des Risk-Analyst ---
+         |<reportOfRiskAnalyst>
          |$risks
+         |</reportOfRiskAnalyst>
          |
          |Erstelle nun den finalen, konsolidierten Bericht.""".stripMargin
     run(prompt, maxTokens = 3000)

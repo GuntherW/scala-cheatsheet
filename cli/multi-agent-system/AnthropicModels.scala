@@ -22,13 +22,7 @@ object AnthropicModels:
     */
   final case class WebSearchTool(`type`: String = "web_search_20250305", name: String = "web_search", max_uses: Int = 5) derives ReadWriter
 
-  final case class ChatRequest(
-      model: String,
-      max_tokens: Int,
-      system: Option[String],
-      messages: List[ChatMessage],
-      tools: Option[List[WebSearchTool]],
-  ) derives ReadWriter
+  final case class ChatRequest(model: String, max_tokens: Int, system: Option[String], messages: List[ChatMessage], tools: Option[List[WebSearchTool]]) derives ReadWriter
 
   // ---- Request (Tool-Use-Loop mit einem client-seitigen/custom Tool) ----
 
@@ -38,11 +32,7 @@ object AnthropicModels:
 
   /** JSON-Schema für die Eingabeparameter eines client-seitigen Tools (`input_schema`). Das Modell nutzt dieses Schema, um zu entscheiden, welche Parameter es beim Tool-Aufruf mitschickt.
     */
-  final case class InputSchema(
-      `type`: String = "object",
-      properties: Map[String, PropertySchema],
-      required: List[String],
-  ) derives ReadWriter
+  final case class InputSchema(`type`: String = "object", properties: Map[String, PropertySchema], required: List[String]) derives ReadWriter
 
   /** Definition eines client-seitigen (custom) Tools. Im Gegensatz zu `WebSearchTool` hat dieses Tool keinen server-seitigen `type` - das Modell liefert nur den Aufrufwunsch zurück, die Ausführung
     * übernimmt unser eigener Code (siehe `AnthropicClient.chatWithTool`).
@@ -54,13 +44,7 @@ object AnthropicModels:
     */
   final case class LoopMessage(role: String, content: ujson.Value) derives ReadWriter
 
-  final case class LoopChatRequest(
-      model: String,
-      max_tokens: Int,
-      system: Option[String],
-      messages: List[LoopMessage],
-      tools: Option[List[ClientTool]],
-  ) derives ReadWriter
+  final case class LoopChatRequest(model: String, max_tokens: Int, system: Option[String], messages: List[LoopMessage], tools: Option[List[ClientTool]]) derives ReadWriter
 
   /** Unser Ergebnis eines client-seitigen Tool-Aufrufs, zurückgesendet an das Modell. `tool_use_id` verknüpft das Ergebnis eindeutig mit dem ursprünglichen `tool_use`-Block.
     */
@@ -82,8 +66,4 @@ object AnthropicModels:
       signature: Option[String] = None,
   ) derives ReadWriter
 
-  final case class ChatResponse(
-      id: String,
-      content: List[ContentBlock],
-      stop_reason: Option[String],
-  ) derives ReadWriter
+  final case class ChatResponse(id: String, content: List[ContentBlock], stop_reason: Option[String]) derives ReadWriter
