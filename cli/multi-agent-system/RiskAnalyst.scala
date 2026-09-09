@@ -9,12 +9,7 @@ case class CalculateTcoInput(technology: String, team_size: Int) derives ReadWri
 
 /** Rückgabe des Tools - bewusst als eigenes Case-Class-Schema, damit die JSON-Struktur klar erkennbar bleibt.
   */
-case class CalculateTcoResult(
-    technology: String,
-    team_size: Int,
-    estimated_monthly_cost_eur: Int,
-    note: String,
-) derives ReadWriter
+case class CalculateTcoResult(technology: String, team_size: Int, estimated_monthly_cost_eur: Int, note: String) derives ReadWriter
 
 /** Definition und Ausführung des client-seitigen (custom) Tools `calculate_tco`. Als eigenes Objekt VOR `RiskAnalyst` definiert, damit es beim Aufbau von `RiskAnalyst extends Agent(...)` bereits
   * vollständig initialisiert zur Verfügung steht (kein Vorwärtsverweis auf `RiskAnalyst` selbst nötig).

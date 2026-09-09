@@ -21,6 +21,17 @@ object AnthropicClient:
 
   private val backend = DefaultSyncBackend()
 
+  /** Schreibt eine Log-Zeile für die Ein-/Ausgabe-Kommunikation mit dem Modell auf die Konsole. Zentraler Ort für dieses simple `println`-Logging, damit sich Aufbau und Präfix (`[Anthropic]`) nicht
+    * in jeder Methode wiederholen.
+    */
+  private def log(msg: String): Unit = println(s"[Anthropic] $msg")
+
+  /** Kürzt lange, mehrzeilige Texte für die Log-Ausgabe auf eine einzelne, überschaubare Zeile (Zeilenumbrüche/mehrfache Leerzeichen werden zu einem Leerzeichen zusammengefasst).
+    */
+  private def truncate(s: String, maxLen: Int = 300): String =
+    val flattened = s.replaceAll("\\s+", " ").trim
+    if flattened.length > maxLen then flattened.take(maxLen) + "…" else flattened
+
   /** Führt genau einen Model-Call aus und liefert nur die reinen Text-Blöcke der Antwort (verkettet), analog zu `text_from_message` im Python-Pendant.
     *
     * @param model
@@ -51,6 +62,10 @@ object AnthropicClient:
 
     val requestBody = write(request)
 
+    log(s"-> Request  model=$model web_search=$useWebSearch")
+    log(s"   system:  ${truncate(systemPrompt)}")
+    log(s"   user:    ${truncate(userMessage)}")
+
     val response = basicRequest
       .post(uri"$BaseUrl")
       .header("x-api-key", apiKey)
@@ -61,12 +76,16 @@ object AnthropicClient:
 
     response.body match
       case Left(errorBody) =>
+        log(s"<- Fehler   HTTP ${response.code}: ${truncate(errorBody)}")
         throw new RuntimeException(s"Anthropic API Fehler (HTTP ${response.code}): $errorBody")
       case Right(bodyJson) =>
         val parsed = read[ChatResponse](bodyJson)
-        parsed.content
+        log(s"<- Response stop_reason=${parsed.stop_reason.getOrElse("-")} blocks=${parsed.content.map(_.`type`).mkString(",")}")
+        val text   = parsed.content
           .collect { case ContentBlock("text", Some(text), _, _, _, _, _) => text }
           .mkString("\n")
+        log(s"   text:    ${truncate(text)}")
+        text
 
   /** Führt einen Tool-Use-Loop mit GENAU EINEM client-seitigen (custom) Tool aus.
     *
@@ -89,8 +108,15 @@ object AnthropicClient:
       maxTokens: Int = 2000,
   ): String =
     var messages: List[LoopMessage] = List(LoopMessage("user", ujson.Str(userMessage)))
+    var turn                        = 0
+
+    log(s"===== Tool-Use-Loop gestartet (model=$model, tools=${tools.map(_.name).mkString(", ")}) =====")
+    log(s"   user:    ${truncate(userMessage)}")
 
     while true do
+      turn += 1
+      log(s"--- Turn $turn: sende ${messages.size} Nachricht(en) an das Modell ---")
+
       val request = LoopChatRequest(
         model = model,
         max_tokens = maxTokens,
@@ -109,11 +135,24 @@ object AnthropicClient:
 
       val parsed = response.body match
         case Left(errorBody) =>
+          log(s"<- Fehler   HTTP ${response.code}: ${truncate(errorBody)}")
           throw new RuntimeException(s"Anthropic API Fehler (HTTP ${response.code}): $errorBody")
         case Right(bodyJson) => read[ChatResponse](bodyJson)
 
+      log(s"<- Turn $turn Antwort: stop_reason=${parsed.stop_reason.getOrElse("-")}")
+      parsed.content.foreach { block =>
+        block.`type` match
+          case "text"     => log(s"   [text]      ${truncate(block.text.getOrElse(""))}")
+          case "thinking" => log(s"   [thinking]  ${truncate(block.thinking.getOrElse(""))}")
+          case "tool_use" =>
+            log(s"   [tool_use]  name=${block.name.getOrElse("?")} id=${block.id.getOrElse("?")} input=${block.input.map(_.render()).getOrElse("{}")}")
+          case other      => log(s"   [$other]")
+      }
+
       if !parsed.stop_reason.contains("tool_use") then
-        return parsed.content.collect { case ContentBlock("text", Some(text), _, _, _, _, _) => text }.mkString("\n")
+        val finalText = parsed.content.collect { case ContentBlock("text", Some(text), _, _, _, _, _) => text }.mkString("\n")
+        log(s"===== Tool-Use-Loop beendet nach $turn Turn(s), finale Antwort: ${truncate(finalText)} =====")
+        return finalText
 
       // Die komplette Assistant-Antwort (inkl. tool_use-Blöcken) muss Teil
       // der Historie werden, damit das Modell im nächsten Turn weiß, worauf
@@ -124,8 +163,11 @@ object AnthropicClient:
         .filter(_.`type` == "tool_use")
         .map { block =>
           val toolName   = block.name.getOrElse("")
+          val toolInput  = block.input.getOrElse(ujson.Obj())
+          log(s"   >> Tool-Aufruf     $toolName(${toolInput.render()})")
           val handler    = toolHandlers.getOrElse(toolName, (_: ujson.Value) => s"Fehler: kein Handler für Tool '$toolName' registriert.")
-          val resultText = handler(block.input.getOrElse(ujson.Obj()))
+          val resultText = handler(toolInput)
+          log(s"   << Tool-Ergebnis   $toolName -> ${truncate(resultText)}")
           ToolResultBlock(tool_use_id = block.id.getOrElse(""), content = resultText)
         }
 

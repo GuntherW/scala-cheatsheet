@@ -1,6 +1,7 @@
 package agents
 
 import upickle.default.*
+import upickle.implicits.serializeDefaults
 
 /** JSON-Modelle für die Anthropic Messages API (`POST /v1/messages`).
   *
@@ -11,6 +12,10 @@ import upickle.default.*
   *
   * Für Felder, deren JSON-Form je nach Nachricht mal ein einfacher String, mal eine Liste von Content-Blöcken ist (Anthropics `content`-Feld), nutzen wir direkt `ujson.Value` - upickles eigene,
   * dynamische JSON-AST-Repräsentation. Ein eigener `RawJson`-Wrapper (wie er für jsoniter-scala nötig war) entfällt dadurch komplett.
+  *
+  * WICHTIG: upickle lässt beim Schreiben Felder, deren Wert zufällig dem deklarierten Default entspricht, standardmäßig einfach weg (z. B. `type = "object"`) - mit fatalen Folgen für die
+  * Anthropic API (leeres/unvollständiges JSON-Objekt statt gültiger Tool-Definition). Case-Classes mit einem NICHT-optionalen Default-Wert (`WebSearchTool`, `InputSchema`, `ToolResultBlock`)
+  * bekommen daher explizit `@serializeDefaults(true)`. Bei `Option`-Feldern (z. B. in `ContentBlock`) ist das Weglassen von `None`-Werten dagegen erwünscht und bleibt unangetastet.
   */
 object AnthropicModels:
 
@@ -20,6 +25,7 @@ object AnthropicModels:
 
   /** Beschreibung eines server-seitigen Tools, z. B. der Web-Suche. `type` ist ein Scala-Softkeyword und muss daher in Backticks stehen.
     */
+  @serializeDefaults(true)
   final case class WebSearchTool(`type`: String = "web_search_20250305", name: String = "web_search", max_uses: Int = 5) derives ReadWriter
 
   final case class ChatRequest(model: String, max_tokens: Int, system: Option[String], messages: List[ChatMessage], tools: Option[List[WebSearchTool]]) derives ReadWriter
@@ -32,6 +38,7 @@ object AnthropicModels:
 
   /** JSON-Schema für die Eingabeparameter eines client-seitigen Tools (`input_schema`). Das Modell nutzt dieses Schema, um zu entscheiden, welche Parameter es beim Tool-Aufruf mitschickt.
     */
+  @serializeDefaults(true)
   final case class InputSchema(`type`: String = "object", properties: Map[String, PropertySchema], required: List[String]) derives ReadWriter
 
   /** Definition eines client-seitigen (custom) Tools. Im Gegensatz zu `WebSearchTool` hat dieses Tool keinen server-seitigen `type` - das Modell liefert nur den Aufrufwunsch zurück, die Ausführung
@@ -44,16 +51,11 @@ object AnthropicModels:
     */
   final case class LoopMessage(role: String, content: ujson.Value) derives ReadWriter
 
-  final case class LoopChatRequest(
-      model: String,
-      max_tokens: Int,
-      system: Option[String],
-      messages: List[LoopMessage],
-      tools: Option[List[ClientTool]],
-  ) derives ReadWriter
+  final case class LoopChatRequest(model: String, max_tokens: Int, system: Option[String], messages: List[LoopMessage], tools: Option[List[ClientTool]]) derives ReadWriter
 
   /** Unser Ergebnis eines client-seitigen Tool-Aufrufs, zurückgesendet an das Modell. `tool_use_id` verknüpft das Ergebnis eindeutig mit dem ursprünglichen `tool_use`-Block.
     */
+  @serializeDefaults(true)
   final case class ToolResultBlock(`type`: String = "tool_result", tool_use_id: String, content: String) derives ReadWriter
 
   // ---- Response ----
