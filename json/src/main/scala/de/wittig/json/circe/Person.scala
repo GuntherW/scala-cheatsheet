@@ -15,7 +15,8 @@ case class Person(
 ) derives Encoder, Decoder
 
 object Person:
-  given yearKeyEncoder: KeyEncoder[Year] = (year: Year) => year.toString + "lkj"
+  given yearKeyEncoder: KeyEncoder[Year] = (year: Year) => year.toString + "-key-encoder"
+  given yearEncoder: Encoder[Year]       = (year: Year) => Json.fromString(year.toString + "-encoder")
 
   given Encoder[FiniteDuration] = Encoder.instance { dur =>
     Json.fromBigDecimal(BigDecimal(dur.toSeconds) / 60)
