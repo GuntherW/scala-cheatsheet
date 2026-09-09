@@ -2,7 +2,7 @@ package agents
 
 import org.apache.pekko.actor.typed.{ActorRef, Behavior, DispatcherSelector}
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
-import AnthropicModels.{ClientTool, RawJson}
+import AnthropicModels.ClientTool
 import scala.util.{Failure, Success}
 import scala.concurrent.Future
 
@@ -24,7 +24,7 @@ object AgentActor:
       systemPrompt: String,
       useWebSearch: Boolean = false,
       clientTools: List[ClientTool] = Nil,
-      toolHandlers: Map[String, RawJson => String] = Map.empty,
+      toolHandlers: Map[String, ujson.Value => String] = Map.empty,
       model: String = "vertex/claude-sonnet-5@eu",
   ): Behavior[Command] =
     Behaviors.setup { context =>

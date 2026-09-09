@@ -90,18 +90,9 @@ final case class PipelineResult(
     val outputDir = os.pwd / "output"
     os.makeDir.all(outputDir)
 
-    os.write.over(
-      outputDir / "01_fact_researcher.md",
-      s"# Fact-Researcher: $topic\n\n${result.factResearcherOutput}\n",
-    )
-    os.write.over(
-      outputDir / "02_risk_analyst.md",
-      s"# Risk-Analyst: $topic\n\n${result.riskAnalystOutput}\n",
-    )
-    os.write.over(
-      outputDir / "03_final_report.md",
-      s"# Finaler Bericht: $topic\n\n${result.finalReport}\n",
-    )
+    os.write.over(outputDir / "01_fact_researcher.md", s"# Fact-Researcher: $topic\n\n${result.factResearcherOutput}\n")
+    os.write.over(outputDir / "02_risk_analyst.md", s"# Risk-Analyst: $topic\n\n${result.riskAnalystOutput}\n")
+    os.write.over(outputDir / "03_final_report.md", s"# Finaler Bericht: $topic\n\n${result.finalReport}\n")
 
     println("\n=== FINALER BERICHT ===\n")
     println(result.finalReport)

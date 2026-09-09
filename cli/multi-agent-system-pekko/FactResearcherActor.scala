@@ -4,14 +4,10 @@ import org.apache.pekko.actor.typed.Behavior
 
 /** Worker 1: Fact-Researcher-Aktor.
   *
-  * Fachlich identisch zu `FactResearcher` in `research_scala`: Sammelt
-  * ausschliesslich Fakten, Argumente und Quellen (server-seitiges Tool
-  * `web_search`), bewertet KEINE Risiken (Separation of Concerns
-  * zwischen Agenten/Aktoren).
+  * Fachlich identisch zu `FactResearcher` in `research_scala`: Sammelt ausschliesslich Fakten, Argumente und Quellen (server-seitiges Tool `web_search`), bewertet KEINE Risiken (Separation of
+  * Concerns zwischen Agenten/Aktoren).
   *
-  * Als Aktor lebt dieser Worker dauerhaft als Kind-Aktor des
-  * `Orchestrator` und verarbeitet nacheinander `AgentProtocol.Run`-
-  * Nachrichten fuer beliebig viele Pipeline-Durchlaeufe.
+  * Als Aktor lebt dieser Worker dauerhaft als Kind-Aktor des `Orchestrator` und verarbeitet nacheinander `AgentProtocol.Run`- Nachrichten fuer beliebig viele Pipeline-Durchlaeufe.
   */
 object FactResearcherActor:
 

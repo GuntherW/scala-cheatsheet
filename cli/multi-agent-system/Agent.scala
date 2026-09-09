@@ -1,6 +1,6 @@
 package agents
 
-import AnthropicModels.{ClientTool, RawJson}
+import AnthropicModels.ClientTool
 
 /** Basisklasse für alle Agenten im Multi-Agenten-System.
   *
@@ -20,7 +20,7 @@ abstract class Agent(
     val systemPrompt: String,
     val useWebSearch: Boolean = false,
     val clientTools: List[ClientTool] = Nil,
-    val toolHandlers: Map[String, RawJson => String] = Map.empty,
+    val toolHandlers: Map[String, ujson.Value => String] = Map.empty,
     val model: String = "vertex/claude-sonnet-5@eu",
 ):
 

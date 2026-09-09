@@ -1,14 +1,12 @@
 package agents
 
-import com.github.plokhotnyuk.jsoniter_scala.core.*
-import com.github.plokhotnyuk.jsoniter_scala.macros.*
+import upickle.default.*
 import org.apache.pekko.actor.typed.Behavior
 import AnthropicModels.*
 
 /** Eingabeparameter, wie sie das Modell (passend zum `input_schema` von `CalculateTcoTool`) liefert.
   */
-final private case class CalculateTcoInput(technology: String, team_size: Int)
-private given JsonValueCodec[CalculateTcoInput] = JsonCodecMaker.make
+final private case class CalculateTcoInput(technology: String, team_size: Int) derives ReadWriter
 
 /** Rückgabe des Tools - bewusst als eigenes Case-Class-Schema, damit die JSON-Struktur klar erkennbar bleibt.
   */
@@ -17,8 +15,7 @@ final private case class CalculateTcoResult(
     team_size: Int,
     estimated_monthly_cost_eur: Int,
     note: String,
-)
-private given JsonValueCodec[CalculateTcoResult] = JsonCodecMaker.make
+) derives ReadWriter
 
 /** Definition und Ausführung des client-seitigen (custom) Tools `calculate_tco`. Unveraendert gegenueber `research_scala/RiskAnalyst.scala`
   *   - Tool-Definition und Handler-Funktion haben nichts mit dem Nebenläufigkeitsmodell (Aktor vs. direkter Aufruf) zu tun.
@@ -41,8 +38,8 @@ private object CalculateTcoTool:
 
   /** Dummy-Implementierung des calculate_tco-Tools. Wird vom `AgentActor` auf dem `blocking-io-dispatcher` ausgeführt (Teil des `chatWithTool`-Loops in `AnthropicClient`).
     */
-  def handler(rawInput: RawJson): String =
-    val input          = readFromArray[CalculateTcoInput](rawInput.bytes)
+  def handler(rawInput: ujson.Value): String =
+    val input          = read[CalculateTcoInput](rawInput)
     // Fest codierte Dummy-Formel - rein illustrativ.
     val monthlyCostEur = 350 * input.team_size + 500
     val result         = CalculateTcoResult(
@@ -51,7 +48,7 @@ private object CalculateTcoTool:
       estimated_monthly_cost_eur = monthlyCostEur,
       note = "Demo-Berechnung mit Dummy-Zahlen, keine reale Kostenanalyse.",
     )
-    writeToString(result)
+    write(result)
 
 /** Worker 2: Risk-Analyst-Aktor.
   *
