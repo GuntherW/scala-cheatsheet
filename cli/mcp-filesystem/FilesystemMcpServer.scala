@@ -207,7 +207,7 @@ val explainFilePrompt = prompt("explain_file")
       messages = List(
         PromptMessage(
           role = Role.User,
-          content = ToolContent.Text(text = s"Bitte lies die Datei $path und erkläre mir, was der Code darin tut.")
+          content = ToolContent.Text(text = s"Lies die Datei $path und erkläre mir den Inhalt.")
         )
       ),
       description = Some(s"Erklärungs-Prompt für $path")
