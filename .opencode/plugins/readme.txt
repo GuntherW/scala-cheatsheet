@@ -1,0 +1,1 @@
+Plugins in opencode sind die Äquivalente von Hooks in Claude Code.

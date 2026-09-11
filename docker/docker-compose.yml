@@ -151,9 +151,20 @@ services:
     volumes:
       - dbdata6:/data/db
 
+  valkey:
+    image: valkey/valkey:9.1.2
+    container_name: valkey-cheatsheet
+    ports:
+      - '6379:6379'
+    volumes:
+      - valkeydata:/data
+
 volumes:
   data:
     driver: local
   dataPgmq:
     driver: local
   dbdata6:
+    driver: local
+  valkeydata:
+    driver: local

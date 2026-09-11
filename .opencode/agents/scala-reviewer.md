@@ -66,7 +66,39 @@ Rules for the output:
 - Keep snippets minimal — just enough context to understand the change.
 - Order findings by file, then line number.
 - No findings in a file → state that explicitly, briefly say why it's fine.
-- End with a summary: finding count per category.
+- **Kategorie** must be exactly one of these three literal strings: `Lesbarkeit`, `Performanz`, `Best Practice`. Never
+  invent variants (e.g. not "Lesbarkeit/Style").
+- End with exactly this summary line (counts as integers, zero included):
+  `**Zusammenfassung:** Lesbarkeit: <n>, Performanz: <n>, Best Practice: <n>`
 - Write the review in German, keep code/identifiers in English.
+- Output ONLY the finding blocks plus the final summary line — no preamble, no closing remarks, no extra prose
+  before/after.
+
+## Example output
+
+```
+### Unsicheres Pattern Matching ohne exhaustiven Check
+**Datei:** src/main/scala/Foo.scala:42
+**Kategorie:** Best Practice
+**Problem:** Das Pattern Match deckt nicht alle Fälle eines sealed trait ab und kann zur Laufzeit eine MatchError werfen.
+
+Aktueller Code:
+```scala
+def handle(x: Status): String = x match
+  case Status.Active => "active"
+```
+
+Verbesserter Code:
+
+```scala
+def handle(x: Status): String = x match
+  case Status.Active   => "active"
+  case Status.Inactive => "inactive"
+```
+
+**Begründung:** Exhaustives Matching wird vom Compiler geprüft und verhindert MatchError zur Laufzeit.
+
+**Zusammenfassung:** Lesbarkeit: 0, Performanz: 0, Best Practice: 1
+```
 
 Do not modify files. Do not run bash commands other than `scalex *`. Analysis and reporting only.
