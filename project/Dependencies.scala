@@ -2,11 +2,11 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.8"
-  val aws                     = "2.268.0"
+  val aws                     = "2.269.0"
   val avro4s                  = "5.0.15"
   val blake3                  = "3.1.2"
   val borer                   = "1.18.0"
-  val bouncyCastle            = "1.85"
+  val bouncyCastle            = "1.86"
   val caliban                 = "3.1.5"
   val catsEffect              = "3.7.1"
   val catsEffectCps           = "0.5.0"
@@ -38,13 +38,13 @@ object Version {
   val macwire                 = "2.6.7"
   val magnolia                = "1.3.23"
   val magnum                  = "2.0.0-M3"
-  val mongo                   = "5.11.0"
+  val mongo                   = "5.11.1"
   val monocle                 = "3.3.0"
   val neotype                 = "0.7.2"
   val openTelemetry           = "1.65.0"
   val osLib                   = "0.11.8"
   val ox                      = "1.0.6"
-  val parserCombinators       = "2.4.0"
+  val parserCombinators       = "2.5.0"
   val proteus                 = "0.6.0"
   val postgres                = "42.7.13"
   val pureConfig              = "0.17.10"
@@ -75,7 +75,7 @@ object Version {
   val zioKafka                = "3.7.1"
   val zioHttp                 = "3.11.4"
   val zioPrelude              = "1.0.0-RC48"
-  val zioSchema               = "1.8.6"
+  val zioSchema               = "1.9.0"
   val zioOpenAI               = "0.4.1"
 
   // ScalaJS
