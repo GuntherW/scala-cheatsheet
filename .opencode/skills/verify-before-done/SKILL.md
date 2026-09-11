@@ -47,6 +47,12 @@ Use `sbt --client` for all checks (faster, connects to running sbt server). Use 
    scala-cli test <file>.scala
    ```
 
+6. **Code review** — once compile/format/lint/test are green, invoke the `scala-reviewer` subagent (via the `task`
+   tool) on every `.scala` file you created or modified in this session. Pass it the list of changed files.
+   - Apply findings you agree with, then re-run the affected steps above (format/lint/compile/test) if you changed code.
+   - If you disagree with a finding, say so explicitly to the user with your reasoning — don't silently drop it.
+   - Skip only for pure comment/doc/formatting-only edits with no logic change.
+
 ## When to skip steps
 
 - Docs/comment-only changes: formatting/linting still apply, tests can be skipped.
@@ -55,4 +61,4 @@ Use `sbt --client` for all checks (faster, connects to running sbt server). Use 
 
 ## Reporting back
 
-State plainly which steps passed and which module/test scope was actually exercised (e.g. "ran `project core` tests only — other modules untouched"). Don't claim "all tests are green" if only a subset ran.
+State plainly which steps passed and which module/test scope was actually exercised (e.g. "ran `project core` tests only — other modules untouched"). State whether `scala-reviewer` was invoked and summarize its findings (or note why it was skipped). Don't claim "all tests are green" if only a subset ran.

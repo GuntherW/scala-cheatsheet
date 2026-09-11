@@ -102,7 +102,7 @@ private def transactionDemo(client: SageClient)(using Ox): Unit =
   client.set("tx:n", 1)
   val result = client.transaction { tx =>
     tx.watch("tx:n")
-    tx.get[Int]("tx:n")
+    val _ = tx.get[Int]("tx:n") // nur zu Demo-Zwecken gelesen, Wert wird nicht weiterverwendet
     tx.exec(
       (Commands.incr("tx:n"), Commands.incrBy("tx:n", 4))
     )
@@ -127,8 +127,10 @@ private def streamsDemo(client: SageClient)(using Ox): Unit =
 
   client.xGroupCreate("stream:orders", "workers", id = GroupStartId.At(StreamId.Zero))
   val batches = client.xReadGroup[String, String]("workers", "w1")(("stream:orders", GroupReadId.New))()
-  val ids     = batches.flatMap(_._2).map(_.id)
-  client.xAck("stream:orders", "workers")(ids.head, ids.tail*)
+  val ids     = batches.flatMap { case (_, entries) => entries }.map(_.id)
+  ids match
+    case head +: tail => client.xAck("stream:orders", "workers")(head, tail*)
+    case _            => println("keine neuen Stream-Einträge zum Acken")
   println(s"acked ids=$ids")
 
 // Client-side caching: erster Read holt vom Server, zweiter kommt aus dem lokalen Cache
