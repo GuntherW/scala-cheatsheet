@@ -9,7 +9,7 @@
 //> using dep io.opentelemetry:opentelemetry-api:1.64.0
 //> using dep io.opentelemetry:opentelemetry-sdk:1.64.0
 //> using dep io.opentelemetry:opentelemetry-exporter-otlp:1.64.0
-//> using dep io.opentelemetry.semconv:opentelemetry-semconv:1.43.0
+//> using dep io.opentelemetry.semconv:opentelemetry-semconv:1.44.0
 //> using dep io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:2.30.0-alpha
 //> using dep ch.qos.logback:logback-classic:1.6.1
 

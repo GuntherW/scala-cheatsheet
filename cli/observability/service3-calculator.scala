@@ -7,7 +7,7 @@
 //> using dep io.opentelemetry:opentelemetry-api:1.64.0
 //> using dep io.opentelemetry:opentelemetry-sdk:1.64.0
 //> using dep io.opentelemetry:opentelemetry-exporter-otlp:1.64.0
-//> using dep io.opentelemetry.semconv:opentelemetry-semconv:1.43.0
+//> using dep io.opentelemetry.semconv:opentelemetry-semconv:1.44.0
 //> using dep io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:2.30.0-alpha
 //> using dep ch.qos.logback:logback-classic:1.6.1
 
@@ -33,11 +33,11 @@ def fibonacci(n: Int): Long =
 
 @main
 def service3Calculator(): Unit =
-  val port      = 8083
-  val svcName   = "service3-calculator"
-  val otel      = setupOtel(svcName)
-  val meter     = otel.getMeter(svcName)
-  val log       = LoggerFactory.getLogger(svcName)
+  val port    = 8083
+  val svcName = "service3-calculator"
+  val otel    = setupOtel(svcName)
+  val meter   = otel.getMeter(svcName)
+  val log     = LoggerFactory.getLogger(svcName)
 
   val requestCounter: LongCounter = meter
     .counterBuilder("fibonacci.requests.total")
