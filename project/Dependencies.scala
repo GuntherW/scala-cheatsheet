@@ -41,7 +41,7 @@ object Version {
   val mongo                   = "5.11.0"
   val monocle                 = "3.3.0"
   val neotype                 = "0.7.2"
-  val openTelemetry           = "1.65.0"
+  val openTelemetry           = "1.66.0"
   val osLib                   = "0.11.8"
   val ox                      = "1.0.6"
   val parserCombinators       = "2.4.0"
