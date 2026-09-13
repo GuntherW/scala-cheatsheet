@@ -290,7 +290,7 @@ object Version:
   val xxhash                  = "1.11.2"
   val yaes                    = "0.21.0"
   val zio                     = "2.1.26"
-  val zioJson                 = "1.0.0"
+  val zioJson                 = "1.1.0"
   val zioKafka                = "3.7.1"
   val zioHttp                 = "3.10.0"
   val zioPrelude              = "1.0.0-RC41"
