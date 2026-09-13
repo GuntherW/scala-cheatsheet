@@ -287,7 +287,7 @@ object Version:
   val upickle                 = "4.4.3"
   val xstream                 = "1.4.21"
   val xml                     = "2.4.0"
-  val xxhash                  = "1.11.2"
+  val xxhash                  = "1.11.3"
   val yaes                    = "0.21.0"
   val zio                     = "2.1.26"
   val zioJson                 = "1.0.0"
