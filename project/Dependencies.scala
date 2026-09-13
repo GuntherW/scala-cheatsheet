@@ -13,7 +13,7 @@ object Version {
   val catsVersion             = "2.13.0"
   val catsConsole             = "0.8.1"
   val circeVersion            = "0.14.16"
-  val cirisVersion            = "3.15.0"
+  val cirisVersion            = "3.15.1"
   val chimney                 = "1.11.0"
   val constructs              = "10.8.1"
   val doobie                  = "1.0.0-RC12"
