@@ -6,10 +6,10 @@
 //> using dep com.softwaremill.sttp.client4::core:4.0.26
 //> using dep com.softwaremill.sttp.client4::circe:4.0.26
 //> using dep io.circe::circe-generic:0.14.16
-//> using dep io.opentelemetry:opentelemetry-api:1.65.0
-//> using dep io.opentelemetry:opentelemetry-sdk:1.65.0
-//> using dep io.opentelemetry:opentelemetry-exporter-otlp:1.65.0
-//> using dep io.opentelemetry.semconv:opentelemetry-semconv:1.43.0
+//> using dep io.opentelemetry:opentelemetry-api:1.66.0
+//> using dep io.opentelemetry:opentelemetry-sdk:1.66.0
+//> using dep io.opentelemetry:opentelemetry-exporter-otlp:1.66.0
+//> using dep io.opentelemetry.semconv:opentelemetry-semconv:1.44.0
 //> using dep io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:2.30.0-alpha
 //> using dep ch.qos.logback:logback-classic:1.6.3
 
