@@ -17,9 +17,9 @@ object AnthropicClient:
 
   private val AnthropicVersion = "2023-06-01"
 
-  private val apiKey: String =
-    Env.get("ANTHROPIC_AUTH_TOKEN").orElse(Env.get("ANTHROPIC_API_KEY"))
-      .getOrElse(throw new RuntimeException("Weder ANTHROPIC_AUTH_TOKEN noch ANTHROPIC_API_KEY gesetzt."))
+  private val apiKey: String = Env.get("ANTHROPIC_AUTH_TOKEN")
+    .orElse(Env.get("ANTHROPIC_API_KEY"))
+    .getOrElse(throw new RuntimeException("Weder ANTHROPIC_AUTH_TOKEN noch ANTHROPIC_API_KEY gesetzt."))
 
   // Dieses Projekt spricht (wie im Python-Pendant) einen requesty.ai-Router statt der offiziellen
   // Anthropic-Basis-URL an. sttp-ai unterstützt das direkt über `ClaudeConfig.baseUrl` (Standard wäre
@@ -45,7 +45,9 @@ object AnthropicClient:
     if flattened.length > maxLen then flattened.take(maxLen) + "…" else flattened
 
   private def textOf(content: List[ContentBlock]): String =
-    content.collect { case ContentBlock.Text(text, _, _) => text }.mkString("\n")
+    content
+      .collect { case ContentBlock.Text(text, _, _) => text }
+      .mkString("\n")
 
   /** Führt einen Model-Call aus - bei Bedarf als Multi-Turn Tool-Use-Loop.
     *

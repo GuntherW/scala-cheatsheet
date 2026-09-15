@@ -35,8 +35,7 @@ object AgentRiskAnalyst extends Agent(
       toolHandlers = Map(CalculateTcoTool.definition.name -> CalculateTcoTool.handler),
     ):
 
-  def analyze(topic: String): String =
-    run(s"Analysiere Risiken, Fallstricke und Nachteile zu folgendem Thema:\n\n$topic")
+  def analyze(topic: String): String = run(s"Analysiere Risiken, Fallstricke und Nachteile zu folgendem Thema:\n\n$topic")
 
   val Id = "risk-analyst"
 
@@ -44,7 +43,6 @@ object AgentRiskAnalyst extends Agent(
     */
   def spec(topic: String): AgentSpec = AgentSpec(
     id = Id,
-    description =
-      "Sucht gezielt nach Risiken, Kosten, Sicherheitsbedenken und Nachteilen der gegebenen Technologie/Entscheidung (nutzt calculate_tco). Nennt keine Vorteile.",
+    description = "Sucht gezielt nach Risiken, Kosten, Sicherheitsbedenken und Nachteilen der gegebenen Technologie/Entscheidung (nutzt calculate_tco). Nennt keine Vorteile.",
     execute = _ => analyze(topic),
   )

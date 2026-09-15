@@ -17,5 +17,4 @@ final case class ExecutionPlan(
     steps: List[List[String]],
     finalAgentId: String,
     reasoning: String,
-) derives Schema,
-      Decoder
+) derives Schema, Decoder

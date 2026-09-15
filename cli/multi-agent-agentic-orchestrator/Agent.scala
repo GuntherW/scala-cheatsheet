@@ -28,13 +28,12 @@ abstract class Agent(
   /** Führt den Model-Call aus (bei Bedarf als Multi-Turn Tool-Use-Loop - siehe `AnthropicClient.chat`). Eine einzige Methode deckt dabei sowohl server-seitige (`useWebSearch`) als auch client-seitige
     * (`clientTools`) Tools ab, einzeln oder gemischt.
     */
-  protected def run(userMessage: String, maxTokens: Int = 2000): String =
-    AnthropicClient.chat(
-      model = model,
-      systemPrompt = systemPrompt,
-      userMessage = userMessage,
-      useWebSearch = useWebSearch,
-      clientTools = clientTools,
-      toolHandlers = toolHandlers,
-      maxTokens = maxTokens,
-    )
+  protected def run(userMessage: String, maxTokens: Int = 2000): String = AnthropicClient.chat(
+    model = model,
+    systemPrompt = systemPrompt,
+    userMessage = userMessage,
+    useWebSearch = useWebSearch,
+    clientTools = clientTools,
+    toolHandlers = toolHandlers,
+    maxTokens = maxTokens,
+  )

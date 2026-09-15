@@ -24,5 +24,4 @@ object AgentFactResearcher extends Agent(
       useWebSearch = true,
     ):
 
-  def research(topic: String): String =
-    run(s"Sammle Fakten, Argumente und Quellen zu folgendem Thema:\n\n$topic")
+  def research(topic: String): String = run(s"Sammle Fakten, Argumente und Quellen zu folgendem Thema:\n\n$topic")

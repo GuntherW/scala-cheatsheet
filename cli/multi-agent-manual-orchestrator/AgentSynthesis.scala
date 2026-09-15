@@ -29,16 +29,15 @@ object AgentSynthesis extends Agent(
     ):
 
   def synthesize(topic: String, facts: String, risks: String): String =
-    val prompt =
-      s"""Thema: $topic
-         |
-         |<reportOfFactResearcher>
-         |$facts
-         |</reportOfFactResearcher>
-         |
-         |<reportOfRiskAnalyst>
-         |$risks
-         |</reportOfRiskAnalyst>
-         |
-         |Erstelle nun den finalen, konsolidierten Bericht.""".stripMargin
+    val prompt = s"""Thema: $topic
+                    |
+                    |<reportOfFactResearcher>
+                    |$facts
+                    |</reportOfFactResearcher>
+                    |
+                    |<reportOfRiskAnalyst>
+                    |$risks
+                    |</reportOfRiskAnalyst>
+                    |
+                    |Erstelle nun den finalen, konsolidierten Bericht.""".stripMargin
     run(prompt, maxTokens = 3000)

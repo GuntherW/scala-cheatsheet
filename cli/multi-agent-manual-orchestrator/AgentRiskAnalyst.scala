@@ -35,5 +35,4 @@ object AgentRiskAnalyst extends Agent(
       toolHandlers = Map(CalculateTcoTool.definition.name -> CalculateTcoTool.handler),
     ):
 
-  def analyze(topic: String): String =
-    run(s"Analysiere Risiken, Fallstricke und Nachteile zu folgendem Thema:\n\n$topic")
+  def analyze(topic: String): String = run(s"Analysiere Risiken, Fallstricke und Nachteile zu folgendem Thema:\n\n$topic")
