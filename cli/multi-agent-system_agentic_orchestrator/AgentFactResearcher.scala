@@ -26,3 +26,14 @@ object AgentFactResearcher extends Agent(
 
   def research(topic: String): String =
     run(s"Sammle Fakten, Argumente und Quellen zu folgendem Thema:\n\n$topic")
+
+  val Id = "fact-researcher"
+
+  /** Generische Beschreibung für Registry/Planner (siehe `AgentSpec.scala`). Keine Abhängigkeiten - kann daher parallel zu anderen abhängigkeitsfreien Agenten laufen.
+    */
+  def spec(topic: String): AgentSpec = AgentSpec(
+    id = Id,
+    description =
+      "Sammelt objektive Fakten, Vorteile und Quellen FÜR die gegebene Technologie/Entscheidung (nutzt web_search). Nennt keine Risiken.",
+    execute = _ => research(topic),
+  )

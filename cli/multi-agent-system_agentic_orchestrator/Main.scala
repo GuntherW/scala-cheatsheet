@@ -20,9 +20,12 @@ package agents
     val outputDir = os.pwd / "output"
     os.makeDir.all(outputDir)
 
-    os.write.over(outputDir / "01_fact_researcher.md", s"# Fact-Researcher: $topic\n\n${result.factResearcherOutput}\n")
-    os.write.over(outputDir / "02_risk_analyst.md", s"# Risk-Analyst: $topic\n\n${result.riskAnalystOutput}\n")
-    os.write.over(outputDir / "03_final_report.md", s"# Finaler Bericht: $topic\n\n${result.finalReport}\n")
+    // Generisch: schreibt für JEDEN im Plan tatsächlich ausgeführten Agenten eine Datei, unabhängig davon,
+    // welche/wie viele Agenten der Orchestrator-Agent für dieses Thema geplant hat.
+    result.outputsById.zipWithIndex.foreach { case ((agentId, output), idx) =>
+      os.write.over(outputDir / f"${idx + 1}%02d_$agentId.md", s"# $agentId: $topic\n\n$output\n")
+    }
+    os.write.over(outputDir / "99_final_report.md", s"# Finaler Bericht: $topic\n\n${result.finalReport}\n")
 
     println("\n=== FINALER BERICHT ===\n")
     println(result.finalReport)

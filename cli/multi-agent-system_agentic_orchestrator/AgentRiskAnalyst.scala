@@ -13,7 +13,7 @@ package agents
   * Hinweis: `web_search` wurde hier bewusst NICHT zusätzlich eingebunden, da das Mischen von server- und client-seitigen Tools bei diesem Router dazu führt, dass auch für `web_search` ein
   * `tool_result` erwartet wird (statt es automatisch serverseitig aufzulösen) - das würde dieses Beispiel unnötig verkomplizieren.
   */
-object RiskAnalyst extends Agent(
+object AgentRiskAnalyst extends Agent(
       name = "Risk-Analyst",
       systemPrompt = """Du bist der Risk-Analyst in einem Multi-Agenten-System.
                        |
@@ -37,3 +37,14 @@ object RiskAnalyst extends Agent(
 
   def analyze(topic: String): String =
     run(s"Analysiere Risiken, Fallstricke und Nachteile zu folgendem Thema:\n\n$topic")
+
+  val Id = "risk-analyst"
+
+  /** Generische Beschreibung für Registry/Planner (siehe `AgentSpec.scala`). Keine Abhängigkeiten - kann daher parallel zum Fact-Researcher laufen.
+    */
+  def spec(topic: String): AgentSpec = AgentSpec(
+    id = Id,
+    description =
+      "Sucht gezielt nach Risiken, Kosten, Sicherheitsbedenken und Nachteilen der gegebenen Technologie/Entscheidung (nutzt calculate_tco). Nennt keine Vorteile.",
+    execute = _ => analyze(topic),
+  )

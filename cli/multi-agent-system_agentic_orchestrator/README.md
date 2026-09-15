@@ -1,4 +1,4 @@
-# Einfaches Multi-Agenten-System (Scala 3.9.0 / scala-cli)
+# Agentischer, generischer Multi-Agenten-Orchestrator (Scala 3.9.0 / scala-cli)
 
 Ziel: Verstehen, wie ein Multi-Agenten-System funktioniert -
 als Vorbereitung auf die **CCAF (Claude Code Agent Framework)**
@@ -8,16 +8,26 @@ Aufgabe des Systems: Zu einer technischen Entscheidung (z. B. "MongoDB vs.
 PostgreSQL") wird ein ausgewogener, faktenbasierter Entscheidungsbericht
 erstellt.
 
+**Besonderheit dieser Version:** Der Orchestrator ist kein hartcodierter
+Workflow mehr, sondern zweigeteilt in eine *agentische* Planning-Phase (ein
+LLM - der `AgentOrchestrator` - entscheidet selbst, welche Worker-Agenten
+in welcher Reihenfolge/Parallelität laufen) und eine *generische*
+Execution-Phase (ein Dependency-Graph-Executor, der weder Anzahl noch
+Identität der Agenten kennt). Siehe Abschnitt
+["Vom Workflow zum Agenten"](#vom-workflow-zum-agenten) für die Details.
+
 ## Tech-Stack
 
-| Zweck                                             | Bibliothek                                                                                        |
-|---------------------------------------------------|---------------------------------------------------------------------------------------------------|
-| Anthropic-/Claude-Client (Messages API, Tools)    | [sttp-ai](https://sttp-ai.softwaremill.com/) (`claude`-Modul, `ClaudeSyncClient`)                 |
-| JSON-Serialisierung/-Deserialisierung             | [circe](https://circe.github.io/circe/) (bringt `sttp-ai` bereits mit, keine eigene Abhängigkeit) |
-| Dateisystemzugriff (`output/`-Ordner)             | [os-lib](https://github.com/com-lihaoyi/os-lib)                                                   |
-| `.env`-Datei einlesen                             | eigene, simple Implementierung (`Env.scala`, siehe unten)                                         |
-| Nebenläufigkeit (paralleles Ausführen der Worker) | [ox](https://ox.softwaremill.com/) (`par`, strukturierte Nebenläufigkeit auf Virtual Threads)     |
-| Build/Run ohne sbt-Projekt                        | `scala-cli` mit `//> using` Direktiven                                                            |
+| Zweck                                                             | Bibliothek                                                                                        |
+|-------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
+| Anthropic-/Claude-Client (Messages API, Tools, Structured Output) | [sttp-ai](https://sttp-ai.softwaremill.com/) (`claude`-Modul, `ClaudeSyncClient`)                 |
+| JSON-Serialisierung/-Deserialisierung                             | [circe](https://circe.github.io/circe/) (bringt `sttp-ai` bereits mit, keine eigene Abhängigkeit) |
+| JSON-Schema-Ableitung für Structured Output                       | [tapir](https://tapir.softwaremill.com/) `Schema` (bringt `sttp-ai` bereits mit)                  |
+| Dateisystemzugriff (`output/`-Ordner)                             | [os-lib](https://github.com/com-lihaoyi/os-lib)                                                   |
+| `.env`-Datei einlesen                                             | eigene, simple Implementierung (`Env.scala`, siehe unten)                                         |
+| Nebenläufigkeit (paralleles Ausführen der Worker)                 | [ox](https://ox.softwaremill.com/) (`par`, strukturierte Nebenläufigkeit auf Virtual Threads)     |
+| Tests (Plan-Validierung/Executor-Logik)                           | [MUnit](https://scalameta.org/munit/) (`scala-cli test .`)                                        |
+| Build/Run ohne sbt-Projekt                                        | `scala-cli` mit `//> using` Direktiven                                                            |
 
 Keine sbt-`build.sbt` nötig - alle Abhängigkeiten werden per Direktive in
 `project.scala` deklariert; `scala-cli` löst sie automatisch über Coursier
@@ -25,42 +35,91 @@ auf.
 
 **Voraussetzung:** JDK 21+ (wird von `ox` für Virtual Threads benötigt).
 
-## Die drei Agenten
+## Vom Workflow zum Agenten
 
-| Agent                          | Rolle                                                             | Läuft...                         | Tools                                   |
-|--------------------------------|-------------------------------------------------------------------|----------------------------------|-----------------------------------------|
-| **Fact-Researcher** (Worker 1) | Sammelt Argumente, Fakten und Quellen *für* eine Technologie      | parallel zu Worker 2             | `web_search` (server-seitig)            |
-| **Risk-Analyst** (Worker 2)    | Sucht gezielt Fallstricke, Kosten, Sicherheitsbedenken, Nachteile | parallel zu Worker 1             | `calculate_tco` (client-seitig, custom) |
-| **Synthesis-Agent** (Worker 3) | Liest beide Outputs, löst Widersprüche auf, erstellt Endbericht   | nachdem beide Worker fertig sind | -                                       |
+Die Vorgänger-Version dieses Projekts hatte einen rein hartcodierten
+Ablauf: `Orchestrator.scala` rief explizit `par(FactResearcher.research(topic),
+RiskAnalyst.analyze(topic))` gefolgt von `Synthesis.synthesize(...)` auf -
+ein fixer Code-Pfad, der weder wusste noch entscheiden konnte, *ob* ein
+Agent für das konkrete Thema überhaupt sinnvoll ist. Das ist ein **Workflow**: die Steuerungslogik ist vorprogrammiert,
+das LLM wird nur für
+die einzelnen Agenten-Aufrufe selbst genutzt.
 
-Ein **Orchestrator** koordiniert den Ablauf, ruft die Modelle aber nicht
-selbst "intelligent" auf - er ist reine Steuerlogik (kein LLM-Call).
+Diese Version verschiebt genau eine Entscheidung - "welche Agenten in
+welcher Reihenfolge/Parallelität?" - vom Scala-Code in ein LLM. Das macht
+den Orchestrator selbst zu einem **Agenten** (im Sinne von "ein LLM trifft
+eine Kontrollfluss-Entscheidung", siehe Anthropics
+["Building Effective Agents"](https://www.anthropic.com/research/building-effective-agents)),
+zusätzlich zu den bereits vorhandenen Worker-Agenten.
+
+Gleichzeitig wurde der Orchestrator **generisch** gemacht: Er kennt weder
+die Anzahl noch die Identität der Agenten. Ein neuer Agent wird
+eingebunden, indem lediglich eine neue `AgentSpec` in `AgentRegistry.specs`
+ergänzt wird - weder `Orchestrator` (Execution) noch `AgentOrchestrator`
+(Planning) müssen dafür angepasst werden.
+
+## Die Agenten & die generische Registry
+
+| Agent                            | Rolle                                                             | `hardDependsOn`               | `isMandatory` | Tools                                   |
+|----------------------------------|-------------------------------------------------------------------|-------------------------------|:-------------:|-----------------------------------------|
+| **Fact-Researcher** (Worker)     | Sammelt Argumente, Fakten und Quellen *für* eine Technologie      | -                             |     nein      | `web_search` (server-seitig)            |
+| **Risk-Analyst** (Worker)        | Sucht gezielt Fallstricke, Kosten, Sicherheitsbedenken, Nachteile | -                             |     nein      | `calculate_tco` (client-seitig, custom) |
+| **Synthesis-Agent** (Aggregator) | Liest beide Outputs, löst Widersprüche auf, erstellt Endbericht   | fact-researcher, risk-analyst |    **ja**     | -                                       |
+
+Jeder Agent registriert sich über eine `AgentSpec` (`AgentSpec.scala`) in
+`AgentRegistry.specs` (`AgentRegistry.scala`) - einzig dort werden neue
+Agenten eingetragen:
+
+```scala
+object AgentRegistry:
+  def specs(topic: String): List[AgentSpec] = List(
+    AgentFactResearcher.spec(topic),
+    RiskAnalyst.spec(topic),
+    AgentSynthesis.spec(topic),
+  )
+```
+
+`hardDependsOn` ist eine harte Constraint, die der `AgentOrchestrator`
+(LLM) beim Planen einhalten MUSS (vom `PlanValidator` notfalls
+erzwungen/repariert); `isMandatory` erzwingt, dass ein Agent immer im Plan
+enthalten ist, selbst wenn das LLM ihn vergisst (typischerweise ein
+Aggregator, ohne den kein sinnvolles Endergebnis entsteht). Nicht als
+Pflicht markierte Agenten (hier: Fact-Researcher, Risk-Analyst) darf der
+`AgentOrchestrator` bewusst weglassen, wenn er sie für ein konkretes Thema
+für irrelevant hält.
+
+Ein Orchestrator koordiniert den Ablauf in zwei Phasen (Planning via LLM,
+Execution generisch) - siehe unten.
 
 ## Ablaufdiagramm (Sequenz)
 
 ```mermaid
 sequenceDiagram
     participant U as User
-    participant O as Orchestrator
+    participant O as Orchestrator (Executor)
+    participant P as Orchestrator-Agent (Planner, LLM)
     participant F as Fact-Researcher
     participant R as Risk-Analyst
     participant S as Synthesis-Agent
     U ->> O: Thema (z.B. "MongoDB vs. PostgreSQL?")
-    par Fan-out: ox.par
-        O ->> F: research(topic)
+    O ->> P: plan(topic, AgentRegistry.specs(topic))
+    P -->> O: ExecutionPlan (Structured Output, 1 Request)
+    Note over O: PlanValidator.validate(plan) - repariert/erzwingt hardDependsOn & isMandatory
+    par Step 1 (laut validiertem Plan): ox.par
+        O ->> F: execute(inputs = {})
         F ->> F: web_search (server-seitig, 1 Request genügt)
         F -->> O: Fakten & Quellen
     and
-        O ->> R: analyze(topic)
+        O ->> R: execute(inputs = {})
         R ->> R: Turn 1: Modell fordert calculate_tco an (stop_reason=tool_use)
         R ->> R: Client führt calculate_tco lokal aus
         R ->> R: Turn 2: tool_result wird zurückgesendet, Modell antwortet final
         R -->> O: Risiken & Nachteile (inkl. TCO-Schätzung)
     end
     Note over O: Fan-in: par() kehrt erst zurück, wenn BEIDE fertig sind
-    O ->> S: synthesize(topic, facts, risks)
+    O ->> S: execute(inputs = {fact-researcher -> ..., risk-analyst -> ...})
     S -->> O: finaler Bericht
-    O -->> U: finaler Bericht + Zwischenergebnisse
+    O -->> U: finaler Bericht (outputsById(plan.finalAgentId)) + alle Zwischenergebnisse
 ```
 
 ## Architektur / Datenfluss
@@ -68,22 +127,28 @@ sequenceDiagram
 ```mermaid
 flowchart TD
     A[Main.scala] --> B[Orchestrator]
-    B -->|Fan - out, ox . par| C[FactResearcher]
-    B -->|Fan - out, ox . par| D[RiskAnalyst]
+    B -->|1 . Planning| P[OrchestratorAgent]
+    P -->|Structured Output| V[PlanValidator]
+    V -->|validierter ExecutionPlan| B
+    B -->|2 . Execution: Level-für-Level, ox . par pro Level| REG[AgentRegistry / AgentSpec]
+    REG --> C[FactResearcher]
+    REG --> D[RiskAnalyst]
+    REG --> E[SynthesisAgent]
     C -->|nutzt Tool| C1[(web_search, server-seitig)]
     D -->|nutzt Tool| D1[(calculate_tco, client-seitig)]
-    C -->|Ergebnis: Fakten| E[SynthesisAgent]
+    C -->|Ergebnis: Fakten| E
     D -->|Ergebnis: Risiken| E
     E -->|kein Tool, nur Kontext| F[Finaler Bericht]
     F --> G[output/*.md]
 
     subgraph Infrastruktur
         H[AnthropicClient] -. ClaudeSyncClient .-> I[(Anthropic API)]
-        H -. circe .-> J[JSON De/Serialisierung]
+        H -. circe + tapir .-> J[JSON De/Serialisierung + Structured-Output-Schema]
     end
     C -.-> H
     D -.-> H
     E -.-> H
+    P -.-> H
 ```
 
 ## Client-seitiges Tool: der Tool-Use-Loop im Detail
@@ -132,21 +197,96 @@ also NICHT automatisch aufgelöst, sobald ein Client-Tool im Spiel ist.
 Deshalb nutzt der Risk-Analyst in diesem Beispiel bewusst ausschließlich
 `calculate_tco`, um den Ablauf klar isoliert zu zeigen.
 
+## Planning-Phase: Der Orchestrator-Agent
+
+Der `AgentOrchestrator` (`AgentOrchestrator.scala`) bekommt das Thema sowie
+den Katalog aller `AgentSpec`s (id, Beschreibung, `hardDependsOn`,
+`isMandatory`) als System-Prompt-Kontext und liefert einen `ExecutionPlan`
+zurück:
+
+```scala
+case class ExecutionPlan(steps: List[List[String]], finalAgentId: String, reasoning: String)
+```
+
+Technisch genutzt wird Anthropics natives **Structured Output**
+(`output_config`/`json_schema`), NICHT Tool-Use:
+
+```scala
+def chatStructured[T: Schema: Decoder](model: String, systemPrompt: String, userMessage: String): T =
+  client.createMessageAs[T](MessageRequest.withSystem(model, systemPrompt, List(Message.user(userMessage)), maxTokens))
+```
+
+`sttp-ai` leitet das JSON-Schema automatisch aus der Case-Class `T` ab (via `tapir.Schema`, `derives Schema`) und parst
+die Antwort direkt zu `T`
+(`circe.Decoder`, `derives Decoder`). Der entscheidende Unterschied zu
+Tool-Use (siehe unten, `AgentRiskAnalyst`/`calculate_tco`): Bei Tool-Use KANN
+das Modell trotz Tool-Definition mit einem reinen Text-Turn antworten (`stopReason != "tool_use"`) - Structured Output
+erzwingt dagegen auf
+API-Ebene, dass die GESAMTE Antwort exakt dem Schema entspricht. Ein
+Multi-Turn-Loop wie bei `chatWithTool` ist daher nicht nötig, ein
+einzelner Request genügt (siehe `AnthropicClient.chatStructured`).
+
+**Warum das trotzdem validiert werden muss:** Ein LLM-Aufruf ist nie
+hundertprozentig verlässlich - selbst mit erzwungenem Schema kann der *Inhalt* des Plans falsch sein (unbekannte
+agent-ids, verletzte
+`hardDependsOn`-Abhängigkeiten, vergessene `isMandatory`-Agenten, ungültige
+`finalAgentId`). Deshalb läuft jeder rohe Plan vor der Ausführung durch
+`PlanValidator.validate` (`PlanValidator.scala`):
+
+1. Unbekannte/doppelte agent-ids werden entfernt.
+1. Fehlende Pflicht-Agenten (`isMandatory`) werden ergänzt.
+1. Die verbleibende Reihenfolge dient nur noch als Tie-Breaker für einen
+   stabilen topologischen Sort (Kahn-Algorithmus) nach `hardDependsOn` -
+   das garantiert dependency-korrekte Level-Gruppierung, unabhängig davon,
+   wie (in)korrekt das LLM ursprünglich gruppiert hatte. Ein Zyklus wird
+   defensiv aufgebrochen statt den Executor zu blockieren.
+1. `finalAgentId` wird validiert, sonst auf einen Pflicht-Agenten
+   zurückgefallen.
+
+`PlanValidator` ist reine, LLM-freie Logik und wird entsprechend mit MUnit
+getestet (`PlanValidatorTest.test.scala`, `scala-cli test .`) - unabhängig
+davon, wie zuverlässig das LLM tatsächlich antwortet.
+
+## Execution-Phase: generischer Dependency-Graph-Executor
+
+Der validierte Plan besteht aus Steps (`List[List[String]]`). Alle
+agent-ids innerhalb eines Steps sind laut Plan unabhängig voneinander und
+werden per `ox.par` parallel ausgeführt; der nächste Step startet erst,
+wenn der aktuelle vollständig abgeschlossen ist:
+
+```scala
+var outputs = ListMap.empty[String, String]
+for step <- plan.steps do
+  val results = par(step.map(id => () => specs(id).execute(outputs)))
+  outputs = outputs ++ step.zip(results)
+```
+
+`Orchestrator.scala` kennt an dieser Stelle weder die Anzahl noch die
+Identität der Agenten - er iteriert ausschließlich über das, was
+`AgentRegistry` bereitstellt und `AgentOrchestrator`/`PlanValidator`
+geplant haben. Fact-Researcher und Risk-Analyst laufen (wie in der
+Vorgänger-Version) weiterhin automatisch parallel, Synthesis automatisch
+danach - aber ohne dass irgendwo im Code `par(FactResearcher..., RiskAnalyst...)`
+hartcodiert steht.
+
 ## Warum parallel?
 
 Fact-Researcher und Risk-Analyst sind voneinander **unabhängig**: keiner
-braucht das Zwischenergebnis des anderen, um seine eigene Aufgabe zu lösen.
-Solche Worker lassen sich parallelisieren (**Fan-out**), was die
-Gesamtlaufzeit deutlich reduziert - denn die längste Wartezeit für ein
-Modell (Latenz) tritt nur einmal auf, statt sich zu addieren. Erst der
-Synthesis-Agent braucht *beide* Ergebnisse gleichzeitig (**Fan-in** /
-Synchronisationspunkt), läuft daher zwangsläufig sequentiell danach.
+braucht das Zwischenergebnis des anderen, um seine eigene Aufgabe zu lösen (kein gemeinsamer Eintrag in
+`hardDependsOn`). Solche Worker lassen sich
+parallelisieren (**Fan-out**), was die Gesamtlaufzeit deutlich reduziert -
+denn die längste Wartezeit für ein Modell (Latenz) tritt nur einmal auf,
+statt sich zu addieren. Erst der Synthesis-Agent braucht *beide* Ergebnisse
+gleichzeitig (**Fan-in** / Synchronisationspunkt), läuft daher
+zwangsläufig in einem eigenen, späteren Step.
 
 Im Code (`Orchestrator.scala`) wird das mit [ox](https://ox.softwaremill.com/)
-umgesetzt: `par(FactResearcher.research(topic), RiskAnalyst.analyze(topic))`
-startet beide Berechnungen auf eigenen Virtual Threads und kehrt erst
-zurück, wenn BEIDE fertig sind - Fan-out und Fan-in in einem einzigen
-Aufruf. Im Gegensatz zu `scala.concurrent.Future` handelt es sich dabei um **strukturierte Nebenläufigkeit**: Der Scope
+umgesetzt: `par(step.map(id => () => specs(id).execute(outputs)))` startet
+alle Agenten EINES Steps auf eigenen Virtual Threads und kehrt erst
+zurück, wenn ALLE fertig sind - Fan-out und Fan-in in einem einzigen
+Aufruf, jetzt aber generisch für eine beliebige Anzahl von Agenten (`Seq[() => T]` statt der ursprünglichen festen
+2er-Tupel-Variante von
+`par`). Im Gegensatz zu `scala.concurrent.Future` handelt es sich dabei um **strukturierte Nebenläufigkeit**: Der Scope
 von `par` garantiert, dass
 keine "verwaisten" Hintergrund-Threads übrig bleiben, und schlägt eine der
 beiden Berechnungen fehl, wird die andere automatisch abgebrochen (interrupted) und der Fehler propagiert - ganz ohne
@@ -170,10 +310,45 @@ Error-Handling für beide Zweige einzeln.
   meist ohne Kenntnis der Zwischenergebnisse anderer Worker. Sorgt für
   unabhängige, unvoreingenommene Perspektiven (Fact-Researcher und
   Risk-Analyst kennen sich gegenseitig nicht).
-- **Orchestrator**: Die Steuerlogik, die festlegt, *welche* Agenten *wann*
-  (sequentiell oder parallel) aufgerufen werden und wie deren Ergebnisse
-  weitergereicht werden. Der Orchestrator selbst ist meist kein LLM-Call,
-  sondern normaler Code.
+- **Orchestrator**: In dieser Version zweigeteilt: Der **Orchestrator-Agent**
+  (`AgentOrchestrator.scala`, LLM-Call) entscheidet *welche* Agenten *wann*
+  (sequentiell oder parallel) aufgerufen werden sollen (Planning); der
+  eigentliche `Orchestrator` (`Orchestrator.scala`) führt diesen Plan nur
+  noch generisch aus (Execution) - er selbst ist reiner Code, kein
+  LLM-Call. Diese Trennung ist der Kernunterschied zwischen einem
+  hartcodierten **Workflow** (Vorgänger-Version) und einem **Agenten** als
+  Kontrollfluss-Entscheider.
+- **`AgentSpec` / `AgentRegistry`**: Generische, LLM-unabhängige
+  Beschreibung eines Agenten (id, Beschreibung, `hardDependsOn`,
+  `isMandatory`, `execute`-Funktion), zentral gesammelt in
+  `AgentRegistry.specs`. Macht den Orchestrator generisch erweiterbar:
+  neue Agenten werden nur hier ergänzt, ohne Executor oder Planner
+  anzufassen.
+- **`ExecutionPlan` / `PlanValidator`**: Der vom Orchestrator-Agent
+  gelieferte Plan (Liste von parallel ausführbaren Steps + `finalAgentId`)
+  ist LLM-generiert und daher nicht blind vertrauenswürdig.
+  `PlanValidator.validate` erzwingt strukturelle Korrektheit (bekannte
+  ids, eingehaltene `hardDependsOn`-Constraints via topologischem Sort,
+  vorhandene Pflicht-Agenten, gültige `finalAgentId`) unabhängig von der
+  Zuverlässigkeit der LLM-Antwort - und ist dadurch, im Gegensatz zum
+  Rest des Systems, ohne echten Model-Call testbar (`scala-cli test .`).
+- **Structured Output**: Anthropics natives Feature, die komplette
+  Modell-Antwort auf ein vorgegebenes JSON-Schema zu erzwingen (`output_config`/`json_schema` in der Messages API). In
+  `sttp-ai`
+  abgebildet über `ClaudeSyncClient.createMessageAs[T]`
+  (`AnthropicClient.chatStructured`) - das Schema wird automatisch aus
+  einer Scala-Case-Class abgeleitet (`derives Schema` via tapir), die
+  Antwort direkt zu dieser Case-Class geparst (`derives Decoder` via
+  circe). Im Unterschied zu Tool-Use genügt dafür immer ein einzelner
+  Request (kein `tool_use`/`tool_result`-Umweg), da das Modell gar nicht
+  anders antworten kann als schemakonform. Genutzt vom
+  `AgentOrchestrator` für den `ExecutionPlan`.
+- **DAG (Directed Acyclic Graph) / Dependency-Graph-Executor**: Der
+  generische `Orchestrator` interpretiert die `hardDependsOn`-Beziehungen
+  der `AgentSpec`s als gerichteten, azyklischen Graphen und führt ihn
+  Level-für-Level aus (`plan.steps`) - alle voneinander unabhängigen
+  Agenten eines Levels parallel (`ox.par`), Level für Level sequentiell.
+  Ersetzt das starre, hartcodierte Fan-out/Fan-in der Vorgänger-Version.
 - **Synthesis- / Aggregator-Agent**: Ein Agent, der die Ausgaben mehrerer
   Worker als Kontext bekommt und daraus ein konsolidiertes Ergebnis
   erzeugt. Löst dabei auch inhaltliche Widersprüche zwischen den
@@ -249,17 +424,23 @@ Error-Handling für beide Zweige einzeln.
 
 ```
 research_scala/
-├── project.scala        # scala-cli Direktiven: Scala-Version & Abhängigkeiten
-├── Env.scala             # Liest ANTHROPIC_API_KEY aus ../.env (via os-lib)
-├── AnthropicClient.scala  # Wrapper um sttp-ai's ClaudeSyncClient + Logging + Tool-Use-Loop
-├── Agent.scala            # Basisklasse Agent (kapselt Model-Call + Tools)
-├── AgentFactResearcher.scala # Worker 1 (web_search, server-seitig)
-├── AgentRiskAnalyst.scala # Worker 2 (calculate_tco, client-seitiges Custom-Tool)
-├── CalculateTcoTool.scala # Definition & Ausführung des calculate_tco-Tools (Ein-/Ausgabe-Typen, JSON-Schema, Handler)
-├── AgentSynthesis.scala   # Worker 3 (Aggregator)
-├── Orchestrator.scala     # Fan-out/Fan-in-Steuerung (ox.par)
-├── Main.scala             # Einstiegspunkt (@main), schreibt output/*.md via os-lib
-├── output/                # wird beim Ausführen erzeugt (Zwischen- & Endergebnisse)
+├── project.scala          # scala-cli Direktiven: Scala-Version, Abhängigkeiten & Test-Framework (MUnit)
+├── Env.scala               # Liest ANTHROPIC_API_KEY aus ../.env (via os-lib)
+├── AnthropicClient.scala   # Wrapper um sttp-ai's ClaudeSyncClient + Logging + Tool-Use-Loop + Structured Output
+├── Agent.scala             # Basisklasse Agent (kapselt Model-Call + Tools)
+├── AgentSpec.scala         # Generische Agenten-Beschreibung (id, hardDependsOn, isMandatory, execute) für Registry/Planner
+├── AgentRegistry.scala     # Zentrale Liste aller AgentSpecs - einziger Ort, um neue Agenten einzubinden
+├── AgentFactResearcher.scala # Worker (web_search, server-seitig) + eigene AgentSpec
+├── AgentRiskAnalyst.scala  # Worker (calculate_tco, client-seitiges Custom-Tool) + eigene AgentSpec
+├── CalculateTcoTool.scala  # Definition & Ausführung des calculate_tco-Tools (Ein-/Ausgabe-Typen, JSON-Schema, Handler)
+├── AgentSynthesis.scala    # Aggregator + eigene AgentSpec (hardDependsOn beide Worker, isMandatory=true)
+├── ExecutionPlan.scala     # Case-Class für den Planungs-Output (Structured Output Schema)
+├── OrchestratorAgent.scala # Planning-Phase (agentisch): LLM entscheidet den ExecutionPlan
+├── PlanValidator.scala     # Validiert/repariert den Plan (reine Funktion, ohne LLM-Call)
+├── PlanValidatorTest.test.scala # MUnit-Tests für PlanValidator (scala-cli test .)
+├── Orchestrator.scala      # Execution-Phase (generisch): führt den validierten Plan Level-für-Level aus (ox.par)
+├── Main.scala              # Einstiegspunkt (@main), schreibt output/*.md generisch via os-lib
+├── output/                 # wird beim Ausführen erzeugt (Zwischen- & Endergebnisse)
 └── README.md
 ```
 
@@ -268,11 +449,14 @@ research_scala/
 ```bash
 cd multi-agent-system_agentic_orchestrator
 scala-cli run . -- "Sollten wir Kubernetes für unser 5-Personen-Startup einführen?"
+scala-cli test .   # PlanValidator-Tests (kein API-Call nötig)
 ```
 
-Ohne Argument wird ein Standardthema verwendet. Die Ergebnisse landen in
-`output/01_fact_researcher.md`, `output/02_risk_analyst.md` und
-`output/03_final_report.md`.
+Ohne Argument wird ein Standardthema verwendet. Die Ergebnisse landen
+generisch für jeden vom Orchestrator-Agent tatsächlich geplanten Agenten
+in `output/<Nummer>_<agent-id>.md` (z. B. `01_fact-researcher.md`,
+`02_risk-analyst.md`, `03_synthesis.md`) sowie im finalen Bericht
+`output/99_final_report.md`.
 
 ## Credentials
 
@@ -331,3 +515,16 @@ Schema (hier `CalculateTcoInput`/`CalculateTcoResult`) genügt in Scala 3
 weiterhin `derives Codec.AsObject` - `circe` ist als Abhängigkeit von
 `sttp-ai` bereits transitiv vorhanden, es muss keine eigene JSON-Bibliothek
 mehr eingebunden werden.
+
+**5. Structured Output (`createMessageAs`) funktioniert über den
+Requesty-Router:** Vor der Umsetzung des `AgentOrchestrator` wurde per
+Smoke-Test verifiziert, dass Anthropics natives `output_config`/
+`json_schema`-Feature (`ClaudeSyncClient.createMessageAs[T]`) auch über
+`router.eu.requesty.ai` funktioniert (nicht nur gegen die offizielle
+`api.anthropic.com`) - keine Selbstverständlichkeit bei einem Proxy/Router,
+der neuere API-Felder ggf. nicht durchreicht. Falls das in einer anderen
+Umgebung/mit einem anderen Router nicht der Fall sein sollte: Ein
+Fallback auf Tool-Use (analog `calculate_tco`, mit demselben
+`ExecutionPlan`-Schema als `Tool.Custom`-Definition statt
+`OutputFormat.JsonSchema`) wäre strukturell einfach nachrüstbar, siehe
+`AnthropicClient.chatWithTool`.

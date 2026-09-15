@@ -2,56 +2,59 @@ package agents
 
 import ox.par
 
-/** Der Orchestrator steuert den Ablauf des Multi-Agenten-Systems:
+import scala.collection.immutable.ListMap
+
+/** Der Orchestrator koordiniert den Ablauf des Multi-Agenten-Systems - jetzt in zwei sauber getrennten Phasen:
   *
-  *   1. Fact-Researcher und Risk-Analyst werden PARALLEL gestartet (`ox.par`, strukturierte Nebenläufigkeit auf Basis von Virtual Threads), da sie unabhängig voneinander arbeiten und keine
-  *      gemeinsamen Zwischenergebnisse benötigen. Das spart Laufzeit (Latenz beider Model-Calls überlappt sich, statt sich zu addieren).
-  *   1. Sobald BEIDE Worker fertig sind, erhält der Synthesis-Agent beide Ergebnisse als Kontext und erstellt den finalen Bericht.
+  *   1. '''Planning''' (agentisch): `OrchestratorAgent.plan` lässt ein LLM entscheiden, welche der registrierten Agenten (`AgentRegistry.specs`) aufgerufen werden sollen, in welcher Reihenfolge und
+  *      was parallel laufen kann. `PlanValidator.validate` stellt anschließend sicher, dass der Plan strukturell korrekt ist (keine verletzten Abhängigkeiten, Pflicht-Agenten enthalten, gültige
+  *      `finalAgentId`), unabhängig davon, wie zuverlässig das LLM tatsächlich geantwortet hat.
+  *   1. '''Execution''' (generisch, kein LLM-Call): Der validierte Plan besteht aus einer Liste von "Steps". Alle Agenten innerhalb eines Steps sind laut Plan voneinander unabhängig und werden per
+  *      `ox.par` (strukturierte Nebenläufigkeit auf Virtual Threads) parallel ausgeführt (Fan-out/Fan-in pro Step); der nächste Step startet erst, wenn der aktuelle vollständig abgeschlossen ist.
   *
-  * Dieses Muster nennt man "Fan-out / Fan-in":
-  *   - '''Fan-out''': Eine Aufgabe wird an mehrere unabhängige Worker verteilt.
-  *   - '''Fan-in''': Die Ergebnisse aller Worker werden an einer Stelle wieder zusammengeführt (hier: durch den Synthesis-Agent).
-  *
-  * `ox.par` kapselt dabei bereits das komplette Fan-out/Fan-in: Beide Berechnungen werden auf eigenen (virtuellen) Threads gestartet, `par` kehrt erst zurück, wenn BEIDE fertig sind (strukturierte
-  * Nebenläufigkeit - im Gegensatz zu freischwebenden `Future`s ist hier durch den Scope garantiert, dass keine "verwaisten" Hintergrund-Threads übrig bleiben). Schlägt eine der beiden Berechnungen
-  * fehl, wird die andere automatisch abgebrochen (interrupted) und der Fehler propagiert.
+  * Der entscheidende Unterschied zur Vorgänger-Version: Früher stand hier hartcodiert `par(FactResearcher.research(topic), RiskAnalyst.analyze(topic))` gefolgt von `Synthesis.synthesize(...)` - ein
+  * reiner, fixer "Workflow". Jetzt kennt dieser Code weder die Anzahl noch die Identität der Agenten; er führt ausschließlich aus, was `AgentRegistry` bereitstellt und `OrchestratorAgent` plant. Ein
+  * neuer Agent lässt sich daher einbinden, indem lediglich eine neue `AgentSpec` in `AgentRegistry.specs` ergänzt wird - an diesem Executor ändert sich nichts.
   */
 object Orchestrator:
 
-  final case class Timing(workersSeconds: Double, totalSeconds: Double)
+  final case class Timing(planningSeconds: Double, executionSeconds: Double, totalSeconds: Double)
 
   final case class PipelineResult(
       topic: String,
-      factResearcherOutput: String,
-      riskAnalystOutput: String,
+      plan: ExecutionPlan,
+      outputsById: Map[String, String], // Reihenfolge = Ausführungsreihenfolge (ListMap), nicht nur Menge
       finalReport: String,
       timing: Timing,
   )
 
   def runPipeline(topic: String): PipelineResult =
-    println(s"[Orchestrator] Starte Fact-Researcher und Risk-Analyst PARALLEL für: '$topic'")
     val start = System.nanoTime()
+    val specs = AgentRegistry.specs(topic).map(s => s.id -> s).toMap
 
-    // Fan-out + Fan-in in einem Aufruf: `par` startet beide Berechnungen
-    // parallel und liefert erst zurück, wenn beide abgeschlossen sind.
-    val (facts, risks) = par(
-      AgentFactResearcher.research(topic),
-      RiskAnalyst.analyze(topic),
-    )
+    println(s"[Orchestrator] Planning-Phase: Orchestrator-Agent entscheidet über den Ausführungsplan für: '$topic'")
+    val rawPlan         = OrchestratorAgent.plan(topic, specs.values.toList)
+    val plan            = PlanValidator.validate(rawPlan, specs)
+    val planningElapsed = (System.nanoTime() - start) / 1e9
+    println(f"[Orchestrator] Plan (nach Validierung): ${plan.steps.map(_.mkString("[", ", ", "]")).mkString(" -> ")}, final=${plan.finalAgentId}")
+    println(s"[Orchestrator] Begründung des Orchestrator-Agent: ${plan.reasoning}")
 
-    val workersElapsed = (System.nanoTime() - start) / 1e9
-    println(f"[Orchestrator] Beide Worker fertig nach $workersElapsed%.1fs")
-
-    println("[Orchestrator] Starte Synthesis-Agent (sequentiell, benötigt beide Vorergebnisse)")
-    val report = AgentSynthesis.synthesize(topic, facts, risks)
+    val executionStart   = System.nanoTime()
+    var outputs          = ListMap.empty[String, String]
+    for step <- plan.steps do
+      println(s"[Orchestrator] Starte Step PARALLEL: ${step.mkString(", ")}")
+      val contextSoFar = outputs
+      val results      = par(step.map(id => () => specs(id).execute(contextSoFar)))
+      outputs = outputs ++ step.zip(results)
+    val executionElapsed = (System.nanoTime() - executionStart) / 1e9
 
     val totalElapsed = (System.nanoTime() - start) / 1e9
-    println(f"[Orchestrator] Fertig nach insgesamt $totalElapsed%.1fs")
+    println(f"[Orchestrator] Fertig nach insgesamt $totalElapsed%.1fs (Planning: $planningElapsed%.1fs, Execution: $executionElapsed%.1fs)")
 
     PipelineResult(
       topic = topic,
-      factResearcherOutput = facts,
-      riskAnalystOutput = risks,
-      finalReport = report,
-      timing = Timing(workersElapsed, totalElapsed),
+      plan = plan,
+      outputsById = outputs,
+      finalReport = outputs(plan.finalAgentId),
+      timing = Timing(planningElapsed, executionElapsed, totalElapsed),
     )

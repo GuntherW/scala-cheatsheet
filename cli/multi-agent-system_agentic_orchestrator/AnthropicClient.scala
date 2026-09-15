@@ -1,11 +1,12 @@
 package agents
 
-import io.circe.Json
+import io.circe.{Decoder, Json}
 import sttp.ai.claude.ClaudeSyncClient
 import sttp.ai.claude.config.ClaudeConfig
 import sttp.ai.claude.models.{ContentBlock, Message, Tool}
 import sttp.ai.claude.requests.MessageRequest
 import sttp.model.Uri
+import sttp.tapir.Schema
 
 /** Dünner Wrapper um den `ClaudeSyncClient` aus [[https://sttp-ai.softwaremill.com/ sttp-ai]] (Modul `claude`).
   *
@@ -182,14 +183,47 @@ object AnthropicClient:
     end while
     "" // unreachable, while(true) endet nur per return
 
+  /** Führt einen Model-Call mit erzwungenem, schemakonformem JSON-Output aus (Anthropics natives "Structured Output"-Feature, `output_config` / `json_schema` - NICHT zu verwechseln mit Tool-Use).
+    * `sttp-ai` leitet das JSON-Schema automatisch aus der Case-Class `T` ab (via Tapir) und parst die Antwort direkt zu `T` (circe). Im Gegensatz zu `chatWithTool` genügt dafür immer genau ein
+    * Request (kein Multi-Turn-Loop), da das Modell gezwungen wird, ausschließlich valides JSON zu liefern - es gibt keinen `tool_use`/`tool_result`-Umweg.
+    *
+    * @tparam T
+    *   Ziel-Typ der Antwort, benötigt `Schema` (Tapir, für die JSON-Schema-Ableitung) und `Decoder` (circe, für das Parsen der Antwort).
+    */
+  def chatStructured[T: Schema: Decoder](
+      model: String,
+      systemPrompt: String,
+      userMessage: String,
+      maxTokens: Int = 1000,
+  ): T =
+    val request = MessageRequest.withSystem(
+      model = model,
+      system = systemPrompt,
+      messages = List(Message.user(userMessage)),
+      maxTokens = maxTokens,
+    )
+
+    log(s"-> Request (structured output) model=$model")
+    log(s"   system:  ${truncate(systemPrompt)}")
+    log(s"   user:    ${truncate(userMessage)}")
+
+    try
+      val result = client.createMessageAs[T](request)
+      log(s"<- Response (structured output): $result")
+      result
+    catch
+      case e: Throwable =>
+        log(s"<- Fehler   ${truncate(e.getMessage)}")
+        throw e
+
   def close(): Unit = client.close()
 
 /** Lädt Umgebungsvariablen aus der `.env`-Datei im Projekt-Root (eine Ebene über diesem Ordner), analog zum Python-Pendant (`python-dotenv`).
- *
- * Eigene, bewusst simple Implementierung auf Basis von `os-lib` statt der Java-Bibliothek `dotenv-java`: Letztere ist reines JVM-Java und würde als einzige Abhängigkeit dieses Projekts die
- * Scala-Native-Kompatibilität der übrigen Abhängigkeiten (`sttp-ai`, `os-lib`, `ox`) brechen. Unterstütztes Format: `SCHLÜSSEL=WERT` pro Zeile, `#`-Kommentare und Leerzeilen werden ignoriert, ein-
- * oder doppelte Anführungszeichen um den Wert werden entfernt. Fällt automatisch auf echte Umgebungsvariablen zurück, falls die `.env`-Datei fehlt oder der Schlüssel dort nicht gesetzt ist.
- */
+  *
+  * Eigene, bewusst simple Implementierung auf Basis von `os-lib` statt der Java-Bibliothek `dotenv-java`: Letztere ist reines JVM-Java und würde als einzige Abhängigkeit dieses Projekts die
+  * Scala-Native-Kompatibilität der übrigen Abhängigkeiten (`sttp-ai`, `os-lib`, `ox`) brechen. Unterstütztes Format: `SCHLÜSSEL=WERT` pro Zeile, `#`-Kommentare und Leerzeilen werden ignoriert, ein-
+  * oder doppelte Anführungszeichen um den Wert werden entfernt. Fällt automatisch auf echte Umgebungsvariablen zurück, falls die `.env`-Datei fehlt oder der Schlüssel dort nicht gesetzt ist.
+  */
 object Env:
 
   private val dotenvPath = os.pwd / ".env"
@@ -202,10 +236,10 @@ object Env:
         .map(_.trim)
         .filter(line => line.nonEmpty && !line.startsWith("#"))
         .flatMap(_.split("=", 2) match
-            case Array(key, value) => Some(key.trim -> unquote(value.trim))
-            case _                 => None,
-            )
-          .toMap
+          case Array(key, value) => Some(key.trim -> unquote(value.trim))
+          case _                 => None,
+        )
+        .toMap
     else Map.empty
 
   private def unquote(value: String): String =

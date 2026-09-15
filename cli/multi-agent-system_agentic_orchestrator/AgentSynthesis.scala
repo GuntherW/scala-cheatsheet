@@ -42,3 +42,16 @@ object AgentSynthesis extends Agent(
          |
          |Erstelle nun den finalen, konsolidierten Bericht.""".stripMargin
     run(prompt, maxTokens = 3000)
+
+  val Id = "synthesis"
+
+  /** Generische Beschreibung für Registry/Planner (siehe `AgentSpec.scala`). Hängt zwingend von Fact-Researcher UND Risk-Analyst ab (`hardDependsOn`) und ist als Pflicht-Agent markiert
+    * (`isMandatory`), da ohne ihn kein konsolidierter Endbericht entsteht - der `PlanValidator` erzwingt beides, selbst falls der Planungs-Agent (LLM) das anders vorschlagen sollte.
+    */
+  def spec(topic: String): AgentSpec = AgentSpec(
+    id = Id,
+    description = "Fasst die Ausgaben von Fact-Researcher und Risk-Analyst zu einem ausgewogenen, konsolidierten Endbericht zusammen.",
+    hardDependsOn = Set(AgentFactResearcher.Id, RiskAnalyst.Id),
+    isMandatory = true,
+    execute = inputs => synthesize(topic, inputs.getOrElse(AgentFactResearcher.Id, ""), inputs.getOrElse(RiskAnalyst.Id, "")),
+  )

@@ -13,7 +13,7 @@ package agents
   * Hinweis: `web_search` wurde hier bewusst NICHT zusätzlich eingebunden, da das Mischen von server- und client-seitigen Tools bei diesem Router dazu führt, dass auch für `web_search` ein
   * `tool_result` erwartet wird (statt es automatisch serverseitig aufzulösen) - das würde dieses Beispiel unnötig verkomplizieren.
   */
-object RiskAnalyst extends Agent(
+object AgentRiskAnalyst extends Agent(
       name = "Risk-Analyst",
       systemPrompt = """Du bist der Risk-Analyst in einem Multi-Agenten-System.
                        |
