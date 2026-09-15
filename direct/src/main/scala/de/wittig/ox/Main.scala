@@ -5,6 +5,7 @@ import ox.either.{catching, ok}
 import ox.resilience.*
 import ox.scheduling.{repeat, Schedule}
 
+import java.time.{LocalDateTime, LocalTime}
 import scala.concurrent.TimeoutException
 import scala.concurrent.duration.*
 import scala.util.Random
@@ -18,6 +19,7 @@ def main(): Unit =
   racing()
   timeOutOx()
   repeating()
+  rateLimiting()
 
   // run two computations in parallel
   def parallel(): Unit =
@@ -68,3 +70,26 @@ def main(): Unit =
       i
 
     repeat(Schedule.fixedInterval(100.millis).maxAttempts(5))(computationR)
+
+  def rateLimiting(): Unit =
+    supervised:
+      // Erlaubt maximal 2 Operationen pro 1 Sekunde (Fixed Window mit Startzeit-Tracking)
+      val rateLimiter = RateLimiter.fixedWindowWithStartTime(2, 1.second)
+
+      def operation(name: String): String =
+        println(s"RateLimiting: ${LocalTime.now()} Executing $name")
+        s"Result of $name"
+
+      // runBlocking: blockiert, falls das Rate-Limit erreicht ist, bis wieder ein Slot frei wird
+      val res1 = rateLimiter.runBlocking(operation("op1"))
+      val res2 = rateLimiter.runBlocking(operation("op2"))
+      val res3 = rateLimiter.runBlocking(operation("op3")) // wartet bis zum nächsten Fenster
+      println(s"RateLimiting: runBlocking results: $res1, $res2, $res3")
+
+      sleep(1.second) // Um das Zeitfenster wieder "neu" zu setzen. (Denn op3 ist ja bereits im neuen Zeitfenster)
+
+      // runOrDrop: bricht sofort mit None ab, falls das Rate-Limit überschritten ist, ansonsten Some(result)
+      val drop1 = rateLimiter.runOrDrop(operation("op4"))
+      val drop2 = rateLimiter.runOrDrop(operation("op5"))
+      val drop3 = rateLimiter.runOrDrop(operation("op6")) // wird verworfen -> None
+      println(s"RateLimiting: runOrDrop results: $drop1, $drop2, $drop3")
