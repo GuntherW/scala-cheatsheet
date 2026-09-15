@@ -37,12 +37,10 @@ object AgentRiskAnalyst extends Agent(
 
   def analyze(topic: String): String = run(s"Analysiere Risiken, Fallstricke und Nachteile zu folgendem Thema:\n\n$topic")
 
-  val Id = "risk-analyst"
-
   /** Generische Beschreibung für Registry/Planner (siehe `AgentSpec.scala`). Keine Abhängigkeiten - kann daher parallel zum Fact-Researcher laufen.
     */
   def spec(topic: String): AgentSpec = AgentSpec(
-    id = Id,
+    id = name,
     description = "Sucht gezielt nach Risiken, Kosten, Sicherheitsbedenken und Nachteilen der gegebenen Technologie/Entscheidung (nutzt calculate_tco). Nennt keine Vorteile.",
     execute = _ => analyze(topic),
   )
