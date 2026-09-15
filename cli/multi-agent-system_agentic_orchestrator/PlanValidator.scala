@@ -1,7 +1,5 @@
 package agents
 
-import scala.collection.mutable.ListBuffer
-
 /** Validiert/repariert einen vom `AgentOrchestrator` (LLM) gelieferten `ExecutionPlan`, bevor der `Orchestrator` ihn ausführt.
   *
   * Notwendig, weil der Plan von einem LLM stammt und daher potenziell fehlerhaft sein kann (unbekannte agent-ids, verletzte Abhängigkeiten, vergessene Pflicht-Agenten, ungültige `finalAgentId`).
@@ -27,10 +25,11 @@ object PlanValidator:
     val orderedIds = deduped ++ mandatory
 
     val levels = topologicalLevels(orderedIds, specs)
+    val allIds = levels.flatten
 
     val finalAgentId =
-      if levels.flatten.contains(raw.finalAgentId) then raw.finalAgentId
-      else specs.values.find(_.isMandatory).map(_.id).orElse(levels.flatten.lastOption).getOrElse(specs.keys.head)
+      if allIds.contains(raw.finalAgentId) then raw.finalAgentId
+      else specs.values.find(_.isMandatory).map(_.id).orElse(allIds.lastOption).getOrElse(specs.keys.head)
 
     ExecutionPlan(levels, finalAgentId, raw.reasoning)
 
@@ -39,22 +38,18 @@ object PlanValidator:
     * Endlosschleife zu laufen.
     */
   private def topologicalLevels(ids: List[String], specs: Map[String, AgentSpec]): List[List[String]] =
-    val priority  = ids.zipWithIndex.toMap
-    val levels    = ListBuffer.empty[List[String]]
-    var doneIds   = Set.empty[String]
-    var remaining = ids
+    val priority = ids.zipWithIndex.toMap
 
-    while remaining.nonEmpty do
-      val (ready, notReady) = remaining.partition(id => specs(id).hardDependsOn.subsetOf(doneIds))
-      if ready.isEmpty then
-        // Zyklus bzw. Abhängigkeit auf eine nicht in `ids` enthaltene id: defensiv auflösen, damit der Executor nicht blockiert.
-        levels += remaining.sortBy(priority)
-        remaining = Nil
+    @annotation.tailrec
+    def loop(remaining: List[String], doneIds: Set[String], levelsAcc: List[List[String]]): List[List[String]] =
+      if remaining.isEmpty then levelsAcc.reverse
       else
-        val sortedReady = ready.sortBy(priority)
-        levels += sortedReady
-        doneIds ++= sortedReady.toSet
-        remaining = notReady
-    end while
+        val (ready, notReady) = remaining.partition(id => specs(id).hardDependsOn.subsetOf(doneIds))
+        if ready.isEmpty then
+          // Zyklus bzw. Abhängigkeit auf eine nicht in `ids` enthaltene id: defensiv auflösen, damit der Executor nicht blockiert.
+          (remaining.sortBy(priority) :: levelsAcc).reverse
+        else
+          val sortedReady = ready.sortBy(priority)
+          loop(notReady, doneIds ++ sortedReady, sortedReady :: levelsAcc)
 
-    levels.toList
+    loop(ids, Set.empty, Nil)

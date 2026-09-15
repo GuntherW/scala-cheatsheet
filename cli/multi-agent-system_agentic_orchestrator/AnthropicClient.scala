@@ -111,14 +111,9 @@ object AnthropicClient:
       toolHandlers: Map[String, Map[String, Json] => String],
       maxTokens: Int = 2000,
   ): String =
-    var messages: List[Message] = List(Message.user(userMessage))
-    var turn                    = 0
 
-    log(s"===== Tool-Use-Loop gestartet (model=$model, tools=${tools.collect { case c: Tool.Custom => c.name }.mkString(", ")}) =====")
-    log(s"   user:    ${truncate(userMessage)}")
-
-    while true do
-      turn += 1
+    @annotation.tailrec
+    def loop(messages: List[Message], turn: Int): String =
       log(s"--- Turn $turn: sende ${messages.size} Nachricht(en) an das Modell ---")
 
       val request = MessageRequest(
@@ -147,41 +142,44 @@ object AnthropicClient:
       if !response.stopReason.contains("tool_use") then
         val finalText = textOf(response.content)
         log(s"===== Tool-Use-Loop beendet nach $turn Turn(s), finale Antwort: ${truncate(finalText)} =====")
-        return finalText
-
-      // Die komplette Assistant-Antwort (inkl. ToolUse-Blöcken) muss Teil der
-      // Historie werden, damit das Modell im nächsten Turn weiß, worauf sich
-      // die tool_result-Blöcke beziehen.
-      //
-      // ACHTUNG (sttp-ai 0.11.0): `ContentBlock.Thinking` hat - anders als das
-      // frühere, selbstgeschriebene JSON-Modell dieses Projekts - KEIN
-      // `signature`-Feld. Gelegentlich liefert das Modell/der Router einen
-      // (fast) leeren `thinking`-Block zurück; sendet man den unverändert
-      // zurück, lehnt die API den Request mit "each thinking block must
-      // contain thinking" ab. Da wir die Signatur ohnehin nicht erhalten
-      // können, filtern wir leere Thinking-Blöcke defensiv heraus, bevor wir
-      // die Antwort in die Historie übernehmen.
-      val historyContent = response.content.filterNot {
-        case ContentBlock.Thinking(thinking) => thinking.isBlank
-        case _                               => false
-      }
-      messages = messages :+ Message.assistant(historyContent)
-
-      val toolResultBlocks = response.content
-        .collect { case tu: ContentBlock.ToolUse => tu }
-        .map { tu =>
-          log(s"   >> Tool-Aufruf     ${tu.name}(${Json.fromFields(tu.input).noSpaces})")
-          val handler    = toolHandlers.getOrElse(tu.name, (_: Map[String, Json]) => s"Fehler: kein Handler für Tool '${tu.name}' registriert.")
-          val resultText = handler(tu.input)
-          log(s"   << Tool-Ergebnis   ${tu.name} -> ${truncate(resultText)}")
-          ContentBlock.ToolResult(toolUseId = tu.id, content = resultText)
+        finalText
+      else
+        // Die komplette Assistant-Antwort (inkl. ToolUse-Blöcken) muss Teil der
+        // Historie werden, damit das Modell im nächsten Turn weiß, worauf sich
+        // die tool_result-Blöcke beziehen.
+        //
+        // ACHTUNG (sttp-ai 0.11.0): `ContentBlock.Thinking` hat - anders als das
+        // frühere, selbstgeschriebene JSON-Modell dieses Projekts - KEIN
+        // `signature`-Feld. Gelegentlich liefert das Modell/der Router einen
+        // (fast) leeren `thinking`-Block zurück; sendet man den unverändert
+        // zurück, lehnt die API den Request mit "each thinking block must
+        // contain thinking" ab. Da wir die Signatur ohnehin nicht erhalten
+        // können, filtern wir leere Thinking-Blöcke defensiv heraus, bevor wir
+        // die Antwort in die Historie übernehmen.
+        val historyContent = response.content.filterNot {
+          case ContentBlock.Thinking(thinking) => thinking.isBlank
+          case _                               => false
         }
 
-      // Alle tool_result-Blöcke gehören in EINEN user-Turn (Anthropic-Konvention),
-      // nicht in mehrere separate Nachrichten.
-      messages = messages :+ Message.user(toolResultBlocks)
-    end while
-    "" // unreachable, while(true) endet nur per return
+        val toolResultBlocks = response.content
+          .collect { case tu: ContentBlock.ToolUse => tu }
+          .map { tu =>
+            log(s"   >> Tool-Aufruf     ${tu.name}(${Json.fromFields(tu.input).noSpaces})")
+            val handler    = toolHandlers.getOrElse(tu.name, (_: Map[String, Json]) => s"Fehler: kein Handler für Tool '${tu.name}' registriert.")
+            val resultText = handler(tu.input)
+            log(s"   << Tool-Ergebnis   ${tu.name} -> ${truncate(resultText)}")
+            ContentBlock.ToolResult(toolUseId = tu.id, content = resultText)
+          }
+
+        // Alle tool_result-Blöcke gehören in EINEN user-Turn (Anthropic-Konvention),
+        // nicht in mehrere separate Nachrichten.
+        val nextMessages = messages :+ Message.assistant(historyContent) :+ Message.user(toolResultBlocks)
+        loop(nextMessages, turn + 1)
+    end loop
+
+    log(s"===== Tool-Use-Loop gestartet (model=$model, tools=${tools.collect { case c: Tool.Custom => c.name }.mkString(", ")}) =====")
+    log(s"   user:    ${truncate(userMessage)}")
+    loop(List(Message.user(userMessage)), turn = 1)
 
   /** Führt einen Model-Call mit erzwungenem, schemakonformem JSON-Output aus (Anthropics natives "Structured Output"-Feature, `output_config` / `json_schema` - NICHT zu verwechseln mit Tool-Use).
     * `sttp-ai` leitet das JSON-Schema automatisch aus der Case-Class `T` ab (via Tapir) und parst die Antwort direkt zu `T` (circe). Im Gegensatz zu `chatWithTool` genügt dafür immer genau ein

@@ -20,10 +20,13 @@ object Orchestrator:
 
   final case class Timing(planningSeconds: Double, executionSeconds: Double, totalSeconds: Double)
 
+  /** @param outputsById
+    *   Ausgaben aller ausgeführten Agenten, Reihenfolge = Ausführungsreihenfolge (`ListMap`), nicht nur Menge.
+    */
   final case class PipelineResult(
       topic: String,
       plan: ExecutionPlan,
-      outputsById: Map[String, String], // Reihenfolge = Ausführungsreihenfolge (ListMap), nicht nur Menge
+      outputsById: Map[String, String],
       finalReport: String,
       timing: Timing,
   )
@@ -40,21 +43,25 @@ object Orchestrator:
     println(s"[Orchestrator] Begründung des Orchestrator-Agent: ${plan.reasoning}")
 
     val executionStart   = System.nanoTime()
-    var outputs          = ListMap.empty[String, String]
-    for step <- plan.steps do
+    val outputs          = plan.steps.foldLeft(ListMap.empty[String, String]) { (contextSoFar, step) =>
       println(s"[Orchestrator] Starte Step PARALLEL: ${step.mkString(", ")}")
-      val contextSoFar = outputs
-      val results      = par(step.map(id => () => specs(id).execute(contextSoFar)))
-      outputs = outputs ++ step.zip(results)
+      val results = par(step.map(id => () => specs(id).execute(contextSoFar)))
+      contextSoFar ++ step.zip(results)
+    }
     val executionElapsed = (System.nanoTime() - executionStart) / 1e9
 
     val totalElapsed = (System.nanoTime() - start) / 1e9
     println(f"[Orchestrator] Fertig nach insgesamt $totalElapsed%.1fs (Planning: $planningElapsed%.1fs, Execution: $executionElapsed%.1fs)")
 
+    val finalReport = outputs.getOrElse(
+      plan.finalAgentId,
+      throw new IllegalStateException(s"finalAgentId '${plan.finalAgentId}' hat keinen Output erzeugt - Plan/Executor inkonsistent."),
+    )
+
     PipelineResult(
       topic = topic,
       plan = plan,
       outputsById = outputs,
-      finalReport = outputs(plan.finalAgentId),
+      finalReport = finalReport,
       timing = Timing(planningElapsed, executionElapsed, totalElapsed),
     )
