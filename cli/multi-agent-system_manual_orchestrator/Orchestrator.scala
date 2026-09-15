@@ -35,7 +35,7 @@ object Orchestrator:
     // Fan-out + Fan-in in einem Aufruf: `par` startet beide Berechnungen
     // parallel und liefert erst zurück, wenn beide abgeschlossen sind.
     val (facts, risks) = par(
-      FactResearcher.research(topic),
+      AgentFactResearcher.research(topic),
       RiskAnalyst.analyze(topic),
     )
 
@@ -43,7 +43,7 @@ object Orchestrator:
     println(f"[Orchestrator] Beide Worker fertig nach $workersElapsed%.1fs")
 
     println("[Orchestrator] Starte Synthesis-Agent (sequentiell, benötigt beide Vorergebnisse)")
-    val report = SynthesisAgent.synthesize(topic, facts, risks)
+    val report = AgentSynthesis.synthesize(topic, facts, risks)
 
     val totalElapsed = (System.nanoTime() - start) / 1e9
     println(f"[Orchestrator] Fertig nach insgesamt $totalElapsed%.1fs")

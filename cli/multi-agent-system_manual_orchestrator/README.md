@@ -10,14 +10,14 @@ erstellt.
 
 ## Tech-Stack
 
-| Zweck                                             | Bibliothek                                                                                     |
-|---------------------------------------------------|------------------------------------------------------------------------------------------------|
-| HTTP-Client (Aufruf der Anthropic API)            | [sttp client4](https://sttp.softwaremill.com/) (`DefaultSyncBackend`)                          |
-| JSON-Serialisierung/-Deserialisierung             | [jsoniter-scala](https://github.com/plokhotnyuk/jsoniter-scala) (Compile-Time-Codegenerierung) |
-| Dateisystemzugriff (`output/`-Ordner)             | [os-lib](https://github.com/com-lihaoyi/os-lib)                                                |
-| `.env`-Datei einlesen                             | [dotenv-java](https://github.com/cdimascio/dotenv-java)                                        |
-| Nebenläufigkeit (paralleles Ausführen der Worker) | [ox](https://ox.softwaremill.com/) (`par`, strukturierte Nebenläufigkeit auf Virtual Threads)  |
-| Build/Run ohne sbt-Projekt                        | `scala-cli` mit `//> using` Direktiven                                                         |
+| Zweck                                             | Bibliothek                                                                                        |
+|---------------------------------------------------|---------------------------------------------------------------------------------------------------|
+| Anthropic-/Claude-Client (Messages API, Tools)    | [sttp-ai](https://sttp-ai.softwaremill.com/) (`claude`-Modul, `ClaudeSyncClient`)                 |
+| JSON-Serialisierung/-Deserialisierung             | [circe](https://circe.github.io/circe/) (bringt `sttp-ai` bereits mit, keine eigene Abhängigkeit) |
+| Dateisystemzugriff (`output/`-Ordner)             | [os-lib](https://github.com/com-lihaoyi/os-lib)                                                   |
+| `.env`-Datei einlesen                             | eigene, simple Implementierung (`Env.scala`, siehe unten)                                         |
+| Nebenläufigkeit (paralleles Ausführen der Worker) | [ox](https://ox.softwaremill.com/) (`par`, strukturierte Nebenläufigkeit auf Virtual Threads)     |
+| Build/Run ohne sbt-Projekt                        | `scala-cli` mit `//> using` Direktiven                                                            |
 
 Keine sbt-`build.sbt` nötig - alle Abhängigkeiten werden per Direktive in
 `project.scala` deklariert; `scala-cli` löst sie automatisch über Coursier
@@ -78,8 +78,8 @@ flowchart TD
     F --> G[output/*.md]
 
     subgraph Infrastruktur
-        H[AnthropicClient] -. sttp HTTP .-> I[(Anthropic API)]
-        H -. jsoniter - scala .-> J[JSON De/Serialisierung]
+        H[AnthropicClient] -. ClaudeSyncClient .-> I[(Anthropic API)]
+        H -. circe .-> J[JSON De/Serialisierung]
     end
     C -.-> H
     D -.-> H
@@ -99,32 +99,31 @@ sequenceDiagram
     participant R as RiskAnalyst (Agent)
     participant A as Anthropic API
     participant H as CalculateTcoTool.handler (lokale Scala-Funktion)
-    R ->> A: LoopChatRequest(..., tools=[calculate_tco])
-    A -->> R: stop_reason="tool_use", content=[tool_use: calculate_tco(technology, team_size)]
-    R ->> H: handler(rawInput: RawJson)
+    R ->> A: MessageRequest(..., tools=[calculate_tco])
+    A -->> R: stopReason="tool_use", content=[ToolUse: calculate_tco(technology, team_size)]
+    R ->> H: handler(rawInput: Map[String, Json])
     H -->> R: Dummy-Ergebnis als JSON-String
-    R ->> A: messages += [assistant: content(inkl. tool_use), user: [tool_result]]
-    A -->> R: stop_reason="end_turn", content=[text: finaler Bericht]
+    R ->> A: messages += [assistant: content(inkl. ToolUse), user: [ToolResult]]
+    A -->> R: stopReason="end_turn", content=[Text: finaler Bericht]
 ```
 
 Wichtige Punkte:
 
-- Das Tool wird per **JSON-Schema** (`InputSchema`/`PropertySchema` in
-  `AnthropicModels.scala`) definiert - das Modell entscheidet selbst, *ob*
+- Das Tool wird per **JSON-Schema** (`ToolInputSchema`/`PropertySchema` aus
+  `sttp.ai.claude.models`) definiert - das Modell entscheidet selbst, *ob*
   und *mit welchen Parametern* es aufgerufen wird.
-- Da Anthropic's `content`-Feld je nach Nachricht ein String ODER eine
-  Liste unterschiedlich geformter Blöcke sein kann, nutzen wir für die
-  Multi-Turn-Nachrichten (`LoopMessage`) ein `RawJson`-Wrapper-Feld statt
-  eines starr typisierten Case-Class-Baums (siehe Abschnitt "Stolperstein"
-  unten).
-- Die Original-Antwort des Modells (inkl. `tool_use`-Block, inkl.
-  `thinking`-Block mit Signatur!) muss unverändert als `assistant`-Nachricht
-  in die Historie zurück, damit das Modell im nächsten Turn weiß, worauf
-  sich das `tool_result` bezieht.
-- Das `tool_result` wird über die `tool_use_id` dem passenden Aufruf
+- `sttp-ai` bildet Anthropic's `content`-Feld bereits als typisiertes
+  ADT (`sealed trait ContentBlock` mit `Text`, `ToolUse`, `ToolResult`, ...)
+  ab - ein eigener `RawJson`-Wrapper wie in der Vorgänger-Implementierung
+  entfällt dadurch vollständig.
+- Die Original-Antwort des Modells (inkl. `ToolUse`-Block) muss als
+  `assistant`-Nachricht unverändert in die Historie zurück, damit das
+  Modell im nächsten Turn weiß, worauf sich das `ToolResult` bezieht (siehe
+  aber Stolperstein zu `Thinking`-Blöcken unten).
+- Das `ToolResult` wird über die `toolUseId` dem passenden Aufruf
   zugeordnet.
 - Die Schleife (`AnthropicClient.chatWithTool`) läuft so lange, bis
-  `stop_reason != "tool_use"` ist.
+  `stopReason != "tool_use"` ist.
 
 **Hinweis zur Kombination von Tool-Typen:** Mischt man in einer Anfrage
 server-seitige (`web_search`) und client-seitige Tools, erwartet dieser
@@ -201,20 +200,22 @@ Error-Handling für beide Zweige einzeln.
   vom Anthropic-Server ausgeführt wird - der Client muss den Tool-Aufruf
   nicht selbst abfangen und beantworten. Ein einzelner Request genügt (`AnthropicClient.chat`).
 - **Client-seitiges (custom) Tool**: Ein selbst definiertes Tool (z. B.
-  `calculate_tco` beim Risk-Analyst) mit eigenem JSON-Schema (`InputSchema`). Das Modell liefert nur den *Wunsch*, das
+  `calculate_tco` beim Risk-Analyst) mit eigenem JSON-Schema (`ToolInputSchema`). Das Modell liefert nur den *Wunsch*,
+  das
   Tool
-  aufzurufen (`stop_reason == "tool_use"`), zurück - die eigentliche
+  aufzurufen (`stopReason == "tool_use"`), zurück - die eigentliche
   Ausführung übernimmt eine lokale Handler-Funktion (`CalculateTcoTool.handler`). Das Ergebnis muss danach explizit als
-  `tool_result` an das Modell zurückgesendet werden (Multi-Turn-Dialog,
+  `ContentBlock.ToolResult` an das Modell zurückgesendet werden (Multi-Turn-Dialog,
   `AnthropicClient.chatWithTool`).
 - **Tool-Handler**: Die lokale Funktion, die ein client-seitiges Tool
   tatsächlich ausführt (hier: `CalculateTcoTool.handler` in
-  `RiskAnalyst.scala`). Bekommt die vom Modell gewählten Parameter als
-  `RawJson` und liefert einen String (meist JSON) als Ergebnis zurück.
-- **`tool_use` / `tool_result` Block**: Content-Block-Typen im
-  Anthropic-Message-Format. `tool_use` = Aufrufwunsch des Modells (Name +
-  Parameter + eindeutige `id`); `tool_result` = die Antwort des Client
-  darauf, referenziert über `tool_use_id`.
+  `AgentRiskAnalyst.scala`). Bekommt die vom Modell gewählten Parameter als
+  `Map[String, io.circe.Json]` und liefert einen String (meist JSON) als Ergebnis zurück.
+- **`ToolUse` / `ToolResult` Block**: Content-Block-Typen im
+  Anthropic-Message-Format (in `sttp-ai` als `ContentBlock.ToolUse` /
+  `ContentBlock.ToolResult` modelliert). `ToolUse` = Aufrufwunsch des
+  Modells (Name + Parameter + eindeutige `id`); `ToolResult` = die Antwort
+  des Client darauf, referenziert über `toolUseId`.
 - **Grounding**: Antworten eines Modells durch externe, verifizierbare
   Quellen (z. B. Websuche-Ergebnisse) absichern, statt sich nur auf
   internes Modellwissen zu verlassen.
@@ -222,16 +223,22 @@ Error-Handling für beide Zweige einzeln.
   Eingabe-Kontext für einen anderen Agenten (hier: Fakten + Risiken werden
   als Text in den Prompt des Synthesis-Agent eingebettet).
 - **Content Block**: Die Antwort eines Anthropic-Modells besteht aus einer
-  Liste von Content-Blöcken unterschiedlichen Typs (`text`,
-  `server_tool_use`, `web_search_tool_result`, ...). Für den finalen
-  Bericht werden nur die `text`-Blöcke extrahiert (`AnthropicClient.chat`).
-- **Codec (jsoniter-scala)**: Eine zur Compile-Zeit generierte
-  Serialisierungs-/Deserialisierungslogik für einen bestimmten Typ (`given JsonValueCodec[T]`). Im Gegensatz zu
-  reflection-basierten
-  JSON-Bibliotheken entsteht dadurch kein Laufzeit-Overhead.
-- **Backend (sttp)**: Die konkrete HTTP-Implementierung, die sttp zum
-  tatsächlichen Senden von Requests nutzt. Hier `DefaultSyncBackend`
-  (synchron, blockierend, intern auf `java.net.http.HttpClient` basierend).
+  Liste von Content-Blöcken unterschiedlichen Typs (`Text`, `ServerToolUse`,
+  `WebSearchToolResult`, ...), in `sttp-ai` als `sealed trait ContentBlock`
+  mit Fallklassen abgebildet. Für den finalen Bericht werden nur die
+  `Text`-Blöcke extrahiert (`AnthropicClient.chat`).
+- **Codec (circe)**: Typklassen-basierte Serialisierungs-/
+  Deserialisierungslogik für einen bestimmten Typ (`Codec[T]` bzw.
+  `Codec.AsObject[T]`), von `sttp-ai` selbst für alle API-Modelle
+  bereitgestellt bzw. per `derives Codec.AsObject` für eigene Typen (`CalculateTcoInput`/`CalculateTcoResult` in
+  `AgentRiskAnalyst.scala`)
+  ableitbar.
+- **`ClaudeSyncClient` (sttp-ai)**: Der blockierende, hochsprachliche
+  Claude-Client aus `sttp-ai`, der Requests direkt als Response-Werte
+  zurückgibt und im Fehlerfall eine `ClaudeException`-Unterklasse wirft (statt `Either`, wie es der rohe `ClaudeClient`
+  täte). Nutzt intern
+  weiterhin `sttp-client4` als HTTP-Backend (`DefaultSyncBackend`, basiert
+  auf `java.net.http.HttpClient`).
 - **Virtual Thread**: Ein von der JVM (ab JDK 21) verwalteter, extrem
   leichtgewichtiger Thread. Im Gegensatz zu klassischen Plattform-Threads
   können davon Millionen gleichzeitig existieren, ohne dass jeder ein
@@ -244,13 +251,12 @@ Error-Handling für beide Zweige einzeln.
 research_scala/
 ├── project.scala        # scala-cli Direktiven: Scala-Version & Abhängigkeiten
 ├── Env.scala             # Liest ANTHROPIC_API_KEY aus ../.env (via os-lib)
-├── Models.scala           # Modell-Konstanten (Sonnet/Haiku)
-├── AnthropicModels.scala  # jsoniter-scala Request-/Response-Case-Classes + Codecs
-├── AnthropicClient.scala  # HTTP-Aufruf via sttp + JSON via jsoniter-scala
+├── AnthropicClient.scala  # Wrapper um sttp-ai's ClaudeSyncClient + Logging + Tool-Use-Loop
 ├── Agent.scala            # Basisklasse Agent (kapselt Model-Call + Tools)
-├── FactResearcher.scala   # Worker 1 (web_search, server-seitig)
-├── RiskAnalyst.scala      # Worker 2 (calculate_tco, client-seitiges Custom-Tool)
-├── SynthesisAgent.scala   # Worker 3 (Aggregator)
+├── AgentFactResearcher.scala # Worker 1 (web_search, server-seitig)
+├── AgentRiskAnalyst.scala # Worker 2 (calculate_tco, client-seitiges Custom-Tool)
+├── CalculateTcoTool.scala # Definition & Ausführung des calculate_tco-Tools (Ein-/Ausgabe-Typen, JSON-Schema, Handler)
+├── AgentSynthesis.scala   # Worker 3 (Aggregator)
 ├── Orchestrator.scala     # Fan-out/Fan-in-Steuerung (ox.par)
 ├── Main.scala             # Einstiegspunkt (@main), schreibt output/*.md via os-lib
 ├── output/                # wird beim Ausführen erzeugt (Zwischen- & Endergebnisse)
@@ -260,7 +266,7 @@ research_scala/
 ## Ausführen
 
 ```bash
-cd research_scala
+cd multi-agent-system_agentic_orchestrator
 scala-cli run . -- "Sollten wir Kubernetes für unser 5-Personen-Startup einführen?"
 ```
 
@@ -270,46 +276,58 @@ Ohne Argument wird ein Standardthema verwendet. Die Ergebnisse landen in
 
 ## Credentials
 
-Der API-Key wird aus der `.env`-Datei im Projekt-Root (`../.env`,
-Variable `ANTHROPIC_API_KEY`) geladen (`Env.scala`, mittels dotenv-java
-gelesen) - analog zum Python-Pendant in `../tutorial/init.py` bzw.
-`../research/init.py`. Genutzt wird der Requesty-Router (`https://router.eu.requesty.ai`) mit dem Modell
-`vertex/claude-sonnet-5@eu`. Authentifiziert wird - wie im offiziellen
-Anthropic-SDK - über die Header `x-api-key` und
-`anthropic-version: 2023-06-01`.
+Der API-Key wird aus der `.env`-Datei im Projekt-Root (`.env` im
+Projektordner, Variable `ANTHROPIC_API_KEY`, alternativ
+`ANTHROPIC_AUTH_TOKEN`) geladen (`Env.scala`, eigene, simple
+`os-lib`-basierte Implementierung ohne zusätzliche Dependency) - analog zum
+Python-Pendant in `../tutorial/init.py` bzw. `../research/init.py`. Genutzt
+wird der Requesty-Router (`https://router.eu.requesty.ai`) mit dem Modell
+`vertex/claude-sonnet-5@eu`, konfiguriert über `ClaudeConfig(baseUrl = ...)`
+aus `sttp-ai`. Authentifiziert wird - wie im offiziellen Anthropic-SDK -
+über die Header `x-api-key` und `anthropic-version: 2023-06-01`, die
+`sttp-ai` automatisch setzt.
 
-## Stolpersteine mit jsoniter-scala
+## Stolpersteine mit sttp-ai
 
-**1. `transientDefault`:** Beim Serialisieren des `web_search`-Tools (`WebSearchTool` mit Default-Werten für `type`,
-`name`, `max_uses`) hat
-jsoniter-scala standardmäßig **alle Felder weggelassen**, die zufällig
-ihrem Default-Wert entsprachen (`transientDefault = true` per Default) -
-das Ergebnis war ein leeres `{}` statt einer gültigen Tool-Definition, was
-die Anthropic API mit einem 400er-Fehler quittierte. Fix: Codec explizit
-mit `JsonCodecMaker.make(CodecMakerConfig.withTransientDefault(false))`
-erzeugen (siehe `AnthropicModels.scala`).
+**1. Custom Base-URL statt offizieller Anthropic-Endpoint:** Dieses Projekt
+spricht (wie das Python-Pendant) einen Requesty-Router statt
+`https://api.anthropic.com` an. `sttp-ai`s `ClaudeConfig` unterstützt das
+direkt über den `baseUrl`-Parameter (`Uri`) - `v1/messages` wird vom Client
+selbst angehängt, man darf den Pfad also NICHT mit angeben (siehe
+`AnthropicClient.scala`). `ClaudeConfig.fromEnv`/`ClaudeSyncClient.fromEnv`
+wurden hier bewusst NICHT genutzt, da sie nur `sys.env` lesen - dieses
+Projekt liest den API-Key stattdessen über die projekteigene
+`Env.scala` (die zusätzlich `../.env` einliest und den Fallback-Namen
+`ANTHROPIC_AUTH_TOKEN` unterstützt).
 
-**2. Dynamisches `content`-Feld:** Anthropic's Message-Format erlaubt für
-`content` entweder einen einfachen String ODER eine Liste heterogener
-Content-Blöcke (`text`, `thinking`, `tool_use`, ...). Rein statisch
-typisierte jsoniter-scala-Case-Classes können das nicht direkt abbilden.
-Lösung: Ein `RawJson`-Wrapper-Typ mit **handgeschriebenem** (nicht
-makro-generiertem) Codec, der die Bytes über `JsonWriter.writeRawVal` /
-`JsonReader.readRawValAsBytes` unverändert durchreicht (siehe
-`AnthropicModels.RawJson`). So lässt sich z. B. eine komplette,
-vom Server erhaltene `content`-Liste unverändert in die nächste Anfrage
-zurückspielen.
+**2. `ContentBlock.Thinking` ohne `signature`-Feld:** Anthropic verlangt beim
+Zurücksenden von `thinking`-Blöcken (z. B. nach einem `tool_use`-Turn)
+eigentlich die unverändert erhaltene `signature`, um die Integrität der
+Reasoning-Kette zu prüfen. `sttp-ai` 0.11.0 bildet `ContentBlock.Thinking`
+jedoch nur mit einem einzigen Feld ab (`thinking: String`, keine
+`signature`) - eine Signatur kann also gar nicht transportiert werden.
+Sendet man einen (gelegentlich fast leeren) `thinking`-Block unverändert
+zurück, lehnt die API den Request mit `"each thinking block must contain
+thinking"` ab. Workaround in `AnthropicClient.chatWithTool`: leere
+`Thinking`-Blöcke werden vor dem Zurücksenden herausgefiltert. Das behebt
+das beobachtete Fehlerbild, ändert aber nichts daran, dass diese
+sttp-ai-Version für Modelle mit **erzwungener** Signatur-Prüfung bei
+nicht-leeren Thinking-Blöcken (echtes Extended Thinking) derzeit keine
+korrekte Lösung anbietet - das wäre nur durch ein Upstream-Fix in
+`sttp-ai` behebbar.
 
-**3. `thinking`-Block muss vollständig erhalten bleiben:** Anfangs hatte
-unser `ContentBlock`-Modell keine Felder für `thinking`/`signature`. Beim
-Zurücksenden der Assistant-Antwort (inkl. `thinking`-Block) an die API kam
-dadurch ein unvollständiger Block an ("each thinking block must contain
-thinking") - die API lehnte den Request mit 400 ab. Fix: `ContentBlock`
-um die Felder `thinking: Option[String]` und `signature: Option[String]`
-ergänzt, damit sie beim Re-Serialisieren erhalten bleiben.
+**3. Mischen von server- und client-seitigen Tools:** Unabhängig von der
+Bibliothek gilt weiterhin: Mischt man in einer Anfrage server-seitige (`web_search`) und client-seitige Tools, erwartet
+der hier genutzte
+Router-Endpunkt für **beide** Typen ein `tool_result` - `web_search` wird
+also NICHT automatisch aufgelöst, sobald ein Client-Tool im Spiel ist.
+Deshalb nutzt der Risk-Analyst in diesem Beispiel bewusst ausschließlich
+`calculate_tco`.
 
-**4. Eindeutige Codec-Namen:** Mehrere `given JsonValueCodec[List[X]]`
-ohne expliziten Namen führten zu Compile-Fehlern ("Conflicting
-definitions"), da der Compiler für alle `List[_]`-Codecs denselben
-Default-Namen generiert. Fix: Jedem `given` einen eigenen Namen geben (z. B.
-`given contentBlockListCodec: JsonValueCodec[List[ContentBlock]]`).
+**4. Eigene Tool-Eingabe-/Ergebnis-Typen bleiben nötig:** `sttp-ai` liefert
+Tool-Eingabeparameter als rohes `Map[String, io.circe.Json]`
+(`ContentBlock.ToolUse.input`). Für ein sauberes, typisiertes Case-Class-
+Schema (hier `CalculateTcoInput`/`CalculateTcoResult`) genügt in Scala 3
+weiterhin `derives Codec.AsObject` - `circe` ist als Abhängigkeit von
+`sttp-ai` bereits transitiv vorhanden, es muss keine eigene JSON-Bibliothek
+mehr eingebunden werden.
