@@ -1,6 +1,6 @@
 ---
 name: scalex
-description: "Explore and navigate Git-tracked Scala 2/3 and Java source with Scalex. Use for symbol definitions, implementations, members, source bodies, test discovery, package structure, and reference candidates before edits. Prefer it for Scala/Java symbol navigation; use ordinary file or text tools for untracked files, other languages, and literal searches. Also supports ASCII graph rendering or parsing when explicitly requested."
+description: "ALWAYS use FIRST, before grep/rg/bash text search, whenever navigating Git-tracked Scala 2/3 or Java source: symbol definitions, references/usages ('who calls X', 'find all usages'), implementations, hierarchies, members, source bodies, test discovery, package structure - especially before renames, refactors, or verifying that docs/comments still match the code. Only fall back to ordinary grep/file tools for untracked files, other languages, or literal string search. Also supports ASCII graph rendering or parsing when explicitly requested."
 ---
 
 # Scalex

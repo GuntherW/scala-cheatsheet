@@ -5,6 +5,10 @@
 * Prefer tools over bash for compile/test where available
 * After adding a dependency in `build.sbt`, run `import-build`
 * To look up a dependency/version, use `find-dep`; for a class API, use `inspect`
+* For Scala/Java symbol navigation (definitions, references/usages, implementations, hierarchies, "who calls X",
+  before renames/refactors) ALWAYS load the `scalex` skill FIRST — do not reach for `grep`/`rg`/bash text search on
+  `.scala`/`.java` files until `scalex` has been tried and was insufficient (untracked files, literal string
+  search, non-JVM files are fine to grep directly)
 
 ## Project Structure
 
