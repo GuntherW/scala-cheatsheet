@@ -10,14 +10,14 @@ erstellt.
 
 ## Tech-Stack
 
-| Zweck                                             | Bibliothek                                                                                     |
-|---------------------------------------------------|------------------------------------------------------------------------------------------------|
-| Anthropic-/Claude-Client (Messages API, Tools)    | [sttp-ai](https://sttp-ai.softwaremill.com/) (`claude`-Modul, `ClaudeSyncClient`)               |
+| Zweck                                             | Bibliothek                                                                                        |
+|---------------------------------------------------|---------------------------------------------------------------------------------------------------|
+| Anthropic-/Claude-Client (Messages API, Tools)    | [sttp-ai](https://sttp-ai.softwaremill.com/) (`claude`-Modul, `ClaudeSyncClient`)                 |
 | JSON-Serialisierung/-Deserialisierung             | [circe](https://circe.github.io/circe/) (bringt `sttp-ai` bereits mit, keine eigene Abhängigkeit) |
-| Dateisystemzugriff (`output/`-Ordner)             | [os-lib](https://github.com/com-lihaoyi/os-lib)                                                |
-| `.env`-Datei einlesen                             | eigene, simple Implementierung (`Env.scala`, siehe unten)                                       |
-| Nebenläufigkeit (paralleles Ausführen der Worker) | [ox](https://ox.softwaremill.com/) (`par`, strukturierte Nebenläufigkeit auf Virtual Threads)  |
-| Build/Run ohne sbt-Projekt                        | `scala-cli` mit `//> using` Direktiven                                                         |
+| Dateisystemzugriff (`output/`-Ordner)             | [os-lib](https://github.com/com-lihaoyi/os-lib)                                                   |
+| `.env`-Datei einlesen                             | eigene, simple Implementierung (`Env.scala`, siehe unten)                                         |
+| Nebenläufigkeit (paralleles Ausführen der Worker) | [ox](https://ox.softwaremill.com/) (`par`, strukturierte Nebenläufigkeit auf Virtual Threads)     |
+| Build/Run ohne sbt-Projekt                        | `scala-cli` mit `//> using` Direktiven                                                            |
 
 Keine sbt-`build.sbt` nötig - alle Abhängigkeiten werden per Direktive in
 `project.scala` deklariert; `scala-cli` löst sie automatisch über Coursier
@@ -200,7 +200,8 @@ Error-Handling für beide Zweige einzeln.
   vom Anthropic-Server ausgeführt wird - der Client muss den Tool-Aufruf
   nicht selbst abfangen und beantworten. Ein einzelner Request genügt (`AnthropicClient.chat`).
 - **Client-seitiges (custom) Tool**: Ein selbst definiertes Tool (z. B.
-  `calculate_tco` beim Risk-Analyst) mit eigenem JSON-Schema (`ToolInputSchema`). Das Modell liefert nur den *Wunsch*, das
+  `calculate_tco` beim Risk-Analyst) mit eigenem JSON-Schema (`ToolInputSchema`). Das Modell liefert nur den *Wunsch*,
+  das
   Tool
   aufzurufen (`stopReason == "tool_use"`), zurück - die eigentliche
   Ausführung übernimmt eine lokale Handler-Funktion (`CalculateTcoTool.handler`). Das Ergebnis muss danach explizit als
@@ -208,7 +209,7 @@ Error-Handling für beide Zweige einzeln.
   `AnthropicClient.chatWithTool`).
 - **Tool-Handler**: Die lokale Funktion, die ein client-seitiges Tool
   tatsächlich ausführt (hier: `CalculateTcoTool.handler` in
-  `RiskAnalyst.scala`). Bekommt die vom Modell gewählten Parameter als
+  `AgentRiskAnalyst.scala`). Bekommt die vom Modell gewählten Parameter als
   `Map[String, io.circe.Json]` und liefert einen String (meist JSON) als Ergebnis zurück.
 - **`ToolUse` / `ToolResult` Block**: Content-Block-Typen im
   Anthropic-Message-Format (in `sttp-ai` als `ContentBlock.ToolUse` /
@@ -229,13 +230,13 @@ Error-Handling für beide Zweige einzeln.
 - **Codec (circe)**: Typklassen-basierte Serialisierungs-/
   Deserialisierungslogik für einen bestimmten Typ (`Codec[T]` bzw.
   `Codec.AsObject[T]`), von `sttp-ai` selbst für alle API-Modelle
-  bereitgestellt bzw. per `derives Codec.AsObject` für eigene Typen
-  (`CalculateTcoInput`/`CalculateTcoResult` in `RiskAnalyst.scala`)
+  bereitgestellt bzw. per `derives Codec.AsObject` für eigene Typen (`CalculateTcoInput`/`CalculateTcoResult` in
+  `AgentRiskAnalyst.scala`)
   ableitbar.
 - **`ClaudeSyncClient` (sttp-ai)**: Der blockierende, hochsprachliche
   Claude-Client aus `sttp-ai`, der Requests direkt als Response-Werte
-  zurückgibt und im Fehlerfall eine `ClaudeException`-Unterklasse wirft
-  (statt `Either`, wie es der rohe `ClaudeClient` täte). Nutzt intern
+  zurückgibt und im Fehlerfall eine `ClaudeException`-Unterklasse wirft (statt `Either`, wie es der rohe `ClaudeClient`
+  täte). Nutzt intern
   weiterhin `sttp-client4` als HTTP-Backend (`DefaultSyncBackend`, basiert
   auf `java.net.http.HttpClient`).
 - **Virtual Thread**: Ein von der JVM (ab JDK 21) verwalteter, extrem
@@ -252,9 +253,10 @@ research_scala/
 ├── Env.scala             # Liest ANTHROPIC_API_KEY aus ../.env (via os-lib)
 ├── AnthropicClient.scala  # Wrapper um sttp-ai's ClaudeSyncClient + Logging + Tool-Use-Loop
 ├── Agent.scala            # Basisklasse Agent (kapselt Model-Call + Tools)
-├── FactResearcher.scala   # Worker 1 (web_search, server-seitig)
-├── RiskAnalyst.scala      # Worker 2 (calculate_tco, client-seitiges Custom-Tool)
-├── SynthesisAgent.scala   # Worker 3 (Aggregator)
+├── AgentFactResearcher.scala # Worker 1 (web_search, server-seitig)
+├── AgentRiskAnalyst.scala # Worker 2 (calculate_tco, client-seitiges Custom-Tool)
+├── CalculateTcoTool.scala # Definition & Ausführung des calculate_tco-Tools (Ein-/Ausgabe-Typen, JSON-Schema, Handler)
+├── AgentSynthesis.scala   # Worker 3 (Aggregator)
 ├── Orchestrator.scala     # Fan-out/Fan-in-Steuerung (ox.par)
 ├── Main.scala             # Einstiegspunkt (@main), schreibt output/*.md via os-lib
 ├── output/                # wird beim Ausführen erzeugt (Zwischen- & Endergebnisse)
@@ -264,7 +266,7 @@ research_scala/
 ## Ausführen
 
 ```bash
-cd research_scala
+cd multi-agent-system_agentic_orchestrator
 scala-cli run . -- "Sollten wir Kubernetes für unser 5-Personen-Startup einführen?"
 ```
 
@@ -315,8 +317,8 @@ korrekte Lösung anbietet - das wäre nur durch ein Upstream-Fix in
 `sttp-ai` behebbar.
 
 **3. Mischen von server- und client-seitigen Tools:** Unabhängig von der
-Bibliothek gilt weiterhin: Mischt man in einer Anfrage server-seitige
-(`web_search`) und client-seitige Tools, erwartet der hier genutzte
+Bibliothek gilt weiterhin: Mischt man in einer Anfrage server-seitige (`web_search`) und client-seitige Tools, erwartet
+der hier genutzte
 Router-Endpunkt für **beide** Typen ein `tool_result` - `web_search` wird
 also NICHT automatisch aufgelöst, sobald ein Client-Tool im Spiel ist.
 Deshalb nutzt der Risk-Analyst in diesem Beispiel bewusst ausschließlich
