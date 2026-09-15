@@ -51,6 +51,7 @@ object AgentPlanner:
     */
   def plan(topic: String, specs: List[AgentSpec]): ExecutionPlan =
     AnthropicClient.chatStructured[ExecutionPlan](
+      caller = "Planner",
       model = model,
       systemPrompt = systemPrompt(specs),
       userMessage = s"Thema: $topic\n\nErstelle den Ausführungsplan.",

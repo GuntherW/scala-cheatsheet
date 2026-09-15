@@ -12,7 +12,7 @@ import sttp.tapir.Schema
   *
   * sttp-ai bringt bereits einen vollwertigen, typsicheren Client für die Anthropic Messages API mit (Request-/Response-Modelle, Authentifizierung über `x-api-key`/`anthropic-version`,
   * Fehlerhierarchie `ClaudeException`) - die frühere, selbstgeschriebene Kombination aus `sttp-client4` + `upickle`-JSON-Modellen (`AnthropicModels`) entfällt dadurch komplett. Dieses Objekt bleibt
-  * nur als schlanke Fassade bestehen, um das simple Logging (`[Anthropic] ...`) sowie den Tool-Use-Loop zentral zu halten.
+  * nur als schlanke Fassade bestehen, um das simple Logging (`[LLM:<Aufrufer>] ...`) sowie den Tool-Use-Loop zentral zu halten.
   */
 object AnthropicClient:
 
@@ -33,10 +33,15 @@ object AnthropicClient:
 
   private val client = ClaudeSyncClient(config)
 
-  /** Schreibt eine Log-Zeile für die Ein-/Ausgabe-Kommunikation mit dem Modell auf die Konsole. Zentraler Ort für dieses simple `println`-Logging, damit sich Aufbau und Präfix (`[Anthropic]`) nicht
-    * in jeder Methode wiederholen.
+  /** Schreibt eine Log-Zeile für die Kommunikation mit dem Modell auf die Konsole.
+    *
+    * `caller` identifiziert den Aufrufer (Agenten-Name bzw. `"Planner"`), damit sich bei parallel laufenden Agenten (siehe `Orchestrator`) erkennen lässt, welche Log-Zeile zu welchem Model-Call
+    * gehört - ohne dieses Präfix wären die interleavten Konsolen-Ausgaben mehrerer gleichzeitiger LLM-Aufrufe nicht mehr auseinanderzuhalten. `indent = true` markiert Detail-Zeilen (Text-/Tool-
+    * Blöcke innerhalb einer Antwort), die unter der jeweiligen "Anfrage"/"Antwort"-Zeile eingerückt dargestellt werden.
     */
-  private def log(msg: String): Unit = println(s"[Anthropic] $msg")
+  private def log(caller: String, msg: String, indent: Boolean = false): Unit =
+    val prefix = if indent then "    " else ""
+    println(s"[LLM:$caller] $prefix$msg")
 
   /** Kürzt lange, mehrzeilige Texte für die Log-Ausgabe auf eine einzelne, überschaubare Zeile (Zeilenumbrüche/mehrfache Leerzeichen werden zu einem Leerzeichen zusammengefasst).
     */
@@ -63,6 +68,8 @@ object AnthropicClient:
     * beantworten müssten - das können wir aber nicht, da uns keine eigene Websuch-Implementierung zur Verfügung steht. Ein Agent, der beides braucht, müsste daher entweder zwei getrennte Model-Calls
     * machen oder auf eine eigene Suchimplementierung zurückgreifen - beides außerhalb des Scopes dieses Lernprojekts.
     *
+    * @param caller
+    *   Bezeichner des Aufrufers (Agenten-Name) für das Logging - siehe `log`.
     * @param useWebSearch
     *   ob das server-seitige `web_search`-Tool erlaubt ist
     * @param clientTools
@@ -71,6 +78,7 @@ object AnthropicClient:
     *   Mapping von Tool-Name -> Funktion, die die rohen Eingabeparameter (`Map[String, Json]`) entgegennimmt und einen String (meist JSON) zurückgibt - nur relevant für `clientTools`.
     */
   def chat(
+      caller: String,
       model: String,
       systemPrompt: String,
       userMessage: String,
@@ -83,11 +91,13 @@ object AnthropicClient:
       !(useWebSearch && clientTools.nonEmpty),
       "Mix aus server-seitigem web_search und client-seitigen Tools wird von diesem Router-Endpunkt nicht sauber unterstützt (siehe Scaladoc/README).",
     )
-    val tools = (if useWebSearch then List(Tool.WebSearch.default) else Nil) ++ clientTools
+    val tools     = (if useWebSearch then List(Tool.WebSearch.default) else Nil) ++ clientTools
+    val toolNames = (if useWebSearch then List("web_search") else Nil) ++ clientTools.collect { case c: Tool.Custom => c.name }
+    val toolsDesc = if toolNames.isEmpty then "keine" else toolNames.mkString(", ")
 
     @annotation.tailrec
     def loop(messages: List[Message], turn: Int): String =
-      log(s"--- Turn $turn: sende ${messages.size} Nachricht(en) an das Modell (${tools.size} Tool(s) aktiv) ---")
+      log(caller, s"Anfrage (Turn $turn) ...")
 
       val request = MessageRequest(
         model = model,
@@ -101,20 +111,20 @@ object AnthropicClient:
         try client.createMessage(request)
         catch
           case e: Throwable =>
-            log(s"<- Fehler   ${truncate(e.getMessage)}")
+            log(caller, s"Fehler: ${truncate(e.getMessage)}")
             throw e
 
-      log(s"<- Turn $turn Antwort: stop_reason=${response.stopReason.getOrElse("-")}")
+      log(caller, s"Antwort (Turn $turn): stop_reason=${response.stopReason.getOrElse("-")}")
       response.content.foreach {
-        case ContentBlock.Text(text, _, _)   => log(s"   [text]      ${truncate(text)}")
-        case ContentBlock.Thinking(thinking) => log(s"   [thinking]  ${truncate(thinking)}")
-        case tu: ContentBlock.ToolUse        => log(s"   [tool_use]  name=${tu.name} id=${tu.id} input=${Json.fromFields(tu.input).noSpaces}")
-        case other                           => log(s"   [$other]")
+        case ContentBlock.Text(text, _, _) => log(caller, s"Text: ${truncate(text)}", indent = true)
+        case _: ContentBlock.Thinking      => // internes Nachdenken des Modells, kein inhaltliches Ergebnis - bewusst nicht geloggt (Rauschen)
+        case tu: ContentBlock.ToolUse      => log(caller, s"Tool-Aufruf: ${tu.name}(${Json.fromFields(tu.input).noSpaces})", indent = true)
+        case other                         => log(caller, s"$other", indent = true)
       }
 
       if !response.stopReason.contains("tool_use") then
         val finalText = textOf(response.content)
-        log(s"===== Model-Call beendet nach $turn Turn(s), finale Antwort: ${truncate(finalText)} =====")
+        log(caller, s"Fertig nach $turn Turn(s): ${truncate(finalText)}")
         finalText
       else
         // Die komplette Assistant-Antwort (inkl. ToolUse-Blöcken) muss Teil der Historie werden, damit das Modell im nächsten Turn
@@ -133,10 +143,9 @@ object AnthropicClient:
         val toolResultBlocks = response.content
           .collect { case tu: ContentBlock.ToolUse => tu }
           .map { tu =>
-            log(s"   >> Tool-Aufruf     ${tu.name}(${Json.fromFields(tu.input).noSpaces})")
             val handler    = toolHandlers.getOrElse(tu.name, (_: Map[String, Json]) => s"Fehler: kein Handler für Tool '${tu.name}' registriert.")
             val resultText = handler(tu.input)
-            log(s"   << Tool-Ergebnis   ${tu.name} -> ${truncate(resultText)}")
+            log(caller, s"Tool-Ergebnis: ${tu.name} -> ${truncate(resultText)}", indent = true)
             ContentBlock.ToolResult(toolUseId = tu.id, content = resultText)
           }
 
@@ -145,19 +154,21 @@ object AnthropicClient:
         loop(nextMessages, turn + 1)
     end loop
 
-    log(s"===== Model-Call gestartet (model=$model, web_search=$useWebSearch, client_tools=${clientTools.collect { case c: Tool.Custom => c.name }.mkString(", ")}) =====")
-    log(s"   system:  ${truncate(systemPrompt)}")
-    log(s"   user:    ${truncate(userMessage)}")
+    log(caller, s"Model-Call gestartet (model=$model, tools=$toolsDesc)")
+    log(caller, s"Auftrag: ${truncate(userMessage)}", indent = true)
     loop(List(Message.user(userMessage)), turn = 1)
 
   /** Führt einen Model-Call mit erzwungenem, schemakonformem JSON-Output aus (Anthropics natives "Structured Output"-Feature, `output_config` / `json_schema` - NICHT zu verwechseln mit Tool-Use).
     * `sttp-ai` leitet das JSON-Schema automatisch aus der Case-Class `T` ab (via Tapir) und parst die Antwort direkt zu `T` (circe). Im Gegensatz zu `chat` mit Tools genügt dafür immer genau ein
     * Request (kein Multi-Turn-Loop), da das Modell gezwungen wird, ausschließlich valides JSON zu liefern - es gibt keinen `tool_use`/`tool_result`-Umweg.
     *
+    * @param caller
+    *   Bezeichner des Aufrufers (hier i. d. R. `"Planner"`) für das Logging - siehe `log`.
     * @tparam T
     *   Ziel-Typ der Antwort, benötigt `Schema` (Tapir, für die JSON-Schema-Ableitung) und `Decoder` (circe, für das Parsen der Antwort).
     */
   def chatStructured[T: Schema: Decoder](
+      caller: String,
       model: String,
       systemPrompt: String,
       userMessage: String,
@@ -170,17 +181,16 @@ object AnthropicClient:
       maxTokens = maxTokens,
     )
 
-    log(s"-> Request (structured output) model=$model")
-    log(s"   system:  ${truncate(systemPrompt)}")
-    log(s"   user:    ${truncate(userMessage)}")
+    log(caller, s"Model-Call gestartet (model=$model, structured output)")
+    log(caller, s"Auftrag: ${truncate(userMessage)}", indent = true)
 
     try
       val result = client.createMessageAs[T](request)
-      log(s"<- Response (structured output): $result")
+      log(caller, s"Fertig: $result")
       result
     catch
       case e: Throwable =>
-        log(s"<- Fehler   ${truncate(e.getMessage)}")
+        log(caller, s"Fehler: ${truncate(e.getMessage)}")
         throw e
 
   def close(): Unit = client.close()

@@ -29,6 +29,7 @@ abstract class Agent(
     * (`clientTools`) Tools ab, einzeln oder gemischt.
     */
   protected def run(userMessage: String, maxTokens: Int = 2000): String = AnthropicClient.chat(
+    caller = name,
     model = model,
     systemPrompt = systemPrompt,
     userMessage = userMessage,

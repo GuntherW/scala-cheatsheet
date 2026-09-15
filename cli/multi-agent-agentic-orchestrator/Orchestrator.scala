@@ -35,17 +35,24 @@ object Orchestrator:
     val start = System.nanoTime()
     val specs = AgentRegistry.specs(topic).map(s => s.id -> s).toMap
 
-    println(s"[Orchestrator] Planning-Phase: Orchestrator-Agent entscheidet über den Ausführungsplan für: '$topic'")
+    println(s"[Orchestrator] Planung: Orchestrator-Agent entscheidet über den Ausführungsplan für Thema '$topic'")
     val rawPlan         = AgentPlanner.plan(topic, specs.values.toList)
     val plan            = PlanValidator.validate(rawPlan, specs)
     val planningElapsed = (System.nanoTime() - start) / 1e9
-    println(f"[Orchestrator] Plan (nach Validierung): ${plan.steps.map(_.mkString("[", ", ", "]")).mkString(" -> ")}, final=${plan.finalAgentId}")
+    println(f"[Orchestrator] Plan (nach Validierung, ${plan.steps.size} Step(s)): ${plan.steps.map(_.mkString("[", ", ", "]")).mkString(" -> ")}, final=${plan.finalAgentId}")
     println(s"[Orchestrator] Begründung des Orchestrator-Agent: ${plan.reasoning}")
 
     val executionStart   = System.nanoTime()
-    val outputs          = plan.steps.foldLeft(ListMap.empty[String, String]) { (contextSoFar, step) =>
-      println(s"[Orchestrator] Starte Step PARALLEL: ${step.mkString(", ")}")
-      val results = par(step.map(id => () => specs(id).execute(contextSoFar)))
+    val totalSteps       = plan.steps.size
+    val outputs          = plan.steps.zipWithIndex.foldLeft(ListMap.empty[String, String]) { case (contextSoFar, (step, idx)) =>
+      val stepNo      = idx + 1
+      val parallel    = step.size > 1
+      val stepLabel   = if parallel then "PARALLEL" else "SEQUENTIELL"
+      println(s"[Orchestrator] Step $stepNo/$totalSteps START ($stepLabel): ${step.mkString(", ")}")
+      val stepStart   = System.nanoTime()
+      val results     = par(step.map(id => () => specs(id).execute(contextSoFar)))
+      val stepElapsed = (System.nanoTime() - stepStart) / 1e9
+      println(f"[Orchestrator] Step $stepNo/$totalSteps ENDE ($stepLabel) nach $stepElapsed%.1fs: ${step.mkString(", ")}")
       contextSoFar ++ step.zip(results)
     }
     val executionElapsed = (System.nanoTime() - executionStart) / 1e9
