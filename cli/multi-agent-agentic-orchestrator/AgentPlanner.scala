@@ -9,12 +9,12 @@ package agents
   *
   * Technisch: Nutzt Anthropics natives '''Structured Output''' (`output_config`/`json_schema`, siehe `AnthropicClient.chatStructured`), NICHT Tool-Use. Der Unterschied: Bei Tool-Use könnte das Modell
   * trotz Tool-Definition mit einem reinen Text-Turn antworten (`stopReason != "tool_use"`); Structured Output erzwingt dagegen direkt auf API-Ebene, dass die GESAMTE Antwort exakt dem JSON-Schema von
-  * `ExecutionPlan` entspricht - ein Multi-Turn-Loop wie bei `chatWithTool` ist daher nicht nötig, ein einzelner Request genügt.
+  * `ExecutionPlan` entspricht - ein Multi-Turn-Loop wie bei `AnthropicClient.chat` (Tool-Use) ist daher nicht nötig, ein einzelner Request genügt.
   *
   * Da die Antwort eines LLM nie hundertprozentig verlässlich ist (unbekannte agent-ids, verletzte Abhängigkeiten, vergessene Pflicht-Agenten), wird der rohe Plan vor der Ausführung immer durch
   * `PlanValidator.validate` geschickt (siehe `Orchestrator.runPipeline`).
   */
-object AgentOrchestrator:
+object AgentPlanner:
 
   private val model = "vertex/claude-sonnet-5@eu"
 

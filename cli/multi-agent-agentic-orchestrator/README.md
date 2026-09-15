@@ -10,7 +10,7 @@ erstellt.
 
 **Besonderheit dieser Version:** Der Orchestrator ist kein hartcodierter
 Workflow mehr, sondern zweigeteilt in eine *agentische* Planning-Phase (ein
-LLM - der `AgentOrchestrator` - entscheidet selbst, welche Worker-Agenten
+LLM - der `AgentPlanner` - entscheidet selbst, welche Worker-Agenten
 in welcher Reihenfolge/Parallelität laufen) und eine *generische*
 Execution-Phase (ein Dependency-Graph-Executor, der weder Anzahl noch
 Identität der Agenten kennt). Siehe Abschnitt
@@ -38,7 +38,7 @@ auf.
 ## Vom Workflow zum Agenten
 
 Die Vorgänger-Version dieses Projekts hatte einen rein hartcodierten
-Ablauf: `AgentOrchestrator.scala` rief explizit `par(AgentFactResearcher.research(topic), 
+Ablauf: `AgentPlanner.scala` rief explizit `par(AgentFactResearcher.research(topic), 
 AgentRiskAnalyst.analyze(topic))` gefolgt von `AgentSynthesis.synthesize(...)` auf -
 ein fixer Code-Pfad, der weder wusste noch entscheiden konnte, *ob* ein
 Agent für das konkrete Thema überhaupt sinnvoll ist. Das ist ein **Workflow**: die Steuerungslogik ist vorprogrammiert,
@@ -55,7 +55,7 @@ zusätzlich zu den bereits vorhandenen Worker-Agenten.
 Gleichzeitig wurde der Orchestrator **generisch** gemacht: Er kennt weder
 die Anzahl noch die Identität der Agenten. Ein neuer Agent wird
 eingebunden, indem lediglich eine neue `AgentSpec` in `AgentRegistry.specs`
-ergänzt wird - weder `Orchestrator` (Execution) noch `AgentOrchestrator`
+ergänzt wird - weder `Orchestrator` (Execution) noch `AgentPlanner`
 (Planning) müssen dafür angepasst werden.
 
 ## Die Agenten & die generische Registry
@@ -84,13 +84,13 @@ object AgentRegistry:
   )
 ```
 
-`hardDependsOn` ist eine harte Constraint, die der `AgentOrchestrator`
+`hardDependsOn` ist eine harte Constraint, die der `AgentPlanner`
 (LLM) beim Planen einhalten MUSS (vom `PlanValidator` notfalls
 erzwungen/repariert); `isMandatory` erzwingt, dass ein Agent immer im Plan
 enthalten ist, selbst wenn das LLM ihn vergisst (typischerweise ein
 Aggregator, ohne den kein sinnvolles Endergebnis entsteht). Nicht als
 Pflicht markierte Agenten (hier: Fact-Researcher, Risk-Analyst) darf der
-`AgentOrchestrator` bewusst weglassen, wenn er sie für ein konkretes Thema
+`AgentPlanner` bewusst weglassen, wenn er sie für ein konkretes Thema
 für irrelevant hält.
 
 Ein Orchestrator koordiniert den Ablauf in zwei Phasen (Planning via LLM,
@@ -132,7 +132,7 @@ sequenceDiagram
 ```mermaid
 flowchart TD
     A[Main.scala] --> B[Orchestrator]
-    B -->|1 . Planning| P[AgentOrchestrator]
+    B -->|1 . Planning| P[AgentPlanner]
     P -->|Structured Output| V[PlanValidator]
     V -->|validierter ExecutionPlan| B
     B -->|2 . Execution: Level-für-Level, ox . par pro Level| REG[AgentRegistry / AgentSpec]
@@ -215,7 +215,7 @@ zeigen.
 
 ## Planning-Phase: Der Orchestrator-Agent
 
-Der `AgentOrchestrator` (`AgentOrchestrator.scala`) bekommt das Thema sowie
+Der `AgentPlanner` (`AgentPlanner.scala`) bekommt das Thema sowie
 den Katalog aller `AgentSpec`s (id, Beschreibung, `hardDependsOn`,
 `isMandatory`) als System-Prompt-Kontext und liefert einen `ExecutionPlan`
 zurück:
@@ -279,7 +279,7 @@ for step <- plan.steps do
 
 `Orchestrator.scala` kennt an dieser Stelle weder die Anzahl noch die
 Identität der Agenten - er iteriert ausschließlich über das, was
-`AgentRegistry` bereitstellt und `AgentOrchestrator`/`PlanValidator`
+`AgentRegistry` bereitstellt und `AgentPlanner`/`PlanValidator`
 geplant haben. Fact-Researcher und Risk-Analyst laufen (wie in der
 Vorgänger-Version) weiterhin automatisch parallel, Synthesis automatisch
 danach - aber ohne dass irgendwo im Code `par(FactResearcher..., RiskAnalyst...)`
@@ -327,7 +327,7 @@ Error-Handling für beide Zweige einzeln.
   unabhängige, unvoreingenommene Perspektiven (Fact-Researcher und
   Risk-Analyst kennen sich gegenseitig nicht).
 - **Orchestrator**: In dieser Version zweigeteilt: Der **Orchestrator-Agent**
-  (`AgentOrchestrator.scala`, LLM-Call) entscheidet *welche* Agenten *wann*
+  (`AgentPlanner.scala`, LLM-Call) entscheidet *welche* Agenten *wann*
   (sequentiell oder parallel) aufgerufen werden sollen (Planning); der
   eigentliche `Orchestrator` (`Orchestrator.scala`) führt diesen Plan nur
   noch generisch aus (Execution) - er selbst ist reiner Code, kein
@@ -358,7 +358,7 @@ Error-Handling für beide Zweige einzeln.
   circe). Im Unterschied zu Tool-Use genügt dafür immer ein einzelner
   Request (kein `tool_use`/`tool_result`-Umweg), da das Modell gar nicht
   anders antworten kann als schemakonform. Genutzt vom
-  `AgentOrchestrator` für den `ExecutionPlan`.
+  `AgentPlanner` für den `ExecutionPlan`.
 - **DAG (Directed Acyclic Graph) / Dependency-Graph-Executor**: Der
   generische `Orchestrator` interpretiert die `hardDependsOn`-Beziehungen
   der `AgentSpec`s als gerichteten, azyklischen Graphen und führt ihn
@@ -451,7 +451,7 @@ multi-agent-agentic-orchestrator/
 ├── CalculateTcoTool.scala    # Definition & Ausführung des calculate_tco-Tools (Ein-/Ausgabe-Typen, JSON-Schema, Handler)
 ├── AgentSynthesis.scala      # Aggregator + eigene AgentSpec (hardDependsOn beide Worker, isMandatory=true)
 ├── ExecutionPlan.scala       # Case-Class für den Planungs-Output (Structured Output Schema)
-├── AgentOrchestrator.scala   # Planning-Phase (agentisch): LLM entscheidet den ExecutionPlan
+├── AgentPlanner.scala   # Planning-Phase (agentisch): LLM entscheidet den ExecutionPlan
 ├── PlanValidator.scala       # Validiert/repariert den Plan (reine Funktion, ohne LLM-Call)
 ├── PlanValidatorTest.test.scala # MUnit-Tests für PlanValidator (scala-cli test .)
 ├── Orchestrator.scala        # Execution-Phase (generisch): führt den validierten Plan Level-für-Level aus (ox.par)
@@ -534,7 +534,7 @@ als Abhängigkeit von `sttp-ai` bereits transitiv vorhanden, es muss keine
 eigene JSON-Bibliothek mehr eingebunden werden.
 
 **5. Structured Output (`createMessageAs`) funktioniert über den
-Requesty-Router:** Vor der Umsetzung des `AgentOrchestrator` wurde per
+Requesty-Router:** Vor der Umsetzung des `AgentPlanner` wurde per
 Smoke-Test verifiziert, dass Anthropics natives `output_config`/
 `json_schema`-Feature (`ClaudeSyncClient.createMessageAs[T]`) auch über
 `router.eu.requesty.ai` funktioniert (nicht nur gegen die offizielle

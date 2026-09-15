@@ -6,15 +6,15 @@ import scala.collection.immutable.ListMap
 
 /** Der Orchestrator koordiniert den Ablauf des Multi-Agenten-Systems - jetzt in zwei sauber getrennten Phasen:
   *
-  *   1. '''Planning''' (agentisch): `AgentOrchestrator.plan` lässt ein LLM entscheiden, welche der registrierten Agenten (`AgentRegistry.specs`) aufgerufen werden sollen, in welcher Reihenfolge und
-  *      was parallel laufen kann. `PlanValidator.validate` stellt anschließend sicher, dass der Plan strukturell korrekt ist (keine verletzten Abhängigkeiten, Pflicht-Agenten enthalten, gültige
+  *   1. '''Planning''' (agentisch): `AgentPlanner.plan` lässt ein LLM entscheiden, welche der registrierten Agenten (`AgentRegistry.specs`) aufgerufen werden sollen, in welcher Reihenfolge und was
+  *      parallel laufen kann. `PlanValidator.validate` stellt anschließend sicher, dass der Plan strukturell korrekt ist (keine verletzten Abhängigkeiten, Pflicht-Agenten enthalten, gültige
   *      `finalAgentId`), unabhängig davon, wie zuverlässig das LLM tatsächlich geantwortet hat.
   *   1. '''Execution''' (generisch, kein LLM-Call): Der validierte Plan besteht aus einer Liste von "Steps". Alle Agenten innerhalb eines Steps sind laut Plan voneinander unabhängig und werden per
   *      `ox.par` (strukturierte Nebenläufigkeit auf Virtual Threads) parallel ausgeführt (Fan-out/Fan-in pro Step); der nächste Step startet erst, wenn der aktuelle vollständig abgeschlossen ist.
   *
   * Der entscheidende Unterschied zur Vorgänger-Version: Früher stand hier hartcodiert `par(FactResearcher.research(topic), RiskAnalyst.analyze(topic))` gefolgt von `Synthesis.synthesize(...)` - ein
-  * reiner, fixer "Workflow". Jetzt kennt dieser Code weder die Anzahl noch die Identität der Agenten; er führt ausschließlich aus, was `AgentRegistry` bereitstellt und `AgentOrchestrator` plant. Ein
-  * neuer Agent lässt sich daher einbinden, indem lediglich eine neue `AgentSpec` in `AgentRegistry.specs` ergänzt wird - an diesem Executor ändert sich nichts.
+  * reiner, fixer "Workflow". Jetzt kennt dieser Code weder die Anzahl noch die Identität der Agenten; er führt ausschließlich aus, was `AgentRegistry` bereitstellt und `AgentPlanner` plant. Ein neuer
+  * Agent lässt sich daher einbinden, indem lediglich eine neue `AgentSpec` in `AgentRegistry.specs` ergänzt wird - an diesem Executor ändert sich nichts.
   */
 object Orchestrator:
 
@@ -36,7 +36,7 @@ object Orchestrator:
     val specs = AgentRegistry.specs(topic).map(s => s.id -> s).toMap
 
     println(s"[Orchestrator] Planning-Phase: Orchestrator-Agent entscheidet über den Ausführungsplan für: '$topic'")
-    val rawPlan         = AgentOrchestrator.plan(topic, specs.values.toList)
+    val rawPlan         = AgentPlanner.plan(topic, specs.values.toList)
     val plan            = PlanValidator.validate(rawPlan, specs)
     val planningElapsed = (System.nanoTime() - start) / 1e9
     println(f"[Orchestrator] Plan (nach Validierung): ${plan.steps.map(_.mkString("[", ", ", "]")).mkString(" -> ")}, final=${plan.finalAgentId}")

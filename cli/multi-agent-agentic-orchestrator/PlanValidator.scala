@@ -1,6 +1,6 @@
 package agents
 
-/** Validiert/repariert einen vom `AgentOrchestrator` (LLM) gelieferten `ExecutionPlan`, bevor der `Orchestrator` ihn ausführt.
+/** Validiert/repariert einen vom `AgentPlanner` (LLM) gelieferten `ExecutionPlan`, bevor der `Orchestrator` ihn ausführt.
   *
   * Notwendig, weil der Plan von einem LLM stammt und daher potenziell fehlerhaft sein kann (unbekannte agent-ids, verletzte Abhängigkeiten, vergessene Pflicht-Agenten, ungültige `finalAgentId`).
   * `validate` liefert IMMER einen strukturell korrekten Plan zurück (nie eine Exception) - im Zweifel unter Verlust der vom LLM vorgeschlagenen Parallel-Gruppierung, aber niemals unter Verletzung der
