@@ -51,7 +51,7 @@ object AgentSynthesis extends Agent(
   def spec(topic: String): AgentSpec = AgentSpec(
     id = Id,
     description = "Fasst die Ausgaben von Fact-Researcher und Risk-Analyst zu einem ausgewogenen, konsolidierten Endbericht zusammen.",
-    hardDependsOn = Set(AgentFactResearcher.Id, RiskAnalyst.Id),
+    hardDependsOn = Set(AgentFactResearcher.Id, AgentRiskAnalyst.Id),
     isMandatory = true,
-    execute = inputs => synthesize(topic, inputs.getOrElse(AgentFactResearcher.Id, ""), inputs.getOrElse(RiskAnalyst.Id, "")),
+    execute = inputs => synthesize(topic, inputs.getOrElse(AgentFactResearcher.Id, ""), inputs.getOrElse(AgentRiskAnalyst.Id, "")),
   )

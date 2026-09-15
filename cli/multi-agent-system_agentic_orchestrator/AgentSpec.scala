@@ -5,7 +5,7 @@ package agents
   * Während `Agent` (siehe `Agent.scala`) den eigentlichen Model-Call kapselt, beschreibt `AgentSpec` einen Agenten als "Knoten" in einem Abhängigkeitsgraphen: welche ID hat er, wovon hängt er ab, und
   * wie wird er generisch ausgeführt (`Map[String, String] => String`, wobei die Map die Outputs seiner Abhängigkeiten enthält, aufgeschlüsselt nach deren `id`).
   *
-  * Ein neuer Agent wird eingebunden, indem lediglich eine neue `AgentSpec`-Instanz der `AgentRegistry` hinzugefügt wird - weder der `Orchestrator` (Execution-Phase) noch der `OrchestratorAgent`
+  * Ein neuer Agent wird eingebunden, indem lediglich eine neue `AgentSpec`-Instanz der `AgentRegistry` hinzugefügt wird - weder der `Orchestrator` (Execution-Phase) noch der `AgentOrchestrator`
   * (Planning-Phase) müssen dafür angepasst werden.
   *
   * @param id

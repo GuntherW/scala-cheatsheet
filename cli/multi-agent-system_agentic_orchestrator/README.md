@@ -38,8 +38,8 @@ auf.
 ## Vom Workflow zum Agenten
 
 Die Vorgänger-Version dieses Projekts hatte einen rein hartcodierten
-Ablauf: `Orchestrator.scala` rief explizit `par(FactResearcher.research(topic),
-RiskAnalyst.analyze(topic))` gefolgt von `Synthesis.synthesize(...)` auf -
+Ablauf: `AgentOrchestrator.scala` rief explizit `par(AgentFactResearcher.research(topic), 
+AgentRiskAnalyst.analyze(topic))` gefolgt von `AgentSynthesis.synthesize(...)` auf -
 ein fixer Code-Pfad, der weder wusste noch entscheiden konnte, *ob* ein
 Agent für das konkrete Thema überhaupt sinnvoll ist. Das ist ein **Workflow**: die Steuerungslogik ist vorprogrammiert,
 das LLM wird nur für
@@ -127,7 +127,7 @@ sequenceDiagram
 ```mermaid
 flowchart TD
     A[Main.scala] --> B[Orchestrator]
-    B -->|1 . Planning| P[OrchestratorAgent]
+    B -->|1 . Planning| P[AgentOrchestrator]
     P -->|Structured Output| V[PlanValidator]
     V -->|validierter ExecutionPlan| B
     B -->|2 . Execution: Level-für-Level, ox . par pro Level| REG[AgentRegistry / AgentSpec]
@@ -435,7 +435,7 @@ research_scala/
 ├── CalculateTcoTool.scala  # Definition & Ausführung des calculate_tco-Tools (Ein-/Ausgabe-Typen, JSON-Schema, Handler)
 ├── AgentSynthesis.scala    # Aggregator + eigene AgentSpec (hardDependsOn beide Worker, isMandatory=true)
 ├── ExecutionPlan.scala     # Case-Class für den Planungs-Output (Structured Output Schema)
-├── OrchestratorAgent.scala # Planning-Phase (agentisch): LLM entscheidet den ExecutionPlan
+├── AgentOrchestrator.scala # Planning-Phase (agentisch): LLM entscheidet den ExecutionPlan
 ├── PlanValidator.scala     # Validiert/repariert den Plan (reine Funktion, ohne LLM-Call)
 ├── PlanValidatorTest.test.scala # MUnit-Tests für PlanValidator (scala-cli test .)
 ├── Orchestrator.scala      # Execution-Phase (generisch): führt den validierten Plan Level-für-Level aus (ox.par)

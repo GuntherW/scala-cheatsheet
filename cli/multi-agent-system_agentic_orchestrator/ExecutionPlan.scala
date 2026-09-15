@@ -3,7 +3,7 @@ package agents
 import io.circe.Decoder
 import sttp.tapir.Schema
 
-/** Ergebnis der Planning-Phase (siehe `OrchestratorAgent`): eine Liste von "Steps". Alle Agenten innerhalb eines Steps sind voneinander unabhängig und werden vom Executor (`Orchestrator`) parallel
+/** Ergebnis der Planning-Phase (siehe `AgentOrchestrator`): eine Liste von "Steps". Alle Agenten innerhalb eines Steps sind voneinander unabhängig und werden vom Executor (`Orchestrator`) parallel
   * ausgeführt; ein Step startet erst, nachdem der vorherige vollständig abgeschlossen ist (Fan-out/Fan-in pro Step).
   *
   * @param steps
