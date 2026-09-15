@@ -116,10 +116,10 @@ object AnthropicClient:
 
       log(caller, s"Antwort (Turn $turn): stop_reason=${response.stopReason.getOrElse("-")}")
       response.content.foreach {
-        case ContentBlock.Text(text, _, _) => log(caller, s"Text: ${truncate(text)}", indent = true)
+        case ContentBlock.Text(text, _, _) => log(caller, s"[Text]: ${truncate(text)}", indent = true)
         case _: ContentBlock.Thinking      => // internes Nachdenken des Modells, kein inhaltliches Ergebnis - bewusst nicht geloggt (Rauschen)
-        case tu: ContentBlock.ToolUse      => log(caller, s"Tool-Aufruf: ${tu.name}(${Json.fromFields(tu.input).noSpaces})", indent = true)
-        case other                         => log(caller, s"$other", indent = true)
+        case tu: ContentBlock.ToolUse      => log(caller, s"[Tool-Aufruf]: ${tu.name}(${Json.fromFields(tu.input).noSpaces})", indent = true)
+        case other                         => log(caller, s"[$other]", indent = true)
       }
 
       if !response.stopReason.contains("tool_use") then
@@ -167,7 +167,7 @@ object AnthropicClient:
     * @tparam T
     *   Ziel-Typ der Antwort, benötigt `Schema` (Tapir, für die JSON-Schema-Ableitung) und `Decoder` (circe, für das Parsen der Antwort).
     */
-  def chatStructured[T: Schema: Decoder](
+  def chatStructured[T: {Schema, Decoder}](
       caller: String,
       model: String,
       systemPrompt: String,

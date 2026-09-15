@@ -49,10 +49,9 @@ object AgentPlanner:
   /** Erstellt den (noch unvalidierten) Ausführungsplan für `topic` anhand der übergebenen Agenten-Kataloge. Der Aufrufer (`Orchestrator.runPipeline`) MUSS das Ergebnis vor der Ausführung durch
     * `PlanValidator.validate` schicken.
     */
-  def plan(topic: String, specs: List[AgentSpec]): ExecutionPlan =
-    AnthropicClient.chatStructured[ExecutionPlan](
-      caller = "Planner",
-      model = model,
-      systemPrompt = systemPrompt(specs),
-      userMessage = s"Thema: $topic\n\nErstelle den Ausführungsplan.",
-    )
+  def plan(topic: String, specs: List[AgentSpec]): ExecutionPlan = AnthropicClient.chatStructured[ExecutionPlan](
+    caller = "Planner",
+    model = model,
+    systemPrompt = systemPrompt(specs),
+    userMessage = s"Thema: $topic\n\nErstelle den Ausführungsplan.",
+  )
