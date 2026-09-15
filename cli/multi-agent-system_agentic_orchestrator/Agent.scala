@@ -1,6 +1,7 @@
 package agents
 
-import AnthropicModels.ClientTool
+import io.circe.Json
+import sttp.ai.claude.models.Tool
 
 /** Basisklasse für alle Agenten im Multi-Agenten-System.
   *
@@ -19,8 +20,8 @@ abstract class Agent(
     val name: String,
     val systemPrompt: String,
     val useWebSearch: Boolean = false,
-    val clientTools: List[ClientTool] = Nil,
-    val toolHandlers: Map[String, ujson.Value => String] = Map.empty,
+    val clientTools: List[Tool] = Nil,
+    val toolHandlers: Map[String, Map[String, Json] => String] = Map.empty,
     val model: String = "vertex/claude-sonnet-5@eu",
 ):
 

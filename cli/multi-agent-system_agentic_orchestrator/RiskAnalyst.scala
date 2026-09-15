@@ -1,35 +1,36 @@
 package agents
 
-import upickle.default.*
-import AnthropicModels.*
+import io.circe.{Codec, Json}
+import io.circe.syntax.*
+import sttp.ai.claude.models.{PropertySchema, Tool, ToolInputSchema}
 
-/** Eingabeparameter, wie sie das Modell (passend zum `input_schema` von `RiskAnalystTools.CalculateTcoTool`) liefert.
+/** Eingabeparameter, wie sie das Modell (passend zum `inputSchema` von `CalculateTcoTool.definition`) liefert.
   */
-case class CalculateTcoInput(technology: String, team_size: Int) derives ReadWriter
+case class CalculateTcoInput(technology: String, team_size: Int) derives Codec.AsObject
 
 /** Rückgabe des Tools - bewusst als eigenes Case-Class-Schema, damit die JSON-Struktur klar erkennbar bleibt.
   */
-case class CalculateTcoResult(technology: String, team_size: Int, estimated_monthly_cost_eur: Int, note: String) derives ReadWriter
+case class CalculateTcoResult(technology: String, team_size: Int, estimated_monthly_cost_eur: Int, note: String) derives Codec.AsObject
 
 /** Definition und Ausführung des client-seitigen (custom) Tools `calculate_tco`. Als eigenes Objekt VOR `RiskAnalyst` definiert, damit es beim Aufbau von `RiskAnalyst extends Agent(...)` bereits
   * vollständig initialisiert zur Verfügung steht (kein Vorwärtsverweis auf `RiskAnalyst` selbst nötig).
   */
 object CalculateTcoTool:
 
-  /** Client-seitiges (custom) Tool: Definition per JSON-Schema (`input_schema`). Das Modell entscheidet selbst, WANN es dieses Tool mit welchen Parametern aufruft - die eigentliche Ausführung
-    * übernimmt `handler` unten.
+  /** Client-seitiges (custom) Tool: Definition per JSON-Schema (`ToolInputSchema`/`PropertySchema` aus sttp-ai). Das Modell entscheidet selbst, WANN es dieses Tool mit welchen Parametern aufruft -
+    * die eigentliche Ausführung übernimmt `handler` unten.
     */
-  val definition: ClientTool = ClientTool(
+  val definition: Tool.Custom = Tool(
     name = "calculate_tco",
     description = "Berechnet eine grobe geschätzte Total Cost of Ownership (TCO) pro Monat für " +
       "eine Technologie, basierend auf der Teamgröße. HINWEIS: Dies ist eine Demo-Berechnung mit " +
       "Dummy-Zahlen, keine echte Kostenanalyse.",
-    input_schema = InputSchema(
+    inputSchema = ToolInputSchema.forObject(
       properties = Map(
-        "technology" -> PropertySchema(`type` = "string", description = "Name der zu bewertenden Technologie, z. B. 'Kubernetes'"),
-        "team_size"  -> PropertySchema(`type` = "integer", description = "Anzahl der Teammitglieder, die die Technologie betreiben/nutzen"),
+        "technology" -> PropertySchema.string("Name der zu bewertenden Technologie, z. B. 'Kubernetes'"),
+        "team_size"  -> PropertySchema.integer("Anzahl der Teammitglieder, die die Technologie betreiben/nutzen"),
       ),
-      required = List("technology", "team_size"),
+      required = Some(List("technology", "team_size")),
     ),
   )
 
@@ -37,8 +38,9 @@ object CalculateTcoTool:
     *
     * Führt keine echte Kostenanalyse durch, sondern demonstriert nur, wie ein client-seitiges Tool lokal ausgeführt und dessen Ergebnis als JSON-String an das Modell zurückgegeben wird.
     */
-  def handler(rawInput: ujson.Value): String =
-    val input          = read[CalculateTcoInput](rawInput)
+  def handler(rawInput: Map[String, Json]): String =
+    val input          = Json.fromFields(rawInput).as[CalculateTcoInput]
+      .getOrElse(throw new RuntimeException(s"Konnte calculate_tco-Eingabe nicht parsen: $rawInput"))
     // Fest codierte Dummy-Formel - rein illustrativ.
     val monthlyCostEur = 350 * input.team_size + 500
     val result         = CalculateTcoResult(
@@ -47,7 +49,7 @@ object CalculateTcoTool:
       estimated_monthly_cost_eur = monthlyCostEur,
       note = "Demo-Berechnung mit Dummy-Zahlen, keine reale Kostenanalyse.",
     )
-    write(result)
+    result.asJson.noSpaces
 
 /** Worker 2: Risk-Analyst
   *
