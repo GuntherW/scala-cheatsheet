@@ -1,127 +1,87 @@
 ---
 name: scalex
-description: "Scala code intelligence CLI for Scala codebases. Find definitions, implementations, usages, imports, members, scaladoc, codebase overview, package API surface, files, annotated symbols, file contents. Triggers: \"where is X defined\", \"who implements Y\", \"find usages of Z\", \"what methods does X have\", \"show source of X\", \"inheritance tree\", \"explain this type\", \"what changed since commit\", \"find types extending X with method Y\", \"what does this package export\", or before renaming. Test navigation: \"what tests exist\", \"is X tested\", \"show test for Y\", \"find tests covering Z\". Use proactively exploring unfamiliar Scala code. Supports fuzzy camelCase search (e.g. \"hms\" finds HttpMessageService). Prefer scalex over grep/glob for Scala symbol lookups. Use `scalex grep` for .scala content search — integrates with --path and --no-tests filters."
+description: "Explore and navigate Git-tracked Scala 2/3 and Java source with Scalex. Use for symbol definitions, implementations, members, source bodies, test discovery, package structure, and reference candidates before edits. Prefer it for Scala/Java symbol navigation; use ordinary file or text tools for untracked files, other languages, and literal searches. Also supports ASCII graph rendering or parsing when explicitly requested."
 ---
 
-`scalex` is a Scala code intelligence CLI — parses Scala/Java via Scalameta, no compiler/build server needed. Works
-with Scala 3 and Scala 2 (falls back to 2.13 dialect). Only works on **git-tracked files**.
+# Scalex
 
-First run indexes all tracked `.scala`/`.java` files (~3s/14k files); later runs re-parse only changed files
-(~400-500ms) via OID caching. Java files indexed via regex (class/interface/enum/record).
+Use Scalex to locate relevant code, then read enough source to answer the question or make the requested change. It parses source without compilation or a build server. Its results describe written syntax, not compiler-resolved semantics.
 
-## Invocation
+## Run
 
-`scalex <command> [args]`. Defaults to cwd; use `-w /path` to set workspace (preferred over positional to avoid
-ambiguity). Auto-indexes on first run.
+The bundled `scripts/scalex-cli` downloads and caches the pinned native binary when needed. Resolve its absolute path relative to this skill and supply the repository root explicitly:
 
-## What's indexed
+```bash
+bash /absolute/path/to/scalex/scripts/scalex-cli def UserService -w /repo
+```
 
-Top-level declarations only: classes, traits, objects, enums, defs, vals, types, named givens (anonymous givens
-skipped), extension groups, annotations. NOT indexed: local defs inside method bodies, params, pattern bindings.
+Examples below abbreviate this invocation as `scalex`. Substitute the bundled script invocation unless the user selected another binary. Keep using the same binary and workspace throughout the task.
 
-`refs`, `imports`, `grep` are plain text search across files (word-boundary/regex) — find everything regardless of
-index.
+Commands discover Git-tracked `.scala` and `.java` files and maintain `.scalex/index.bin`. New, untracked files are absent; read or search them directly. Do not stage user files just to make them discoverable.
 
-## Commands
+## Choose the smallest useful query
 
-### `scalex def <symbol> [--verbose] [--kind K] [--no-tests] [--path PREFIX]`
-Find definition, incl. `given` instances. `--verbose` shows full signature inline. Ranked: class/trait/object/enum
-first, non-test before test, shorter paths first. Supports package-qualified (`def com.example.Cache`, partial
-`def cache.Cache`) and `Owner.member` dotted syntax (`def PaymentService.processPayment`).
+| Question | Start with |
+|---|---|
+| Where is a known symbol? | `def UserService` |
+| I only know part of the name | `search Service --kind trait --limit 10` |
+| Which definition is meant? | `def com.example.UserService` or `def UserService.findUser` |
+| What does this type expose? | `members UserService` |
+| How does this method work? | `body findUser --in UserServiceLive` |
+| Give me a short introduction to a type | `explain UserService --brief` |
+| Show implementations or parent types | `impl UserService` or `hierarchy UserService --up` |
+| What code mentions this symbol? | `refs UserService` |
+| Which imports mention it? | `imports UserService` |
+| What tests are declared? | `tests "bloom filter"` |
+| Which test files mention it? | `coverage UserService` |
+| Where should I start in this repository? | `overview --concise`, then `summary com.example` |
+| What is declared in this file? | `symbols src/main/scala/UserService.scala` |
+| Search within a known class or method | `grep 'process' --in UserServiceLive` |
 
-### `scalex impl <trait> [--verbose] [--kind K] [--no-tests] [--path PREFIX] [--limit N]`
-Classes/objects/enums extending or mixing in a trait. Also finds type-param usage in extends clauses (`class Bar
-extends Mixin[Foo]`). Faster/more targeted than `refs` for concrete implementations.
+Use `explain` without `--brief` when its combined definition, documentation, members, companion, implementations, and imports are useful. Use `members --body --max-lines 20` to inspect several short implementations together. Avoid loading a whole package or many full bodies for a single lookup.
 
-### `scalex refs <symbol> [--flat] [--count] [--top N] [--strict] [--category CAT] [--no-tests] [--path PREFIX] [-C N] [--limit N]`
-Word-boundary text search, bloom-filter accelerated. 20s timeout (large codebases may return partial results).
-Categorized by default: Definition/ExtendedBy/ImportedBy/UsedAsType/Usage/Comment. `--count` for triage without full
-lists, `--top N` ranks files by ref count, `-C N` for grep-style context, `--flat` for a flat list.
+For detailed syntax, less common commands, and supported flags, read the relevant section of [commands.md](references/commands.md). It covers package/API analysis, overrides, dependencies, diffs, structural searches, and output options. Use `help` to check the invoked binary's interface if documentation and behavior differ.
 
-### `scalex imports <symbol> [--strict] [--no-tests] [--path PREFIX] [--limit N]`
-Import statements only — cleaner than `refs` for dependency analysis. 20s timeout.
+## Interpret the evidence
 
-### `scalex members <symbol> [--verbose] [--brief] [--body] [--max-lines N] [--inherited] [--kind K] [--no-tests] [--path PREFIX] [--limit N]`
-Member declarations (def/val/var/type) of a class/trait/object/enum. Parsed on-the-fly, not indexed. Companion-aware
-(shows companion members automatically). `--inherited` walks the extends chain, marks shadowing members
-`[override]`. `--body` inlines method bodies; `--max-lines N` caps inlined size (0 = unlimited).
+- **Definitions and members are syntactic.** No inferred types, implicit/given resolution, macro expansion, or overload resolution. Local definitions are not generally indexed; read a known enclosing body or use text search when a lookup misses.
+- **References are candidates.** `refs` uses word-boundary text matching, including comments and unrelated symbols with the same name. Categories and import-based confidence are heuristics. `--strict` tightens identifier boundaries; it does not resolve symbol identity. Before a rename, inspect the matches and validate the edit with the project's compiler/tests.
+- **Implementations need interpretation.** `impl Foo` also includes types with `Foo` as a type argument in an extends clause, such as `extends Mixin[Foo]`; these are not necessarily subtypes of `Foo`.
+- **Test mentions are not coverage.** `coverage` finds textual references in test files, not executed lines or assertions. `tests` discovers supported test declaration patterns; dynamic names and unsupported frameworks may be absent.
+- **API results are import-based.** `api` estimates externally imported symbols; it is not a compiler-verified public API inventory.
+- **A miss is not proof of absence.** Check spelling, qualification, scope, file tracking, parse failures, and cache freshness. Fall back to direct source reads or `rg` when those better answer the question.
 
-### `scalex doc <symbol> [--kind K] [--no-tests] [--path PREFIX] [--limit N]`
-Leading scaladoc comment. Returns "(no scaladoc)" if none.
+## Keep scope and output deliberate
 
-### `scalex search <query> [--kind K] [--verbose] [--limit N] [--exact] [--prefix] [--definitions-only] [--returns TYPE] [--takes TYPE]`
-Fuzzy name search: exact > prefix > substring > camelCase abbreviation (`hms` → `HttpMessageService`). Ranked by
-import popularity. `--exact`/`--prefix` cut noise on large codebases. `--definitions-only` restricts to
-class/trait/object/enum. `--returns`/`--takes` filter by substring match on return type / parameter types.
+Start with a qualified symbol or the relevant path when known. Use `--path`, `--kind`, and command-supported package filters to reduce noise. Use `--no-tests` only when excluding tests fits the question; retain tests during impact analysis. `overview` excludes tests by default; add `--include-tests` when needed.
 
-### `scalex grep <pattern> [--in <symbol>] [-e PAT]... [--count] [--no-tests] [--path PREFIX] [-C N] [--limit N]`
-Regex (Java, not POSIX — `|` not `\|`, `( )` not `\( \)`) content search across `.scala` files, with built-in
-`--path`/`--no-tests` filtering. Prefer over the Grep tool for `.scala` files. `-e` combines multiple patterns
-(OR'd). `--in <symbol>` scopes to a class/method body (supports `Owner.member`). 20s timeout.
+Prefer `--limit N` for readable samples and `--count` for counts. `--max-output N` limits result characters; with `--json`, oversized output becomes a valid truncation object instead of the requested result payload. Inspect truncation metadata before consuming JSON. A display limit is not a guarantee of less scanning work.
 
-### `scalex body <symbol> [--in <owner>] [-C N] [--imports] [--no-tests] [--path PREFIX] [--limit N]`
-Full source body via Scalameta spans — def/val/var/type/class/trait/object/enum. `--in <owner>` disambiguates
-same-named members across classes. `--imports` prepends the file's import block. Also extracts test bodies by exact
-test-name string (`test("...")`, `it("...")`, `describe("...")`, `"..." in { }`, `"..." >> { }`); scope with
-`--in SuiteName`.
+`refs`, `imports`, and `grep` have scan deadlines and can return partial results. Read stderr and timeout indicators; never present an incomplete scan as exhaustive. `coverage` currently discards the underlying timeout indicator, so use `refs` and inspect test-file matches when scan completeness matters.
 
-### `scalex hierarchy <symbol> [--up] [--down] [--depth N] [--no-tests] [--path PREFIX]`
-Inheritance tree via extends clauses. `--up` parents only, `--down` children only, `--depth N` limits tree depth
-(default: no cap). External/unknown parents shown as `[external]`.
+Use ordinary text search for literal strings, configuration, unsupported files, or fresh edits. `scalex grep` is useful for symbol-scoped bodies and integrated source filters; it is not a required replacement for `rg`. Its patterns use Java regex syntax and invalid patterns may be rewritten with a diagnostic; check that diagnostic when matching punctuation.
 
-### `scalex overrides <method> [--of <trait>] [--body] [--max-lines N] [--limit N]`
-All implementations of a method name across types (or scoped `--of <trait>`). `--body`/`--max-lines N` inline
-source.
+## Cache freshness after edits
 
-### `scalex explain <symbol> [--verbose] [--brief] [--body] [--max-lines N] [--shallow] [--no-doc] [--inherited] [--impl-limit N] [--members-limit N] [--expand N] [--no-tests] [--path PREFIX] [--exclude-path PREFIX]`
-One-shot composite: definition + scaladoc + members (top 10) + companion + implementations (top 5) + import files —
-saves 4-5 round-trips. Supports package-qualified and `Owner.member` syntax. `--shallow` = def+members+companion
-only. `--brief` = def + top 3 members only (pairs well with `batch`). `--expand N` recursively expands each impl's
-members. `--inherited` merges parent members with provenance. Fuzzy fallback on miss; falls back to `summary` on
-package match. Multiple matches → prints ready-to-run `scalex explain pkg.Name` on stderr.
+The current cache compares Git index OIDs, not working-tree content hashes. Unstaged edits can leave cached symbols, imports, and bloom filters stale. Text reads may therefore disagree with cached navigation, and stale bloom filters can hide newly added names.
 
-### `scalex tests [<pattern>] [--verbose] [--path PREFIX] [--json]`
-Test names from MUnit/ScalaTest/specs2 conventions, test files only. Passing `<pattern>` filters by substring **and
-shows full bodies inline** — fastest way to find+read a specific test.
+After editing, verify affected code directly. `index` reports the normally loaded index; it does **not** force a clean rebuild. Do not stage changes or delete caches merely to make a query work. Use the project's compile/test workflow to validate code changes.
 
-## Additional commands
+`diff <ref>` reads current source and the Git ref directly, including unstaged edits. It reports declaration-text changes, including bodies, rather than semantic equivalence; see the [diff reference](references/commands.md#diff) for scope and display limits.
 
-Run `scalex <command> --help` for full flags.
+## Several independent lookups
 
-| Command               | Purpose                                                          | Key flags                         |
-|------------------------|-------------------------------------------------------------------|------------------------------------|
-| `overview`            | Codebase summary: symbols by kind, top packages, hub types       | `--architecture`, `--focus-package` |
-| `file <query>`        | Find files by name (fuzzy)                                       |                                    |
-| `annotated <ann>`     | Symbols with a given annotation                                  | `--kind K`                        |
-| `package <pkg>`       | All symbols in a package, by kind                                | `--definitions-only`, `--verbose` |
-| `api <pkg>`           | Public API surface (externally imported symbols)                | `--used-by PKG`                   |
-| `summary <pkg>`       | Sub-packages with symbol counts                                  |                                    |
-| `deps <symbol>`       | What a symbol depends on (reverse of `refs`)                     | `--depth N`                       |
-| `context <file:line>` | Enclosing scopes at a line                                       |                                    |
-| `diff <git-ref>`      | Symbol-level diff vs a git ref                                   |                                    |
-| `ast-pattern`         | Structural search                                                | `--extends`, `--has-method`, `--body-contains` |
-| `entrypoints`         | `@main`, `def main`, `extends App`, test suites                  | `--no-tests`                      |
-| `coverage <symbol>`   | References in test files only (is this tested?)                 |                                    |
-| `batch`               | Multiple queries, one index load (stdin)                        |                                    |
-| `symbols <file>`      | What's defined in this file                                     | `--summary`                       |
-| `packages`            | List all packages                                                |                                    |
-| `index`               | Force reindex (rarely needed)                                    |                                    |
+Use `batch` to share one index load when several queries are already known:
 
-## Non-obvious workflows
+```bash
+printf '%s\n' 'def UserService' 'members UserService' 'impl UserService' |
+  bash /absolute/path/to/scalex/scripts/scalex-cli batch -w /repo
+```
 
-- **3+ lookups at once** → `batch`: `echo -e "def Foo\nimpl Foo\nrefs Foo" | scalex batch -w /project`
-- **Full API + impls in one call** → `explain MyTrait` (`--expand 1` for impl members, `--brief` for condensed)
-- **Common-name disambiguation** → `def com.example.cache.Cache` (package-qualified or partial)
-- **Coupling analysis** → `api com.example --used-by com.example.web`
-- **All output as JSON** → append `--json` to any command
+Batch lines are split on whitespace, without shell-style quote parsing. Run queries containing spaced arguments, such as test names, as separate commands. Set the workspace on the outer `batch` invocation. Batch output includes command separators; do not parse the entire stream as one JSON document. The index is shared for that batch, so start a new invocation after edits.
 
-## Fallback
+## Failures and diagrams
 
-"Not found" → symbol may be local (not top-level), in a file with parse errors, or not git-tracked. Fall back to
-Grep/Glob/Read.
+Usage errors exit 2; operational failures exit 1. JSON-mode failures use an error object on stdout; text diagnostics use stderr. Batch continues after failed queries and returns the highest failure status. Report a tool failure separately from an empty successful result.
 
-## Why scalex over grep
-
-Understands Scala syntax — finds `given`/`enum`/`extension` and annotated symbols grep misses. Structured output
-(kind, package, line). Categorized `refs` gives refactoring-ready impact analysis in one pass. `grep` subcommand adds
-`--path`/`--no-tests` filtering grep/Grep tool lack.
+Run `graph --render` or `graph --parse` only for an explicit diagram request. Read [graph-examples.md](references/graph-examples.md) for syntax. Do not add a graph step to ordinary navigation; `hierarchy`, `deps`, and `explain` already format their results.

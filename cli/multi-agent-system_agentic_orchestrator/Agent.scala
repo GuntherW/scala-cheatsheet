@@ -25,26 +25,16 @@ abstract class Agent(
     val model: String = "vertex/claude-sonnet-5@eu",
 ):
 
-  /** Führt den Model-Call aus.
-    *
-    * Hat der Agent client-seitige Tools konfiguriert (`clientTools`), wird der Tool-Use-Loop (`chatWithTool`) genutzt - andernfalls ein simpler Einzel-Request (optional mit server-seitigem
-    * `web_search`).
+  /** Führt den Model-Call aus (bei Bedarf als Multi-Turn Tool-Use-Loop - siehe `AnthropicClient.chat`). Eine einzige Methode deckt dabei sowohl server-seitige (`useWebSearch`) als auch client-seitige
+    * (`clientTools`) Tools ab, einzeln oder gemischt.
     */
   protected def run(userMessage: String, maxTokens: Int = 2000): String =
-    if clientTools.nonEmpty then
-      AnthropicClient.chatWithTool(
-        model = model,
-        systemPrompt = systemPrompt,
-        userMessage = userMessage,
-        tools = clientTools,
-        toolHandlers = toolHandlers,
-        maxTokens = maxTokens,
-      )
-    else
-      AnthropicClient.chat(
-        model = model,
-        systemPrompt = systemPrompt,
-        userMessage = userMessage,
-        useWebSearch = useWebSearch,
-        maxTokens = maxTokens,
-      )
+    AnthropicClient.chat(
+      model = model,
+      systemPrompt = systemPrompt,
+      userMessage = userMessage,
+      useWebSearch = useWebSearch,
+      clientTools = clientTools,
+      toolHandlers = toolHandlers,
+      maxTokens = maxTokens,
+    )

@@ -154,10 +154,13 @@ flowchart TD
 ## Client-seitiges Tool: der Tool-Use-Loop im Detail
 
 Während `web_search` komplett vom Anthropic-Server ausgeführt wird (ein
-einziger Request genügt, siehe `AnthropicClient.chat`), muss ein **client-seitiges (custom) Tool** wie `calculate_tco`
-von uns selbst
-ausgeführt werden. Das erzeugt einen Mehrschritt-Dialog ("Multi-Turn"),
-implementiert in `AnthropicClient.chatWithTool`:
+einziger Request genügt), muss ein **client-seitiges (custom) Tool** wie
+`calculate_tco` von uns selbst ausgeführt werden. Das erzeugt einen
+Mehrschritt-Dialog ("Multi-Turn"). Beide Fälle - server-seitig und
+client-seitig - werden von EINER einzigen Methode abgedeckt,
+`AnthropicClient.chat`: Ein reiner `web_search`-Call terminiert die
+Schleife bereits nach dem ersten Turn (`stopReason != "tool_use"`), ein
+Custom-Tool wie `calculate_tco` löst hingegen den Multi-Turn-Loop aus:
 
 ```mermaid
 sequenceDiagram
@@ -187,15 +190,23 @@ Wichtige Punkte:
   aber Stolperstein zu `Thinking`-Blöcken unten).
 - Das `ToolResult` wird über die `toolUseId` dem passenden Aufruf
   zugeordnet.
-- Die Schleife (`AnthropicClient.chatWithTool`) läuft so lange, bis
+- Die Schleife (`AnthropicClient.chat`) läuft so lange, bis
   `stopReason != "tool_use"` ist.
 
 **Hinweis zur Kombination von Tool-Typen:** Mischt man in einer Anfrage
 server-seitige (`web_search`) und client-seitige Tools, erwartet dieser
-Router-Endpunkt für **beide** Typen ein `tool_result` - `web_search` wird
-also NICHT automatisch aufgelöst, sobald ein Client-Tool im Spiel ist.
-Deshalb nutzt der Risk-Analyst in diesem Beispiel bewusst ausschließlich
-`calculate_tco`, um den Ablauf klar isoliert zu zeigen.
+Router-Endpunkt für **beide** Typen ein `tool_result` - `web_search`
+verhält sich in dieser Kombination NICHT wie ein automatisch aufgelöstes
+Server-Tool, sondern wie ein ganz normales `ContentBlock.ToolUse`, das wir
+selbst beantworten müssten. Das können wir aber nicht, da uns keine eigene
+Websuch-Implementierung zur Verfügung steht (das wurde per Smoke-Test
+verifiziert: das Modell fordert `web_search` per `ToolUse` an, wir können
+nur mit "kein Handler registriert" antworten - die Suche findet dann de
+facto nicht statt). `AnthropicClient.chat` verbietet den Mix deshalb
+bewusst per `require`. Deshalb nutzt der Risk-Analyst in diesem Beispiel
+bewusst ausschließlich `calculate_tco`, um den Ablauf klar isoliert zu
+zeigen.
+
 
 ## Planning-Phase: Der Orchestrator-Agent
 
@@ -223,7 +234,7 @@ Tool-Use (siehe unten, `AgentRiskAnalyst`/`calculate_tco`): Bei Tool-Use KANN
 das Modell trotz Tool-Definition mit einem reinen Text-Turn antworten (`stopReason != "tool_use"`) - Structured Output
 erzwingt dagegen auf
 API-Ebene, dass die GESAMTE Antwort exakt dem Schema entspricht. Ein
-Multi-Turn-Loop wie bei `chatWithTool` ist daher nicht nötig, ein
+Multi-Turn-Loop wie bei `chat` ist daher nicht nötig, ein
 einzelner Request genügt (siehe `AnthropicClient.chatStructured`).
 
 **Warum das trotzdem validiert werden muss:** Ein LLM-Aufruf ist nie
@@ -381,7 +392,7 @@ Error-Handling für beide Zweige einzeln.
   aufzurufen (`stopReason == "tool_use"`), zurück - die eigentliche
   Ausführung übernimmt eine lokale Handler-Funktion (`CalculateTcoTool.handler`). Das Ergebnis muss danach explizit als
   `ContentBlock.ToolResult` an das Modell zurückgesendet werden (Multi-Turn-Dialog,
-  `AnthropicClient.chatWithTool`).
+  `AnthropicClient.chat`).
 - **Tool-Handler**: Die lokale Funktion, die ein client-seitiges Tool
   tatsächlich ausführt (hier: `CalculateTcoTool.handler` in
   `AgentRiskAnalyst.scala`). Bekommt die vom Modell gewählten Parameter als
@@ -492,7 +503,7 @@ jedoch nur mit einem einzigen Feld ab (`thinking: String`, keine
 `signature`) - eine Signatur kann also gar nicht transportiert werden.
 Sendet man einen (gelegentlich fast leeren) `thinking`-Block unverändert
 zurück, lehnt die API den Request mit `"each thinking block must contain
-thinking"` ab. Workaround in `AnthropicClient.chatWithTool`: leere
+thinking"` ab. Workaround in `AnthropicClient.chat`: leere
 `Thinking`-Blöcke werden vor dem Zurücksenden herausgefiltert. Das behebt
 das beobachtete Fehlerbild, ändert aber nichts daran, dass diese
 sttp-ai-Version für Modelle mit **erzwungener** Signatur-Prüfung bei
@@ -501,20 +512,23 @@ korrekte Lösung anbietet - das wäre nur durch ein Upstream-Fix in
 `sttp-ai` behebbar.
 
 **3. Mischen von server- und client-seitigen Tools:** Unabhängig von der
-Bibliothek gilt weiterhin: Mischt man in einer Anfrage server-seitige (`web_search`) und client-seitige Tools, erwartet
-der hier genutzte
-Router-Endpunkt für **beide** Typen ein `tool_result` - `web_search` wird
-also NICHT automatisch aufgelöst, sobald ein Client-Tool im Spiel ist.
-Deshalb nutzt der Risk-Analyst in diesem Beispiel bewusst ausschließlich
-`calculate_tco`.
+Bibliothek gilt weiterhin: Mischt man in einer Anfrage server-seitige (`web_search`) und client-seitige Tools, verhält sich `web_search`
+NICHT wie ein automatisch vom Server aufgelöstes Tool, sondern wie ein
+ganz normales `ContentBlock.ToolUse` (Name `web_search`), das der Client
+selbst per `ToolResult` beantworten müsste - das haben wir per Smoke-Test
+verifiziert. Da uns keine eigene Websuch-Implementierung zur Verfügung
+steht, verbietet `AnthropicClient.chat` diesen Mix bewusst per `require`
+(statt still zu degradieren). Deshalb nutzt der Risk-Analyst in diesem
+Beispiel bewusst ausschließlich `calculate_tco`.
 
 **4. Eigene Tool-Eingabe-/Ergebnis-Typen bleiben nötig:** `sttp-ai` liefert
 Tool-Eingabeparameter als rohes `Map[String, io.circe.Json]`
 (`ContentBlock.ToolUse.input`). Für ein sauberes, typisiertes Case-Class-
 Schema (hier `CalculateTcoInput`/`CalculateTcoResult`) genügt in Scala 3
-weiterhin `derives Codec.AsObject` - `circe` ist als Abhängigkeit von
-`sttp-ai` bereits transitiv vorhanden, es muss keine eigene JSON-Bibliothek
-mehr eingebunden werden.
+weiterhin `derives ConfiguredCodec` (mit einem impliziten `Configuration`
+für snake_case-JSON-Feldnamen bei camelCase-Scala-Feldern) - `circe` ist
+als Abhängigkeit von `sttp-ai` bereits transitiv vorhanden, es muss keine
+eigene JSON-Bibliothek mehr eingebunden werden.
 
 **5. Structured Output (`createMessageAs`) funktioniert über den
 Requesty-Router:** Vor der Umsetzung des `AgentOrchestrator` wurde per
@@ -527,4 +541,4 @@ Umgebung/mit einem anderen Router nicht der Fall sein sollte: Ein
 Fallback auf Tool-Use (analog `calculate_tco`, mit demselben
 `ExecutionPlan`-Schema als `Tool.Custom`-Definition statt
 `OutputFormat.JsonSchema`) wäre strukturell einfach nachrüstbar, siehe
-`AnthropicClient.chatWithTool`.
+`AnthropicClient.chat`.
