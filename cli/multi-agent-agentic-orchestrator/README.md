@@ -24,7 +24,7 @@ Identität der Agenten kennt). Siehe Abschnitt
 | JSON-Serialisierung/-Deserialisierung                             | [circe](https://circe.github.io/circe/) (bringt `sttp-ai` bereits mit, keine eigene Abhängigkeit) |
 | JSON-Schema-Ableitung für Structured Output                       | [tapir](https://tapir.softwaremill.com/) `Schema` (bringt `sttp-ai` bereits mit)                  |
 | Dateisystemzugriff (`output/`-Ordner)                             | [os-lib](https://github.com/com-lihaoyi/os-lib)                                                   |
-| `.env`-Datei einlesen                                             | eigene, simple Implementierung (`Env.scala`, siehe unten)                                         |
+| `.env`-Datei einlesen                                             | eigene, simple Implementierung (`object Env` in `AnthropicClient.scala`, siehe unten)             |
 | Nebenläufigkeit (paralleles Ausführen der Worker)                 | [ox](https://ox.softwaremill.com/) (`par`, strukturierte Nebenläufigkeit auf Virtual Threads)     |
 | Tests (Plan-Validierung/Executor-Logik)                           | [MUnit](https://scalameta.org/munit/) (`scala-cli test .`)                                        |
 | Build/Run ohne sbt-Projekt                                        | `scala-cli` mit `//> using` Direktiven                                                            |
@@ -61,10 +61,15 @@ ergänzt wird - weder `Orchestrator` (Execution) noch `AgentOrchestrator`
 ## Die Agenten & die generische Registry
 
 | Agent                            | Rolle                                                             | `hardDependsOn`               | `isMandatory` | Tools                                   |
-|----------------------------------|-------------------------------------------------------------------|-------------------------------|:-------------:|-----------------------------------------|
+|----------------------------------|--------------------------------------------------------------------|--------------------------------|:-------------:|-----------------------------------------|
 | **Fact-Researcher** (Worker)     | Sammelt Argumente, Fakten und Quellen *für* eine Technologie      | -                             |     nein      | `web_search` (server-seitig)            |
 | **Risk-Analyst** (Worker)        | Sucht gezielt Fallstricke, Kosten, Sicherheitsbedenken, Nachteile | -                             |     nein      | `calculate_tco` (client-seitig, custom) |
-| **Synthesis-Agent** (Aggregator) | Liest beide Outputs, löst Widersprüche auf, erstellt Endbericht   | fact-researcher, risk-analyst |    **ja**     | -                                       |
+| **Synthesis-Agent** (Aggregator) | Liest beide Outputs, löst Widersprüche auf, erstellt Endbericht   | Fact-Researcher, Risk-Analyst |    **ja**     | -                                       |
+
+**Wichtig zur `id`:** `AgentSpec.id` ist einfach der `name` des jeweiligen `Agent` (z. B. `"Fact-Researcher"`) - es gibt bewusst KEINE separate, zusätzliche id-Konstante mehr. Ein Agent hat damit
+genau EINEN Bezeichner, der sowohl für Menschen (Logs, Dateinamen) als auch für den Planungs-Agent (LLM) und den `PlanValidator` (Set-Vergleiche in `hardDependsOn`) verwendet wird. Das spart
+Duplikation, hat aber eine Konsequenz: Ändert sich `name`, ändert sich automatisch auch die `id` - und damit potenziell auch alle `hardDependsOn`-Referenzen darauf (siehe `AgentSynthesis.scala`,
+`Set(AgentFactResearcher.name, AgentRiskAnalyst.name)`).
 
 Jeder Agent registriert sich über eine `AgentSpec` (`AgentSpec.scala`) in
 `AgentRegistry.specs` (`AgentRegistry.scala`) - einzig dort werden neue
@@ -74,7 +79,7 @@ Agenten eingetragen:
 object AgentRegistry:
   def specs(topic: String): List[AgentSpec] = List(
     AgentFactResearcher.spec(topic),
-    RiskAnalyst.spec(topic),
+    AgentRiskAnalyst.spec(topic),
     AgentSynthesis.spec(topic),
   )
 ```
@@ -117,7 +122,7 @@ sequenceDiagram
         R -->> O: Risiken & Nachteile (inkl. TCO-Schätzung)
     end
     Note over O: Fan-in: par() kehrt erst zurück, wenn BEIDE fertig sind
-    O ->> S: execute(inputs = {fact-researcher -> ..., risk-analyst -> ...})
+    O ->> S: execute(inputs = {Fact-Researcher -> ..., Risk-Analyst -> ...})
     S -->> O: finaler Bericht
     O -->> U: finaler Bericht (outputsById(plan.finalAgentId)) + alle Zwischenergebnisse
 ```
@@ -434,48 +439,46 @@ Error-Handling für beide Zweige einzeln.
 ## Projektstruktur
 
 ```
-research_scala/
-├── project.scala          # scala-cli Direktiven: Scala-Version, Abhängigkeiten & Test-Framework (MUnit)
-├── Env.scala               # Liest ANTHROPIC_API_KEY aus ../.env (via os-lib)
-├── AnthropicClient.scala   # Wrapper um sttp-ai's ClaudeSyncClient + Logging + Tool-Use-Loop + Structured Output
-├── Agent.scala             # Basisklasse Agent (kapselt Model-Call + Tools)
-├── AgentSpec.scala         # Generische Agenten-Beschreibung (id, hardDependsOn, isMandatory, execute) für Registry/Planner
-├── AgentRegistry.scala     # Zentrale Liste aller AgentSpecs - einziger Ort, um neue Agenten einzubinden
+multi-agent-agentic-orchestrator/
+├── project.scala             # scala-cli Direktiven: Scala-Version, Abhängigkeiten & Test-Framework (MUnit)
+├── AnthropicClient.scala     # Wrapper um sttp-ai's ClaudeSyncClient + Logging + Tool-Use-Loop + Structured Output
+│                             #   + object Env am Dateiende: liest ANTHROPIC_AUTH_TOKEN/ANTHROPIC_API_KEY aus .env (via os-lib)
+├── Agent.scala               # Basisklasse Agent (kapselt Model-Call + Tools)
+├── AgentSpec.scala           # Generische Agenten-Beschreibung (id, hardDependsOn, isMandatory, execute) für Registry/Planner
+├── AgentRegistry.scala       # Zentrale Liste aller AgentSpecs - einziger Ort, um neue Agenten einzubinden
 ├── AgentFactResearcher.scala # Worker (web_search, server-seitig) + eigene AgentSpec
-├── AgentRiskAnalyst.scala  # Worker (calculate_tco, client-seitiges Custom-Tool) + eigene AgentSpec
-├── CalculateTcoTool.scala  # Definition & Ausführung des calculate_tco-Tools (Ein-/Ausgabe-Typen, JSON-Schema, Handler)
-├── AgentSynthesis.scala    # Aggregator + eigene AgentSpec (hardDependsOn beide Worker, isMandatory=true)
-├── ExecutionPlan.scala     # Case-Class für den Planungs-Output (Structured Output Schema)
-├── AgentOrchestrator.scala # Planning-Phase (agentisch): LLM entscheidet den ExecutionPlan
-├── PlanValidator.scala     # Validiert/repariert den Plan (reine Funktion, ohne LLM-Call)
+├── AgentRiskAnalyst.scala    # Worker (calculate_tco, client-seitiges Custom-Tool) + eigene AgentSpec
+├── CalculateTcoTool.scala    # Definition & Ausführung des calculate_tco-Tools (Ein-/Ausgabe-Typen, JSON-Schema, Handler)
+├── AgentSynthesis.scala      # Aggregator + eigene AgentSpec (hardDependsOn beide Worker, isMandatory=true)
+├── ExecutionPlan.scala       # Case-Class für den Planungs-Output (Structured Output Schema)
+├── AgentOrchestrator.scala   # Planning-Phase (agentisch): LLM entscheidet den ExecutionPlan
+├── PlanValidator.scala       # Validiert/repariert den Plan (reine Funktion, ohne LLM-Call)
 ├── PlanValidatorTest.test.scala # MUnit-Tests für PlanValidator (scala-cli test .)
-├── Orchestrator.scala      # Execution-Phase (generisch): führt den validierten Plan Level-für-Level aus (ox.par)
-├── Main.scala              # Einstiegspunkt (@main), schreibt output/*.md generisch via os-lib
-├── output/                 # wird beim Ausführen erzeugt (Zwischen- & Endergebnisse)
+├── Orchestrator.scala        # Execution-Phase (generisch): führt den validierten Plan Level-für-Level aus (ox.par)
+├── Main.scala                # Einstiegspunkt (@main), schreibt output/*.md generisch via os-lib
+├── output/                   # wird beim Ausführen erzeugt (Zwischen- & Endergebnisse)
 └── README.md
 ```
 
 ## Ausführen
 
 ```bash
-cd multi-agent-system_agentic_orchestrator
+cd cli/multi-agent-agentic-orchestrator
 scala-cli run . -- "Sollten wir Kubernetes für unser 5-Personen-Startup einführen?"
 scala-cli test .   # PlanValidator-Tests (kein API-Call nötig)
 ```
 
 Ohne Argument wird ein Standardthema verwendet. Die Ergebnisse landen
 generisch für jeden vom Orchestrator-Agent tatsächlich geplanten Agenten
-in `output/<Nummer>_<agent-id>.md` (z. B. `01_fact-researcher.md`,
-`02_risk-analyst.md`, `03_synthesis.md`) sowie im finalen Bericht
+in `output/<Nummer>_<agent-id>.md` (z. B. `01_Fact-Researcher.md`,
+`02_Risk-Analyst.md`, `03_Synthesis-Agent.md`) sowie im finalen Bericht
 `output/99_final_report.md`.
 
 ## Credentials
 
-Der API-Key wird aus der `.env`-Datei im Projekt-Root (`.env` im
-Projektordner, Variable `ANTHROPIC_API_KEY`, alternativ
-`ANTHROPIC_AUTH_TOKEN`) geladen (`Env.scala`, eigene, simple
-`os-lib`-basierte Implementierung ohne zusätzliche Dependency) - analog zum
-Python-Pendant in `../tutorial/init.py` bzw. `../research/init.py`. Genutzt
+Der API-Key wird aus der `.env`-Datei in diesem Projektordner (`cli/multi-agent-agentic-orchestrator/.env`, Variable `ANTHROPIC_AUTH_TOKEN`, alternativ `ANTHROPIC_API_KEY`) geladen (`object Env`
+am Ende von `AnthropicClient.scala`, eigene, simple `os-lib`-basierte Implementierung ohne zusätzliche Dependency). `Env.get` liest dabei zuerst `.env` (relativ zu `os.pwd`, also dem Verzeichnis, aus
+dem `scala-cli run .` gestartet wird) und fällt andernfalls auf eine echte Umgebungsvariable zurück. Genutzt
 wird der Requesty-Router (`https://router.eu.requesty.ai`) mit dem Modell
 `vertex/claude-sonnet-5@eu`, konfiguriert über `ClaudeConfig(baseUrl = ...)`
 aus `sttp-ai`. Authentifiziert wird - wie im offiziellen Anthropic-SDK -
@@ -491,9 +494,9 @@ direkt über den `baseUrl`-Parameter (`Uri`) - `v1/messages` wird vom Client
 selbst angehängt, man darf den Pfad also NICHT mit angeben (siehe
 `AnthropicClient.scala`). `ClaudeConfig.fromEnv`/`ClaudeSyncClient.fromEnv`
 wurden hier bewusst NICHT genutzt, da sie nur `sys.env` lesen - dieses
-Projekt liest den API-Key stattdessen über die projekteigene
-`Env.scala` (die zusätzlich `../.env` einliest und den Fallback-Namen
-`ANTHROPIC_AUTH_TOKEN` unterstützt).
+Projekt liest den API-Key stattdessen über das projekteigene `object Env`
+(am Ende von `AnthropicClient.scala`, liest zusätzlich `.env` und
+unterstützt den Fallback-Namen `ANTHROPIC_AUTH_TOKEN`).
 
 **2. `ContentBlock.Thinking` ohne `signature`-Feld:** Anthropic verlangt beim
 Zurücksenden von `thinking`-Blöcken (z. B. nach einem `tool_use`-Turn)
