@@ -36,7 +36,7 @@ object Orchestrator:
     // parallel und liefert erst zurück, wenn beide abgeschlossen sind.
     val (facts, risks) = par(
       AgentFactResearcher.research(topic),
-      RiskAnalyst.analyze(topic),
+      AgentRiskAnalyst.analyze(topic),
     )
 
     val workersElapsed = (System.nanoTime() - start) / 1e9

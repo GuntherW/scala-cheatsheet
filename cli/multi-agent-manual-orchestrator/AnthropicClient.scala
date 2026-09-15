@@ -47,85 +47,51 @@ object AnthropicClient:
   private def textOf(content: List[ContentBlock]): String =
     content.collect { case ContentBlock.Text(text, _, _) => text }.mkString("\n")
 
-  /** Führt genau einen Model-Call aus und liefert nur die reinen Text-Blöcke der Antwort (verkettet), analog zu `text_from_message` im Python-Pendant.
+  /** Führt einen Model-Call aus - bei Bedarf als Multi-Turn Tool-Use-Loop.
     *
-    * @param model
-    *   Modellname, z. B. `vertex/claude-sonnet-5@eu`
-    * @param systemPrompt
-    *   Rolle/Instruktion des Agenten
-    * @param userMessage
-    *   eigentliche Aufgabe/Anfrage
+    * Deckt drei Fälle in EINER Methode ab (siehe README, Abschnitt "Client-seitiges Tool"):
+    *   1. '''Kein Tool''' (`useWebSearch = false`, `clientTools = Nil`): ein einzelner Request genügt, die Schleife unten beendet sich bereits nach Turn 1, da `stopReason != "tool_use"`.
+    *   1. '''Nur server-seitiges Tool''' (`useWebSearch = true`): der Server löst `web_search` komplett selbst auf, meist genügt auch hier ein Request.
+    *   1. '''Client-seitige (custom) Tools''' (`clientTools`, z. B. `calculate_tco`): das Modell liefert nur den Aufrufwunsch zurück (`stopReason == "tool_use"`, `ContentBlock.ToolUse`), WIR führen
+    *      `toolHandlers` lokal aus und senden das Ergebnis zurück (Multi-Turn).
+    *
+    * '''Mix aus server- und client-seitigen Tools ist bewusst NICHT unterstützt''' (siehe `require` unten): Getestet gegen den hier genutzten Router-Endpunkt verhält sich `web_search` in dieser
+    * Kombination NICHT wie ein bereits vom Server aufgelöstes Tool (kein `ContentBlock.ServerToolUse`/`WebSearchToolResult`-Paar), sondern wie ein ganz normaler `ContentBlock.ToolUse`, den WIR
+    * beantworten müssten - das können wir aber nicht, da uns keine eigene Websuch-Implementierung zur Verfügung steht. Ein Agent, der beides braucht, müsste daher entweder zwei getrennte Model-Calls
+    * machen oder auf eine eigene Suchimplementierung zurückgreifen - beides außerhalb des Scopes dieses Lernprojekts.
+    *
     * @param useWebSearch
     *   ob das server-seitige `web_search`-Tool erlaubt ist
-    * @param maxTokens
-    *   Obergrenze für die Antwortlänge
+    * @param clientTools
+    *   client-seitige (custom) Tool-Definitionen, z. B. `calculate_tco`
+    * @param toolHandlers
+    *   Mapping von Tool-Name -> Funktion, die die rohen Eingabeparameter (`Map[String, Json]`) entgegennimmt und einen String (meist JSON) zurückgibt - nur relevant für `clientTools`.
     */
   def chat(
       model: String,
       systemPrompt: String,
       userMessage: String,
       useWebSearch: Boolean = false,
-      maxTokens: Int = 3000,
-  ): String =
-    val request = MessageRequest(
-      model = model,
-      messages = List(Message.user(userMessage)),
-      system = Some(systemPrompt),
-      maxTokens = maxTokens,
-      tools = if useWebSearch then Some(List(Tool.WebSearch.default)) else None,
-    )
-
-    log(s"-> Request  model=$model web_search=$useWebSearch")
-    log(s"   system:  ${truncate(systemPrompt)}")
-    log(s"   user:    ${truncate(userMessage)}")
-
-    try
-      val response = client.createMessage(request)
-      log(s"<- Response stop_reason=${response.stopReason.getOrElse("-")}")
-      val text     = textOf(response.content)
-      log(s"   text:    ${truncate(text)}")
-      text
-    catch
-      case e: Throwable =>
-        log(s"<- Fehler   ${truncate(e.getMessage)}")
-        throw e
-
-  /** Führt einen Tool-Use-Loop mit einem oder mehreren client-seitigen (custom) Tools aus.
-    *
-    * Ablauf (siehe auch README, Abschnitt "Client-seitiges Tool"):
-    *   1. Request mit der Nutzeranfrage + Tool-Definition(en) senden.
-    *   2. Antwortet das Modell mit `stopReason == "tool_use"`, enthält die Antwort einen oder mehrere `ContentBlock.ToolUse`-Blöcke.
-    *   3. Für jeden Block wird der passende Handler aus `toolHandlers` aufgerufen (bekommt die rohen Eingabeparameter als `Map[String, Json]`).
-    *   4. Die komplette Assistant-Antwort (inkl. Tool-Use-Blöcken) sowie EIN `user`-Turn mit allen `ContentBlock.ToolResult`s werden als neue Nachrichten angehängt, danach wird erneut gesendet.
-    *   5. Wiederholen, bis `stopReason != "tool_use"` ist.
-    *
-    * @param toolHandlers
-    *   Mapping von Tool-Name -> Funktion, die die rohen Eingabeparameter (`Map[String, Json]`) entgegennimmt und einen String (meist JSON) zurückgibt.
-    */
-  def chatWithTool(
-      model: String,
-      systemPrompt: String,
-      userMessage: String,
-      tools: List[Tool],
-      toolHandlers: Map[String, Map[String, Json] => String],
+      clientTools: List[Tool] = Nil,
+      toolHandlers: Map[String, Map[String, Json] => String] = Map.empty,
       maxTokens: Int = 2000,
   ): String =
-    var messages: List[Message] = List(Message.user(userMessage))
-    var turn                    = 0
+    require(
+      !(useWebSearch && clientTools.nonEmpty),
+      "Mix aus server-seitigem web_search und client-seitigen Tools wird von diesem Router-Endpunkt nicht sauber unterstützt (siehe Scaladoc/README).",
+    )
+    val tools = (if useWebSearch then List(Tool.WebSearch.default) else Nil) ++ clientTools
 
-    log(s"===== Tool-Use-Loop gestartet (model=$model, tools=${tools.collect { case c: Tool.Custom => c.name }.mkString(", ")}) =====")
-    log(s"   user:    ${truncate(userMessage)}")
-
-    while true do
-      turn += 1
-      log(s"--- Turn $turn: sende ${messages.size} Nachricht(en) an das Modell ---")
+    @annotation.tailrec
+    def loop(messages: List[Message], turn: Int): String =
+      log(s"--- Turn $turn: sende ${messages.size} Nachricht(en) an das Modell (${tools.size} Tool(s) aktiv) ---")
 
       val request = MessageRequest(
         model = model,
         messages = messages,
         system = Some(systemPrompt),
         maxTokens = maxTokens,
-        tools = Some(tools),
+        tools = if tools.isEmpty then None else Some(tools),
       )
 
       val response =
@@ -145,51 +111,50 @@ object AnthropicClient:
 
       if !response.stopReason.contains("tool_use") then
         val finalText = textOf(response.content)
-        log(s"===== Tool-Use-Loop beendet nach $turn Turn(s), finale Antwort: ${truncate(finalText)} =====")
-        return finalText
-
-      // Die komplette Assistant-Antwort (inkl. ToolUse-Blöcken) muss Teil der
-      // Historie werden, damit das Modell im nächsten Turn weiß, worauf sich
-      // die tool_result-Blöcke beziehen.
-      //
-      // ACHTUNG (sttp-ai 0.11.0): `ContentBlock.Thinking` hat - anders als das
-      // frühere, selbstgeschriebene JSON-Modell dieses Projekts - KEIN
-      // `signature`-Feld. Gelegentlich liefert das Modell/der Router einen
-      // (fast) leeren `thinking`-Block zurück; sendet man den unverändert
-      // zurück, lehnt die API den Request mit "each thinking block must
-      // contain thinking" ab. Da wir die Signatur ohnehin nicht erhalten
-      // können, filtern wir leere Thinking-Blöcke defensiv heraus, bevor wir
-      // die Antwort in die Historie übernehmen.
-      val historyContent = response.content.filterNot {
-        case ContentBlock.Thinking(thinking) => thinking.isBlank
-        case _                               => false
-      }
-      messages = messages :+ Message.assistant(historyContent)
-
-      val toolResultBlocks = response.content
-        .collect { case tu: ContentBlock.ToolUse => tu }
-        .map { tu =>
-          log(s"   >> Tool-Aufruf     ${tu.name}(${Json.fromFields(tu.input).noSpaces})")
-          val handler    = toolHandlers.getOrElse(tu.name, (_: Map[String, Json]) => s"Fehler: kein Handler für Tool '${tu.name}' registriert.")
-          val resultText = handler(tu.input)
-          log(s"   << Tool-Ergebnis   ${tu.name} -> ${truncate(resultText)}")
-          ContentBlock.ToolResult(toolUseId = tu.id, content = resultText)
+        log(s"===== Model-Call beendet nach $turn Turn(s), finale Antwort: ${truncate(finalText)} =====")
+        finalText
+      else
+        // Die komplette Assistant-Antwort (inkl. ToolUse-Blöcken) muss Teil der Historie werden, damit das Modell im nächsten Turn
+        // weiß, worauf sich die tool_result-Blöcke beziehen.
+        //
+        // ACHTUNG (sttp-ai 0.11.0): `ContentBlock.Thinking` hat - anders als das frühere, selbstgeschriebene JSON-Modell dieses
+        // Projekts - KEIN `signature`-Feld. Gelegentlich liefert das Modell/der Router einen (fast) leeren `thinking`-Block zurück;
+        // sendet man den unverändert zurück, lehnt die API den Request mit "each thinking block must contain thinking" ab. Da wir die
+        // Signatur ohnehin nicht erhalten können, filtern wir leere Thinking-Blöcke defensiv heraus, bevor wir die Antwort in die
+        // Historie übernehmen.
+        val historyContent = response.content.filterNot {
+          case ContentBlock.Thinking(thinking) => thinking.isBlank
+          case _                               => false
         }
 
-      // Alle tool_result-Blöcke gehören in EINEN user-Turn (Anthropic-Konvention),
-      // nicht in mehrere separate Nachrichten.
-      messages = messages :+ Message.user(toolResultBlocks)
-    end while
-    "" // unreachable, while(true) endet nur per return
+        val toolResultBlocks = response.content
+          .collect { case tu: ContentBlock.ToolUse => tu }
+          .map { tu =>
+            log(s"   >> Tool-Aufruf     ${tu.name}(${Json.fromFields(tu.input).noSpaces})")
+            val handler    = toolHandlers.getOrElse(tu.name, (_: Map[String, Json]) => s"Fehler: kein Handler für Tool '${tu.name}' registriert.")
+            val resultText = handler(tu.input)
+            log(s"   << Tool-Ergebnis   ${tu.name} -> ${truncate(resultText)}")
+            ContentBlock.ToolResult(toolUseId = tu.id, content = resultText)
+          }
+
+        // Alle tool_result-Blöcke gehören in EINEN user-Turn (Anthropic-Konvention), nicht in mehrere separate Nachrichten.
+        val nextMessages = messages :+ Message.assistant(historyContent) :+ Message.user(toolResultBlocks)
+        loop(nextMessages, turn + 1)
+    end loop
+
+    log(s"===== Model-Call gestartet (model=$model, web_search=$useWebSearch, client_tools=${clientTools.collect { case c: Tool.Custom => c.name }.mkString(", ")}) =====")
+    log(s"   system:  ${truncate(systemPrompt)}")
+    log(s"   user:    ${truncate(userMessage)}")
+    loop(List(Message.user(userMessage)), turn = 1)
 
   def close(): Unit = client.close()
 
 /** Lädt Umgebungsvariablen aus der `.env`-Datei im Projekt-Root (eine Ebene über diesem Ordner), analog zum Python-Pendant (`python-dotenv`).
- *
- * Eigene, bewusst simple Implementierung auf Basis von `os-lib` statt der Java-Bibliothek `dotenv-java`: Letztere ist reines JVM-Java und würde als einzige Abhängigkeit dieses Projekts die
- * Scala-Native-Kompatibilität der übrigen Abhängigkeiten (`sttp-ai`, `os-lib`, `ox`) brechen. Unterstütztes Format: `SCHLÜSSEL=WERT` pro Zeile, `#`-Kommentare und Leerzeilen werden ignoriert, ein-
- * oder doppelte Anführungszeichen um den Wert werden entfernt. Fällt automatisch auf echte Umgebungsvariablen zurück, falls die `.env`-Datei fehlt oder der Schlüssel dort nicht gesetzt ist.
- */
+  *
+  * Eigene, bewusst simple Implementierung auf Basis von `os-lib` statt der Java-Bibliothek `dotenv-java`: Letztere ist reines JVM-Java und würde als einzige Abhängigkeit dieses Projekts die
+  * Scala-Native-Kompatibilität der übrigen Abhängigkeiten (`sttp-ai`, `os-lib`, `ox`) brechen. Unterstütztes Format: `SCHLÜSSEL=WERT` pro Zeile, `#`-Kommentare und Leerzeilen werden ignoriert, ein-
+  * oder doppelte Anführungszeichen um den Wert werden entfernt. Fällt automatisch auf echte Umgebungsvariablen zurück, falls die `.env`-Datei fehlt oder der Schlüssel dort nicht gesetzt ist.
+  */
 object Env:
 
   private val dotenvPath = os.pwd / ".env"
@@ -202,10 +167,10 @@ object Env:
         .map(_.trim)
         .filter(line => line.nonEmpty && !line.startsWith("#"))
         .flatMap(_.split("=", 2) match
-            case Array(key, value) => Some(key.trim -> unquote(value.trim))
-            case _                 => None,
-            )
-          .toMap
+          case Array(key, value) => Some(key.trim -> unquote(value.trim))
+          case _                 => None,
+        )
+        .toMap
     else Map.empty
 
   private def unquote(value: String): String =

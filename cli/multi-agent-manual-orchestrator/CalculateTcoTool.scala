@@ -1,16 +1,22 @@
 package agents
 
-import io.circe.{Codec, Json}
+import io.circe.Json
+import io.circe.derivation.{Configuration, ConfiguredCodec}
 import io.circe.syntax.*
 import sttp.ai.claude.models.{PropertySchema, Tool, ToolInputSchema}
 
+/** JSON-Feldnamen von `CalculateTcoInput`/`CalculateTcoResult` sollen dem `snake_case` der Anthropic-Tool-Schemas (`team_size`, ...) entsprechen, während die Scala-Felder selbst der
+  * Projekt-Konvention `camelCase` folgen (siehe AGENTS.md) - `ConfiguredCodec` (statt schlichtem `Codec.AsObject`) respektiert dafür ein implizites `Configuration`.
+  */
+given Configuration = Configuration.default.withSnakeCaseMemberNames
+
 /** Eingabeparameter, wie sie das Modell (passend zum `inputSchema` von `CalculateTcoTool.definition`) liefert.
   */
-case class CalculateTcoInput(technology: String, team_size: Int) derives Codec.AsObject
+case class CalculateTcoInput(technology: String, teamSize: Int) derives ConfiguredCodec
 
 /** Rückgabe des Tools - bewusst als eigenes Case-Class-Schema, damit die JSON-Struktur klar erkennbar bleibt.
   */
-case class CalculateTcoResult(technology: String, team_size: Int, estimated_monthly_cost_eur: Int, note: String) derives Codec.AsObject
+case class CalculateTcoResult(technology: String, teamSize: Int, estimatedMonthlyCostEur: Int, note: String) derives ConfiguredCodec
 
 /** Definition und Ausführung des client-seitigen (custom) Tools `calculate_tco`, genutzt vom `RiskAnalyst` (siehe `AgentRiskAnalyst.scala`). Eigene Datei, damit die Tool-Definition (JSON-Schema) und
   * -Ausführung (Handler) klar getrennt vom Agenten selbst sichtbar sind.
@@ -36,17 +42,19 @@ object CalculateTcoTool:
 
   /** Dummy-Implementierung des calculate_tco-Tools.
     *
-    * Führt keine echte Kostenanalyse durch, sondern demonstriert nur, wie ein client-seitiges Tool lokal ausgeführt und dessen Ergebnis als JSON-String an das Modell zurückgegeben wird.
+    * Führt keine echte Kostenanalyse durch, sondern demonstriert nur, wie ein client-seitiges Tool lokal ausgeführt und dessen Ergebnis als JSON-String an das Modell zurückgegeben wird. Ein
+    * fehlerhafter Input (z. B. weil das Modell ein Feld weggelassen hat) bricht den Tool-Use-Loop NICHT mit einer Exception ab, sondern wird als JSON-Fehlerobjekt an das Modell zurückgemeldet - so
+    * kann das Modell im nächsten Turn selbst reagieren (z. B. das Tool erneut mit korrigierten Parametern aufrufen).
     */
   def handler(rawInput: Map[String, Json]): String =
-    val input          = Json.fromFields(rawInput).as[CalculateTcoInput]
-      .getOrElse(throw new RuntimeException(s"Konnte calculate_tco-Eingabe nicht parsen: $rawInput"))
-    // Fest codierte Dummy-Formel - rein illustrativ.
-    val monthlyCostEur = 350 * input.team_size + 500
-    val result         = CalculateTcoResult(
-      technology = input.technology,
-      team_size = input.team_size,
-      estimated_monthly_cost_eur = monthlyCostEur,
-      note = "Demo-Berechnung mit Dummy-Zahlen, keine reale Kostenanalyse.",
-    )
-    result.asJson.noSpaces
+    Json.fromFields(rawInput).as[CalculateTcoInput] match
+      case Left(error)  => Json.obj("error" -> s"Konnte calculate_tco-Eingabe nicht parsen: ${error.getMessage}".asJson).noSpaces
+      case Right(input) =>
+        // Fest codierte Dummy-Formel - rein illustrativ.
+        val monthlyCostEur = 350 * input.teamSize + 500
+        CalculateTcoResult(
+          technology = input.technology,
+          teamSize = input.teamSize,
+          estimatedMonthlyCostEur = monthlyCostEur,
+          note = "Demo-Berechnung mit Dummy-Zahlen, keine reale Kostenanalyse.",
+        ).asJson.noSpaces
