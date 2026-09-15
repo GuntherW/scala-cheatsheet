@@ -48,9 +48,21 @@ Use `sbt --client` for all checks (faster, connects to running sbt server). Use 
    ```
 
 6. **Code review** — once compile/format/lint/test are green, invoke the `scala-reviewer` subagent (via the `task`
-   tool) on every `.scala` file you created or modified in this session. Pass it the list of changed files.
+   tool) on the `.scala` files you created or modified in this session.
+
+   - **1–2 files changed:** one `scala-reviewer` call with the file list is enough.
+   - **3+ files changed:** avoid feeding them all into a single call — attention dilutes across files (uneven depth,
+     missed issues in "middle" files, contradictory findings). Instead:
+     1. **Per-file pass:** launch one `scala-reviewer` task per file, in parallel (single message, multiple `task`
+        calls), each scoped to exactly that file.
+     2. **Integration pass:** launch one more `scala-reviewer` task, giving it the full list of changed files plus
+        the concatenated findings from step 1, and ask it to check specifically for: contradictory findings between
+        files (same pattern flagged in one, approved in another), cross-file data flow issues, and inconsistent API
+        usage across the changed files.
    - Apply findings you agree with, then re-run the affected steps above (format/lint/compile/test) if you changed code.
    - If you disagree with a finding, say so explicitly to the user with your reasoning — don't silently drop it.
+   - Treat findings with `Konfidenz` ≤0.5 as "to discuss", not as facts — mention them to the user distinctly from
+     higher-confidence findings, rather than applying them silently.
    - Skip only for pure comment/doc/formatting-only edits with no logic change.
 
 ## When to skip steps
@@ -61,4 +73,4 @@ Use `sbt --client` for all checks (faster, connects to running sbt server). Use 
 
 ## Reporting back
 
-State plainly which steps passed and which module/test scope was actually exercised (e.g. "ran `project core` tests only — other modules untouched"). State whether `scala-reviewer` was invoked and summarize its findings (or note why it was skipped). Don't claim "all tests are green" if only a subset ran.
+State plainly which steps passed and which module/test scope was actually exercised (e.g. "ran `project core` tests only — other modules untouched"). State whether `scala-reviewer` was invoked (single-file, per-file+integration, or skipped) and summarize its findings, separating high- from low-confidence ones. Don't claim "all tests are green" if only a subset ran.

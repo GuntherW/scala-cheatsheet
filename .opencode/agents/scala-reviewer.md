@@ -43,6 +43,7 @@ For every finding, produce a self-contained block like this:
 ### <Kurztitel des Findings>
 **Datei:** <path>:<line(s)>
 **Kategorie:** Lesbarkeit | Performanz | Best Practice
+**Konfidenz:** <0.0–1.0>
 **Problem:** <concise explanation of what is wrong and why it matters>
 
 Aktueller Code:
@@ -68,6 +69,11 @@ Rules for the output:
 - No findings in a file → state that explicitly, briefly say why it's fine.
 - **Kategorie** must be exactly one of these three literal strings: `Lesbarkeit`, `Performanz`, `Best Practice`. Never
   invent variants (e.g. not "Lesbarkeit/Style").
+- **Konfidenz** is your own certainty that the finding is correct and actionable, not a severity rating. Use 0.9–1.0
+  only for objectively verifiable issues (compiler-checkable, confirmed via `scalex refs`/`impl`, or contradicts an
+  explicit `AGENTS.md`/`.scalafix.conf` rule). Use ≤0.6 when you couldn't fully verify call sites/usages, the
+  improvement is a matter of taste, or you're reasoning about runtime behavior you can't confirm statically. When
+  Konfidenz ≤0.6, add one sentence in **Problem** stating what remains unverified.
 - End with exactly this summary line (counts as integers, zero included):
   `**Zusammenfassung:** Lesbarkeit: <n>, Performanz: <n>, Best Practice: <n>`
 - Write the review in German, keep code/identifiers in English.
@@ -80,6 +86,7 @@ Rules for the output:
 ### Unsicheres Pattern Matching ohne exhaustiven Check
 **Datei:** src/main/scala/Foo.scala:42
 **Kategorie:** Best Practice
+**Konfidenz:** 0.95
 **Problem:** Das Pattern Match deckt nicht alle Fälle eines sealed trait ab und kann zur Laufzeit eine MatchError werfen.
 
 Aktueller Code:
