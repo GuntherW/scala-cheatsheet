@@ -1,6 +1,6 @@
 package agents
 
-import io.circe.Decoder
+import io.circe.Codec
 import sttp.tapir.Schema
 
 /** Ergebnis der Planning-Phase (siehe `AgentPlanner`): eine Liste von "Steps". Alle Agenten innerhalb eines Steps sind voneinander unabhängig und werden vom Executor (`Orchestrator`) parallel
@@ -17,4 +17,4 @@ final case class ExecutionPlan(
     steps: List[List[String]],
     finalAgentId: String,
     reasoning: String,
-) derives Schema, Decoder
+) derives Schema, Codec

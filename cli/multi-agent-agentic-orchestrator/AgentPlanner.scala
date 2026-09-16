@@ -7,9 +7,9 @@ package agents
   * verschieben wir genau diese eine Entscheidung - "welche Worker in welcher Gruppierung" - vom Scala-Code ins Modell, der eigentliche Worker-Aufruf (`AgentSpec.execute`) bleibt normaler,
   * deterministischer Code.
   *
-  * Technisch: Nutzt Anthropics natives '''Structured Output''' (`output_config`/`json_schema`, siehe `AnthropicClient.chatStructured`), NICHT Tool-Use. Der Unterschied: Bei Tool-Use könnte das Modell
-  * trotz Tool-Definition mit einem reinen Text-Turn antworten (`stopReason != "tool_use"`); Structured Output erzwingt dagegen direkt auf API-Ebene, dass die GESAMTE Antwort exakt dem JSON-Schema von
-  * `ExecutionPlan` entspricht - ein Multi-Turn-Loop wie bei `AnthropicClient.chat` (Tool-Use) ist daher nicht nötig, ein einzelner Request genügt.
+  * Technisch: Nutzt Anthropics natives '''Structured Output''' (`output_config`/`json_schema`, siehe `AnthropicClient.buildStructuredAgent`), NICHT Tool-Use. Der Unterschied: Bei Tool-Use könnte das
+  * Modell trotz Tool-Definition mit einem reinen Text-Turn antworten (`stopReason != "tool_use"`); Structured Output erzwingt dagegen direkt auf API-Ebene, dass die GESAMTE Antwort exakt dem
+  * JSON-Schema von `ExecutionPlan` entspricht - ein Multi-Turn-Loop wie bei Tool-Use-Agenten (siehe `Agent.scala`) ist daher nicht nötig, ein einzelner Request genügt.
   *
   * Da die Antwort eines LLM nie hundertprozentig verlässlich ist (unbekannte agent-ids, verletzte Abhängigkeiten, vergessene Pflicht-Agenten), wird der rohe Plan vor der Ausführung immer durch
   * `PlanValidator.validate` geschickt (siehe `Orchestrator.runPipeline`).
@@ -48,10 +48,16 @@ object AgentPlanner:
 
   /** Erstellt den (noch unvalidierten) Ausführungsplan für `topic` anhand der übergebenen Agenten-Kataloge. Der Aufrufer (`Orchestrator.runPipeline`) MUSS das Ergebnis vor der Ausführung durch
     * `PlanValidator.validate` schicken.
+    *
+    * Nutzt `AnthropicClient.buildStructuredAgent` (Structured Output über den Interceptor-fähigen sttp-ai Agent-Loop, siehe `AnthropicClient.buildAgent`-Scaladoc) statt eines direkten
+    * `chatStructured`-Aufrufs - damit läuft auch die Planungsphase durchs Logging-/Usage-Tracking (`AnthropicClient.usageCollector`), nicht nur die Worker-Agenten.
     */
-  def plan(topic: String, specs: List[AgentSpec]): ExecutionPlan = AnthropicClient.chatStructured[ExecutionPlan](
-    caller = "Planner",
-    model = model,
-    systemPrompt = systemPrompt(specs),
-    userMessage = s"Thema: $topic\n\nErstelle den Ausführungsplan.",
-  )
+  def plan(topic: String, specs: List[AgentSpec]): ExecutionPlan =
+    val agent = AnthropicClient.buildStructuredAgent[ExecutionPlan](
+      caller = "Planner",
+      model = model,
+      systemPrompt = systemPrompt(specs),
+    )
+    agent.run(s"Thema: $topic\n\nErstelle den Ausführungsplan.")(AnthropicClient.backend).finalAnswer match
+      case Right(executionPlan) => executionPlan
+      case Left(failure)        => throw new RuntimeException(s"Planner lieferte keinen validen ExecutionPlan: $failure")
