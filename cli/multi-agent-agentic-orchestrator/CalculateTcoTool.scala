@@ -10,23 +10,27 @@ import sttp.shared.Identity
 
 import scala.collection.immutable.ListMap
 
-/** JSON-Feldnamen von `CalculateTcoInput`/`CalculateTcoResult` sollen dem `snake_case` der Anthropic-Tool-Schemas (`team_size`, ...) entsprechen, während die Scala-Felder selbst der
-  * Projekt-Konvention `camelCase` folgen (siehe AGENTS.md) - `ConfiguredCodec` (statt schlichtem `Codec.AsObject`) respektiert dafür ein implizites `Configuration`.
-  */
-given Configuration = Configuration.default.withSnakeCaseMemberNames
-
-/** Eingabeparameter, wie sie das Modell (passend zum `inputSchema` von `CalculateTcoTool.definition`) liefert.
-  */
-case class CalculateTcoInput(technology: String, teamSize: Int) derives ConfiguredCodec
-
-/** Rückgabe des Tools - bewusst als eigenes Case-Class-Schema, damit die JSON-Struktur klar erkennbar bleibt.
-  */
-case class CalculateTcoResult(technology: String, teamSize: Int, estimatedMonthlyCostEur: Int, note: String) derives ConfiguredCodec
-
 /** Definition und Ausführung des client-seitigen (custom) Tools `calculate_tco`, genutzt vom `RiskAnalyst` (siehe `AgentRiskAnalyst.scala`). Eigene Datei, damit die Tool-Definition (JSON-Schema) und
   * -Ausführung (Handler) klar getrennt vom Agenten selbst sichtbar sind.
   */
 object CalculateTcoTool:
+
+  /** JSON-Feldnamen von `CalculateTcoInput`/`CalculateTcoResult` sollen dem `snake_case` der Anthropic-Tool-Schemas (`team_size`, ...) entsprechen, während die Scala-Felder selbst der
+    * Projekt-Konvention `camelCase` folgen (siehe AGENTS.md) - `ConfiguredCodec` (statt schlichtem `Codec.AsObject`) respektiert dafür ein implizites `Configuration`.
+    *
+    * '''Bewusst als Member DIESES Objekts statt top-level im Package''' (anders als in einer früheren Version dieser Datei): Ein top-level `given` in Scala 3 ist package-weit sichtbar, nicht nur
+    * dateilokal - es hätte sonst auch die circe-`derives Codec`-Ableitung von `ExecutionPlan.scala` (ein anderer Typ im selben Package `agents`) auf snake_case umgestellt und dort zu Decoding-Fehlern
+    * geführt (`final_agent_id` statt `finalAgentId` erwartet), obwohl `ExecutionPlan` mit dieser Konfiguration nichts zu tun hat.
+    */
+  private given Configuration = Configuration.default.withSnakeCaseMemberNames
+
+  /** Eingabeparameter, wie sie das Modell (passend zum `inputSchema` von `CalculateTcoTool.definition`) liefert.
+    */
+  private case class CalculateTcoInput(technology: String, teamSize: Int) derives ConfiguredCodec
+
+  /** Rückgabe des Tools - bewusst als eigenes Case-Class-Schema, damit die JSON-Struktur klar erkennbar bleibt.
+    */
+  private case class CalculateTcoResult(technology: String, teamSize: Int, estimatedMonthlyCostEur: Int, note: String) derives ConfiguredCodec
 
   /** Client-seitiges (custom) Tool: Definition per JSON-Schema (`ToolInputSchema`/`PropertySchema` aus sttp-ai). Das Modell entscheidet selbst, WANN es dieses Tool mit welchen Parametern aufruft -
     * die eigentliche Ausführung übernimmt `handler` unten.

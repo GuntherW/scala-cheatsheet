@@ -2,7 +2,7 @@ package agents
 
 import io.circe.Json
 import sttp.ai.claude.ClaudeClient
-import sttp.ai.claude.models.{ContentBlock, Message, Tool}
+import sttp.ai.claude.models.{ContentBlock, Message, OutputConfig, OutputFormat, Tool}
 import sttp.ai.claude.requests.MessageRequest
 import sttp.ai.core.agent.*
 import sttp.client4.Backend
@@ -52,6 +52,13 @@ final class ClaudeToolLoopBackend(
       inputSchema = ensureObjectType(tool.rawJsonSchema),
     )
 
+  /** Erzwungenes, schemakonformes JSON (Structured Output, siehe `AgentBuilder.deriveResponseSchema`/`ResponseSchema`) - ohne diesen Block würde `config.responseSchema` (von
+    * `AnthropicClient.buildStructuredAgent` gesetzt) stillschweigend ignoriert und das Modell könnte frei antworten (z. B. in Markdown-Codefences verpackt oder mit abweichenden Feldnamen) statt exakt
+    * dem `ExecutionPlan`-Schema zu folgen.
+    */
+  private val outputConfig: Option[OutputConfig] =
+    config.responseSchema.map(rs => OutputConfig(format = Some(OutputFormat.JsonSchema(rs.schema))))
+
   /** Kleine, lokale Kopie der gleichnamigen (aber `private[ai]`, also von außerhalb des sttp-ai-Packages nicht nutzbaren) Normalisierung aus `AgentTool`: Provider verlangen für das Tool-Input-Schema
     * ein JSON-Schema vom Typ `object`, manche zusätzlich das `properties`-Feld.
     */
@@ -95,6 +102,7 @@ final class ClaudeToolLoopBackend(
       system = systemPrompt,
       maxTokens = config.maxTokens.getOrElse(4096),
       tools = if includeTools && convertedTools.nonEmpty then Some(convertedTools.toList) else None,
+      outputConfig = outputConfig,
     )
 
     client.createMessage(request).send(backend).body match
