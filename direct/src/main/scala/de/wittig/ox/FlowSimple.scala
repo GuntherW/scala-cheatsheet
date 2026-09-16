@@ -9,13 +9,13 @@ import sttp.tapir.server.netty.sync.NettySyncServer
 @main
 def flowSimple(): Unit =
 
-//  flowSimple
+//  demoBasics
 //  demoZip
 //  demoMerge
 //  demoSupervised
   demoMapPar
 
-  def flowSimple = Flow.fromValues(10, 3, 5, 12)
+  def demoBasics = Flow.fromValues(10, 3, 5, 12)
     .map(_ + 1)
 //    .filter(_ % 2 == 0)
     .intersperse(1)
@@ -41,12 +41,12 @@ def flowSimple(): Unit =
       .runForeach(println)
   }
 
-  inline def namesFlow = Flow
+  def namesFlow = Flow
     .fromInputStream(this.getClass.getResourceAsStream("/names.txt"))
     .linesUtf8
     .map(_.toLowerCase.capitalize)
 
-  inline def demoMapPar = {
+  def demoMapPar = {
     import sttp.client4.quick.*
     println("start")
     namesFlow
@@ -57,7 +57,7 @@ def flowSimple(): Unit =
   }
 
   // create channels & transform them using high-level operations
-  inline def demoSupervised = supervised {
+  def demoSupervised = supervised {
     Flow.iterate(0)(_ + 1) // natural numbers
       .filter(_ % 2 == 0)
       .map(_ + 1)

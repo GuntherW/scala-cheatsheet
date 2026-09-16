@@ -7,10 +7,12 @@ import java.nio.file.Paths
 @main
 def flowFileIO(): Unit =
 
+  val resourcesDir = Paths.get(ClassLoader.getSystemResource("names.txt").toURI).getParent
+
   Flow
-    .fromFile(Paths.get("direct/src/main/resources/names.txt"))
+    .fromFile(resourcesDir.resolve("names.txt"))
     .linesUtf8
     .mapPar(4)(_.toLowerCase.capitalize)
     .intersperse("\n")
     .encodeUtf8
-    .runToFile(Paths.get("direct/src/main/resources/namesCapitalized.txt"))
+    .runToFile(resourcesDir.resolve("namesCapitalized.txt"))

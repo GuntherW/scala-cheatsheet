@@ -3,6 +3,7 @@ package de.wittig.ox
 import scala.concurrent.duration.*
 
 import ox.*
+import ox.scheduling.{repeat, Schedule}
 
 @main
 def structuredConcurrency2(): Unit =
@@ -10,9 +11,8 @@ def structuredConcurrency2(): Unit =
   // supervised Block ist fertig, wenn forKUser fertig ist. fork läuft so lange wie der supervised block aktiv ist und beendet sich dann auch automatisch.
   val a = supervised {
     fork {
-      while (true) {
+      repeat(Schedule.fixedInterval(500.millis)) {
         println("catching Metrics ...")
-        sleep(500.millis)
       }
     }
     forkUser {
