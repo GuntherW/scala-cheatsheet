@@ -4,6 +4,11 @@ import io.circe.Json
 import io.circe.derivation.{Configuration, ConfiguredCodec}
 import io.circe.syntax.*
 import sttp.ai.claude.models.{PropertySchema, Tool, ToolInputSchema}
+import sttp.ai.core.agent.AgentTool
+import sttp.apispec.{Schema as ApiSchema, SchemaType}
+import sttp.shared.Identity
+
+import scala.collection.immutable.ListMap
 
 /** JSON-Feldnamen von `CalculateTcoInput`/`CalculateTcoResult` sollen dem `snake_case` der Anthropic-Tool-Schemas (`team_size`, ...) entsprechen, während die Scala-Felder selbst der
   * Projekt-Konvention `camelCase` folgen (siehe AGENTS.md) - `ConfiguredCodec` (statt schlichtem `Codec.AsObject`) respektiert dafür ein implizites `Configuration`.
@@ -58,3 +63,21 @@ object CalculateTcoTool:
           estimatedMonthlyCostEur = monthlyCostEur,
           note = "Demo-Berechnung mit Dummy-Zahlen, keine reale Kostenanalyse.",
         ).asJson.noSpaces
+
+  /** Gleiche Definition/Ausführung wie `definition`/`handler` oben, aber als `sttp.ai.core.agent.AgentTool` - der generischen Tool- Abstraktion, die der Interceptor-fähige Agent-Loop
+    * (`sttp.ai.core.agent.LoopAgent`, siehe `AgentBackends.scala`) erwartet. Bewusst über `AgentTool.dynamic` (rohes `Map[String, Json]`-Input, kein `derives`-Codec für `CalculateTcoInput`)
+    * definiert, damit exakt dasselbe, bereits robuste `handler` (inkl. Fehlerbehandlung bei fehlerhaftem Modell-Input) unverändert weiterverwendet werden kann - eine
+    * `AgentTool.fromFunction[CalculateTcoInput]` bräuchte zusätzlich eine snake_case-bewusste Tapir-`Schema`-Ableitung für `team_size`, was hier keinen Mehrwert brächte.
+    */
+  val agentTool: AgentTool[Identity, Map[String, Json]] = AgentTool.dynamic(
+    toolName = definition.name,
+    toolDescription = definition.description,
+    toolSchema = ApiSchema(
+      `type` = Some(List(SchemaType.Object)),
+      properties = ListMap(
+        "technology" -> ApiSchema(`type` = Some(List(SchemaType.String)), description = Some("Name der zu bewertenden Technologie, z. B. 'Kubernetes'")),
+        "team_size"  -> ApiSchema(`type` = Some(List(SchemaType.Integer)), description = Some("Anzahl der Teammitglieder, die die Technologie betreiben/nutzen")),
+      ),
+      required = List("technology", "team_size"),
+    ),
+  )(handler)
