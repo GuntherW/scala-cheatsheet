@@ -20,13 +20,14 @@ Identität der Agenten kennt). Siehe Abschnitt
 
 | Zweck                                                             | Bibliothek                                                                                        |
 |-------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
-| Anthropic-/Claude-Client (Messages API, Tools, Structured Output) | [sttp-ai](https://sttp-ai.softwaremill.com/) (`claude`-Modul, `ClaudeSyncClient`)                 |
+| Anthropic-/Claude-Client (Messages API, Tools, Structured Output) | [sttp-ai](https://sttp-ai.softwaremill.com/) (`claude`-Modul, `ClaudeClient` + `Agent`-Loop)      |
+| Interceptoren (Logging, Token-/Kosten-Tracking, Budgets)          | [sttp-ai](https://sttp-ai.softwaremill.com/agents/interceptors.html) `core`-Modul (`AgentInterceptor`, transitiv über `claude`) |
 | JSON-Serialisierung/-Deserialisierung                             | [circe](https://circe.github.io/circe/) (bringt `sttp-ai` bereits mit, keine eigene Abhängigkeit) |
 | JSON-Schema-Ableitung für Structured Output                       | [tapir](https://tapir.softwaremill.com/) `Schema` (bringt `sttp-ai` bereits mit)                  |
 | Dateisystemzugriff (`output/`-Ordner)                             | [os-lib](https://github.com/com-lihaoyi/os-lib)                                                   |
 | `.env`-Datei einlesen                                             | eigene, simple Implementierung (`object Env` in `AnthropicClient.scala`, siehe unten)             |
 | Nebenläufigkeit (paralleles Ausführen der Worker)                 | [ox](https://ox.softwaremill.com/) (`par`, strukturierte Nebenläufigkeit auf Virtual Threads)     |
-| Tests (Plan-Validierung/Executor-Logik)                           | [MUnit](https://scalameta.org/munit/) (`scala-cli test .`)                                        |
+| Tests (Plan-Validierung/Executor-Logik, Interceptoren)            | [MUnit](https://scalameta.org/munit/) (`scala-cli test .`)                                        |
 | Build/Run ohne sbt-Projekt                                        | `scala-cli` mit `//> using` Direktiven                                                            |
 
 Keine sbt-`build.sbt` nötig - alle Abhängigkeiten werden per Direktive in
@@ -147,7 +148,9 @@ flowchart TD
     F --> G[output/*.md]
 
     subgraph Infrastruktur
-        H[AnthropicClient] -. ClaudeSyncClient .-> I[(Anthropic API)]
+        H[AnthropicClient] -. ClaudeClient + SyncBackend .-> I[(Anthropic API / Router)]
+        H -. baut .-> AG[sttp-ai Agent-Loop + Interceptoren]
+        AG -. Logging/Usage/Budget .-> INT[Interceptors.scala]
         H -. circe + tapir .-> J[JSON De/Serialisierung + Structured-Output-Schema]
     end
     C -.-> H
@@ -156,16 +159,61 @@ flowchart TD
     P -.-> H
 ```
 
+## Interceptoren: Logging, Usage-Tracking, Budget
+
+sttp-ai bringt für den generischen Agent-Loop (`sttp.ai.core.agent.Agent`,
+erzeugt via `AgentBuilder`) das Konzept der **Interceptoren**
+(`AgentInterceptor`) mit - Middleware, die sich onion-style um jede
+Iteration, jeden LLM-Call und jeden Tool-Aufruf legt (siehe
+[sttp-ai-Doku](https://sttp-ai.softwaremill.com/agents/interceptors.html)).
+Dieses Projekt nutzt sie für genau die Dinge, die für ein Lernprojekt
+rund um Kosten/Tokenverbrauch interessant sind:
+
+| Interceptor                                          | Zweck                                                                                                     |
+|-------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
+| `LoggingInterceptor` (sttp-ai)                       | Ersetzt das frühere handgeschriebene `[LLM:<Aufrufer>] ...`-Logging (`Interceptors.loggingFor`).            |
+| `UsageTrackingInterceptor` (dieses Projekt)          | Schreibt Tokens/Modell/Dauer jedes LLM-Calls in einen pipeline-weiten `UsageCollector`.                     |
+| `BudgetInterceptor` (sttp-ai)                        | Generöses Token-Limit pro Agent-Aufruf (`Interceptors.Pricing.perCallTokenBudget`) als Sicherheitsnetz.     |
+
+Jeder Agent (inkl. `AgentPlanner`) bekommt diesen Interceptor-Stack über
+`AnthropicClient.buildAgent`/`buildStructuredAgent` mit - siehe
+`Interceptors.commonInterceptors`. Am Ende einer Pipeline liest der
+`Orchestrator` aus dem geteilten `AnthropicClient.usageCollector` einen
+Gesamt-Report (Tokens, geschätzte Kosten, Dauer je Agent + Planner), der
+sowohl auf der Konsole ausgegeben als auch nach
+`output/99_usage_report.md` geschrieben wird.
+
+**Warum ein eigenes `AgentBackend` statt der eingebauten `ClaudeAgent`-Fabrik
+von sttp-ai?** `ClaudeAgent.synchronous(...)` konvertiert jedes Tool
+zwingend zu einem client-seitigen `Tool.CustomRaw` - das server-seitige
+`web_search`-Tool des Fact-Researcher lässt sich darüber nicht abbilden.
+`AgentBackend[F]` ist aber ein öffentliches sttp-ai-Trait; `ClaudeToolLoopBackend`
+(`AgentBackends.scala`) implementiert es selbst und streut `web_search`
+zusätzlich in die Tool-Liste ein - der Interceptor-Mechanismus selbst
+(`LoopAgent.aroundLlmCall(...)`) ist davon unabhängig und funktioniert für
+alle Agenten gleich, unabhängig davon, welches Tool sie nutzen.
+
+**Kosten sind Schätzwerte:** `Interceptors.Pricing.table` enthält
+öffentliche, ungefähre Anthropic-Listenpreise - keine verbindlichen Preise
+des hier genutzten Requesty-Routers, der abweichend abrechnen und eine
+andere `model`-Id zurückmelden kann als die in `sttp.ai.claude.models.ClaudeModel`
+gelisteten. Taucht im Usage-Report ein "kein Preiseintrag für Modell..."-
+Hinweis auf, sollte `Interceptors.Pricing` um die tatsächlich gemeldete
+Modell-Id ergänzt werden.
+
 ## Client-seitiges Tool: der Tool-Use-Loop im Detail
 
 Während `web_search` komplett vom Anthropic-Server ausgeführt wird (ein
 einziger Request genügt), muss ein **client-seitiges (custom) Tool** wie
 `calculate_tco` von uns selbst ausgeführt werden. Das erzeugt einen
-Mehrschritt-Dialog ("Multi-Turn"). Beide Fälle - server-seitig und
-client-seitig - werden von EINER einzigen Methode abgedeckt,
-`AnthropicClient.chat`: Ein reiner `web_search`-Call terminiert die
-Schleife bereits nach dem ersten Turn (`stopReason != "tool_use"`), ein
-Custom-Tool wie `calculate_tco` löst hingegen den Multi-Turn-Loop aus:
+Mehrschritt-Dialog ("Multi-Turn"). Diesen Loop übernimmt seit der
+Umstellung auf sttp-ai-Interceptoren nicht mehr eine eigene, handgeschriebene
+Methode, sondern der generische Agent-Loop von sttp-ai
+(`sttp.ai.core.agent.LoopAgent`, erzeugt über `AnthropicClient.buildAgent`
+und das projekteigene `ClaudeToolLoopBackend`, siehe `AgentBackends.scala`):
+ein reiner `web_search`-Call terminiert die Schleife bereits nach dem
+ersten Turn (keine `ToolCall`s in der Antwort), ein Custom-Tool wie
+`calculate_tco` löst hingegen den Multi-Turn-Loop aus:
 
 ```mermaid
 sequenceDiagram
@@ -182,21 +230,24 @@ sequenceDiagram
 
 Wichtige Punkte:
 
-- Das Tool wird per **JSON-Schema** (`ToolInputSchema`/`PropertySchema` aus
-  `sttp.ai.claude.models`) definiert - das Modell entscheidet selbst, *ob*
-  und *mit welchen Parametern* es aufgerufen wird.
+- Das Tool wird per **JSON-Schema** (`sttp.apispec.Schema`, siehe
+  `CalculateTcoTool.agentTool`) definiert und als
+  `sttp.ai.core.agent.AgentTool` an den Agent-Loop übergeben - das Modell
+  entscheidet selbst, *ob* und *mit welchen Parametern* es aufgerufen wird.
 - `sttp-ai` bildet Anthropic's `content`-Feld bereits als typisiertes
   ADT (`sealed trait ContentBlock` mit `Text`, `ToolUse`, `ToolResult`, ...)
   ab - ein eigener `RawJson`-Wrapper wie in der Vorgänger-Implementierung
   entfällt dadurch vollständig.
 - Die Original-Antwort des Modells (inkl. `ToolUse`-Block) muss als
   `assistant`-Nachricht unverändert in die Historie zurück, damit das
-  Modell im nächsten Turn weiß, worauf sich das `ToolResult` bezieht (siehe
+  Modell im nächsten Turn weiß, worauf sich das `ToolResult` bezieht - das
+  übernimmt `ClaudeToolLoopBackend`/`LoopAgent` automatisch (siehe
   aber Stolperstein zu `Thinking`-Blöcken unten).
 - Das `ToolResult` wird über die `toolUseId` dem passenden Aufruf
   zugeordnet.
-- Die Schleife (`AnthropicClient.chat`) läuft so lange, bis
-  `stopReason != "tool_use"` ist.
+- Die Schleife (`sttp.ai.core.agent.LoopAgent`) läuft so lange, bis eine
+  Antwort ohne Tool-Aufrufe zurückkommt (oder ein Interceptor/die
+  `maxIterations`-Grenze den Loop vorzeitig, aber geordnet beendet).
 
 **Hinweis zur Kombination von Tool-Typen:** Mischt man in einer Anfrage
 server-seitige (`web_search`) und client-seitige Tools, erwartet dieser
@@ -207,10 +258,12 @@ selbst beantworten müssten. Das können wir aber nicht, da uns keine eigene
 Websuch-Implementierung zur Verfügung steht (das wurde per Smoke-Test
 verifiziert: das Modell fordert `web_search` per `ToolUse` an, wir können
 nur mit "kein Handler registriert" antworten - die Suche findet dann de
-facto nicht statt). `AnthropicClient.chat` verbietet den Mix deshalb
-bewusst per `require`. Deshalb nutzt der Risk-Analyst in diesem Beispiel
-bewusst ausschließlich `calculate_tco`, um den Ablauf klar isoliert zu
-zeigen.
+facto nicht statt). Anders als die frühere, handgeschriebene `chat`-Methode
+erzwingt `ClaudeToolLoopBackend` diesen Ausschluss nicht mehr per `require`
+(`includeWebSearch` und `clientTools` sind dort technisch unabhängig
+kombinierbar) - die Router-Einschränkung selbst besteht aber unverändert
+fort. Deshalb nutzt der Risk-Analyst in diesem Beispiel weiterhin bewusst
+ausschließlich `calculate_tco`, um den Ablauf klar isoliert zu zeigen.
 
 
 ## Planning-Phase: Der Orchestrator-Agent
@@ -228,19 +281,24 @@ Technisch genutzt wird Anthropics natives **Structured Output**
 (`output_config`/`json_schema`), NICHT Tool-Use:
 
 ```scala
-def chatStructured[T: Schema: Decoder](model: String, systemPrompt: String, userMessage: String): T =
-  client.createMessageAs[T](MessageRequest.withSystem(model, systemPrompt, List(Message.user(userMessage)), maxTokens))
+def buildStructuredAgent[T: {Schema, Codec}](caller: String, model: String, systemPrompt: String): Agent[Identity, String, T] =
+  AgentBuilder[Identity, ClaudeModel.CustomClaudeModel](cfg => ClaudeToolLoopBackend(client, model, includeWebSearch = false, cfg))
+    .systemPrompt(systemPrompt)
+    .interceptors(commonInterceptors(caller))
+    .deriveResponseSchema[T]
+    .build
 ```
 
 `sttp-ai` leitet das JSON-Schema automatisch aus der Case-Class `T` ab (via `tapir.Schema`, `derives Schema`) und parst
 die Antwort direkt zu `T`
-(`circe.Decoder`, `derives Decoder`). Der entscheidende Unterschied zu
-Tool-Use (siehe unten, `AgentRiskAnalyst`/`calculate_tco`): Bei Tool-Use KANN
+(`circe.Codec`, `derives Codec` - ein bidirektionaler Codec ist Voraussetzung für `deriveResponseSchema`, auch wenn hier
+nur decodiert wird). Der entscheidende Unterschied zu
+Tool-Use (siehe oben, `AgentRiskAnalyst`/`calculate_tco`): Bei Tool-Use KANN
 das Modell trotz Tool-Definition mit einem reinen Text-Turn antworten (`stopReason != "tool_use"`) - Structured Output
 erzwingt dagegen auf
 API-Ebene, dass die GESAMTE Antwort exakt dem Schema entspricht. Ein
-Multi-Turn-Loop wie bei `chat` ist daher nicht nötig, ein
-einzelner Request genügt (siehe `AnthropicClient.chatStructured`).
+Multi-Turn-Loop ist daher nicht nötig, ein
+einzelner Request genügt (siehe `AnthropicClient.buildStructuredAgent`, genutzt von `AgentPlanner.plan`).
 
 **Warum das trotzdem validiert werden muss:** Ein LLM-Aufruf ist nie
 hundertprozentig verlässlich - selbst mit erzwungenem Schema kann der *Inhalt* des Plans falsch sein (unbekannte
@@ -351,10 +409,10 @@ Error-Handling für beide Zweige einzeln.
 - **Structured Output**: Anthropics natives Feature, die komplette
   Modell-Antwort auf ein vorgegebenes JSON-Schema zu erzwingen (`output_config`/`json_schema` in der Messages API). In
   `sttp-ai`
-  abgebildet über `ClaudeSyncClient.createMessageAs[T]`
-  (`AnthropicClient.chatStructured`) - das Schema wird automatisch aus
+  abgebildet über `AgentBuilder.deriveResponseSchema[T]`
+  (`AnthropicClient.buildStructuredAgent`) - das Schema wird automatisch aus
   einer Scala-Case-Class abgeleitet (`derives Schema` via tapir), die
-  Antwort direkt zu dieser Case-Class geparst (`derives Decoder` via
+  Antwort direkt zu dieser Case-Class geparst (`derives Codec` via
   circe). Im Unterschied zu Tool-Use genügt dafür immer ein einzelner
   Request (kein `tool_use`/`tool_result`-Umweg), da das Modell gar nicht
   anders antworten kann als schemakonform. Genutzt vom
@@ -389,19 +447,24 @@ Error-Handling für beide Zweige einzeln.
   ausgeführt werden können. Man unterscheidet:
 - **Server-seitiges Tool**: Ein Tool wie `web_search_20250305`, das direkt
   vom Anthropic-Server ausgeführt wird - der Client muss den Tool-Aufruf
-  nicht selbst abfangen und beantworten. Ein einzelner Request genügt (`AnthropicClient.chat`).
+  nicht selbst abfangen und beantworten. Ein einzelner Request genügt (`ClaudeToolLoopBackend`, siehe `AgentBackends.scala`).
 - **Client-seitiges (custom) Tool**: Ein selbst definiertes Tool (z. B.
-  `calculate_tco` beim Risk-Analyst) mit eigenem JSON-Schema (`ToolInputSchema`). Das Modell liefert nur den *Wunsch*,
-  das
+  `calculate_tco` beim Risk-Analyst), an den Agent-Loop übergeben als
+  `sttp.ai.core.agent.AgentTool` (`CalculateTcoTool.agentTool`). Das Modell liefert nur den *Wunsch*, das
   Tool
-  aufzurufen (`stopReason == "tool_use"`), zurück - die eigentliche
+  aufzurufen (`ToolCall` in der `AgentResponse`), zurück - die eigentliche
   Ausführung übernimmt eine lokale Handler-Funktion (`CalculateTcoTool.handler`). Das Ergebnis muss danach explizit als
   `ContentBlock.ToolResult` an das Modell zurückgesendet werden (Multi-Turn-Dialog,
-  `AnthropicClient.chat`).
+  vom generischen `sttp.ai.core.agent.LoopAgent` übernommen).
 - **Tool-Handler**: Die lokale Funktion, die ein client-seitiges Tool
-  tatsächlich ausführt (hier: `CalculateTcoTool.handler` in
-  `AgentRiskAnalyst.scala`). Bekommt die vom Modell gewählten Parameter als
+  tatsächlich ausführt (hier: `CalculateTcoTool.handler`, genutzt von
+  `CalculateTcoTool.agentTool` in `AgentRiskAnalyst.scala`). Bekommt die vom Modell gewählten Parameter als
   `Map[String, io.circe.Json]` und liefert einen String (meist JSON) als Ergebnis zurück.
+- **Interceptor** (`sttp.ai.core.agent.AgentInterceptor`): Middleware um
+  den Agent-Loop, die onion-style Iterationen/LLM-Calls/Tool-Aufrufe
+  umschließt (siehe Abschnitt "Interceptoren" oben) - genutzt für Logging
+  (`LoggingInterceptor`), Token-/Kosten-Tracking (`UsageTrackingInterceptor`,
+  dieses Projekt) und Budgets (`BudgetInterceptor`).
 - **`ToolUse` / `ToolResult` Block**: Content-Block-Typen im
   Anthropic-Message-Format (in `sttp-ai` als `ContentBlock.ToolUse` /
   `ContentBlock.ToolResult` modelliert). `ToolUse` = Aufrufwunsch des
@@ -417,19 +480,22 @@ Error-Handling für beide Zweige einzeln.
   Liste von Content-Blöcken unterschiedlichen Typs (`Text`, `ServerToolUse`,
   `WebSearchToolResult`, ...), in `sttp-ai` als `sealed trait ContentBlock`
   mit Fallklassen abgebildet. Für den finalen Bericht werden nur die
-  `Text`-Blöcke extrahiert (`AnthropicClient.chat`).
+  `Text`-Blöcke extrahiert (`ClaudeToolLoopBackend.sendRequest`, siehe `AgentBackends.scala`).
 - **Codec (circe)**: Typklassen-basierte Serialisierungs-/
   Deserialisierungslogik für einen bestimmten Typ (`Codec[T]` bzw.
   `Codec.AsObject[T]`), von `sttp-ai` selbst für alle API-Modelle
   bereitgestellt bzw. per `derives Codec.AsObject` für eigene Typen (`CalculateTcoInput`/`CalculateTcoResult` in
-  `AgentRiskAnalyst.scala`)
+  `CalculateTcoTool.scala`)
   ableitbar.
-- **`ClaudeSyncClient` (sttp-ai)**: Der blockierende, hochsprachliche
-  Claude-Client aus `sttp-ai`, der Requests direkt als Response-Werte
-  zurückgibt und im Fehlerfall eine `ClaudeException`-Unterklasse wirft (statt `Either`, wie es der rohe `ClaudeClient`
-  täte). Nutzt intern
-  weiterhin `sttp-client4` als HTTP-Backend (`DefaultSyncBackend`, basiert
-  auf `java.net.http.HttpClient`).
+- **`ClaudeClient` / `SyncBackend` (sttp-ai)**: `ClaudeClient` baut Requests
+  gegen die Anthropic Messages API nur noch (stateless, gibt `Either`
+  zurück); das eigentliche Senden übernimmt ein separat gehaltener
+  `sttp.client4.SyncBackend` (`AnthropicClient.backend`, gewrappt in
+  `RetryingBackend` für automatische Retries bei transienten Fehlern). Diese
+  Trennung ist Voraussetzung dafür, dass der Interceptor-fähige Agent-Loop
+  (`Agent.run(in)(backend)`) den Backend explizit entgegennehmen kann - die
+  bequemere, aber dafür ungeeignete Alternative `ClaudeSyncClient` versteckt
+  den Backend intern.
 - **Virtual Thread**: Ein von der JVM (ab JDK 21) verwalteter, extrem
   leichtgewichtiger Thread. Im Gegensatz zu klassischen Plattform-Threads
   können davon Millionen gleichzeitig existieren, ohne dass jeder ein
@@ -441,22 +507,25 @@ Error-Handling für beide Zweige einzeln.
 ```
 multi-agent-agentic-orchestrator/
 ├── project.scala             # scala-cli Direktiven: Scala-Version, Abhängigkeiten & Test-Framework (MUnit)
-├── AnthropicClient.scala     # Wrapper um sttp-ai's ClaudeSyncClient + Logging + Tool-Use-Loop + Structured Output
+├── AnthropicClient.scala     # ClaudeClient + SyncBackend, buildAgent/buildStructuredAgent (Interceptor-Stack), usageCollector
 │                             #   + object Env am Dateiende: liest ANTHROPIC_AUTH_TOKEN/ANTHROPIC_API_KEY aus .env (via os-lib)
-├── Agent.scala               # Basisklasse Agent (kapselt Model-Call + Tools)
+├── AgentBackends.scala       # ClaudeToolLoopBackend: eigenes sttp.ai.core.agent.AgentBackend (client-seitige Tools + optional web_search)
+├── Interceptors.scala        # Logging-/Usage-Tracking-/Budget-Interceptoren + PriceTable (Kostenschätzung)
+├── Agent.scala               # Basisklasse Agent (kapselt Model-Call + Tools über AnthropicClient.buildAgent)
 ├── AgentSpec.scala           # Generische Agenten-Beschreibung (id, hardDependsOn, isMandatory, execute) für Registry/Planner
 ├── AgentRegistry.scala       # Zentrale Liste aller AgentSpecs - einziger Ort, um neue Agenten einzubinden
 ├── AgentFactResearcher.scala # Worker (web_search, server-seitig) + eigene AgentSpec
 ├── AgentRiskAnalyst.scala    # Worker (calculate_tco, client-seitiges Custom-Tool) + eigene AgentSpec
-├── CalculateTcoTool.scala    # Definition & Ausführung des calculate_tco-Tools (Ein-/Ausgabe-Typen, JSON-Schema, Handler)
+├── CalculateTcoTool.scala    # Definition & Ausführung des calculate_tco-Tools (Ein-/Ausgabe-Typen, JSON-Schema, Handler, AgentTool)
 ├── AgentSynthesis.scala      # Aggregator + eigene AgentSpec (hardDependsOn beide Worker, isMandatory=true)
 ├── ExecutionPlan.scala       # Case-Class für den Planungs-Output (Structured Output Schema)
 ├── AgentPlanner.scala   # Planning-Phase (agentisch): LLM entscheidet den ExecutionPlan
 ├── PlanValidator.scala       # Validiert/repariert den Plan (reine Funktion, ohne LLM-Call)
 ├── PlanValidatorTest.test.scala # MUnit-Tests für PlanValidator (scala-cli test .)
-├── Orchestrator.scala        # Execution-Phase (generisch): führt den validierten Plan Level-für-Level aus (ox.par)
+├── InterceptorsTest.test.scala  # MUnit-Tests für Interceptors.scala (ohne echten API-Call)
+├── Orchestrator.scala        # Execution-Phase (generisch): führt den validierten Plan Level-für-Level aus (ox.par), aggregiert Usage-Report
 ├── Main.scala                # Einstiegspunkt (@main), schreibt output/*.md generisch via os-lib
-├── output/                   # wird beim Ausführen erzeugt (Zwischen- & Endergebnisse)
+├── output/                   # wird beim Ausführen erzeugt (Zwischen- & Endergebnisse, inkl. 99_usage_report.md)
 └── README.md
 ```
 
@@ -472,7 +541,9 @@ Ohne Argument wird ein Standardthema verwendet. Die Ergebnisse landen
 generisch für jeden vom Orchestrator-Agent tatsächlich geplanten Agenten
 in `output/<Nummer>_<agent-id>.md` (z. B. `01_Fact-Researcher.md`,
 `02_Risk-Analyst.md`, `03_Synthesis-Agent.md`) sowie im finalen Bericht
-`output/99_final_report.md`.
+`output/99_final_report.md`. Zusätzlich landet ein Token-/Kosten-Report
+über Planner + alle ausgeführten Agenten in `output/99_usage_report.md`
+(siehe Abschnitt "Interceptoren" oben).
 
 ## Credentials
 
@@ -506,7 +577,8 @@ jedoch nur mit einem einzigen Feld ab (`thinking: String`, keine
 `signature`) - eine Signatur kann also gar nicht transportiert werden.
 Sendet man einen (gelegentlich fast leeren) `thinking`-Block unverändert
 zurück, lehnt die API den Request mit `"each thinking block must contain
-thinking"` ab. Workaround in `AnthropicClient.chat`: leere
+thinking"` ab. Workaround in `ClaudeToolLoopBackend.buildMessages` (siehe
+`AgentBackends.scala`): leere
 `Thinking`-Blöcke werden vor dem Zurücksenden herausgefiltert. Das behebt
 das beobachtete Fehlerbild, ändert aber nichts daran, dass diese
 sttp-ai-Version für Modelle mit **erzwungener** Signatur-Prüfung bei
@@ -520,8 +592,11 @@ NICHT wie ein automatisch vom Server aufgelöstes Tool, sondern wie ein
 ganz normales `ContentBlock.ToolUse` (Name `web_search`), das der Client
 selbst per `ToolResult` beantworten müsste - das haben wir per Smoke-Test
 verifiziert. Da uns keine eigene Websuch-Implementierung zur Verfügung
-steht, verbietet `AnthropicClient.chat` diesen Mix bewusst per `require`
-(statt still zu degradieren). Deshalb nutzt der Risk-Analyst in diesem
+steht, würde ein solcher `ToolCall` im generischen Agent-Loop nur mit
+"Tool not found: web_search" beantwortet - `ClaudeToolLoopBackend`
+erzwingt den Ausschluss (anders als die frühere `chat`-Methode) nicht mehr
+per `require`, die Agenten dieses Projekts kombinieren `useWebSearch` und
+`clientTools` aber weiterhin bewusst nicht. Deshalb nutzt der Risk-Analyst in diesem
 Beispiel bewusst ausschließlich `calculate_tco`.
 
 **4. Eigene Tool-Eingabe-/Ergebnis-Typen bleiben nötig:** `sttp-ai` liefert
@@ -533,15 +608,16 @@ für snake_case-JSON-Feldnamen bei camelCase-Scala-Feldern) - `circe` ist
 als Abhängigkeit von `sttp-ai` bereits transitiv vorhanden, es muss keine
 eigene JSON-Bibliothek mehr eingebunden werden.
 
-**5. Structured Output (`createMessageAs`) funktioniert über den
+**5. Structured Output (`createMessageAs`/`deriveResponseSchema`) funktioniert über den
 Requesty-Router:** Vor der Umsetzung des `AgentPlanner` wurde per
 Smoke-Test verifiziert, dass Anthropics natives `output_config`/
-`json_schema`-Feature (`ClaudeSyncClient.createMessageAs[T]`) auch über
+`json_schema`-Feature (ursprünglich getestet über `ClaudeSyncClient.createMessageAs[T]`, heute genutzt über
+`AgentBuilder.deriveResponseSchema[T]`, siehe `AnthropicClient.buildStructuredAgent`) auch über
 `router.eu.requesty.ai` funktioniert (nicht nur gegen die offizielle
 `api.anthropic.com`) - keine Selbstverständlichkeit bei einem Proxy/Router,
 der neuere API-Felder ggf. nicht durchreicht. Falls das in einer anderen
 Umgebung/mit einem anderen Router nicht der Fall sein sollte: Ein
 Fallback auf Tool-Use (analog `calculate_tco`, mit demselben
-`ExecutionPlan`-Schema als `Tool.Custom`-Definition statt
-`OutputFormat.JsonSchema`) wäre strukturell einfach nachrüstbar, siehe
-`AnthropicClient.chat`.
+`ExecutionPlan`-Schema als eigenes `AgentTool` statt
+`deriveResponseSchema`) wäre strukturell einfach nachrüstbar, siehe
+`AnthropicClient.buildAgent`.
