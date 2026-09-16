@@ -19,7 +19,7 @@ case class AuthenticationError(code: Int) derives ConfiguredCodec
 type User = String
 
 @main
-def tapirNettyFutureServer2(): Unit = {
+def tapirNettyFutureServer2(): Unit =
 
   def authenticate(token: AuthenticationToken): Future[Either[AuthenticationError, User]] = Future.successful(
     token.value match
@@ -99,7 +99,6 @@ def tapirNettyFutureServer2(): Unit = {
       .start(),
     Duration.Inf
   )
-}
 
 object Database:
   var kittens: List[Kitten] = List(

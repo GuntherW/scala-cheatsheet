@@ -10,7 +10,7 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 
 @main
-def tapirNettyFutureServer(): Unit = {
+def tapirNettyFutureServer(): Unit =
 
   // One endpoint on GET /hello with query parameter `name`
   val helloWorldEndpoint: PublicEndpoint[String, Unit, String, Any] =
@@ -41,7 +41,7 @@ def tapirNettyFutureServer(): Unit = {
   // Bind and start to accept incoming connections.
   val port = serverBinding.port
   val host = serverBinding.hostName
-  println(s"Server started at port = ${serverBinding.port}")
+  println(s"Server started at port = $port")
 
   val backend = DefaultSyncBackend()
   val badUrl  = uri"http://$host:$port/bad_url"
@@ -53,10 +53,9 @@ def tapirNettyFutureServer(): Unit = {
   val allGood = uri"http://$host:$port/hello?name=Netty"
   val body    = basicRequest.response(asStringAlways).get(allGood).send(backend).body
 
-  println("Got result: " + body)
+  println(s"Got result: $body")
   assert(body == "Hello, Netty!")
   assert(port == declaredPort, "Ports don't match")
   assert(host == declaredHost, "Hosts don't match")
 
   Await.result(serverBinding.stop(), Duration.Inf)
-}
