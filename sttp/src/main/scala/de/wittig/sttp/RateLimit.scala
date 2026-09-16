@@ -17,7 +17,7 @@ import scala.concurrent.duration.Duration
 class RateLimitingBackendWrapper[F[_], P](
     rateLimiter: RateLimiter,
     delegate: GenericBackend[F, P]
-)(implicit monadError: MonadError[F])
+)(using monadError: MonadError[F])
     extends DelegateBackend(delegate):
 
   override def send[T](request: GenericRequest[T, P & Effect[F]]): F[Response[T]] =
@@ -34,7 +34,7 @@ object RateLimitingBackendWrapper:
       rateLimiter: RateLimiter,
       service: => F[T]
   )(using monadError: MonadError[F]): F[T] =
-    import sttp.monad.syntax._
+    import sttp.monad.syntax.*
     monadError.blocking(RateLimiter.waitForPermission(rateLimiter)).flatMap(_ => service)
 
 @main

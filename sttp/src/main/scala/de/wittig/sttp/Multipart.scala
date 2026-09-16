@@ -1,12 +1,12 @@
 package de.wittig.sttp
 
 import sttp.client4.*
-import java.nio.file.Files
-import java.nio.file.Path
 import sttp.model.MediaType
 
+import de.wittig.sttp.TempFiles.withTemporaryFile
+
 @main
-def main(): Unit =
+def multipartDemo(): Unit =
 
   withTemporaryFile("Hello, World!".getBytes) { file1 =>
     withTemporaryFile("<img>".getBytes) { file2 =>
@@ -27,13 +27,4 @@ def main(): Unit =
       // the resposne body should contain a "files" and "form" fields with the uploaded multipart data
       println(response.body)
     }
-  }
-
-  def withTemporaryFile[T](data: Array[Byte])(f: Path => T): T = {
-    val file = Files.createTempFile("sttp", "demo")
-    try
-      Files.write(file, data)
-      f(file)
-    finally
-      val _ = Files.deleteIfExists(file)
   }

@@ -12,8 +12,7 @@ def githubSimple(): Unit =
 
   val backend = DefaultSyncBackend()
   val query   = "language:scala"
-  val sort    = Some("stars")
-//  val sort    = None
+  val sort    = Some("stars") // Alternative: None, falls unsortiert gesucht werden soll
 
   val request = basicRequest
     .get(uri"https://api.github.com/search/repositories?q=$query&sort=$sort")

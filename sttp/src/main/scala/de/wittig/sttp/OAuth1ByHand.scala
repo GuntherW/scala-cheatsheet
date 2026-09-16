@@ -1,5 +1,5 @@
 package de.wittig.sttp
-import sttp.client3.{Request, *}
+import sttp.client4.{Request, *}
 import sttp.model.*
 import java.net.URLEncoder
 
@@ -13,7 +13,7 @@ import scala.util.Random
 @main
 def oAuth1ByHand(): Unit =
 
-  val backend = HttpURLConnectionBackend()
+  val backend = DefaultSyncBackend()
 
   val consumerKey        = "yourConsumerKey"
   val accessToken        = "yourAccessToken"
@@ -39,14 +39,14 @@ class Signer(consumerKey: String, accessToken: String, consumerPrivateKey: Strin
   private val secretKeySpec = new SecretKeySpec(signingKey.getBytes("UTF-8"), "HmacSHA1")
   mac.init(secretKeySpec)
 
-  def sign[L, A](request: Request[Either[L, A], Any]): Request[Either[L, A], Any] =
+  def sign[L, A](request: Request[Either[L, A]]): Request[Either[L, A]] =
     val method              = request.method
     val oauthParams         = generateOAuthParams()
     val baseString          = createBaseString(method.method, request.uri, oauthParams)
     val signature           = generateSignature(baseString, secretKeySpec)
     val signedParams        = oauthParams + ("oauth_signature" -> signature)
     val authorizationHeader = "OAuth " + generateAuthorizationHeader(signedParams)
-    request.copy(headers = request.headers :+ Header("Authorization", authorizationHeader))
+    request.header(Header("Authorization", authorizationHeader))
 
   private def generateOAuthParams(): Map[String, String] =
     Map(

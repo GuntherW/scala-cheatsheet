@@ -2,8 +2,7 @@ package de.wittig.sttp
 
 import sttp.client4.*
 
-import java.nio.file.Files
-import java.nio.file.Path
+import de.wittig.sttp.TempFiles.withTemporaryFile
 
 @main
 def uploadFile(): Unit =
@@ -17,13 +16,4 @@ def uploadFile(): Unit =
 
     // the uploaded data should be echoed in the "data" field of the response body
     println(response.body)
-  }
-
-  def withTemporaryFile[T](data: Array[Byte])(f: Path => T): T = {
-    val file = Files.createTempFile("sttp", "demo")
-    try
-      Files.write(file, data)
-      f(file)
-    finally
-      val _ = Files.deleteIfExists(file)
   }
