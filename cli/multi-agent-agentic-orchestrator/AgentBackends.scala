@@ -13,14 +13,18 @@ import sttp.shared.Identity
   *
   * '''Warum nicht einfach `ClaudeAgent.synchronous(...)` (die eingebaute sttp-ai-Fabrik für Claude-Agenten) nutzen?''' NICHT weil server- und client-seitige Tools sich auf HTTP-/JSON-Ebene
   * grundsätzlich unterscheiden würden - in der Anthropic Messages API landen beide schlicht als Einträge im selben `tools`-Array, und genau das machen wir unten auch (`convertedTools` mischt
-  * `Tool.WebSearch.default` mit den zu `Tool.CustomRaw` konvertierten `AgentTool`s). Der eigentliche Grund liegt konkret im sttp-ai-Code:
+  * `Tool.WebSearch.default` mit den zu `Tool.CustomRaw` konvertierten `AgentTool`s). Der eigentliche Grund ist simpler und liegt nicht an einer fehlenden Fallunterscheidung, sondern an einem
+  * fehlenden Erweiterungspunkt in sttp-ais öffentlicher Builder-API:
   *
-  *   1. `sttp.ai.claude.models.Tool` ist ein Sum-Type mit unterschiedlichen Shapes: `Tool.WebSearch` hat gar kein `inputSchema`-Feld (Anthropic kennt das Tool schon), sondern eigene Felder
-  *      (`maxUses`, `allowedDomains`, ...) und einen eigenen Wire-Typ (`"web_search_20250305"`) - strukturell etwas anderes als `Tool.Custom`/`Tool.CustomRaw`.
-  *   1. Die eingebaute, `private[claude]` `ClaudeAgentBackend.convertTool` bildet JEDES registrierte `AgentTool[F, _]` unconditional auf `Tool.CustomRaw` ab - es gibt dort keinen Zweig, der
-  *      stattdessen `Tool.WebSearch` erzeugen könnte. `AgentTool[F, T]` selbst zwingt außerdem zu zwei Dingen: einem JSON-Schema UND einer lokal auszuführenden Funktion (`execute: T => F[String]`).
-  *      `web_search` hat aber keins von beidem - kein Schema (siehe Punkt 1) und keine lokale Ausführung (der Server löst das Tool komplett selbst auf, wir bekommen dafür nie einen `ToolCall` zum
-  *      Beantworten). Es passt also schlicht nicht in die `AgentTool`-Abstraktion, und die eingebaute Fabrik bietet keinen anderen Erweiterungspunkt an.
+  *   - `AgentBuilder`/`AgentConfig` bieten für Tools ausschließlich `.tools(Seq[AgentTool[F, _]])`/`.addTool(...)` an - beide ausschließlich typisiert auf `AgentTool[F, _]`. Es gibt dort KEIN
+  *     weiteres Feld/keine weitere Methode, um zusätzlich einen rohen, providerspezifischen `Tool`-Wert (wie `Tool.WebSearch`) in den Request zu bekommen.
+  *   - Die eingebaute, `private[claude]` `ClaudeAgentBackend.convertTool` verarbeitet folgerichtig ausschließlich `config.userTools` (unsere eigenen, client-seitigen Tools) - sie muss `web_search`
+  *     nie behandeln, weil `web_search` dort gar nicht erst hineingelangen kann: `AgentTool[F, T]` zwingt zu einem JSON-Schema UND einer lokal auszuführenden Funktion (`execute: T => F[String]`),
+  *     `web_search` hat aber keins von beidem (kein Schema nötig, keine lokale Ausführung, da Anthropic das Tool komplett serverseitig auflöst und wir dafür nie einen `ToolCall` zum Beantworten
+  *     bekommen). `Tool.WebSearch` ist zudem strukturell ein anderer Fall des `Tool`-Sum-Types als `Tool.Custom`/`Tool.CustomRaw` (kein `inputSchema`-Feld, eigener Wire-Typ `"web_search_20250305"`).
+  *
+  * Kurz: Es fehlt schlicht ein Konfigurations-Hook für "zusätzliche, provider-native Tools neben den `AgentTool`s" - weder `AgentBuilder` noch `AgentConfig` bieten einen. Da `ClaudeAgentBackend`
+  * selbst `private[claude]` ist, können wir sie auch nicht erweitern/überschreiben, sondern müssen den Adapter komplett selbst schreiben.
   *
   * `AgentBackend[F]` ist dagegen ein öffentliches Trait (siehe sttp-ai-Doku "Interceptors": `LoopAgent` ruft `interceptor.aroundLlmCall(ctx)(agentBackend.sendRequest(...))` auf, unabhängig davon,
   * welche Tools der Backend in den Request packt) - wir können also eine eigene, schlanke Implementierung schreiben, die `Tool.WebSearch.default` direkt (nicht über `AgentTool`) einstreut, und

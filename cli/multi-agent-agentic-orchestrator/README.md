@@ -186,19 +186,26 @@ sowohl auf der Konsole ausgegeben als auch nach
 **Warum ein eigenes `AgentBackend` statt der eingebauten `ClaudeAgent`-Fabrik
 von sttp-ai?** NICHT weil server- und client-seitige Tools sich auf HTTP-/JSON-Ebene
 grundsätzlich unterscheiden würden - in der Messages API landen beide schlicht
-als Einträge im selben `tools`-Array. Der eigentliche Grund liegt konkret im
-sttp-ai-Code: `sttp.ai.claude.models.Tool` ist ein Sum-Type mit unterschiedlichen
-Shapes (`Tool.WebSearch` hat z. B. gar kein `inputSchema`-Feld, sondern eigene
-Felder wie `maxUses`/`allowedDomains` und einen eigenen Wire-Typ), und die
-eingebaute, `private[claude]` `ClaudeAgentBackend.convertTool` bildet JEDES
-registrierte `AgentTool[F, _]` unconditional auf `Tool.CustomRaw` ab - ohne
-Zweig, der stattdessen `Tool.WebSearch` erzeugen könnte. `AgentTool[F, T]`
-selbst zwingt außerdem zu einem JSON-Schema UND einer lokal auszuführenden
+als Einträge im selben `tools`-Array, und genau das machen wir unten auch
+(`ClaudeToolLoopBackend.convertedTools` mischt `Tool.WebSearch.default` mit den
+zu `Tool.CustomRaw` konvertierten `AgentTool`s). Der eigentliche Grund ist
+einfacher: `AgentBuilder`/`AgentConfig` bieten für Tools ausschließlich
+`.tools(Seq[AgentTool[F, _]])`/`.addTool(...)` an - beide ausschließlich
+typisiert auf `AgentTool[F, _]`. Es gibt dort KEIN weiteres Feld/keine weitere
+Methode, um zusätzlich einen rohen, providerspezifischen `Tool`-Wert (wie
+`Tool.WebSearch`) in den Request zu bekommen. Die eingebaute, `private[claude]`
+`ClaudeAgentBackend.convertTool` verarbeitet folgerichtig ausschließlich
+`config.userTools` (unsere eigenen, client-seitigen Tools) - sie muss
+`web_search` nie behandeln, weil es dort gar nicht erst hineingelangen kann:
+`AgentTool[F, T]` zwingt zu einem JSON-Schema UND einer lokal auszuführenden
 Funktion (`execute: T => F[String]`); `web_search` hat keins von beidem (kein
 Schema nötig, keine lokale Ausführung, da der Server das Tool komplett selbst
-auflöst und wir dafür nie einen `ToolCall` bekommen). `web_search` passt also
-schlicht nicht in die `AgentTool`-Abstraktion, und die eingebaute Fabrik bietet
-keinen anderen Erweiterungspunkt an. `AgentBackend[F]` ist aber ein öffentliches
+auflöst und wir dafür nie einen `ToolCall` bekommen) und ist zudem strukturell
+ein anderer Fall des `Tool`-Sum-Types (kein `inputSchema`-Feld, eigener
+Wire-Typ). Es fehlt also schlicht ein Konfigurations-Hook für "zusätzliche,
+provider-native Tools neben den `AgentTool`s" - weder `AgentBuilder` noch
+`AgentConfig` bieten einen, und `ClaudeAgentBackend` selbst ist `private[claude]`,
+lässt sich also auch nicht erweitern. `AgentBackend[F]` ist aber ein öffentliches
 sttp-ai-Trait; `ClaudeToolLoopBackend` (`AgentBackends.scala`) implementiert es
 selbst und streut `Tool.WebSearch.default` direkt (nicht über `AgentTool`) in
 die Tool-Liste ein - der Interceptor-Mechanismus selbst
