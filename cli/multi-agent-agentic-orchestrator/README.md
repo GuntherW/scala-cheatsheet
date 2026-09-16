@@ -195,11 +195,14 @@ diese Lücke zwar technisch schließen können, aber nur um den Preis, große
 Teile der eingebauten `ClaudeAgentBackend`-Logik (History-Aufbau,
 Tool-Konvertierung, Response-Mapping) zu duplizieren - für ein Tool, das
 ohnehin nie einen Multi-Turn-Loop braucht (siehe nächster Abschnitt). Diese
-zusätzliche Komplexität stand in keinem Verhältnis zum Nutzen. Stattdessen:
-`AnthropicClient.buildAgent` nutzt die eingebaute `ClaudeAgent`-Fabrik von
-sttp-ai unverändert (für alle Agenten mit client-seitigen `AgentTool`s bzw.
-gar keinen Tools), `AnthropicClient.runWithWebSearch` deckt `web_search`
-separat und bewusst simpel ab (siehe unten) - beide Pfade nutzen denselben
+zusätzliche Komplexität stand in keinem Verhältnis zum Nutzen. Stattdessen
+implementiert `AnthropicClient.buildAgent` intern zwei Pfade hinter EINER
+öffentlichen Methode: die eingebaute `ClaudeAgent`-Fabrik von sttp-ai (für
+client-seitige `AgentTool`s bzw. gar keine Tools) und eine schlanke, selbst
+geschriebene `sttp.ai.core.agent.Agent`-Implementierung für `web_search`
+(siehe nächster Abschnitt) - `Agent.scala` ruft in beiden Fällen dieselbe
+Methode mit demselben Rückgabetyp (`Agent[Identity, String, String]`) auf
+und muss den Unterschied nicht kennen. Beide Pfade nutzen denselben
 Interceptor-Stack (`Interceptors.commonInterceptors`), sodass Logging und
 Usage-Tracking einheitlich bleiben.
 
@@ -217,27 +220,43 @@ Server-seitiges `web_search` und client-seitige (custom) Tools wie
 `calculate_tco` sehen auf den ersten Blick ähnlich aus (beide landen im
 selben `tools`-Array der Anthropic Messages API), unterscheiden sich aber
 fundamental darin, WER das Tool ausführt - und das bestimmt, welchen der
-beiden folgenden Pfade `Agent.run` (`Agent.scala`) wählt:
+beiden folgenden Pfade `AnthropicClient.buildAgent` intern wählt (anhand
+des `useWebSearch`-Flags, das `Agent.scala` durchreicht):
 
 | | `web_search` (server-seitig) | `calculate_tco` (client-seitig) |
 |---|---|---|
 | Wer führt das Tool aus? | Anthropic-Server, intern | Wir selbst (`CalculateTcoTool.handler`) |
 | Braucht die API dafür einen `ToolCall`, den WIR beantworten? | Nein | Ja (Multi-Turn) |
 | Genügt ein einzelner Request? | Ja, immer (siehe unten) | Nein, i. d. R. mehrere Turns |
-| Code-Pfad in diesem Projekt | `AnthropicClient.runWithWebSearch` (Einzel-Request, kein Agent-Loop) | `AnthropicClient.buildAgent` (`sttp.ai.core.agent.LoopAgent`, via `sttp.ai.claude.agent.ClaudeAgent`) |
+| Interne Implementierung in `buildAgent` | `webSearchAgent` (eigene, schlanke `Agent`-Implementierung, Einzel-Request) | eingebaute `ClaudeAgent.synchronous(...)` (`sttp.ai.core.agent.LoopAgent`) |
 
-**`runWithWebSearch`:** Da der Server `web_search` komplett intern auflöst
-(inkl. eventuell mehrfacher Suchen innerhalb EINES HTTP-Response) und uns
-nur das fertige Ergebnis zurückgibt, genügt strukturell immer ein einzelner
-Request - ein `LoopAgent` wäre hier reiner Overhead. Damit dieser
-Einzel-Request trotzdem einheitlich geloggt und im `usageCollector` erfasst
-wird, ruft `runWithWebSearch` denselben `aroundLlmCall`-Interceptor-Hook
-einmalig direkt auf, den sonst der `LoopAgent` pro Iteration aufruft -
-ohne den kompletten Loop-/Backend-Apparat zu benötigen.
+Warum lässt sich `Tool.WebSearch.default` nicht einfach zusätzlich in die
+`tools`-Liste von `buildAgent` mitgeben? `Tool.WebSearch.default` hat den
+Typ `sttp.ai.claude.models.Tool`, `buildAgent`s `tools`-Parameter (und die
+zugrundeliegende `AgentBuilder.tools(...)`-Methode von sttp-ai) verlangen
+aber `Seq[sttp.ai.core.agent.AgentTool[F, _]]` - einen anderen, höherwertigen
+Typ (Schema + lokal auszuführende Funktion). Das ist ein Typfehler, kein
+Implementierungsdetail, das sich "einfach mitgeben" ließe.
 
-**`buildAgent`:** Für `calculate_tco` (und alle anderen client-seitigen
-Tools) genügt dagegen die eingebaute `ClaudeAgent`-Fabrik von sttp-ai
-unverändert - das Modell liefert nur den Aufrufwunsch zurück
+**`webSearchAgent` (privat in `AnthropicClient`):** Da der Server
+`web_search` komplett intern auflöst (inkl. eventuell mehrfacher Suchen
+innerhalb EINES HTTP-Response) und uns nur das fertige Ergebnis
+zurückgibt, genügt strukturell immer ein einzelner Request - ein
+`LoopAgent` wäre hier reiner Overhead. Statt trotzdem einen vollen
+`LoopAgent` samt eigenem `AgentBackend` zu bemühen, implementiert
+`webSearchAgent` das öffentliche `sttp.ai.core.agent.Agent`-Trait direkt:
+eine Iteration, ein `AgentResult` - aber mit demselben `aroundLlmCall`-
+Interceptor-Hook (Logging/Usage-Tracking) und derselben "unsauberes
+Ende"-Erkennung (`FinishReason.TokenLimit` bei abgeschnittener Antwort),
+die `Agent.scala` einheitlich für BEIDE Tool-Typen auswertet - dadurch
+bekommt z. B. der Fact-Researcher (`web_search`) dieselbe `WARN`-Log-Zeile
+bei einer durch `maxTokens` abgeschnittenen Antwort wie der Risk-Analyst
+(`calculate_tco`), was mit einer schlichten `String`-Rückgabe nicht möglich
+gewesen wäre.
+
+**`ClaudeAgent.synchronous(...)`:** Für `calculate_tco` (und alle anderen
+client-seitigen Tools) genügt dagegen die eingebaute `ClaudeAgent`-Fabrik
+von sttp-ai unverändert - das Modell liefert nur den Aufrufwunsch zurück
 (`ContentBlock.ToolUse` in der `AgentResponse`), WIR führen
 `CalculateTcoTool.handler` lokal aus und der generische `LoopAgent` sendet
 das Ergebnis automatisch als `ContentBlock.ToolResult` zurück (Multi-Turn):
@@ -475,7 +494,7 @@ Error-Handling für beide Zweige einzeln.
   ausgeführt werden können. Man unterscheidet:
 - **Server-seitiges Tool**: Ein Tool wie `web_search_20250305`, das direkt
   vom Anthropic-Server ausgeführt wird - der Client muss den Tool-Aufruf
-  nicht selbst abfangen und beantworten. Ein einzelner Request genügt (`AnthropicClient.runWithWebSearch`).
+  nicht selbst abfangen und beantworten. Ein einzelner Request genügt (`AnthropicClient.buildAgent` mit `useWebSearch = true`, intern `webSearchAgent`).
 - **Client-seitiges (custom) Tool**: Ein selbst definiertes Tool (z. B.
   `calculate_tco` beim Risk-Analyst), an den Agent-Loop übergeben als
   `sttp.ai.core.agent.AgentTool` (`CalculateTcoTool.agentTool`). Das Modell liefert nur den *Wunsch*, das
@@ -508,7 +527,7 @@ Error-Handling für beide Zweige einzeln.
   Liste von Content-Blöcken unterschiedlichen Typs (`Text`, `ServerToolUse`,
   `WebSearchToolResult`, ...), in `sttp-ai` als `sealed trait ContentBlock`
   mit Fallklassen abgebildet. Für den finalen Bericht werden nur die
-  `Text`-Blöcke extrahiert (`AnthropicClient.runWithWebSearch` bzw. die eingebaute `ClaudeAgentBackend` für `buildAgent`).
+  `Text`-Blöcke extrahiert (`AnthropicClient.webSearchAgent` bzw. die eingebaute `ClaudeAgentBackend`, je nach `useWebSearch`).
 - **Codec (circe)**: Typklassen-basierte Serialisierungs-/
   Deserialisierungslogik für einen bestimmten Typ (`Codec[T]` bzw.
   `Codec.AsObject[T]`), von `sttp-ai` selbst für alle API-Modelle
@@ -535,8 +554,8 @@ Error-Handling für beide Zweige einzeln.
 ```
 multi-agent-agentic-orchestrator/
 ├── project.scala             # scala-cli Direktiven: Scala-Version, Abhängigkeiten & Test-Framework (MUnit)
-├── AnthropicClient.scala     # ClaudeClient + SyncBackend, buildAgent/buildStructuredAgent (eingebaute ClaudeAgent-Fabrik + Interceptor-Stack),
-│                             #   runWithWebSearch (Einzel-Request fuer server-seitiges web_search), usageCollector
+├── AnthropicClient.scala     # ClaudeClient + SyncBackend, buildAgent (eingebaute ClaudeAgent-Fabrik ODER webSearchAgent-Einzel-Request,
+│                             #   je nach useWebSearch)/buildStructuredAgent (Interceptor-Stack), usageCollector
 │                             #   + object Env am Dateiende: liest ANTHROPIC_AUTH_TOKEN/ANTHROPIC_API_KEY aus .env (via os-lib)
 ├── Interceptors.scala        # Logging-/Usage-Tracking-/Budget-Interceptoren + PriceTable (Kostenschätzung)
 ├── Agent.scala               # Basisklasse Agent (kapselt Model-Call + Tools über AnthropicClient.buildAgent)
@@ -615,8 +634,8 @@ verhält sich `web_search` bei diesem Router-Endpunkt NICHT wie ein automatisch 
 verifiziert. Da uns keine eigene Websuch-Implementierung zur Verfügung steht, würde ein solcher `ToolCall` unbeantwortet bleiben bzw. im
 generischen Agent-Loop nur mit "Tool not found: web_search" quittiert. `Agent.scala` verbietet die Kombination deshalb per `require`
 (`useWebSearch` und `clientTools` sind gegenseitig exklusiv) - unabhängig davon läuft `web_search` ohnehin über einen komplett anderen
-Code-Pfad (`AnthropicClient.runWithWebSearch`, Einzel-Request) als client-seitige Tools (`AnthropicClient.buildAgent`, Agent-Loop), sodass
-eine versehentliche Vermischung technisch gar nicht erst entstehen kann.
+internen Pfad in `buildAgent` (`webSearchAgent`, Einzel-Request) als client-seitige Tools (`ClaudeAgent.synchronous(...)`, Agent-Loop),
+sodass eine versehentliche Vermischung technisch gar nicht erst entstehen kann.
 
 **4. Eigene Tool-Eingabe-/Ergebnis-Typen bleiben nötig:** `sttp-ai` liefert
 Tool-Eingabeparameter als rohes `Map[String, io.circe.Json]`

@@ -8,8 +8,9 @@ import sttp.ai.claude.models.{ContentBlock, Message, Tool}
 import sttp.ai.claude.requests.MessageRequest
 import sttp.ai.core.agent.*
 import sttp.ai.core.http.RetryingBackend
-import sttp.client4.{DefaultSyncBackend, SyncBackend}
+import sttp.client4.{Backend, DefaultSyncBackend, SyncBackend}
 import sttp.model.Uri
+import sttp.monad.IdentityMonad
 import sttp.shared.Identity
 import sttp.tapir.Schema
 
@@ -52,38 +53,44 @@ object AnthropicClient:
 
   def backend: SyncBackend = httpBackend
 
-  /** Pipeline-weite Sammelstelle für Tokens/Kosten/Dauer aller über `buildAgent`/`buildStructuredAgent`/`runWithWebSearch` erzeugten LLM-Calls (inkl. Planner) - siehe `Interceptors.UsageCollector`.
-    * Der Orchestrator liest daraus am Ende einer Pipeline den Gesamt-Report.
+  /** Pipeline-weite Sammelstelle für Tokens/Kosten/Dauer aller über `buildAgent`/`buildStructuredAgent` erzeugten LLM-Calls (inkl. Planner) - siehe `Interceptors.UsageCollector`. Der Orchestrator
+    * liest daraus am Ende einer Pipeline den Gesamt-Report.
     */
   val usageCollector: Interceptors.UsageCollector = new Interceptors.UsageCollector
 
   private def commonInterceptors(caller: String): Seq[AgentInterceptor[Identity]] =
     Seq(Interceptors.loggingFor(caller), new Interceptors.UsageTrackingInterceptor(caller, usageCollector), Interceptors.budgetSafetyNet)
 
-  /** Baut einen interceptor-fähigen Agent-Loop (`sttp.ai.core.agent.Agent`) für einen client-seitigen Tool-Use-Agenten, auf Basis der eingebauten `ClaudeAgent`-Fabrik von sttp-ai
-    * (`sttp.ai.claude.agent.ClaudeAgent.synchronous`). Passend für alle Agenten, deren Tools sich als `AgentTool` ausdrücken lassen (client-seitig, vom Modell angefragt, von UNS lokal ausgeführt) -
-    * für das server-seitige `web_search`-Tool siehe stattdessen `runWithWebSearch`.
+  /** Baut einen interceptor-fähigen `sttp.ai.core.agent.Agent` - unabhängig davon, ob dahinter der generische, client-seitige Tool-Use-Loop von sttp-ai (`ClaudeAgent.synchronous`) oder der bewusst
+    * simple Einzel-Request-Pfad für das server-seitige `web_search`-Tool steckt (`webSearchAgent`, siehe dort). `Agent.scala` muss diesen Unterschied dadurch nicht kennen - EIN Aufruf, EIN
+    * Rückgabetyp (`Agent[Identity, String, String]`), egal welcher Tool-Typ genutzt wird.
     *
     * @param caller
     *   Bezeichner des Aufrufers (Agenten-Name) - dient sowohl dem Logging als auch der Zuordnung im `usageCollector`-Report.
     * @param tools
-    *   client-seitige (custom) Tools, z. B. `CalculateTcoTool.agentTool`.
+    *   client-seitige (custom) Tools, z. B. `CalculateTcoTool.agentTool` - nur relevant, wenn `useWebSearch = false`.
+    * @param useWebSearch
+    *   ob statt des Tool-Use-Loops der Einzel-Request-Pfad mit dem server-seitigen `web_search`-Tool genutzt werden soll (siehe `webSearchAgent` für die Begründung, warum das kein
+    *   `AgentTool`/`ClaudeAgent` sein kann).
     */
   def buildAgent(
       caller: String,
       model: String,
       systemPrompt: String,
       tools: Seq[AgentTool[Identity, ?]] = Seq.empty,
+      useWebSearch: Boolean = false,
       maxIterations: Int = 10,
       maxTokens: Option[Int] = None,
   ): Agent[Identity, String, String] =
-    val builder = ClaudeAgent
-      .synchronous(client, model)
-      .maxIterations(maxIterations)
-      .systemPrompt(systemPrompt)
-      .tools(tools)
-      .interceptors(commonInterceptors(caller))
-    maxTokens.fold(builder)(builder.maxTokens).build
+    if useWebSearch then webSearchAgent(caller, model, systemPrompt, maxTokens.getOrElse(2000))
+    else
+      val builder = ClaudeAgent
+        .synchronous(client, model)
+        .maxIterations(maxIterations)
+        .systemPrompt(systemPrompt)
+        .tools(tools)
+        .interceptors(commonInterceptors(caller))
+      maxTokens.fold(builder)(builder.maxTokens).build
 
   /** Wie `buildAgent`, aber mit erzwungenem, schemakonformem JSON-Output (Structured Output) - Ersatz für das frühere `chatStructured`. Ein einzelner Request genügt normalerweise (`maxIterations =
     * 1`), da das Modell zu validem JSON gezwungen wird.
@@ -102,52 +109,70 @@ object AnthropicClient:
       .deriveResponseSchema[T]
       .build
 
-  /** Einmaliger Model-Call mit dem server-seitigen `web_search`-Tool (`Tool.WebSearch`, siehe sttp-ai-Doku
-    * [[https://sttp-ai.softwaremill.com/claude/tool-calling.html "Tool calling", Abschnitt "Predefined tools"]]) - bewusst NICHT über `buildAgent`/`ClaudeAgent`.
+  /** Eigene, minimale `sttp.ai.core.agent.Agent`-Implementierung für einen einmaligen Model-Call mit dem server-seitigen `web_search`-Tool (`Tool.WebSearch`, siehe sttp-ai-Doku
+    * [[https://sttp-ai.softwaremill.com/claude/tool-calling.html "Tool calling", Abschnitt "Predefined tools"]]) - bewusst NICHT über `ClaudeAgent`/`AgentBuilder`.
     *
-    * '''Warum kein `AgentBackend`/Agent-Loop dafür?''' `web_search` lässt sich strukturell nicht als `AgentTool` ausdrücken: `AgentTool[F, T]` verlangt zwingend ein JSON-Schema UND eine lokal
-    * auszuführende Funktion (`execute: T => F[String]`) - `web_search` hat keins von beidem, da Anthropic das Tool komplett serverseitig auflöst (wir bekommen dafür nie einen `ToolCall` zum
-    * Beantworten). Das ist keine Beschränkung des HTTP-Protokolls (`web_search` und client-seitige Tools landen in der Messages API im selben `tools`-Array, siehe `sttp-ai`-Doku "Both custom and
-    * predefined tools can be passed in the same tools list"), sondern der `AgentTool`-Abstraktion von sttp-ai - `AgentBuilder`/`AgentConfig` bieten keinen Konfigurations-Hook für zusätzliche,
-    * provider-native `Tool`-Werte neben den `AgentTool`s.
+    * '''Warum keine `.tools(...)`-Liste, sondern eine eigene `Agent`-Implementierung?''' `Tool.WebSearch.default` hat den Typ `sttp.ai.claude.models.Tool` - `AgentBuilder.tools(...)` verlangt aber
+    * `Seq[sttp.ai.core.agent.AgentTool[F, _]]`, einen anderen, höherwertigen Typ (Schema + lokal auszuführende Funktion). Man kann `Tool.WebSearch.default` also nicht einfach in die Tool-Liste von
+    * `buildAgent` mitgeben - das wäre ein Typfehler, kein Implementierungsdetail. Das liegt NICHT am HTTP-Protokoll (`web_search` und client-seitige Tools landen in der Messages API im selben
+    * `tools`-Array, siehe sttp-ai-Doku "Both custom and predefined tools can be passed in the same tools list"), sondern daran, dass `web_search` strukturell keine `AgentTool`-Eigenschaften hat: kein
+    * Schema nötig (Anthropic kennt das Tool schon) und keine lokale Ausführung (der Server löst es komplett selbst auf - wir bekommen dafür nie einen `ToolCall` zum Beantworten).
     *
-    * Zusätzlich braucht `web_search` - anders als client-seitige Tools - ohnehin keinen Multi-Turn-Loop: Der Server löst das Tool (inkl. eventuell mehrfacher interner Suchen) komplett innerhalb EINES
-    * HTTP-Response auf, wir bekommen nur das fertige Ergebnis zurück. Ein einzelner Request genügt daher strukturell, ein `LoopAgent` wäre hier reiner Overhead.
-    *
-    * Damit dieser Einzel-Request trotzdem einheitlich geloggt und im `usageCollector` erfasst wird, wird der `aroundLlmCall`-Interceptor- Hook (derselbe wie in `buildAgent`) einmalig direkt
-    * aufgerufen - ohne den kompletten `LoopAgent`/`AgentBackend`-Apparat zu benötigen.
+    * Da `web_search` aus demselben Grund (keine lokale Ausführung) auch nie einen Multi-Turn-Loop braucht - der Server löst das Tool (inkl. eventuell mehrfacher interner Suchen) komplett innerhalb
+    * EINES HTTP-Response auf -, genügt strukturell ein einzelner Request. Statt dafür trotzdem einen vollen `LoopAgent` samt eigenem `AgentBackend` zu bemühen (reiner Overhead für eine einzige
+    * Iteration), implementiert diese Methode das öffentliche `sttp.ai.core.agent.Agent`-Trait direkt: eine Iteration, ein `AgentResult`, aber denselben `aroundLlmCall`-Interceptor-Hook
+    * (Logging/Usage-Tracking) wie `buildAgent` - und, anders als eine schlichte `String`-Rückgabe es könnte, dieselbe "unsauberes Ende"-Erkennung (`FinishReason.TokenLimit` ->
+    * `Left(AgentIncomplete(...))`), die `Agent.scala` einheitlich für BEIDE Tool-Typen behandelt.
     */
-  def runWithWebSearch(caller: String, model: String, systemPrompt: String, userMessage: String, maxTokens: Int = 2000): String =
-    val request = MessageRequest(
-      model = model,
-      messages = List(Message.user(userMessage)),
-      system = Some(systemPrompt),
-      maxTokens = maxTokens,
-      tools = Some(List(Tool.WebSearch.default)),
-    )
+  private def webSearchAgent(caller: String, model: String, systemPrompt: String, maxTokens: Int): Agent[Identity, String, String] =
+    new Agent[Identity, String, String]:
+      protected given monad: sttp.monad.MonadError[Identity] = IdentityMonad
 
-    val interceptor    = AgentInterceptor.compose(commonInterceptors(caller))
-    val history        = ConversationHistory.empty.addUserPrompt(userMessage)
-    val iterationInfo  = IterationInfo(iteration = 1, maxIterations = 1)
-    val llmCallContext = LlmCallContext(history, includeTools = true, iterationInfo)
+      def run(userMessage: String, seedHistory: ConversationHistory)(backend: Backend[Identity]): Identity[AgentResult[Either[AgentFailure, String]]] =
+        val history = seedHistory.addUserPrompt(userMessage)
+        val request = MessageRequest(
+          model = model,
+          messages = List(Message.user(userMessage)),
+          system = Some(systemPrompt),
+          maxTokens = maxTokens,
+          tools = Some(List(Tool.WebSearch.default)),
+        )
 
-    val response = interceptor.aroundLlmCall(llmCallContext) {
-      client.createMessage(request).send(httpBackend).body match
-        case Left(error) => throw new RuntimeException(s"Claude API error: ${error.getMessage}")
-        case Right(resp) =>
-          val textContent = resp.content.collectFirst { case ContentBlock.Text(text, _, _) => text }.getOrElse("")
-          val u           = resp.usage
-          val usage       = TokenUsage(
-            inputTokens = Tokens(u.totalInputTokens.toLong),
-            outputTokens = Tokens(u.outputTokens.toLong),
-            cachedInputTokens = Tokens(u.cacheReadInputTokens.getOrElse(0).toLong),
-            reasoningTokens = Tokens.Zero,
-            cacheWriteInputTokens = Tokens(u.cacheCreationInputTokens.getOrElse(0).toLong),
-          )
-          val stopReason  = if resp.stopReason.contains("max_tokens") then StopReason.MaxTokens else StopReason.EndTurn
-          AgentResponse(textContent, Seq.empty, stopReason, usage = Some(usage), model = Some(resp.model))
-    }
-    response.textContent
+        val interceptor    = AgentInterceptor.compose(commonInterceptors(caller))
+        val llmCallContext = LlmCallContext(history, includeTools = true, IterationInfo(iteration = 1, maxIterations = 1))
+
+        val response = interceptor.aroundLlmCall(llmCallContext) {
+          client.createMessage(request).send(backend).body match
+            case Left(error) => throw new RuntimeException(s"Claude API error: ${error.getMessage}")
+            case Right(resp) =>
+              val textContent = resp.content.collectFirst { case ContentBlock.Text(text, _, _) => text }.getOrElse("")
+              val u           = resp.usage
+              val usage       = TokenUsage(
+                inputTokens = Tokens(u.totalInputTokens.toLong),
+                outputTokens = Tokens(u.outputTokens.toLong),
+                cachedInputTokens = Tokens(u.cacheReadInputTokens.getOrElse(0).toLong),
+                reasoningTokens = Tokens.Zero,
+                cacheWriteInputTokens = Tokens(u.cacheCreationInputTokens.getOrElse(0).toLong),
+              )
+              val stopReason  = if resp.stopReason.contains("max_tokens") then StopReason.MaxTokens else StopReason.EndTurn
+              AgentResponse(textContent, Seq.empty, stopReason, usage = Some(usage), model = Some(resp.model))
+        }
+
+        val usage                                     = response.usage.getOrElse(TokenUsage.Zero)
+        val finalHistory                              = history.addAssistantResponse(response.textContent, Seq.empty)
+        val finalAnswer: Either[AgentFailure, String] =
+          if response.stopReason == StopReason.MaxTokens then Left(AgentIncomplete(response.textContent, FinishReason.TokenLimit, parseError = None))
+          else Right(response.textContent)
+
+        AgentResult(
+          finalAnswer,
+          iterations = 1,
+          toolCalls = Seq.empty,
+          finishReason = if response.stopReason == StopReason.MaxTokens then FinishReason.TokenLimit else FinishReason.NaturalStop,
+          usage = usage,
+          llmCalls = Seq(LlmCallUsage(response.model, usage)),
+          history = finalHistory,
+        )
 
 /** Lädt Umgebungsvariablen aus der `.env`-Datei im aktuellen Arbeitsverzeichnis (`os.pwd`, also i. d. R. diesem Projektordner, wenn `scala-cli run .` von hier aus gestartet wird), analog zum
   * Python-Pendant (`python-dotenv`).
