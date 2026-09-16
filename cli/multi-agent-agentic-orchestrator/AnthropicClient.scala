@@ -1,18 +1,28 @@
 package agents
 
 import io.circe.{Decoder, Json}
-import sttp.ai.claude.ClaudeSyncClient
+import io.circe.parser.decode
+import sttp.ai.claude.ClaudeClient
+import sttp.ai.claude.ClaudeExceptions.ClaudeException.DeserializationClaudeException
 import sttp.ai.claude.config.ClaudeConfig
-import sttp.ai.claude.models.{ContentBlock, Message, Tool}
+import sttp.ai.claude.models.{ContentBlock, Message, OutputFormat, Tool}
 import sttp.ai.claude.requests.MessageRequest
+import sttp.ai.claude.responses.MessageResponse
+import sttp.ai.core.http.RetryingBackend
+import sttp.client4.{DefaultSyncBackend, SyncBackend}
 import sttp.model.Uri
 import sttp.tapir.Schema
 
-/** Dünner Wrapper um den `ClaudeSyncClient` aus [[https://sttp-ai.softwaremill.com/ sttp-ai]] (Modul `claude`).
+/** Dünner Wrapper um den `ClaudeClient` aus [[https://sttp-ai.softwaremill.com/ sttp-ai]] (Modul `claude`).
   *
   * sttp-ai bringt bereits einen vollwertigen, typsicheren Client für die Anthropic Messages API mit (Request-/Response-Modelle, Authentifizierung über `x-api-key`/`anthropic-version`,
   * Fehlerhierarchie `ClaudeException`) - die frühere, selbstgeschriebene Kombination aus `sttp-client4` + `upickle`-JSON-Modellen (`AnthropicModels`) entfällt dadurch komplett. Dieses Objekt bleibt
   * nur als schlanke Fassade bestehen, um das simple Logging (`[LLM:<Aufrufer>] ...`) sowie den Tool-Use-Loop zentral zu halten.
+  *
+  * '''Client/Backend getrennt statt `ClaudeSyncClient`''': `ClaudeClient` baut nur noch die Requests (stateless), das eigentliche Senden übernimmt ein separat gehaltener `SyncBackend`. Das ist
+  * Voraussetzung dafür, künftig sttp-ai-Interceptoren (`sttp.ai.core.agent.AgentInterceptor`, siehe `Interceptors.scala`) einzusetzen - deren Agent-Loop (`Agent.run(in)(backend)`) erwartet den
+  * Backend als expliziten Parameter statt ihn (wie `ClaudeSyncClient`) intern zu verstecken. Nebeneffekt: `RetryingBackend` sorgt jetzt tatsächlich für Retries bei transienten Fehlern (5xx, 429, ...) -
+  * vorher war `ClaudeConfig.maxRetries` zwar konfigurierbar, wurde aber nie tatsächlich angewendet.
   */
 object AnthropicClient:
 
@@ -31,7 +41,9 @@ object AnthropicClient:
     baseUrl = Uri.unsafeParse("https://router.eu.requesty.ai"),
   )
 
-  private val client = ClaudeSyncClient(config)
+  private val client: ClaudeClient = ClaudeClient(config)
+
+  private val httpBackend: SyncBackend = RetryingBackend(DefaultSyncBackend(), config.maxRetries)
 
   /** Schreibt eine Log-Zeile für die Kommunikation mit dem Modell auf die Konsole.
     *
@@ -54,6 +66,26 @@ object AnthropicClient:
     content
       .collect { case ContentBlock.Text(text, _, _) => text }
       .mkString("\n")
+
+  /** Sendet einen `MessageRequest` über den getrennt gehaltenen `httpBackend` (siehe Kommentar am Objekt-Kopf) - Ersatz für das bisherige `ClaudeSyncClient.createMessage`, das Request-Bau (`client`)
+    * und Versand (`httpBackend`) intern zusammenfasste.
+    */
+  private def sendMessage(request: MessageRequest): MessageResponse =
+    client.createMessage(request).send(httpBackend).body match
+      case Left(exception) => throw exception
+      case Right(response) => response
+
+  /** Ersatz für das bisherige `ClaudeSyncClient.createMessageAs[T]`: erzwingt Structured Output (falls noch nicht gesetzt) und parst die Text-Antwort zu `T`.
+    */
+  private def sendMessageAs[T: {Schema, Decoder}](request: MessageRequest): T =
+    val withSchema =
+      if request.usesStructuredOutput then request
+      else request.withStructuredOutput(OutputFormat.JsonSchema.withTapirSchema[T])
+    val response   = sendMessage(withSchema)
+    val text       = response.content.collect { case ContentBlock.Text(t, _, _) => t }.mkString
+    decode[T](text) match
+      case Right(value) => value
+      case Left(e)      => throw new DeserializationClaudeException(s"Failed to parse structured output: ${e.getMessage}", null)
 
   /** Führt einen Model-Call aus - bei Bedarf als Multi-Turn Tool-Use-Loop.
     *
@@ -108,7 +140,7 @@ object AnthropicClient:
       )
 
       val response =
-        try client.createMessage(request)
+        try sendMessage(request)
         catch
           case e: Throwable =>
             log(caller, s"Fehler: ${truncate(e.getMessage)}")
@@ -185,7 +217,7 @@ object AnthropicClient:
     log(caller, s"Auftrag: ${truncate(userMessage)}", indent = true)
 
     try
-      val result = client.createMessageAs[T](request)
+      val result = sendMessageAs[T](request)
       log(caller, s"Fertig: $result")
       result
     catch
@@ -193,7 +225,7 @@ object AnthropicClient:
         log(caller, s"Fehler: ${truncate(e.getMessage)}")
         throw e
 
-  def close(): Unit = client.close()
+  def close(): Unit = httpBackend.close()
 
 /** Lädt Umgebungsvariablen aus der `.env`-Datei im aktuellen Arbeitsverzeichnis (`os.pwd`, also i. d. R. diesem Projektordner, wenn `scala-cli run .` von hier aus gestartet wird), analog zum
   * Python-Pendant (`python-dotenv`).
