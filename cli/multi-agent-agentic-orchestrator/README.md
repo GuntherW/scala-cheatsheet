@@ -184,12 +184,24 @@ sowohl auf der Konsole ausgegeben als auch nach
 `output/99_usage_report.md` geschrieben wird.
 
 **Warum ein eigenes `AgentBackend` statt der eingebauten `ClaudeAgent`-Fabrik
-von sttp-ai?** `ClaudeAgent.synchronous(...)` konvertiert jedes Tool
-zwingend zu einem client-seitigen `Tool.CustomRaw` - das server-seitige
-`web_search`-Tool des Fact-Researcher lässt sich darüber nicht abbilden.
-`AgentBackend[F]` ist aber ein öffentliches sttp-ai-Trait; `ClaudeToolLoopBackend`
-(`AgentBackends.scala`) implementiert es selbst und streut `web_search`
-zusätzlich in die Tool-Liste ein - der Interceptor-Mechanismus selbst
+von sttp-ai?** NICHT weil server- und client-seitige Tools sich auf HTTP-/JSON-Ebene
+grundsätzlich unterscheiden würden - in der Messages API landen beide schlicht
+als Einträge im selben `tools`-Array. Der eigentliche Grund liegt konkret im
+sttp-ai-Code: `sttp.ai.claude.models.Tool` ist ein Sum-Type mit unterschiedlichen
+Shapes (`Tool.WebSearch` hat z. B. gar kein `inputSchema`-Feld, sondern eigene
+Felder wie `maxUses`/`allowedDomains` und einen eigenen Wire-Typ), und die
+eingebaute, `private[claude]` `ClaudeAgentBackend.convertTool` bildet JEDES
+registrierte `AgentTool[F, _]` unconditional auf `Tool.CustomRaw` ab - ohne
+Zweig, der stattdessen `Tool.WebSearch` erzeugen könnte. `AgentTool[F, T]`
+selbst zwingt außerdem zu einem JSON-Schema UND einer lokal auszuführenden
+Funktion (`execute: T => F[String]`); `web_search` hat keins von beidem (kein
+Schema nötig, keine lokale Ausführung, da der Server das Tool komplett selbst
+auflöst und wir dafür nie einen `ToolCall` bekommen). `web_search` passt also
+schlicht nicht in die `AgentTool`-Abstraktion, und die eingebaute Fabrik bietet
+keinen anderen Erweiterungspunkt an. `AgentBackend[F]` ist aber ein öffentliches
+sttp-ai-Trait; `ClaudeToolLoopBackend` (`AgentBackends.scala`) implementiert es
+selbst und streut `Tool.WebSearch.default` direkt (nicht über `AgentTool`) in
+die Tool-Liste ein - der Interceptor-Mechanismus selbst
 (`LoopAgent.aroundLlmCall(...)`) ist davon unabhängig und funktioniert für
 alle Agenten gleich, unabhängig davon, welches Tool sie nutzen.
 

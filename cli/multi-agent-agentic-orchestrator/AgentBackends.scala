@@ -11,14 +11,21 @@ import sttp.shared.Identity
 /** Eigene, projekt-lokale Implementierung von `sttp.ai.core.agent.AgentBackend` - dem Adapter, über den der generische Agent-Loop (`sttp.ai.core.agent.LoopAgent`, erzeugt via
   * `AgentBuilder`/`ClaudeAgent`) mit einer konkreten LLM-API spricht.
   *
-  * '''Warum nicht einfach `ClaudeAgent.synchronous(...)` (die eingebaute sttp-ai-Fabrik für Claude-Agenten) nutzen?''' Deren interne `ClaudeAgentBackend` ist `private[claude]` und konvertiert JEDES
-  * registrierte Tool (`AgentTool[F, _]`) zwingend zu `Tool.CustomRaw` - ein client-seitiges (custom) Tool, das das Modell nur ANFRAGT und WIR lokal ausführen müssen. Das server-seitige Tool
-  * `web_search` (komplett vom Anthropic-Server aufgelöst, siehe `AgentFactResearcher`) lässt sich darüber nicht abbilden.
+  * '''Warum nicht einfach `ClaudeAgent.synchronous(...)` (die eingebaute sttp-ai-Fabrik für Claude-Agenten) nutzen?''' NICHT weil server- und client-seitige Tools sich auf HTTP-/JSON-Ebene
+  * grundsätzlich unterscheiden würden - in der Anthropic Messages API landen beide schlicht als Einträge im selben `tools`-Array, und genau das machen wir unten auch (`convertedTools` mischt
+  * `Tool.WebSearch.default` mit den zu `Tool.CustomRaw` konvertierten `AgentTool`s). Der eigentliche Grund liegt konkret im sttp-ai-Code:
+  *
+  *   1. `sttp.ai.claude.models.Tool` ist ein Sum-Type mit unterschiedlichen Shapes: `Tool.WebSearch` hat gar kein `inputSchema`-Feld (Anthropic kennt das Tool schon), sondern eigene Felder
+  *      (`maxUses`, `allowedDomains`, ...) und einen eigenen Wire-Typ (`"web_search_20250305"`) - strukturell etwas anderes als `Tool.Custom`/`Tool.CustomRaw`.
+  *   1. Die eingebaute, `private[claude]` `ClaudeAgentBackend.convertTool` bildet JEDES registrierte `AgentTool[F, _]` unconditional auf `Tool.CustomRaw` ab - es gibt dort keinen Zweig, der
+  *      stattdessen `Tool.WebSearch` erzeugen könnte. `AgentTool[F, T]` selbst zwingt außerdem zu zwei Dingen: einem JSON-Schema UND einer lokal auszuführenden Funktion (`execute: T => F[String]`).
+  *      `web_search` hat aber keins von beidem - kein Schema (siehe Punkt 1) und keine lokale Ausführung (der Server löst das Tool komplett selbst auf, wir bekommen dafür nie einen `ToolCall` zum
+  *      Beantworten). Es passt also schlicht nicht in die `AgentTool`-Abstraktion, und die eingebaute Fabrik bietet keinen anderen Erweiterungspunkt an.
   *
   * `AgentBackend[F]` ist dagegen ein öffentliches Trait (siehe sttp-ai-Doku "Interceptors": `LoopAgent` ruft `interceptor.aroundLlmCall(ctx)(agentBackend.sendRequest(...))` auf, unabhängig davon,
-  * welche Tools der Backend in den Request packt) - wir können also eine eigene, schlanke Implementierung schreiben, die zusätzlich `Tool.WebSearch.default` einstreut, und trotzdem den vollen
-  * Interceptor-/Budget-/Logging-Mechanismus von sttp-ai nutzen. Diese Klasse ist bewusst eine (kleine) Kopie der Grundidee der eingebauten `ClaudeAgentBackend` - nur mit der zusätzlichen
-  * `includeWebSearch`-Fähigkeit.
+  * welche Tools der Backend in den Request packt) - wir können also eine eigene, schlanke Implementierung schreiben, die `Tool.WebSearch.default` direkt (nicht über `AgentTool`) einstreut, und
+  * trotzdem den vollen Interceptor-/Budget-/Logging-Mechanismus von sttp-ai nutzen. Diese Klasse ist bewusst eine (kleine) Kopie der Grundidee der eingebauten `ClaudeAgentBackend` - nur mit der
+  * zusätzlichen `includeWebSearch`-Fähigkeit.
   *
   * @param client
   *   stateless Request-Builder (siehe `AnthropicClient`)
