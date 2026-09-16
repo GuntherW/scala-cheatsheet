@@ -31,8 +31,7 @@ object AgentRiskAnalyst extends Agent(
                        |- Sei präzise und strukturiere die Antwort in Stichpunkten.
                        |- Antworte auf Deutsch.
                        |""".stripMargin,
-      clientTools = List(CalculateTcoTool.definition),
-      toolHandlers = Map(CalculateTcoTool.definition.name -> CalculateTcoTool.handler),
+      clientTools = Seq(CalculateTcoTool.agentTool),
     ):
 
   def analyze(topic: String): String = run(s"Analysiere Risiken, Fallstricke und Nachteile zu folgendem Thema:\n\n$topic")
