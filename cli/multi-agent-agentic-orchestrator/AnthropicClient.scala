@@ -1,16 +1,18 @@
 package agents
 
-import io.circe.{Decoder, Json}
+import io.circe.{Codec, Decoder, Json}
 import io.circe.parser.decode
 import sttp.ai.claude.ClaudeClient
 import sttp.ai.claude.ClaudeExceptions.ClaudeException.DeserializationClaudeException
 import sttp.ai.claude.config.ClaudeConfig
-import sttp.ai.claude.models.{ContentBlock, Message, OutputFormat, Tool}
+import sttp.ai.claude.models.{ClaudeModel, ContentBlock, Message, OutputFormat, Tool}
 import sttp.ai.claude.requests.MessageRequest
 import sttp.ai.claude.responses.MessageResponse
+import sttp.ai.core.agent.{Agent, AgentBuilder, AgentTool}
 import sttp.ai.core.http.RetryingBackend
 import sttp.client4.{DefaultSyncBackend, SyncBackend}
 import sttp.model.Uri
+import sttp.shared.Identity
 import sttp.tapir.Schema
 
 /** Dünner Wrapper um den `ClaudeClient` aus [[https://sttp-ai.softwaremill.com/ sttp-ai]] (Modul `claude`).
@@ -226,6 +228,57 @@ object AnthropicClient:
         throw e
 
   def close(): Unit = httpBackend.close()
+
+  /** Pipeline-weite Sammelstelle für Tokens/Kosten/Dauer aller über `buildAgent`/`buildStructuredAgent` erzeugten Agenten (inkl. Planner) - siehe `Interceptors.UsageCollector`. Der Orchestrator liest
+    * daraus am Ende einer Pipeline den Gesamt-Report.
+    */
+  val usageCollector: Interceptors.UsageCollector = new Interceptors.UsageCollector
+
+  private def commonInterceptors(caller: String) =
+    Seq(Interceptors.loggingFor(caller), new Interceptors.UsageTrackingInterceptor(caller, usageCollector), Interceptors.budgetSafetyNet)
+
+  /** Baut einen interceptor-fähigen Agent-Loop (`sttp.ai.core.agent.Agent`) für einen Tool-Use-Agenten - der Ersatz für den bisherigen, handgeschriebenen Multi-Turn-Loop in `chat`. Nutzt das eigene
+    * `ClaudeToolLoopBackend` (siehe `AgentBackends.scala`) statt der eingebauten (aber `private[claude]` und ohne `web_search`-Unterstützung auskommenden) `ClaudeAgent`-Fabrik von sttp-ai.
+    *
+    * @param caller
+    *   Bezeichner des Aufrufers (Agenten-Name) - dient sowohl dem Logging als auch der Zuordnung im `usageCollector`-Report.
+    * @param tools
+    *   client-seitige (custom) Tools, z. B. `CalculateTcoTool.agentTool`.
+    * @param useWebSearch
+    *   ob zusätzlich das server-seitige `web_search`-Tool angeboten werden soll (siehe `ClaudeToolLoopBackend`).
+    */
+  def buildAgent(
+      caller: String,
+      model: String,
+      systemPrompt: String,
+      tools: Seq[AgentTool[Identity, ?]] = Seq.empty,
+      useWebSearch: Boolean = false,
+      maxIterations: Int = 10,
+  ): Agent[Identity, String, String] =
+    AgentBuilder[Identity, ClaudeModel.CustomClaudeModel](cfg => ClaudeToolLoopBackend(client, model, useWebSearch, cfg))
+      .maxIterations(maxIterations)
+      .systemPrompt(systemPrompt)
+      .tools(tools)
+      .interceptors(commonInterceptors(caller))
+      .build
+
+  /** Wie `buildAgent`, aber mit erzwungenem, schemakonformem JSON-Output (Structured Output) - Ersatz für `chatStructured`. Ein einzelner Request genügt normalerweise (`maxIterations = 1`), da das
+    * Modell zu validem JSON gezwungen wird.
+    */
+  def buildStructuredAgent[T: {Schema, Codec}](
+      caller: String,
+      model: String,
+      systemPrompt: String,
+      maxIterations: Int = 1,
+  ): Agent[Identity, String, T] =
+    AgentBuilder[Identity, ClaudeModel.CustomClaudeModel](cfg => ClaudeToolLoopBackend(client, model, includeWebSearch = false, cfg))
+      .maxIterations(maxIterations)
+      .systemPrompt(systemPrompt)
+      .interceptors(commonInterceptors(caller))
+      .deriveResponseSchema[T]
+      .build
+
+  def backend: SyncBackend = httpBackend
 
 /** Lädt Umgebungsvariablen aus der `.env`-Datei im aktuellen Arbeitsverzeichnis (`os.pwd`, also i. d. R. diesem Projektordner, wenn `scala-cli run .` von hier aus gestartet wird), analog zum
   * Python-Pendant (`python-dotenv`).
