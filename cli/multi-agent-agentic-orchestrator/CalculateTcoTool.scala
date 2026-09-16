@@ -69,9 +69,9 @@ object CalculateTcoTool:
         ).asJson.noSpaces
 
   /** Gleiche Definition/Ausführung wie `definition`/`handler` oben, aber als `sttp.ai.core.agent.AgentTool` - der generischen Tool- Abstraktion, die der Interceptor-fähige Agent-Loop
-    * (`sttp.ai.core.agent.LoopAgent`, siehe `AgentBackends.scala`) erwartet. Bewusst über `AgentTool.dynamic` (rohes `Map[String, Json]`-Input, kein `derives`-Codec für `CalculateTcoInput`)
-    * definiert, damit exakt dasselbe, bereits robuste `handler` (inkl. Fehlerbehandlung bei fehlerhaftem Modell-Input) unverändert weiterverwendet werden kann - eine
-    * `AgentTool.fromFunction[CalculateTcoInput]` bräuchte zusätzlich eine snake_case-bewusste Tapir-`Schema`-Ableitung für `team_size`, was hier keinen Mehrwert brächte.
+    * (`sttp.ai.core.agent.LoopAgent`, via `sttp.ai.claude.agent.ClaudeAgent`/`AnthropicClient.buildAgent`) erwartet. Bewusst über `AgentTool.dynamic` (rohes `Map[String, Json]`-Input, kein
+    * `derives`-Codec für `CalculateTcoInput`) definiert, damit exakt dasselbe, bereits robuste `handler` (inkl. Fehlerbehandlung bei fehlerhaftem Modell-Input) unverändert weiterverwendet werden kann -
+    * eine `AgentTool.fromFunction[CalculateTcoInput]` bräuchte zusätzlich eine snake_case-bewusste Tapir-`Schema`-Ableitung für `team_size`, was hier keinen Mehrwert brächte.
     */
   val agentTool: AgentTool[Identity, Map[String, Json]] = AgentTool.dynamic(
     toolName = definition.name,

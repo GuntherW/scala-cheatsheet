@@ -183,34 +183,25 @@ Gesamt-Report (Tokens, geschätzte Kosten, Dauer je Agent + Planner), der
 sowohl auf der Konsole ausgegeben als auch nach
 `output/99_usage_report.md` geschrieben wird.
 
-**Warum ein eigenes `AgentBackend` statt der eingebauten `ClaudeAgent`-Fabrik
-von sttp-ai?** NICHT weil server- und client-seitige Tools sich auf HTTP-/JSON-Ebene
-grundsätzlich unterscheiden würden - in der Messages API landen beide schlicht
-als Einträge im selben `tools`-Array, und genau das machen wir unten auch
-(`ClaudeToolLoopBackend.convertedTools` mischt `Tool.WebSearch.default` mit den
-zu `Tool.CustomRaw` konvertierten `AgentTool`s). Der eigentliche Grund ist
-einfacher: `AgentBuilder`/`AgentConfig` bieten für Tools ausschließlich
-`.tools(Seq[AgentTool[F, _]])`/`.addTool(...)` an - beide ausschließlich
-typisiert auf `AgentTool[F, _]`. Es gibt dort KEIN weiteres Feld/keine weitere
-Methode, um zusätzlich einen rohen, providerspezifischen `Tool`-Wert (wie
-`Tool.WebSearch`) in den Request zu bekommen. Die eingebaute, `private[claude]`
-`ClaudeAgentBackend.convertTool` verarbeitet folgerichtig ausschließlich
-`config.userTools` (unsere eigenen, client-seitigen Tools) - sie muss
-`web_search` nie behandeln, weil es dort gar nicht erst hineingelangen kann:
-`AgentTool[F, T]` zwingt zu einem JSON-Schema UND einer lokal auszuführenden
-Funktion (`execute: T => F[String]`); `web_search` hat keins von beidem (kein
-Schema nötig, keine lokale Ausführung, da der Server das Tool komplett selbst
-auflöst und wir dafür nie einen `ToolCall` bekommen) und ist zudem strukturell
-ein anderer Fall des `Tool`-Sum-Types (kein `inputSchema`-Feld, eigener
-Wire-Typ). Es fehlt also schlicht ein Konfigurations-Hook für "zusätzliche,
-provider-native Tools neben den `AgentTool`s" - weder `AgentBuilder` noch
-`AgentConfig` bieten einen, und `ClaudeAgentBackend` selbst ist `private[claude]`,
-lässt sich also auch nicht erweitern. `AgentBackend[F]` ist aber ein öffentliches
-sttp-ai-Trait; `ClaudeToolLoopBackend` (`AgentBackends.scala`) implementiert es
-selbst und streut `Tool.WebSearch.default` direkt (nicht über `AgentTool`) in
-die Tool-Liste ein - der Interceptor-Mechanismus selbst
-(`LoopAgent.aroundLlmCall(...)`) ist davon unabhängig und funktioniert für
-alle Agenten gleich, unabhängig davon, welches Tool sie nutzen.
+**Warum kein eigenes `AgentBackend`?** Naheliegend wäre, für `web_search`
+(server-seitig, siehe unten) ein eigenes `sttp.ai.core.agent.AgentBackend`
+zu schreiben, um es doch noch über den generischen Agent-Loop laufen zu
+lassen. Das haben wir versucht - und wieder verworfen: `web_search` lässt
+sich strukturell nicht als `AgentTool` ausdrücken (`AgentTool[F, T]` zwingt
+zu einem JSON-Schema UND einer lokal auszuführenden Funktion; `web_search`
+hat keins von beidem, da Anthropic es komplett serverseitig auflöst - wir
+bekommen dafür nie einen `ToolCall`). Ein eigenes `AgentBackend` hätte
+diese Lücke zwar technisch schließen können, aber nur um den Preis, große
+Teile der eingebauten `ClaudeAgentBackend`-Logik (History-Aufbau,
+Tool-Konvertierung, Response-Mapping) zu duplizieren - für ein Tool, das
+ohnehin nie einen Multi-Turn-Loop braucht (siehe nächster Abschnitt). Diese
+zusätzliche Komplexität stand in keinem Verhältnis zum Nutzen. Stattdessen:
+`AnthropicClient.buildAgent` nutzt die eingebaute `ClaudeAgent`-Fabrik von
+sttp-ai unverändert (für alle Agenten mit client-seitigen `AgentTool`s bzw.
+gar keinen Tools), `AnthropicClient.runWithWebSearch` deckt `web_search`
+separat und bewusst simpel ab (siehe unten) - beide Pfade nutzen denselben
+Interceptor-Stack (`Interceptors.commonInterceptors`), sodass Logging und
+Usage-Tracking einheitlich bleiben.
 
 **Kosten sind Schätzwerte:** `Interceptors.Pricing.table` enthält
 öffentliche, ungefähre Anthropic-Listenpreise - keine verbindlichen Preise
@@ -220,19 +211,36 @@ gelisteten. Taucht im Usage-Report ein "kein Preiseintrag für Modell..."-
 Hinweis auf, sollte `Interceptors.Pricing` um die tatsächlich gemeldete
 Modell-Id ergänzt werden.
 
-## Client-seitiges Tool: der Tool-Use-Loop im Detail
+## Zwei Wege zum Model-Call: Agent-Loop vs. Einzel-Request
 
-Während `web_search` komplett vom Anthropic-Server ausgeführt wird (ein
-einziger Request genügt), muss ein **client-seitiges (custom) Tool** wie
-`calculate_tco` von uns selbst ausgeführt werden. Das erzeugt einen
-Mehrschritt-Dialog ("Multi-Turn"). Diesen Loop übernimmt seit der
-Umstellung auf sttp-ai-Interceptoren nicht mehr eine eigene, handgeschriebene
-Methode, sondern der generische Agent-Loop von sttp-ai
-(`sttp.ai.core.agent.LoopAgent`, erzeugt über `AnthropicClient.buildAgent`
-und das projekteigene `ClaudeToolLoopBackend`, siehe `AgentBackends.scala`):
-ein reiner `web_search`-Call terminiert die Schleife bereits nach dem
-ersten Turn (keine `ToolCall`s in der Antwort), ein Custom-Tool wie
-`calculate_tco` löst hingegen den Multi-Turn-Loop aus:
+Server-seitiges `web_search` und client-seitige (custom) Tools wie
+`calculate_tco` sehen auf den ersten Blick ähnlich aus (beide landen im
+selben `tools`-Array der Anthropic Messages API), unterscheiden sich aber
+fundamental darin, WER das Tool ausführt - und das bestimmt, welchen der
+beiden folgenden Pfade `Agent.run` (`Agent.scala`) wählt:
+
+| | `web_search` (server-seitig) | `calculate_tco` (client-seitig) |
+|---|---|---|
+| Wer führt das Tool aus? | Anthropic-Server, intern | Wir selbst (`CalculateTcoTool.handler`) |
+| Braucht die API dafür einen `ToolCall`, den WIR beantworten? | Nein | Ja (Multi-Turn) |
+| Genügt ein einzelner Request? | Ja, immer (siehe unten) | Nein, i. d. R. mehrere Turns |
+| Code-Pfad in diesem Projekt | `AnthropicClient.runWithWebSearch` (Einzel-Request, kein Agent-Loop) | `AnthropicClient.buildAgent` (`sttp.ai.core.agent.LoopAgent`, via `sttp.ai.claude.agent.ClaudeAgent`) |
+
+**`runWithWebSearch`:** Da der Server `web_search` komplett intern auflöst
+(inkl. eventuell mehrfacher Suchen innerhalb EINES HTTP-Response) und uns
+nur das fertige Ergebnis zurückgibt, genügt strukturell immer ein einzelner
+Request - ein `LoopAgent` wäre hier reiner Overhead. Damit dieser
+Einzel-Request trotzdem einheitlich geloggt und im `usageCollector` erfasst
+wird, ruft `runWithWebSearch` denselben `aroundLlmCall`-Interceptor-Hook
+einmalig direkt auf, den sonst der `LoopAgent` pro Iteration aufruft -
+ohne den kompletten Loop-/Backend-Apparat zu benötigen.
+
+**`buildAgent`:** Für `calculate_tco` (und alle anderen client-seitigen
+Tools) genügt dagegen die eingebaute `ClaudeAgent`-Fabrik von sttp-ai
+unverändert - das Modell liefert nur den Aufrufwunsch zurück
+(`ContentBlock.ToolUse` in der `AgentResponse`), WIR führen
+`CalculateTcoTool.handler` lokal aus und der generische `LoopAgent` sendet
+das Ergebnis automatisch als `ContentBlock.ToolResult` zurück (Multi-Turn):
 
 ```mermaid
 sequenceDiagram
@@ -247,7 +255,7 @@ sequenceDiagram
     A -->> R: stopReason="end_turn", content=[Text: finaler Bericht]
 ```
 
-Wichtige Punkte:
+Wichtige Punkte zu `calculate_tco`/`buildAgent`:
 
 - Das Tool wird per **JSON-Schema** (`sttp.apispec.Schema`, siehe
   `CalculateTcoTool.agentTool`) definiert und als
@@ -260,29 +268,29 @@ Wichtige Punkte:
 - Die Original-Antwort des Modells (inkl. `ToolUse`-Block) muss als
   `assistant`-Nachricht unverändert in die Historie zurück, damit das
   Modell im nächsten Turn weiß, worauf sich das `ToolResult` bezieht - das
-  übernimmt `ClaudeToolLoopBackend`/`LoopAgent` automatisch (siehe
-  aber Stolperstein zu `Thinking`-Blöcken unten).
+  übernimmt die eingebaute `ClaudeAgentBackend`/`LoopAgent` automatisch
+  (siehe aber Stolperstein zu `Thinking`-Blöcken unten).
 - Das `ToolResult` wird über die `toolUseId` dem passenden Aufruf
   zugeordnet.
 - Die Schleife (`sttp.ai.core.agent.LoopAgent`) läuft so lange, bis eine
   Antwort ohne Tool-Aufrufe zurückkommt (oder ein Interceptor/die
   `maxIterations`-Grenze den Loop vorzeitig, aber geordnet beendet).
 
-**Hinweis zur Kombination von Tool-Typen:** Mischt man in einer Anfrage
-server-seitige (`web_search`) und client-seitige Tools, erwartet dieser
-Router-Endpunkt für **beide** Typen ein `tool_result` - `web_search`
-verhält sich in dieser Kombination NICHT wie ein automatisch aufgelöstes
-Server-Tool, sondern wie ein ganz normales `ContentBlock.ToolUse`, das wir
-selbst beantworten müssten. Das können wir aber nicht, da uns keine eigene
+**Hinweis zur Kombination von Tool-Typen:** `Agent.scala` erzwingt per
+`require`, dass ein Agent NICHT gleichzeitig `useWebSearch = true` und
+eigene `clientTools` nutzt - nicht weil die Anthropic API das grundsätzlich
+verböte (laut sttp-ai-Doku "Both custom and predefined tools can be passed
+in the same tools list"), sondern weil dieser Router-Endpunkt in dieser
+Kombination für BEIDE Tool-Typen ein `tool_result` erwartet - `web_search`
+verhält sich dann NICHT mehr wie ein automatisch aufgelöstes Server-Tool,
+sondern wie ein ganz normales `ContentBlock.ToolUse`, das wir selbst
+beantworten müssten. Das können wir aber nicht, da uns keine eigene
 Websuch-Implementierung zur Verfügung steht (das wurde per Smoke-Test
 verifiziert: das Modell fordert `web_search` per `ToolUse` an, wir können
 nur mit "kein Handler registriert" antworten - die Suche findet dann de
-facto nicht statt). Anders als die frühere, handgeschriebene `chat`-Methode
-erzwingt `ClaudeToolLoopBackend` diesen Ausschluss nicht mehr per `require`
-(`includeWebSearch` und `clientTools` sind dort technisch unabhängig
-kombinierbar) - die Router-Einschränkung selbst besteht aber unverändert
-fort. Deshalb nutzt der Risk-Analyst in diesem Beispiel weiterhin bewusst
-ausschließlich `calculate_tco`, um den Ablauf klar isoliert zu zeigen.
+facto nicht statt). Deshalb nutzt der Risk-Analyst in diesem Beispiel
+bewusst ausschließlich `calculate_tco`, der Fact-Researcher ausschließlich
+`web_search`.
 
 
 ## Planning-Phase: Der Orchestrator-Agent
@@ -301,7 +309,8 @@ Technisch genutzt wird Anthropics natives **Structured Output**
 
 ```scala
 def buildStructuredAgent[T: {Schema, Codec}](caller: String, model: String, systemPrompt: String): Agent[Identity, String, T] =
-  AgentBuilder[Identity, ClaudeModel.CustomClaudeModel](cfg => ClaudeToolLoopBackend(client, model, includeWebSearch = false, cfg))
+  ClaudeAgent
+    .synchronous(client, model)
     .systemPrompt(systemPrompt)
     .interceptors(commonInterceptors(caller))
     .deriveResponseSchema[T]
@@ -466,7 +475,7 @@ Error-Handling für beide Zweige einzeln.
   ausgeführt werden können. Man unterscheidet:
 - **Server-seitiges Tool**: Ein Tool wie `web_search_20250305`, das direkt
   vom Anthropic-Server ausgeführt wird - der Client muss den Tool-Aufruf
-  nicht selbst abfangen und beantworten. Ein einzelner Request genügt (`ClaudeToolLoopBackend`, siehe `AgentBackends.scala`).
+  nicht selbst abfangen und beantworten. Ein einzelner Request genügt (`AnthropicClient.runWithWebSearch`).
 - **Client-seitiges (custom) Tool**: Ein selbst definiertes Tool (z. B.
   `calculate_tco` beim Risk-Analyst), an den Agent-Loop übergeben als
   `sttp.ai.core.agent.AgentTool` (`CalculateTcoTool.agentTool`). Das Modell liefert nur den *Wunsch*, das
@@ -499,7 +508,7 @@ Error-Handling für beide Zweige einzeln.
   Liste von Content-Blöcken unterschiedlichen Typs (`Text`, `ServerToolUse`,
   `WebSearchToolResult`, ...), in `sttp-ai` als `sealed trait ContentBlock`
   mit Fallklassen abgebildet. Für den finalen Bericht werden nur die
-  `Text`-Blöcke extrahiert (`ClaudeToolLoopBackend.sendRequest`, siehe `AgentBackends.scala`).
+  `Text`-Blöcke extrahiert (`AnthropicClient.runWithWebSearch` bzw. die eingebaute `ClaudeAgentBackend` für `buildAgent`).
 - **Codec (circe)**: Typklassen-basierte Serialisierungs-/
   Deserialisierungslogik für einen bestimmten Typ (`Codec[T]` bzw.
   `Codec.AsObject[T]`), von `sttp-ai` selbst für alle API-Modelle
@@ -526,9 +535,9 @@ Error-Handling für beide Zweige einzeln.
 ```
 multi-agent-agentic-orchestrator/
 ├── project.scala             # scala-cli Direktiven: Scala-Version, Abhängigkeiten & Test-Framework (MUnit)
-├── AnthropicClient.scala     # ClaudeClient + SyncBackend, buildAgent/buildStructuredAgent (Interceptor-Stack), usageCollector
+├── AnthropicClient.scala     # ClaudeClient + SyncBackend, buildAgent/buildStructuredAgent (eingebaute ClaudeAgent-Fabrik + Interceptor-Stack),
+│                             #   runWithWebSearch (Einzel-Request fuer server-seitiges web_search), usageCollector
 │                             #   + object Env am Dateiende: liest ANTHROPIC_AUTH_TOKEN/ANTHROPIC_API_KEY aus .env (via os-lib)
-├── AgentBackends.scala       # ClaudeToolLoopBackend: eigenes sttp.ai.core.agent.AgentBackend (client-seitige Tools + optional web_search)
 ├── Interceptors.scala        # Logging-/Usage-Tracking-/Budget-Interceptoren + PriceTable (Kostenschätzung)
 ├── Agent.scala               # Basisklasse Agent (kapselt Model-Call + Tools über AnthropicClient.buildAgent)
 ├── AgentSpec.scala           # Generische Agenten-Beschreibung (id, hardDependsOn, isMandatory, execute) für Registry/Planner
@@ -588,35 +597,26 @@ Projekt liest den API-Key stattdessen über das projekteigene `object Env`
 (am Ende von `AnthropicClient.scala`, liest zusätzlich `.env` und
 unterstützt den Fallback-Namen `ANTHROPIC_AUTH_TOKEN`).
 
-**2. `ContentBlock.Thinking` ohne `signature`-Feld:** Anthropic verlangt beim
-Zurücksenden von `thinking`-Blöcken (z. B. nach einem `tool_use`-Turn)
-eigentlich die unverändert erhaltene `signature`, um die Integrität der
-Reasoning-Kette zu prüfen. `sttp-ai` 0.11.0 bildet `ContentBlock.Thinking`
-jedoch nur mit einem einzigen Feld ab (`thinking: String`, keine
-`signature`) - eine Signatur kann also gar nicht transportiert werden.
-Sendet man einen (gelegentlich fast leeren) `thinking`-Block unverändert
-zurück, lehnt die API den Request mit `"each thinking block must contain
-thinking"` ab. Workaround in `ClaudeToolLoopBackend.buildMessages` (siehe
-`AgentBackends.scala`): leere
-`Thinking`-Blöcke werden vor dem Zurücksenden herausgefiltert. Das behebt
-das beobachtete Fehlerbild, ändert aber nichts daran, dass diese
-sttp-ai-Version für Modelle mit **erzwungener** Signatur-Prüfung bei
-nicht-leeren Thinking-Blöcken (echtes Extended Thinking) derzeit keine
-korrekte Lösung anbietet - das wäre nur durch ein Upstream-Fix in
-`sttp-ai` behebbar.
+**2. `ContentBlock.Thinking` ohne `signature`-Feld (Problem entfällt seit Umstieg auf die eingebaute `ClaudeAgentBackend`):** Anthropic
+verlangt beim Zurücksenden von `thinking`-Blöcken (z. B. nach einem `tool_use`-Turn) eigentlich die unverändert erhaltene `signature`, um
+die Integrität der Reasoning-Kette zu prüfen - `sttp-ai` 0.11.0 bildet `ContentBlock.Thinking` aber nur mit einem einzigen Feld ab
+(`thinking: String`, keine `signature`). Mit dem früheren, selbstgeschriebenen Backend (`ClaudeToolLoopBackend`, mittlerweile entfernt)
+mussten wir deshalb leere `Thinking`-Blöcke vor dem Zurücksenden manuell herausfiltern, sonst lehnte die API den Request mit `"each
+thinking block must contain thinking"` ab. Die eingebaute `ClaudeAgentBackend` (jetzt genutzt über `AnthropicClient.buildAgent`) hat dieses
+Problem strukturell nicht: Sie rekonstruiert die `assistant`-Nachricht der Historie ausschließlich aus dem extrahierten `textContent` und
+den `toolCalls` (`AgentResponse`), nie aus den rohen Content-Blöcken der Original-Antwort - `Thinking`-Blöcke werden also nie zurückgesendet,
+ob leer oder nicht. Für Modelle mit **erzwungener** Signatur-Prüfung bei echtem, nicht-leerem Extended Thinking bliebe das dennoch
+grundsätzlich ungelöst (mangels `signature`-Feld in `sttp-ai` 0.11.0) - dieses Projekt nutzt aber kein Extended Thinking, daher bislang nur
+theoretisch relevant.
 
-**3. Mischen von server- und client-seitigen Tools:** Unabhängig von der
-Bibliothek gilt weiterhin: Mischt man in einer Anfrage server-seitige (`web_search`) und client-seitige Tools, verhält sich `web_search`
-NICHT wie ein automatisch vom Server aufgelöstes Tool, sondern wie ein
-ganz normales `ContentBlock.ToolUse` (Name `web_search`), das der Client
-selbst per `ToolResult` beantworten müsste - das haben wir per Smoke-Test
-verifiziert. Da uns keine eigene Websuch-Implementierung zur Verfügung
-steht, würde ein solcher `ToolCall` im generischen Agent-Loop nur mit
-"Tool not found: web_search" beantwortet - `ClaudeToolLoopBackend`
-erzwingt den Ausschluss (anders als die frühere `chat`-Methode) nicht mehr
-per `require`, die Agenten dieses Projekts kombinieren `useWebSearch` und
-`clientTools` aber weiterhin bewusst nicht. Deshalb nutzt der Risk-Analyst in diesem
-Beispiel bewusst ausschließlich `calculate_tco`.
+**3. Mischen von server- und client-seitigen Tools:** Mischt man in einer Anfrage server-seitige (`web_search`) und client-seitige Tools,
+verhält sich `web_search` bei diesem Router-Endpunkt NICHT wie ein automatisch vom Server aufgelöstes Tool, sondern wie ein ganz normales
+`ContentBlock.ToolUse` (Name `web_search`), das der Client selbst per `ToolResult` beantworten müsste - das haben wir per Smoke-Test
+verifiziert. Da uns keine eigene Websuch-Implementierung zur Verfügung steht, würde ein solcher `ToolCall` unbeantwortet bleiben bzw. im
+generischen Agent-Loop nur mit "Tool not found: web_search" quittiert. `Agent.scala` verbietet die Kombination deshalb per `require`
+(`useWebSearch` und `clientTools` sind gegenseitig exklusiv) - unabhängig davon läuft `web_search` ohnehin über einen komplett anderen
+Code-Pfad (`AnthropicClient.runWithWebSearch`, Einzel-Request) als client-seitige Tools (`AnthropicClient.buildAgent`, Agent-Loop), sodass
+eine versehentliche Vermischung technisch gar nicht erst entstehen kann.
 
 **4. Eigene Tool-Eingabe-/Ergebnis-Typen bleiben nötig:** `sttp-ai` liefert
 Tool-Eingabeparameter als rohes `Map[String, io.circe.Json]`

@@ -18,8 +18,8 @@ import sttp.shared.Identity
   *   - '''Interceptor''': sttp-ai-Middleware um den Agent-Loop (Logging, Usage-Tracking, Budgets - siehe `Interceptors.scala`), onion-style um jede Iteration/jeden LLM-Call/Tool-Aufruf gelegt (siehe
   *     `AnthropicClient.buildAgent`).
   *
-  * Der Model-Call selbst läuft über `AnthropicClient.buildAgent` - einen `sttp.ai.core.agent.Agent`-Loop (statt des früheren, direkt in diesem Projekt handgeschriebenen Tool-Use-Loops), inkl.
-  * Logging-/Usage-/Budget-Interceptoren.
+  * Der Model-Call selbst läuft über `AnthropicClient.buildAgent` (client-seitige Tools, `sttp.ai.core.agent.Agent`-Loop) bzw. `AnthropicClient.runWithWebSearch` (server-seitiges `web_search`, siehe
+  * dort für die Begründung, warum das kein `Agent`-Loop braucht) - statt des früheren, direkt in diesem Projekt handgeschriebenen Tool-Use-Loops -, inkl. Logging-/Usage-/Budget-Interceptoren.
   */
 abstract class Agent(
     val name: String,
@@ -29,24 +29,25 @@ abstract class Agent(
     val model: String = "vertex/claude-sonnet-5@eu",
 ):
 
-  /** Führt den Model-Call aus (bei Bedarf als Multi-Turn Tool-Use-Loop - siehe `AnthropicClient.buildAgent`/`ClaudeToolLoopBackend`). Eine einzige Methode deckt dabei sowohl server-seitige
-    * (`useWebSearch`) als auch client-seitige (`clientTools`) Tools ab.
+  require(
+    !(useWebSearch && clientTools.nonEmpty),
+    "web_search laesst sich nicht mit client-seitigen Tools kombinieren (siehe README, Abschnitt zu Tool-Typen) - " +
+      "AnthropicClient.runWithWebSearch bietet dafuer keinen Tool-Use-Loop an.",
+  )
+
+  /** Führt den Model-Call aus. Server-seitiges `web_search` (`useWebSearch`) und client-seitige Tools (`clientTools`) sind bewusst exklusiv (siehe `require` oben) und laufen über unterschiedliche
+    * Pfade in `AnthropicClient` - `runWithWebSearch` (einzelner Request, kein Loop nötig) bzw. `buildAgent` (Interceptor-fähiger Multi-Turn Agent-Loop).
     *
-    * Bei einem "unsauberen" Loop-Ende (z. B. Budget-Interceptor greift, oder maximale Iterationen erreicht, bevor eine finale Text-Antwort ohne Tool-Aufruf kam) wird die bestmögliche verfügbare
-    * Antwort (`AgentFailure.rawAnswer`) zurückgegeben statt hart zu scheitern - das entspricht dem bisherigen, bewusst nachsichtigen Verhalten dieses Lernprojekts (siehe `AgentConfig`-Systemprompt:
-    * "IF THIS IS THE LAST ALLOWED ITERATION, provide your final answer, even if the result is partial").
+    * Bei einem "unsauberen" Loop-Ende von `buildAgent` (z. B. Budget-Interceptor greift, oder maximale Iterationen erreicht, bevor eine finale Text-Antwort ohne Tool-Aufruf kam) wird die bestmögliche
+    * verfügbare Antwort (`AgentFailure.rawAnswer`) zurückgegeben statt hart zu scheitern - das entspricht dem bisherigen, bewusst nachsichtigen Verhalten dieses Lernprojekts (siehe
+    * `AgentConfig`-Systemprompt: "IF THIS IS THE LAST ALLOWED ITERATION, provide your final answer, even if the result is partial").
     */
   protected def run(userMessage: String, maxTokens: Int = 2000): String =
-    val agent = AnthropicClient.buildAgent(
-      caller = name,
-      model = model,
-      systemPrompt = systemPrompt,
-      tools = clientTools,
-      useWebSearch = useWebSearch,
-      maxTokens = Some(maxTokens),
-    )
-    agent.run(userMessage)(AnthropicClient.backend).finalAnswer match
-      case Right(answer) => answer
-      case Left(failure) =>
-        println(s"[LLM:$name/WARN] Kein regulärer Abschluss des Agent-Loops (${failure.getClass.getSimpleName}) - nutze bestmögliche Antwort.")
-        failure.rawAnswer
+    if useWebSearch then AnthropicClient.runWithWebSearch(caller = name, model = model, systemPrompt = systemPrompt, userMessage = userMessage, maxTokens = maxTokens)
+    else
+      val agent = AnthropicClient.buildAgent(caller = name, model = model, systemPrompt = systemPrompt, tools = clientTools, maxTokens = Some(maxTokens))
+      agent.run(userMessage)(AnthropicClient.backend).finalAnswer match
+        case Right(answer) => answer
+        case Left(failure) =>
+          println(s"[LLM:$name/WARN] Kein regulärer Abschluss des Agent-Loops (${failure.getClass.getSimpleName}) - nutze bestmögliche Antwort.")
+          failure.rawAnswer
