@@ -22,6 +22,9 @@ object Orchestrator:
 
   /** @param outputsById
     *   Ausgaben aller ausgeführten Agenten, Reihenfolge = Ausführungsreihenfolge (`ListMap`), nicht nur Menge.
+    * @param usageReport
+    *   Menschenlesbare Zusammenfassung über Tokens/Kosten/Dauer aller LLM-Calls dieser Pipeline (Planner + alle ausgeführten Worker-Agenten)
+    *   - siehe `Interceptors.UsageCollector.report`.
     */
   final case class PipelineResult(
       topic: String,
@@ -29,6 +32,7 @@ object Orchestrator:
       outputsById: Map[String, String],
       finalReport: String,
       timing: Timing,
+      usageReport: String,
   )
 
   def runPipeline(topic: String): PipelineResult =
@@ -65,10 +69,17 @@ object Orchestrator:
       throw new IllegalStateException(s"finalAgentId '${plan.finalAgentId}' hat keinen Output erzeugt - Plan/Executor inkonsistent."),
     )
 
+    // Nutzt denselben, pipeline-weiten `AnthropicClient.usageCollector`, in den jeder Agent (inkl. Planner) über seinen eigenen
+    // `UsageTrackingInterceptor` schreibt (siehe `AnthropicClient.buildAgent`/`buildStructuredAgent`) - hier wird nur noch der
+    // Abschluss-Report für DIESEN Pipeline-Lauf gezogen.
+    val usageReport = AnthropicClient.usageCollector.report(Interceptors.Pricing.table)
+    println(usageReport)
+
     PipelineResult(
       topic = topic,
       plan = plan,
       outputsById = outputs,
       finalReport = finalReport,
       timing = Timing(planningElapsed, executionElapsed, totalElapsed),
+      usageReport = usageReport,
     )

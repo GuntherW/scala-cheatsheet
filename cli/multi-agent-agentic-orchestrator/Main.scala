@@ -26,6 +26,7 @@ package agents
       os.write.over(outputDir / f"${idx + 1}%02d_$agentId.md", s"# $agentId: $topic\n\n$output\n")
     }
     os.write.over(outputDir / "99_final_report.md", s"# Finaler Bericht: $topic\n\n${result.finalReport}\n")
+    os.write.over(outputDir / "99_usage_report.md", s"# Token-/Kosten-Report: $topic\n\n```\n${result.usageReport}\n```\n")
 
     println("\n=== FINALER BERICHT ===\n")
     println(result.finalReport)
