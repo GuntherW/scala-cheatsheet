@@ -96,9 +96,7 @@ Other: `akka`, `json`, `macros`, `macwire`, `magnolia`, `scalajs`, `spring`, `gr
 2. `scalafixOnCompile := true` — lint runs on compile
 3. Semanticdb enabled for IDE support
 
-## Scratchpad (tasks touching 3+ files or refactorings)
+## Scratchpad
 
-- Check for `SCRATCHPAD.md`; create if missing
-- Read it first at session start / after `/compact`
-- Keep updated: `# Ziel`, `## Erkenntnisse & Architektur`, `## Checkliste` (`- [ ]`/`- [x]`)
-- Delete only once all tests are green and the task is fully done
+For codebase exploration or tasks touching 3+ files: load the `scratchpad` skill FIRST, before starting — it
+maintains `SCRATCHPAD.md` with concrete findings so they survive context degradation and `/compact`.
