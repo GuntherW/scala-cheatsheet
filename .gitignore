@@ -1,39 +1,61 @@
 /logs/
 /project/project/
 /project/target/
-/target/
 
 # sbt specific
 .cache*
 .history
 .lib/
 .settings*
-dist/*
-target/
 lib_managed/
 src_managed/
 project/boot/
 project/plugins/project/
+target/
 
+# IDE / Tooling
 .idea/
-
-# Scala-IDE specific
-.scala_dependencies
-.worksheet
-.project
-.classpath
-/bin/*
-/bin/
-
 .bloop
 .metals
 .vscode
 .bsp
 .scala-build
-.env
+.scala_dependencies
+.worksheet
+.project
+.classpath
+/bin/
 
+# Node
 package-lock.json
 node_modules
-/http4s/src/main/resources/appConfig.json
 
+# App-specific config
+/http4s/src/main/resources/appConfig.json
 /cdk.out
+
+# Tools
+.cellar/
+.scalex/
+
+# Terraform
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
+
+# Environment / secrets
+.env
+.envrc
+
+# Build & deploy artifacts
+dist/
+out/
+*.zip
+
+# Runtime data
+*.jfr
+
+# CLI results
+cli/multi-agent-agentic-orchestrator/output/
+cli/multi-agent-manual-orchestrator/output/
