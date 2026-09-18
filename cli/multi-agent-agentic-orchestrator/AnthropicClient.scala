@@ -124,18 +124,6 @@ object AnthropicClient:
     * (Logging/Usage-Tracking) wie `buildAgent` - und, anders als eine schlichte `String`-Rückgabe es könnte, dieselbe "unsauberes Ende"-Erkennung (`FinishReason.TokenLimit` ->
     * `Left(AgentIncomplete(...))`), die `Agent.scala` einheitlich für BEIDE Tool-Typen behandelt.
     */
-  /** Übersetzt die generische `ConversationHistory` des sttp-ai-Agent-Traits in die provider-spezifische `List[Message]` der Claude Messages API. Der `web_search`-Pfad wird zwar aktuell immer mit
-    * leerer `seedHistory` aufgerufen (ein einzelner Turn), respektiert damit aber trotzdem den Trait-Vertrag: Der gesendete Request spiegelt exakt dieselbe Historie wider wie das intern gepflegte
-    * `history`/`finalHistory` - andernfalls würde ein späterer Multi-Turn-Aufruf den bisherigen Verlauf stillschweigend verschlucken. `IterationMarker`-Einträge sind reine interne Loop-Marker ohne
-    * Entsprechung in der Messages API und werden übersprungen.
-    */
-  private def toClaudeMessages(history: ConversationHistory): List[Message] =
-    history.entries.collect {
-      case ConversationEntry.UserPrompt(content)               => Message.user(content)
-      case ConversationEntry.AssistantResponse(content, _)     => Message.assistant(content)
-      case ConversationEntry.ToolResult(toolCallId, _, result) => Message.toolResult(toolCallId, result)
-    }.toList
-
   private def webSearchAgent(caller: String, model: String, systemPrompt: String, maxTokens: Int): Agent[Identity, String, String] =
     new Agent[Identity, String, String]:
       protected given monad: sttp.monad.MonadError[Identity] = IdentityMonad
@@ -144,7 +132,7 @@ object AnthropicClient:
         val history = seedHistory.addUserPrompt(userMessage)
         val request = MessageRequest(
           model = model,
-          messages = toClaudeMessages(history),
+          messages = List(Message.user(userMessage)),
           system = Some(systemPrompt),
           maxTokens = maxTokens,
           tools = Some(List(Tool.WebSearch.default)),
@@ -153,13 +141,9 @@ object AnthropicClient:
         val interceptor    = AgentInterceptor.compose(commonInterceptors(caller))
         val llmCallContext = LlmCallContext(history, includeTools = true, IterationInfo(iteration = 1, maxIterations = 1))
 
-        // Der eigentliche HTTP-Call bleibt bewusst INNERHALB von `aroundLlmCall`, damit der `UsageTrackingInterceptor`
-        // die tatsächliche Netzwerkdauer misst. Ein API-Fehler wird - statt via `throw` den ganzen Prozess abzureißen -
-        // als `StopReason.Other(...)` in die `AgentResponse` kodiert und weiter unten in ein typisiertes
-        // `Left(AgentIncomplete(...))` übersetzt (konsistent zur restlichen `AgentFailure`-Fehlerkette, siehe `Agent.scala`).
         val response = interceptor.aroundLlmCall(llmCallContext) {
           client.createMessage(request).send(backend).body match
-            case Left(error) => AgentResponse("", Seq.empty, StopReason.Other(s"api_error: ${error.getMessage}"), usage = None, model = None)
+            case Left(error) => throw new RuntimeException(s"Claude API error: ${error.getMessage}")
             case Right(resp) =>
               val textContent = resp.content.collectFirst { case ContentBlock.Text(text, _, _) => text }.getOrElse("")
               val u           = resp.usage
@@ -174,20 +158,17 @@ object AnthropicClient:
               AgentResponse(textContent, Seq.empty, stopReason, usage = Some(usage), model = Some(resp.model))
         }
 
-        val usage        = response.usage.getOrElse(TokenUsage.Zero)
-        val finalHistory = history.addAssistantResponse(response.textContent, Seq.empty)
-
-        val answerAndReason: (Either[AgentFailure, String], FinishReason) = response.stopReason match
-          case StopReason.MaxTokens     => (Left(AgentIncomplete(response.textContent, FinishReason.TokenLimit, parseError = None)), FinishReason.TokenLimit)
-          case StopReason.Other(reason) => (Left(AgentIncomplete(response.textContent, FinishReason.Error(reason), parseError = None)), FinishReason.Error(reason))
-          case _                        => (Right(response.textContent), FinishReason.NaturalStop)
-        val (finalAnswer, finishReason)                                   = answerAndReason
+        val usage                                     = response.usage.getOrElse(TokenUsage.Zero)
+        val finalHistory                              = history.addAssistantResponse(response.textContent, Seq.empty)
+        val finalAnswer: Either[AgentFailure, String] =
+          if response.stopReason == StopReason.MaxTokens then Left(AgentIncomplete(response.textContent, FinishReason.TokenLimit, parseError = None))
+          else Right(response.textContent)
 
         AgentResult(
           finalAnswer,
           iterations = 1,
           toolCalls = Seq.empty,
-          finishReason = finishReason,
+          finishReason = if response.stopReason == StopReason.MaxTokens then FinishReason.TokenLimit else FinishReason.NaturalStop,
           usage = usage,
           llmCalls = Seq(LlmCallUsage(response.model, usage)),
           history = finalHistory,
@@ -223,3 +204,6 @@ object Env:
     if isQuoted then value.substring(1, value.length - 1) else value
 
   def get(key: String): Option[String] = dotenvVars.get(key).orElse(sys.env.get(key))
+
+  def require(key: String): String = get(key)
+    .getOrElse(throw new RuntimeException(s"Umgebungsvariable '$key' ist weder in .env noch im Environment gesetzt."))

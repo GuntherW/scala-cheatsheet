@@ -40,13 +40,7 @@ object Orchestrator:
     val specs = AgentRegistry.specs(topic).map(s => s.id -> s).toMap
 
     println(s"[Orchestrator] Planung: Orchestrator-Agent entscheidet über den Ausführungsplan für Thema '$topic'")
-    val rawPlan         = AgentPlanner.plan(topic, specs.values.toList) match
-      case Right(executionPlan) => executionPlan
-      case Left(failure)        =>
-        // Kein harter Abbruch: `PlanValidator` repariert einen leeren Plan zu einem dependency-korrekten
-        // Pflicht-Agenten-Plan (siehe dort) - besser ein reduzierter Lauf als gar kein Ergebnis.
-        println(s"[Orchestrator] WARN: Planner lieferte keinen validen ExecutionPlan ($failure) - Fallback auf Pflicht-Agenten-Plan.")
-        ExecutionPlan(steps = Nil, finalAgentId = "", reasoning = s"Fallback nach Planner-Fehlschlag: $failure")
+    val rawPlan         = AgentPlanner.plan(topic, specs.values.toList)
     val plan            = PlanValidator.validate(rawPlan, specs)
     val planningElapsed = (System.nanoTime() - start) / 1e9
     println(f"[Orchestrator] Plan (nach Validierung, ${plan.steps.size} Step(s)): ${plan.steps.map(_.mkString("[", ", ", "]")).mkString(" -> ")}, final=${plan.finalAgentId}")

@@ -3,6 +3,7 @@ package agents
 import io.circe.Json
 import io.circe.derivation.{Configuration, ConfiguredCodec}
 import io.circe.syntax.*
+import sttp.ai.claude.models.{PropertySchema, Tool, ToolInputSchema}
 import sttp.ai.core.agent.AgentTool
 import sttp.apispec.{Schema as ApiSchema, SchemaType}
 import sttp.shared.Identity
@@ -23,7 +24,7 @@ object CalculateTcoTool:
     */
   private given Configuration = Configuration.default.withSnakeCaseMemberNames
 
-  /** Eingabeparameter, wie sie das Modell (passend zum `toolSchema` von `CalculateTcoTool.agentTool`) liefert.
+  /** Eingabeparameter, wie sie das Modell (passend zum `inputSchema` von `CalculateTcoTool.definition`) liefert.
     */
   private case class CalculateTcoInput(technology: String, teamSize: Int) derives ConfiguredCodec
 
@@ -31,15 +32,22 @@ object CalculateTcoTool:
     */
   private case class CalculateTcoResult(technology: String, teamSize: Int, estimatedMonthlyCostEur: Int, note: String) derives ConfiguredCodec
 
-  // Single Source of Truth für Tool-Metadaten: Name, Beschreibung und Feld-Beschreibungstexte werden nur EINMAL
-  // gepflegt und von `agentTool` (unten) referenziert - kein zweites, parallel zu wartendes Schema mehr.
-  private val toolName              = "calculate_tco"
-  private val toolDescription       =
-    "Berechnet eine grobe geschätzte Total Cost of Ownership (TCO) pro Monat für " +
+  /** Client-seitiges (custom) Tool: Definition per JSON-Schema (`ToolInputSchema`/`PropertySchema` aus sttp-ai). Das Modell entscheidet selbst, WANN es dieses Tool mit welchen Parametern aufruft -
+    * die eigentliche Ausführung übernimmt `handler` unten.
+    */
+  val definition: Tool.Custom = Tool(
+    name = "calculate_tco",
+    description = "Berechnet eine grobe geschätzte Total Cost of Ownership (TCO) pro Monat für " +
       "eine Technologie, basierend auf der Teamgröße. HINWEIS: Dies ist eine Demo-Berechnung mit " +
-      "Dummy-Zahlen, keine echte Kostenanalyse."
-  private val technologyDescription = "Name der zu bewertenden Technologie, z. B. 'Kubernetes'"
-  private val teamSizeDescription   = "Anzahl der Teammitglieder, die die Technologie betreiben/nutzen"
+      "Dummy-Zahlen, keine echte Kostenanalyse.",
+    inputSchema = ToolInputSchema.forObject(
+      properties = Map(
+        "technology" -> PropertySchema.string("Name der zu bewertenden Technologie, z. B. 'Kubernetes'"),
+        "team_size"  -> PropertySchema.integer("Anzahl der Teammitglieder, die die Technologie betreiben/nutzen"),
+      ),
+      required = Some(List("technology", "team_size")),
+    ),
+  )
 
   /** Dummy-Implementierung des calculate_tco-Tools.
     *
@@ -60,19 +68,19 @@ object CalculateTcoTool:
           note = "Demo-Berechnung mit Dummy-Zahlen, keine reale Kostenanalyse.",
         ).asJson.noSpaces
 
-  /** Das `calculate_tco`-Tool als `sttp.ai.core.agent.AgentTool` - der generischen Tool-Abstraktion, die der Interceptor-fähige Agent-Loop (`sttp.ai.core.agent.LoopAgent`, via
-    * `sttp.ai.claude.agent.ClaudeAgent`/`AnthropicClient.buildAgent`) erwartet. Bewusst über `AgentTool.dynamic` (rohes `Map[String, Json]`-Input, kein `derives`-Codec für `CalculateTcoInput`)
-    * definiert, damit das bereits robuste `handler` (inkl. Fehlerbehandlung bei fehlerhaftem Modell-Input) unverändert weiterverwendet werden kann - eine `AgentTool.fromFunction[CalculateTcoInput]`
-    * bräuchte zusätzlich eine snake_case-bewusste Tapir-`Schema`-Ableitung für `team_size`, was hier keinen Mehrwert brächte.
+  /** Gleiche Definition/Ausführung wie `definition`/`handler` oben, aber als `sttp.ai.core.agent.AgentTool` - der generischen Tool- Abstraktion, die der Interceptor-fähige Agent-Loop
+    * (`sttp.ai.core.agent.LoopAgent`, via `sttp.ai.claude.agent.ClaudeAgent`/`AnthropicClient.buildAgent`) erwartet. Bewusst über `AgentTool.dynamic` (rohes `Map[String, Json]`-Input, kein
+    * `derives`-Codec für `CalculateTcoInput`) definiert, damit exakt dasselbe, bereits robuste `handler` (inkl. Fehlerbehandlung bei fehlerhaftem Modell-Input) unverändert weiterverwendet werden kann -
+    * eine `AgentTool.fromFunction[CalculateTcoInput]` bräuchte zusätzlich eine snake_case-bewusste Tapir-`Schema`-Ableitung für `team_size`, was hier keinen Mehrwert brächte.
     */
   val agentTool: AgentTool[Identity, Map[String, Json]] = AgentTool.dynamic(
-    toolName = toolName,
-    toolDescription = toolDescription,
+    toolName = definition.name,
+    toolDescription = definition.description,
     toolSchema = ApiSchema(
       `type` = Some(List(SchemaType.Object)),
       properties = ListMap(
-        "technology" -> ApiSchema(`type` = Some(List(SchemaType.String)), description = Some(technologyDescription)),
-        "team_size"  -> ApiSchema(`type` = Some(List(SchemaType.Integer)), description = Some(teamSizeDescription)),
+        "technology" -> ApiSchema(`type` = Some(List(SchemaType.String)), description = Some("Name der zu bewertenden Technologie, z. B. 'Kubernetes'")),
+        "team_size"  -> ApiSchema(`type` = Some(List(SchemaType.Integer)), description = Some("Anzahl der Teammitglieder, die die Technologie betreiben/nutzen")),
       ),
       required = List("technology", "team_size"),
     ),

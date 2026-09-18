@@ -1,7 +1,5 @@
 package agents
 
-import sttp.ai.core.agent.AgentFailure
-
 /** Der agentische Kern des Systems: Ein LLM-Aufruf, der - im Gegensatz zum bisherigen, komplett hartcodierten Ablauf - selbst entscheidet, WELCHE der registrierten Agenten (siehe
   * `AgentRegistry`/`AgentSpec`) für das gegebene Thema aufgerufen werden sollen, in welcher Reihenfolge und was parallel laufen kann.
   *
@@ -53,15 +51,13 @@ object AgentPlanner:
     *
     * Nutzt `AnthropicClient.buildStructuredAgent` (Structured Output über den Interceptor-fähigen sttp-ai Agent-Loop, siehe `AnthropicClient.buildAgent`-Scaladoc) statt eines direkten
     * `chatStructured`-Aufrufs - damit läuft auch die Planungsphase durchs Logging-/Usage-Tracking (`AnthropicClient.usageCollector`), nicht nur die Worker-Agenten.
-    *
-    * Liefert `Left(AgentFailure)` statt einer Exception, falls der Planungs-Call nicht sauber abschloss - konsistent zur restlichen typisierten Fehlerkette des Projekts (`AgentRunOutcome`/
-    * `ReportOutcome`). Der Aufrufer kann daraus kontrolliert degradieren (siehe `Orchestrator.runPipeline`: Fallback auf einen leeren Plan, den `PlanValidator` zu einem Pflicht-Agenten-Plan
-    * repariert), statt die gesamte Pipeline hart abzubrechen.
     */
-  def plan(topic: String, specs: List[AgentSpec]): Either[AgentFailure, ExecutionPlan] =
+  def plan(topic: String, specs: List[AgentSpec]): ExecutionPlan =
     val agent = AnthropicClient.buildStructuredAgent[ExecutionPlan](
       caller = "Planner",
       model = model,
       systemPrompt = systemPrompt(specs),
     )
-    agent.run(s"Thema: $topic\n\nErstelle den Ausführungsplan.")(AnthropicClient.backend).finalAnswer
+    agent.run(s"Thema: $topic\n\nErstelle den Ausführungsplan.")(AnthropicClient.backend).finalAnswer match
+      case Right(executionPlan) => executionPlan
+      case Left(failure)        => throw new RuntimeException(s"Planner lieferte keinen validen ExecutionPlan: $failure")
