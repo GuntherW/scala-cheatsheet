@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.8"
-  val aws                     = "2.269.0"
+  val aws                     = "2.270.0"
   val avro4s                  = "5.0.15"
   val blake3                  = "3.1.2"
   val borer                   = "1.18.0"
@@ -23,14 +23,14 @@ object Version {
   val gatling                 = "3.15.1"
   val gears                   = "0.3.1"
   val grpcNetty               = "1.84.0"
-  val hash4j                  = "0.30.0"
+  val hash4j                  = "0.31.0"
   val h2                      = "2.5.250"
   val http4s                  = "0.23.37"
   val jackson                 = "3.2.2"
   val jwtHttp4s               = "2.0.15"
   val jwtScala                = "11.0.4"
   val jsonSchemaValidator     = "3.0.7"
-  val jsoniter                = "2.40.1"
+  val jsoniter                = "2.41.0"
   val kafka                   = "4.3.1"
   val kyo                     = "0.19.0"
   val logback                 = "1.6.3"
@@ -38,9 +38,11 @@ object Version {
   val macwire                 = "2.6.7"
   val magnolia                = "1.3.23"
   val magnum                  = "2.0.0-M3"
-  val mongo                   = "5.11.1"
+  val mongo                   = "5.12.0"
+  val metricsCore             = "4.2.40"
   val monocle                 = "3.3.0"
   val neotype                 = "0.7.2"
+  val oak                     = "2.6.0"
   val openTelemetry           = "1.66.0"
   val osLib                   = "0.11.8"
   val ox                      = "1.0.7"
@@ -91,7 +93,7 @@ object Version {
   val munit                 = "1.3.6"
   val munitScalaCheck       = "1.3.1"
   val scalaCheck            = "1.20.0"
-  val scalaMock             = "7.5.5"
+  val scalaMock             = "7.6.0"
   val scalaTest             = "3.2.20"
   val testContainer         = "0.44.1"
   val weaverCats            = "0.8.4"
@@ -163,9 +165,12 @@ object Library {
   val magnolia                  = "com.softwaremill.magnolia1_3"          %% "magnolia"                                  % Version.magnolia
   val magnum                    = "com.augustnagro"                       %% "magnum"                                    % Version.magnum
   val magnumpg                  = "com.augustnagro"                       %% "magnumpg"                                  % Version.magnum
+  val metricsCore               = "io.dropwizard.metrics"                  % "metrics-core"                              % Version.metricsCore
   val mongoDriverSync           = "org.mongodb"                            % "mongodb-driver-sync"                       % Version.mongo
   val monocle                   = "dev.optics"                            %% "monocle-core"                              % Version.monocle
   val neotype                   = "io.github.kitlangton"                  %% "neotype"                                   % Version.neotype
+  val oakJcr                    = "org.apache.jackrabbit"                  % "oak-jcr"                                   % Version.oak
+  val oakSegmentTar             = "org.apache.jackrabbit"                  % "oak-segment-tar"                           % Version.oak
   val openTelemtry              = "io.opentelemetry"                       % "opentelemetry-exporter-otlp"               % Version.openTelemetry
   val openTelemtryAutoConfigure = "io.opentelemetry"                       % "opentelemetry-sdk-extension-autoconfigure" % Version.openTelemetry
   val osLib                     = "com.lihaoyi"                           %% "os-lib"                                    % Version.osLib
