@@ -13,8 +13,19 @@ def main(): Unit =
     List(Address("Paper St", "Somewhere")),
     RecoveryMethod.Email("john@example.com")
   )
-
   println(user.transformInto[UserDTO])
+
+  val user2 = UserDTO(
+    "John",
+    Seq(AddressDTO("Paper St", "Somewhere")),
+    Option(RecoveryMethodDTO.Email(EmailDTO("john@example.com")))
+  )
+    .transformIntoPartial[User]
+    .asEither
+    .left
+    .map(_.asErrorPathMessages)
+
+  println(user2)
 
 object Dtos:
   case class UserDTO(
