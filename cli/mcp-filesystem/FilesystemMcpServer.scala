@@ -232,9 +232,10 @@ def mcpServer: StreamingMcpServer[Identity] =
 // HTTP – für manuelle Nutzung / Tests
 @main def filesystemMcpServer(): Unit =
   val endpoint = OxServerHttpTransport(List("mcp")).serve(mcpServer)
-  println("Filesystem MCP Server (Ox) starting on http://localhost:8181/mcp")
+  println("Filesystem MCP Server starting on http://localhost:8181/mcp")
   NettySyncServer().port(8181).addEndpoint(endpoint).startAndWait()
 
 // stdio – für OpenCode / MCP-Clients die den Prozess selbst starten
 @main def filesystemMcpServerStdio(): Unit =
+  println("Filesystem MCP Server starting (stdio)")
   OxServerStdioTransport().serve(mcpServer)

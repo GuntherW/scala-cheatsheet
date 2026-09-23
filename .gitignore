@@ -58,4 +58,5 @@ out/
 
 # CLI results
 cli/multi-agent-agentic-orchestrator/output/
+cli/multi-agent-agentic-orchestrator-kyo/output/
 cli/multi-agent-manual-orchestrator/output/

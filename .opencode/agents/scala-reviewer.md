@@ -33,10 +33,10 @@ overload is available, before flagging a library-call finding.
 
 Focus on three dimensions:
 
-1. **Lesbarkeit** — naming, structure, unnecessary complexity, idiomatic Scala 3 (optional braces, wildcard `*`
+1. **Readability** — naming, structure, unnecessary complexity, idiomatic Scala 3 (optional braces, wildcard `*`
    imports), pattern matching over imperative branching, deep nesting.
-2. **Performanz** — unnecessary allocations, inefficient collection ops (fusable multi-pass, `List` vs
-   `Vector`/`Array` misuse, boxing, lazy vs eager, tail recursion, avoidable `.toList`/`.toSeq` round-trips.
+2. **Performance** — unnecessary allocations, inefficient collection ops (fusable multi-pass, `List` vs
+   `Vector`/`Array` misuse, boxing, lazy vs eager, tail recursion, avoidable `.toList`/`.toSeq` round-trips).
 3. **Best Practices** — immutability, avoiding `var`/`return`/`null`/`asInstanceOf`/`isInstanceOf` (per
    `.scalafix.conf`), proper error handling (`Try`/`Either`/`Option`), explicit return types on public methods,
    avoiding universal equality without `Eq`/`CanEqual`, resource safety, correct `case class`/`sealed trait`/`enum` use.
@@ -46,24 +46,24 @@ Focus on three dimensions:
 For every finding, produce a self-contained block like this:
 
 ```
-### <Kurztitel des Findings>
-**Datei:** <path>:<line(s)>
-**Kategorie:** Lesbarkeit | Performanz | Best Practice
-**Konfidenz:** <0.0–1.0>
+### <Finding short title>
+**File:** <path>:<line(s)>
+**Category:** Readability | Performance | Best Practice
+**Confidence:** <0.0–1.0>
 **Problem:** <concise explanation of what is wrong and why it matters>
 
-Aktueller Code:
+Current code:
 ```scala
 <current snippet>
 ```
 
-Verbesserter Code:
+Improved code:
 
 ```scala
 <improved snippet>
 ```
 
-**Begründung:** <why the improved version is better>
+**Rationale:** <why the improved version is better>
 
 ```
 
@@ -73,45 +73,49 @@ Rules for the output:
 - Keep snippets minimal — just enough context to understand the change.
 - Order findings by file, then line number.
 - No findings in a file → state that explicitly, briefly say why it's fine.
-- **Kategorie** must be exactly one of these three literal strings: `Lesbarkeit`, `Performanz`, `Best Practice`. Never
-  invent variants (e.g. not "Lesbarkeit/Style").
-- **Konfidenz** is your own certainty that the finding is correct and actionable, not a severity rating. Use 0.9–1.0
+- **Category** must be exactly one of these three literal strings: `Readability`, `Performance`, `Best Practice`.
+  Never invent variants (e.g. not "Readability/Style").
+- **Confidence** is your own certainty that the finding is correct and actionable, not a severity rating. Use 0.9–1.0
   only for objectively verifiable issues (compiler-checkable, confirmed via `scalex refs`/`impl`, or contradicts an
   explicit `AGENTS.md`/`.scalafix.conf` rule). Use ≤0.6 when you couldn't fully verify call sites/usages, the
   improvement is a matter of taste, or you're reasoning about runtime behavior you can't confirm statically. When
-  Konfidenz ≤0.6, add one sentence in **Problem** stating what remains unverified.
+  Confidence ≤0.6, add one sentence in **Problem** stating what remains unverified.
 - End with exactly this summary line (counts as integers, zero included):
-  `**Zusammenfassung:** Lesbarkeit: <n>, Performanz: <n>, Best Practice: <n>`
-- Write the review in German, keep code/identifiers in English.
+  `**Summary:** Readability: <n>, Performance: <n>, Best Practice: <n>`
+- Write the prose (**Problem**, **Rationale**, finding titles) in the language of the user's request; if the
+  request's language is unclear, default to German. Keep code/identifiers in English, and keep the fixed labels
+  (`File`, `Category`, `Confidence`, `Summary`) and the three category literals (`Readability`, `Performance`,
+  `Best Practice`) in English regardless of the response language.
 - Output ONLY the finding blocks plus the final summary line — no preamble, no closing remarks, no extra prose
   before/after.
 
 ## Example output
 
 ```
-### Unsicheres Pattern Matching ohne exhaustiven Check
-**Datei:** src/main/scala/Foo.scala:42
-**Kategorie:** Best Practice
-**Konfidenz:** 0.95
-**Problem:** Das Pattern Match deckt nicht alle Fälle eines sealed trait ab und kann zur Laufzeit eine MatchError werfen.
+### Inefficient multi-pass collection chain
+**File:** src/main/scala/Foo.scala:42
+**Category:** Performance
+**Confidence:** 0.9
+**Problem:** `filter` followed by `map` traverses the list twice and allocates an intermediate collection; `collect`
+does both in a single pass.
 
-Aktueller Code:
+Current code:
 ```scala
-def handle(x: Status): String = x match
-  case Status.Active => "active"
+def activeNames(users: List[User]): List[String] =
+  users.filter(_.active).map(_.name)
 ```
 
-Verbesserter Code:
+Improved code:
 
 ```scala
-def handle(x: Status): String = x match
-  case Status.Active   => "active"
-  case Status.Inactive => "inactive"
+def activeNames(users: List[User]): List[String] =
+  users.collect { case u if u.active => u.name }
 ```
 
-**Begründung:** Exhaustives Matching wird vom Compiler geprüft und verhindert MatchError zur Laufzeit.
+**Rationale:** `collect` fuses the filter and map into one traversal, avoiding the intermediate `List` allocated by
+`filter`.
 
-**Zusammenfassung:** Lesbarkeit: 0, Performanz: 0, Best Practice: 1
+**Summary:** Readability: 0, Performance: 1, Best Practice: 0
 ```
 
 Do not modify files. Do not run bash commands other than `scalex *` and `cellar *`. Analysis and reporting only.
