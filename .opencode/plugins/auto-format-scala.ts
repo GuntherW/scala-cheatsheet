@@ -1,4 +1,8 @@
-import type { Plugin } from "@opencode-ai/plugin"
+import { Plugin } from "@opencode/plugin"
+import { execFile } from "node:child_process"
+import { promisify } from "node:util"
+
+const execFileAsync = promisify(execFile)
 
 /**
  * Runs `scalafmt` on any .scala file right after the agent edits or writes
@@ -7,19 +11,20 @@ import type { Plugin } from "@opencode-ai/plugin"
  *
  * Requires the `scalafmt` CLI to be on PATH (installed via coursier/cs).
  */
-export const AutoFormatScala: Plugin = async ({ $ }) => {
-  return {
-    "tool.execute.after": async (input, output) => {
-      if (input.tool !== "edit" && input.tool !== "write") return
+export default Plugin.define({
+  id: "auto-format-scala",
+  async setup(ctx) {
+    await ctx.tool.hook("execute.after", async (event) => {
+      if (event.tool !== "edit" && event.tool !== "write") return
 
-      const filePath = input.args?.filePath as string | undefined
+      const filePath = (event.input as { filePath?: string } | undefined)?.filePath
       if (!filePath || !filePath.endsWith(".scala")) return
 
       try {
-        await $`scalafmt ${filePath}`.quiet()
+        await execFileAsync("scalafmt", [filePath])
       } catch (err) {
         console.error(`[auto-format-scala] scalafmt failed for ${filePath}:`, err)
       }
-    },
-  }
-}
+    })
+  },
+})
