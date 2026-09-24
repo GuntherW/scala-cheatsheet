@@ -1,10 +1,11 @@
 package de.wittig.json.jwt
 
 import org.bouncycastle.jce.ECNamedCurveTable
+import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.jce.spec.ECNamedCurveSpec
 import pdi.jwt.{Jwt, JwtAlgorithm}
 
-import java.security.{KeyFactory, KeyPairGenerator}
+import java.security.{KeyFactory, KeyPairGenerator, Security}
 import java.security.spec.*
 import scala.util.chaining.scalaUtilChainingOps
 
@@ -23,6 +24,10 @@ def mainWithSavedKeysEcdsa(): Unit =
 
   val privateSpec = new ECPrivateKeySpec(S.underlying, curveSpec)
   val publicSpec  = new ECPublicKeySpec(new ECPoint(X.underlying, Y.underlying), curveSpec)
+
+  if (Security.getProvider("BC") == null) {
+    Security.addProvider(BouncyCastleProvider())
+  }
 
   val privateKeyEC = KeyFactory.getInstance("ECDSA", "BC").generatePrivate(privateSpec)
   val publicKeyEC  = KeyFactory.getInstance("ECDSA", "BC").generatePublic(publicSpec)

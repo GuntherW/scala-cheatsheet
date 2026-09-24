@@ -39,24 +39,24 @@ def mainClaim(): Unit =
   // In 10 seconds from now
   claim = claim.expiresIn(5)
   // At a specific timestamp (in seconds)
-  claim.expiresAt(1431520421)
+  claim = claim.expiresAt(1431520421)
   // Right now! (the token is directly invalid...)
-  claim.expiresNow
+  claim = claim.expiresNow
 
   // Set the beginning of the token (aka the "not before" attribute)
   // 5 seconds ago
-  claim.startsIn(-5)
+  claim = claim.startsIn(-5)
   // At a specific timestamp (in seconds)
-  claim.startsAt(1431520421)
+  claim = claim.startsAt(1431520421)
   // Right now!
   claim = claim.startsNow
 
   // Set the date when the token was created
   // (you should always use claim.issuedNow, but I let you do otherwise if needed)
   // 5 seconds ago
-  claim.issuedIn(-5)
+  claim = claim.issuedIn(-5)
   // At a specific timestamp (in seconds)
-  claim.issuedAt(1431520421)
+  claim = claim.issuedAt(1431520421)
   // Right now!
   claim = claim.issuedNow
 
