@@ -5,7 +5,7 @@ import ox.either.{catching, ok}
 import ox.resilience.*
 import ox.scheduling.{repeat, Schedule}
 
-import java.time.{LocalDateTime, LocalTime}
+import java.time.LocalTime
 import scala.concurrent.TimeoutException
 import scala.concurrent.duration.*
 import scala.util.Random
