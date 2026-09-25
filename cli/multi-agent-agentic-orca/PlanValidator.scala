@@ -1,0 +1,37 @@
+/** Repariert einen LLM-Plan. Liefert immer einen strukturell gültigen Plan, nie eine Exception.
+  *
+  * Unbekannte Ids fliegen raus, Pflicht-Agenten kommen rein, `hardDependsOn` wird per Kahn-Algorithmus erzwungen. Ein Zyklus wird aufgebrochen, statt den Executor zu blockieren.
+  */
+object PlanValidator:
+
+  def validate(raw: ExecutionPlan, specs: Map[String, AgentSpec]): ExecutionPlan =
+    require(specs.nonEmpty, "AgentRegistry darf nicht leer sein.")
+
+    val knownIds   = specs.keySet
+    val deduped    = raw.steps.flatten.filter(knownIds.contains).distinct
+    val mandatory  = specs.values.filter(_.isMandatory).map(_.id).filterNot(deduped.contains)
+    val orderedIds = deduped ++ mandatory
+
+    val levels = topologicalLevels(orderedIds, specs)
+    val allIds = levels.flatten
+
+    val finalAgentId =
+      if allIds.contains(raw.finalAgentId) then raw.finalAgentId
+      else specs.values.find(_.isMandatory).map(_.id).orElse(allIds.lastOption).getOrElse(specs.keys.head)
+
+    ExecutionPlan(levels, finalAgentId, raw.reasoning)
+
+  private def topologicalLevels(ids: List[String], specs: Map[String, AgentSpec]): List[List[String]] =
+    val priority = ids.zipWithIndex.toMap
+
+    @annotation.tailrec
+    def loop(remaining: List[String], doneIds: Set[String], levelsAcc: List[List[String]]): List[List[String]] =
+      if remaining.isEmpty then levelsAcc.reverse
+      else
+        val (ready, notReady) = remaining.partition(id => specs(id).hardDependsOn.subsetOf(doneIds))
+        if ready.isEmpty then (remaining.sortBy(priority) :: levelsAcc).reverse
+        else
+          val sortedReady = ready.sortBy(priority)
+          loop(notReady, doneIds ++ sortedReady, sortedReady :: levelsAcc)
+
+    loop(ids, Set.empty, Nil)
