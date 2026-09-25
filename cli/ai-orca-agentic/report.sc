@@ -14,13 +14,13 @@ import scala.collection.immutable.ListMap
 // Agentischer Orchestrator auf Orca. Das LLM plant, welcher Agent wann läuft.
 // Der Flow erzwingt einen Worktree, damit der Checkout dieses Repos keinen Branch wechselt.
 
-val DefaultTopic = "Sollten wir für unser Backend von REST auf GraphQL wechseln?"
-val OutputDir    = "cli/multi-agent-agentic-orca/output"
+val defaultTopic = "Sollten wir für unser Backend von REST auf GraphQL wechseln?"
+val outputDir    = "cli/multi-agent-agentic-orca/output"
 
 case class PlanDraft(steps: List[List[String]], finalAgentId: String, reasoning: String) derives JsonData
 
 val parsed = OrcaArgs(args)
-val topic  = if parsed.userPrompt.isBlank then DefaultTopic else parsed.userPrompt
+val topic  = if parsed.userPrompt.isBlank then defaultTopic else parsed.userPrompt
 val specs  = AgentRegistry.describe.map(s => s.id -> s).toMap
 
 flow(
@@ -34,7 +34,7 @@ flow(
 ):
   val draft = stage("Plan", commitMessage = Some((_: PlanDraft) => "stage: plan")):
     claude
-      .withModel(AgentRegistry.ReportModel)
+      .withModel(AgentRegistry.model)
       .withName("Planner")
       .withReadOnly
       .withSystemPrompt(AgentRegistry.plannerPrompt)
@@ -53,8 +53,8 @@ flow(
         val bound = AgentRegistry.bind(topic)
         display(s"Step ${idx + 1}: ${step.mkString(", ")}")
         Par.mapUnordered(step.size)(step): id =>
-          id -> bound(id).execute(context)
-      val byId = pairs.toMap
+          id -> bound(id)(context)
+      val byId  = pairs.toMap
       context ++ step.flatMap(id => byId.get(id).map(id -> _))
   }
 
@@ -62,11 +62,11 @@ flow(
     plan.steps.flatten.zipWithIndex.foreach { case (id, index) =>
       val text = outputs.getOrElse(id, "")
       val name = s"${"%02d".format(index + 1)}_$id.md"
-      fs.write(s"$OutputDir/$name", s"# $id: $topic\n\n$text\n")
+      fs.write(s"$outputDir/$name", s"# $id: $topic\n\n$text\n")
     }
     val finalReport = outputs.getOrElse(plan.finalAgentId, "Kein finaler Agent hat einen Bericht geliefert.")
-    fs.write(s"$OutputDir/99_final_report.md", s"# Finaler Bericht: $topic\n\n$finalReport\n")
+    fs.write(s"$outputDir/99_final_report.md", s"# Finaler Bericht: $topic\n\n$finalReport\n")
     finalReport
 
   println(s"\n=== FINALER BERICHT ===\n\n$report")
-  println(s"\n[Ergebnisse im Worktree: $OutputDir]")
+  println(s"\n[Ergebnisse im Worktree: $outputDir]")

@@ -7,7 +7,7 @@
 class PlanValidatorTest extends munit.FunSuite:
 
   private def spec(id: String, dependsOn: Set[String] = Set.empty, mandatory: Boolean = false): AgentSpec =
-    AgentSpec(id = id, description = id, hardDependsOn = dependsOn, isMandatory = mandatory, execute = _ => id)
+    AgentSpec(id = id, description = id, hardDependsOn = dependsOn, isMandatory = mandatory)
 
   private val a        = spec("a")
   private val b        = spec("b")
