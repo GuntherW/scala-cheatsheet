@@ -57,7 +57,7 @@ object Version {
   val scodec                  = "2.3.3"
   val skunk                   = "1.0.0"
   val springBoot              = "4.1.1"
-  val sttp                    = "4.0.26"
+  val sttp                    = "4.0.27"
   val sttpOAuth               = "0.18.0"
   val sttpOpenAi              = "0.3.10"
   val squants                 = "1.8.3"
