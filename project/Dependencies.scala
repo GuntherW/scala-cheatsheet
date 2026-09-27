@@ -65,7 +65,7 @@ object Version {
   val toml                    = "0.3.0"
   val tyqu                    = "0.1.0"
   val upickle                 = "4.4.3"
-  val xxHash                  = "1.11.3"
+  val xxHash                  = "1.11.4"
   val yaes                    = "0.21.0"
   val xstream                 = "1.4.21"
   val xml                     = "2.5.0"
