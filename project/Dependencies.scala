@@ -87,7 +87,7 @@ object Version {
   val cucumberScala         = "8.39.7"
   val junit                 = "6.1.3"
   val junitJupiterInterface = "0.19.0"
-  val mockito               = "5.23.0"
+  val mockito               = "5.24.0"
   val munit                 = "1.3.6"
   val munitScalaCheck       = "1.3.1"
   val scalaCheck            = "1.20.0"
