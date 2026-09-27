@@ -43,7 +43,7 @@ object Version {
   val neotype                 = "0.7.2"
   val openTelemetry           = "1.66.0"
   val osLib                   = "0.11.8"
-  val ox                      = "1.0.7"
+  val ox                      = "1.0.8"
   val parserCombinators       = "2.5.0"
   val proteus                 = "0.6.0"
   val postgres                = "42.7.13"
