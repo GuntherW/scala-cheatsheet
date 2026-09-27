@@ -26,7 +26,7 @@ object Version {
   val hash4j                  = "0.30.0"
   val h2                      = "2.5.250"
   val http4s                  = "0.23.37"
-  val jackson                 = "3.2.2"
+  val jackson                 = "3.2.3"
   val jwtHttp4s               = "2.0.15"
   val jwtScala                = "11.0.4"
   val jsonSchemaValidator     = "3.0.7"
