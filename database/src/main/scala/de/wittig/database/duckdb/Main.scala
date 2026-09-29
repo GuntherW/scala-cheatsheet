@@ -1,56 +1,59 @@
 package de.wittig.database.duckdb
 
-import org.duckdb.DuckDBConnection
+import java.sql.{Connection, DriverManager}
+import scala.util.Using
 
-import java.sql.{DriverManager, ResultSet}
+case class User(id: Int, name: String, age: Int)
 
 @main
 def main(): Unit =
+  Using.resource(DriverManager.getConnection("jdbc:duckdb:")) { connection =>
+    given Connection = connection
 
-//  val connection = DriverManager.getConnection("jdbc:duckdb:database/duck.db").asInstanceOf[DuckDBConnection]
-  val connection = DriverManager.getConnection("jdbc:duckdb:").asInstanceOf[DuckDBConnection]
-  val statement  = connection.createStatement()
+    createTable()
+    insertUsers(List(User(1, "Alice", 30), User(2, "Bob", 25), User(3, "Charlie", 35)))
+    insertUser(User(4, "Hans", 44))
+    val users = queryUsers()
+    println("ID | Name    | Age")
+    println("-------------------")
+    users.foreach(user => println(f"${user.id}%2d | ${user.name}%-7s | ${user.age}%3d"))
+  }
 
-  // Create a table
-  val createTableSQL = """
-                         CREATE TABLE users (
-                           id INTEGER,
-                           name VARCHAR,
-                           age INTEGER
-                         );
-                         """
-  statement.execute(createTableSQL)
+private def createTable()(using connection: Connection): Unit =
+  val createTableSQL =
+    """CREATE TABLE users (
+      |  id INTEGER,
+      |  name VARCHAR,
+      |  age INTEGER
+      |);""".stripMargin
+  Using.resource(connection.createStatement())(_.execute(createTableSQL))
 
-  // Insert some data
-  val insertDataSQL = """
-                        INSERT INTO users (id, name, age) VALUES
-                          (1, 'Alice', 30),
-                          (2, 'Bob', 25),
-                          (3, 'Charlie', 35);
-                        """
-  statement.execute(insertDataSQL)
+private def insertUsers(users: List[User])(using connection: Connection): Unit =
+  Using.resource(connection.prepareStatement("INSERT INTO users (id, name, age) VALUES (?, ?, ?)")) { prepared =>
+    users.foreach { user =>
+      prepared.setInt(1, user.id)
+      prepared.setString(2, user.name)
+      prepared.setInt(3, user.age)
+      prepared.addBatch()
+    }
+    prepared.executeBatch()
+  }
 
-  // Insert, using Prepared Statement
-  val prepared = connection.prepareStatement("INSERT INTO users (id, name, age) VALUES (?, ?, ?)")
-  prepared.setInt(1, 4)
-  prepared.setString(2, "Hans")
-  prepared.setInt(3, 44)
-  prepared.execute()
+private def insertUser(user: User)(using connection: Connection): Unit =
+  Using.resource(connection.prepareStatement("INSERT INTO users (id, name, age) VALUES (?, ?, ?)")) { prepared =>
+    prepared.setInt(1, user.id)
+    prepared.setString(2, user.name)
+    prepared.setInt(3, user.age)
+    prepared.execute()
+  }
 
-  // Query the data
-  val querySQL             = "SELECT * FROM users;"
-  val resultSet: ResultSet = statement.executeQuery(querySQL)
-
-  // Print the results
-  println("ID | Name    | Age")
-  println("-------------------")
-  while resultSet.next() do
-    val id   = resultSet.getInt("id")
-    val name = resultSet.getString("name")
-    val age  = resultSet.getInt("age")
-    println(f"$id%2d | $name%-7s | $age%3d")
-
-  // Clean up
-  resultSet.close()
-  statement.close()
-  connection.close()
+private def queryUsers()(using connection: Connection): Seq[User] =
+  Using.Manager { use =>
+    val statement = use(connection.createStatement())
+    val resultSet = use(statement.executeQuery("SELECT * FROM users;"))
+    Iterator
+      .continually(resultSet)
+      .takeWhile(_.next())
+      .map(rs => User(rs.getInt("id"), rs.getString("name"), rs.getInt("age")))
+      .toSeq
+  }.get
