@@ -35,10 +35,10 @@ private def resourcePath(name: String): String =
 private def revenueByCategory(jsonPath: String)(using connection: Connection): Seq[RevenueByCategory] =
   val query =
     """SELECT category, sum(quantity * unit_price) AS revenue, count(*) AS orders
-      |FROM read_json_auto(?)
-      |WHERE status != 'cancelled'
-      |GROUP BY category
-      |ORDER BY revenue DESC;""".stripMargin
+      | FROM read_json_auto(?)
+      | WHERE status != 'cancelled'
+      | GROUP BY category
+      | ORDER BY revenue DESC;""".stripMargin
   Using.Manager { use =>
     val prepared  = use(connection.prepareStatement(query))
     prepared.setString(1, jsonPath)
@@ -53,10 +53,10 @@ private def revenueByCategory(jsonPath: String)(using connection: Connection): S
 private def revenueByCountry(jsonPath: String)(using connection: Connection): Seq[RevenueByCountry] =
   val query =
     """SELECT country, sum(quantity * unit_price) AS revenue, count(*) AS orders
-      |FROM read_json_auto(?)
-      |WHERE status != 'cancelled'
-      |GROUP BY country
-      |ORDER BY revenue DESC;""".stripMargin
+      | FROM read_json_auto(?)
+      | WHERE status != 'cancelled'
+      | GROUP BY country
+      | ORDER BY revenue DESC;""".stripMargin
   Using.Manager { use =>
     val prepared  = use(connection.prepareStatement(query))
     prepared.setString(1, jsonPath)
