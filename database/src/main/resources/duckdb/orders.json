@@ -1,0 +1,14 @@
+[
+  { "order_id": 1001, "customer_name": "Alice Johnson", "country": "USA", "product": "Laptop", "category": "Electronics", "quantity": 1, "unit_price": 999.99, "order_date": "2024-01-05", "status": "shipped" },
+  { "order_id": 1002, "customer_name": "Bob Smith", "country": "Germany", "product": "Coffee Maker", "category": "Home", "quantity": 2, "unit_price": 49.50, "order_date": "2024-01-07", "status": "shipped" },
+  { "order_id": 1003, "customer_name": "Charlie Brown", "country": "USA", "product": "Headphones", "category": "Electronics", "quantity": 3, "unit_price": 79.90, "order_date": "2024-01-10", "status": "cancelled" },
+  { "order_id": 1004, "customer_name": "Diana Prince", "country": "France", "product": "Desk Chair", "category": "Furniture", "quantity": 1, "unit_price": 159.00, "order_date": "2024-01-12", "status": "shipped" },
+  { "order_id": 1005, "customer_name": "Ethan Hunt", "country": "Germany", "product": "Smartphone", "category": "Electronics", "quantity": 2, "unit_price": 699.00, "order_date": "2024-01-15", "status": "pending" },
+  { "order_id": 1006, "customer_name": "Fiona Gallagher", "country": "UK", "product": "Blender", "category": "Home", "quantity": 1, "unit_price": 39.99, "order_date": "2024-01-18", "status": "shipped" },
+  { "order_id": 1007, "customer_name": "George Miller", "country": "France", "product": "Bookshelf", "category": "Furniture", "quantity": 2, "unit_price": 89.50, "order_date": "2024-01-20", "status": "shipped" },
+  { "order_id": 1008, "customer_name": "Hannah Lee", "country": "USA", "product": "Tablet", "category": "Electronics", "quantity": 1, "unit_price": 329.00, "order_date": "2024-01-22", "status": "pending" },
+  { "order_id": 1009, "customer_name": "Ivan Petrov", "country": "UK", "product": "Toaster", "category": "Home", "quantity": 3, "unit_price": 24.99, "order_date": "2024-01-25", "status": "shipped" },
+  { "order_id": 1010, "customer_name": "Julia Roberts", "country": "Germany", "product": "Office Desk", "category": "Furniture", "quantity": 1, "unit_price": 219.00, "order_date": "2024-01-28", "status": "shipped" },
+  { "order_id": 1011, "customer_name": "Kevin Ng", "country": "USA", "product": "Monitor", "category": "Electronics", "quantity": 2, "unit_price": 189.99, "order_date": "2024-02-02", "status": "shipped" },
+  { "order_id": 1012, "customer_name": "Laura Wilson", "country": "France", "product": "Vacuum Cleaner", "category": "Home", "quantity": 1, "unit_price": 129.00, "order_date": "2024-02-05", "status": "cancelled" }
+]

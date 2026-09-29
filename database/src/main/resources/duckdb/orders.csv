@@ -1,0 +1,13 @@
+order_id,customer_name,country,product,category,quantity,unit_price,order_date,status
+1001,Alice Johnson,USA,Laptop,Electronics,1,999.99,2024-01-05,shipped
+1002,Bob Smith,Germany,Coffee Maker,Home,2,49.50,2024-01-07,shipped
+1003,Charlie Brown,USA,Headphones,Electronics,3,79.90,2024-01-10,cancelled
+1004,Diana Prince,France,Desk Chair,Furniture,1,159.00,2024-01-12,shipped
+1005,Ethan Hunt,Germany,Smartphone,Electronics,2,699.00,2024-01-15,pending
+1006,Fiona Gallagher,UK,Blender,Home,1,39.99,2024-01-18,shipped
+1007,George Miller,France,Bookshelf,Furniture,2,89.50,2024-01-20,shipped
+1008,Hannah Lee,USA,Tablet,Electronics,1,329.00,2024-01-22,pending
+1009,Ivan Petrov,UK,Toaster,Home,3,24.99,2024-01-25,shipped
+1010,Julia Roberts,Germany,Office Desk,Furniture,1,219.00,2024-01-28,shipped
+1011,Kevin Ng,USA,Monitor,Electronics,2,189.99,2024-02-02,shipped
+1012,Laura Wilson,France,Vacuum Cleaner,Home,1,129.00,2024-02-05,cancelled

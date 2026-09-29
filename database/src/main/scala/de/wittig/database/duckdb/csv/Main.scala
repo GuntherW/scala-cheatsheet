@@ -34,14 +34,15 @@ private def resourcePath(name: String): String =
 
 private def revenueByCategory(csvPath: String)(using connection: Connection): Seq[RevenueByCategory] =
   val query =
-    s"""SELECT category, sum(quantity * unit_price) AS revenue, count(*) AS orders
-       |FROM read_csv_auto('$csvPath')
-       |WHERE status != 'cancelled'
-       |GROUP BY category
-       |ORDER BY revenue DESC;""".stripMargin
+    """SELECT category, sum(quantity * unit_price) AS revenue, count(*) AS orders
+      |FROM read_csv_auto(?)
+      |WHERE status != 'cancelled'
+      |GROUP BY category
+      |ORDER BY revenue DESC;""".stripMargin
   Using.Manager { use =>
-    val statement = use(connection.createStatement())
-    val resultSet = use(statement.executeQuery(query))
+    val prepared  = use(connection.prepareStatement(query))
+    prepared.setString(1, csvPath)
+    val resultSet = use(prepared.executeQuery())
     Iterator
       .continually(resultSet)
       .takeWhile(_.next())
@@ -51,14 +52,15 @@ private def revenueByCategory(csvPath: String)(using connection: Connection): Se
 
 private def revenueByCountry(csvPath: String)(using connection: Connection): Seq[RevenueByCountry] =
   val query =
-    s"""SELECT country, sum(quantity * unit_price) AS revenue, count(*) AS orders
-       |FROM read_csv_auto('$csvPath')
-       |WHERE status != 'cancelled'
-       |GROUP BY country
-       |ORDER BY revenue DESC;""".stripMargin
+    """SELECT country, sum(quantity * unit_price) AS revenue, count(*) AS orders
+      |FROM read_csv_auto(?)
+      |WHERE status != 'cancelled'
+      |GROUP BY country
+      |ORDER BY revenue DESC;""".stripMargin
   Using.Manager { use =>
-    val statement = use(connection.createStatement())
-    val resultSet = use(statement.executeQuery(query))
+    val prepared  = use(connection.prepareStatement(query))
+    prepared.setString(1, csvPath)
+    val resultSet = use(prepared.executeQuery())
     Iterator
       .continually(resultSet)
       .takeWhile(_.next())
