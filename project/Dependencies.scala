@@ -18,7 +18,7 @@ object Version {
   val constructs              = "10.8.1"
   val doobie                  = "1.0.0-RC12"
   val ducktape                = "0.2.13"
-  val duckdb                  = "1.5.5.1"
+  val duckdb                  = "1.5.6.0"
   val fs2                     = "3.14.0"
   val gatling                 = "3.15.1"
   val gears                   = "0.3.1"
@@ -85,7 +85,7 @@ object Version {
   val uTest      = "0.9.5"
 
   // Test
-  val cucumber              = "8.0.2"
+  val cucumber              = "8.0.3"
   val cucumberScala         = "8.39.7"
   val junit                 = "6.1.3"
   val junitJupiterInterface = "0.19.0"
