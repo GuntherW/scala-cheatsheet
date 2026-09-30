@@ -1,16 +1,24 @@
 package agent
 
-import io.circe.Json
+import io.circe.{Decoder, Json}
 import io.circe.derivation.{Configuration, ConfiguredCodec}
 import io.circe.syntax.*
 import sttp.ai.claude.models.{PropertySchema, Tool, ToolInputSchema}
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 /** JSON-Feldnamen der Ein-/Ausgabetypen sollen `snake_case` folgen (passend zu den Tool-Schemas), die Scala-Felder selbst `camelCase` (Projekt-Konvention).
   */
 given Configuration = Configuration.default.withSnakeCaseMemberNames
+
+/** Gemeinsamer Decode-/Fehlerbehandlungs-Baustein für alle Tool-Handler unten: dekodiert `rawInput` nach `A` und liefert bei Erfolg `onInput(input)`, bei einem Decode-Fehler ein einheitliches
+  * `{"error": "..."}`-JSON. Vermeidet die identische `Left`/`Right`-Fallunterscheidung in jedem einzelnen Handler.
+  */
+private def decodeInput[A: Decoder](toolName: String, rawInput: Map[String, Json])(onInput: A => String): String =
+  Json.fromFields(rawInput).as[A] match
+    case Left(error)  => Json.obj("error" -> s"Konnte $toolName-Eingabe nicht parsen: ${error.getMessage}".asJson).noSpaces
+    case Right(input) => onInput(input)
 
 /** Tool 1: `get_current_time` - liefert Datum/Uhrzeit für eine optionale Zeitzone (IANA-ID, z. B. "Europe/Berlin"). Ohne Angabe wird UTC verwendet.
   */
@@ -31,15 +39,14 @@ object CurrentTimeTool:
   )
 
   def handler(rawInput: Map[String, Json]): String =
-    Json.fromFields(rawInput).as[CurrentTimeInput] match
-      case Left(error)  => Json.obj("error" -> s"Konnte get_current_time-Eingabe nicht parsen: ${error.getMessage}".asJson).noSpaces
-      case Right(input) =>
-        val zoneId = input.timezone.getOrElse("UTC")
-        Try(java.time.ZoneId.of(zoneId)) match
-          case scala.util.Failure(_)    => Json.obj("error" -> s"Unbekannte Zeitzone: '$zoneId'".asJson).noSpaces
-          case scala.util.Success(zone) =>
-            val now = ZonedDateTime.now(zone)
-            CurrentTimeResult(timezone = zoneId, iso8601 = now.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)).asJson.noSpaces
+    decodeInput[CurrentTimeInput](definition.name, rawInput) { input =>
+      val zoneId = input.timezone.getOrElse("UTC")
+      Try(java.time.ZoneId.of(zoneId)) match
+        case Failure(_)    => Json.obj("error" -> s"Unbekannte Zeitzone: '$zoneId'".asJson).noSpaces
+        case Success(zone) =>
+          val now = ZonedDateTime.now(zone)
+          CurrentTimeResult(timezone = zoneId, iso8601 = now.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)).asJson.noSpaces
+    }
 
 /** Tool 2: `calculator` - wertet einen einfachen arithmetischen Ausdruck aus (+, -, *, /, Klammern). Bewusst simpel gehalten (keine Variablen/Funktionen) - dient nur der Veranschaulichung.
   */
@@ -60,15 +67,15 @@ object CalculatorTool:
   )
 
   def handler(rawInput: Map[String, Json]): String =
-    Json.fromFields(rawInput).as[CalculatorInput] match
-      case Left(error)  => Json.obj("error" -> s"Konnte calculator-Eingabe nicht parsen: ${error.getMessage}".asJson).noSpaces
-      case Right(input) =>
-        Try(ExpressionParser.evaluate(input.expression)) match
-          case scala.util.Failure(e)      => Json.obj("error" -> s"Konnte Ausdruck nicht auswerten: ${e.getMessage}".asJson).noSpaces
-          case scala.util.Success(result) => CalculatorResult(expression = input.expression, result = result).asJson.noSpaces
+    decodeInput[CalculatorInput](definition.name, rawInput) { input =>
+      Try(ExpressionParser.evaluate(input.expression)) match
+        case Failure(e)      => Json.obj("error" -> s"Konnte Ausdruck nicht auswerten: ${e.getMessage}".asJson).noSpaces
+        case Success(result) => CalculatorResult(expression = input.expression, result = result).asJson.noSpaces
+    }
 
 /** Winziger, rekursiver Parser/Evaluator für arithmetische Ausdrücke (+, -, *, /, Klammern, unäres Minus). Bewusst ohne externe Bibliothek - dieses Lernprojekt soll den Tool-Search-Flow zeigen, nicht
-  * einen produktionsreifen Parser.
+  * einen produktionsreifen Parser. Die Zeigerposition `pos` bleibt bewusst ein lokal gekapselter `var` (kein sichtbarer Zustand außerhalb dieser Methode) - ein rein immutabler State-Thread würde hier
+  * gegenüber dem winzigen Scope unnötige Komplexität hinzufügen.
   */
 object ExpressionParser:
   def evaluate(expr: String): Double =
@@ -97,21 +104,15 @@ object ExpressionParser:
         case Some('+') => advance(); parseFactor()
         case _         => parseNumber()
 
-    def parseTerm(): Double =
-      var value = parseFactor()
-      while peek.contains('*') || peek.contains('/') do
-        val op  = advance()
-        val rhs = parseFactor()
-        value = if op == '*' then value * rhs else value / rhs
+    def parseBinaryLevel(next: () => Double, ops: Map[Char, (Double, Double) => Double]): Double =
+      var value = next()
+      while peek.exists(ops.contains) do
+        val op = advance()
+        value = ops(op)(value, next())
       value
 
-    def parseExpr(): Double =
-      var value = parseTerm()
-      while peek.contains('+') || peek.contains('-') do
-        val op  = advance()
-        val rhs = parseTerm()
-        value = if op == '+' then value + rhs else value - rhs
-      value
+    def parseTerm(): Double = parseBinaryLevel(parseFactor, Map('*' -> (_ * _), '/' -> (_ / _)))
+    def parseExpr(): Double = parseBinaryLevel(parseTerm, Map('+' -> (_ + _), '-' -> (_ - _)))
 
     val result = parseExpr()
     if pos != chars.length then throw new IllegalArgumentException(s"Unerwartetes Zeichen an Position $pos in '$expr'")
@@ -137,10 +138,10 @@ object RollDiceTool:
   )
 
   def handler(rawInput: Map[String, Json]): String =
-    Json.fromFields(rawInput).as[RollDiceInput] match
-      case Left(error)                                        => Json.obj("error" -> s"Konnte roll_dice-Eingabe nicht parsen: ${error.getMessage}".asJson).noSpaces
-      case Right(input) if input.sides < 2 || input.count < 1 =>
+    decodeInput[RollDiceInput](definition.name, rawInput) {
+      case input if input.sides < 2 || input.count < 1 =>
         Json.obj("error" -> "sides muss >= 2 und count muss >= 1 sein.".asJson).noSpaces
-      case Right(input)                                       =>
+      case input                                       =>
         val rolls = List.fill(input.count)(scala.util.Random.nextInt(input.sides) + 1)
         RollDiceResult(sides = input.sides, count = input.count, rolls = rolls, sum = rolls.sum).asJson.noSpaces
+    }

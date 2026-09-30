@@ -41,6 +41,11 @@ object ToolRegistry:
 
   private val byName: Map[String, ToolMeta] = all.map(t => t.definition.name -> t).toMap
 
+  // Name/Description/Keywords ändern sich nie zur Laufzeit - der durchsuchbare Text pro Tool wird deshalb
+  // einmalig statt bei jedem `search`-Aufruf neu gebaut (relevant, sobald die Tool-Bibliothek größer wird).
+  private val searchableTextByTool: Map[ToolMeta, String] =
+    all.map(meta => meta -> (meta.definition.name :: meta.definition.description :: meta.keywords).mkString(" ").toLowerCase).toMap
+
   def find(name: String): Option[ToolMeta] = byName.get(name)
 
   /** Simple Keyword-/Substring-Suche über Name, Description und `keywords` aller registrierten Tools (case-insensitive, jedes Wort der Query wird einzeln gegen jedes Tool geprüft). Bewusst simpel
@@ -51,10 +56,6 @@ object ToolRegistry:
     * B. ein einzelnes "w") und damit ungewollt zusätzliche, eigentlich irrelevante Tools freischalten würden.
     */
   def search(query: String): List[ToolMeta] =
-    val terms = query.toLowerCase.split("(?U)\\W+").filter(_.length >= 3).toList
+    val terms = query.toLowerCase.split("(?U)\\W+").filter(_.length >= 3)
     if terms.isEmpty then Nil
-    else
-      all.filter { meta =>
-        val haystack = (meta.definition.name :: meta.definition.description :: meta.keywords).mkString(" ").toLowerCase
-        terms.exists(haystack.contains)
-      }
+    else all.filter(meta => terms.exists(searchableTextByTool(meta).contains))
