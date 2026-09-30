@@ -39,7 +39,9 @@ Focus on three dimensions:
    `Vector`/`Array` misuse, boxing, lazy vs eager, tail recursion, avoidable `.toList`/`.toSeq` round-trips).
 3. **Best Practices** — immutability, avoiding `var`/`return`/`null`/`asInstanceOf`/`isInstanceOf` (per
    `.scalafix.conf`), proper error handling (`Try`/`Either`/`Option`), explicit return types on public methods,
-   avoiding universal equality without `Eq`/`CanEqual`, resource safety, correct `case class`/`sealed trait`/`enum` use.
+   avoiding universal equality without `Eq`/`CanEqual`, resource safety, correct `case class`/`sealed trait`/`enum` use,
+   preferring Scala 3 `derives` (e.g. `derives Encoder.AsObject`/`Decoder`/`Eq`/`Show`) over a manually written
+   `given`/`Encoder.forProductN`/`Decoder.forProductN` instance when a type class provides an automatic derivation.
 
 ## Output format
 

@@ -11,8 +11,9 @@ import ox.timeout
 import scala.concurrent.duration.*
 
 /** Dünner Wrapper um den `ClaudeSyncClient` aus [[https://sttp-ai.softwaremill.com/ sttp-ai]] (Modul `claude`), analog zu `ai-sttpai-manual/AnthropicClient.scala` - mit einer zentralen Ergänzung: Der
-  * Tool-Use-Loop hält hier nicht eine FESTE `tools`-Liste über alle Turns hinweg, sondern eine, die WÄCHST, sobald das Modell über `search_tools` neue Werkzeuge "entdeckt" (Tool-Search-/
-  * Progressive-Tool-Disclosure-Paradigma, siehe README).
+  * Tool-Use-Loop hält hier nicht eine FESTE `tools`-Liste über alle Turns hinweg, sondern eine, die WÄCHST, sobald ein Tool-Aufruf neue Tools "freischaltet" (`ToolCallResult.enables`, siehe
+  * `ToolCatalog.scala`). Wichtig: Dieser Client kennt `search_tools` NICHT als Sonderfall - er behandelt jeden Tool-Aufruf identisch (`executeToolUse`) und reagiert nur generisch auf `enables`. Das
+  * Tool-Search-Paradigma selbst "passiert" ausschließlich in `ToolCatalog.scala`.
   */
 object AnthropicClient:
 
@@ -46,38 +47,32 @@ object AnthropicClient:
 
   private def activeNamesOf(tools: List[Tool]): List[String] = tools.collect { case c: Tool.Custom => c.name }
 
-  /** Ergebnis der Ausführung eines einzelnen `ToolUse`-Blocks: das `ToolResult` (geht in die Historie zurück) sowie die dadurch neu "entdeckten" Tools (nur bei `search_tools` nicht-leer, siehe
-    * `AnthropicClient.chat`).
+  /** Ergebnis der Ausführung eines einzelnen `ToolUse`-Blocks: das `ToolResult` (geht in die Historie zurück) sowie die dadurch neu "entdeckten" Tools (siehe `ToolCallResult.enables`).
+    *
+    * WICHTIG: Dieser Client kennt `search_tools` NICHT als Sonderfall - er ruft für JEDEN `ToolUse`-Block einfach `ToolCatalog.find(...).handler(...)` auf. Ob und welche Tools dabei neu
+    * freigeschaltet werden, entscheidet ausschließlich der jeweilige Handler (bei den drei fachlichen Tools immer keine, bei `search_tools` die gefundenen Treffer) - siehe `ToolCatalog.scala`.
     */
   private case class ToolOutcome(result: ContentBlock.ToolResult, newlyEnabled: List[Tool.Custom])
 
   private def executeToolUse(toolUse: ContentBlock.ToolUse): ToolOutcome =
-    if toolUse.name == SearchToolsTool.Name then
-      log(s"   >> search_tools(query=${toolUse.input.get("query").flatMap(_.asString).getOrElse("")})")
-      val (resultJson, hitNames) = SearchToolsTool.search(toolUse.input)
-      log(if hitNames.isEmpty then "   << Treffer: keine" else s"   << Treffer: ${hitNames.mkString(", ")}")
-      val newlyEnabled           = hitNames.flatMap(ToolRegistry.find).map(_.definition)
-      ToolOutcome(ContentBlock.ToolResult(toolUseId = toolUse.id, content = resultJson), newlyEnabled)
-    else
-      val resultText = ToolRegistry.find(toolUse.name) match
-        case Some(meta) =>
-          log(s"   >> Tool-Aufruf ${toolUse.name}(${Json.fromFields(toolUse.input).noSpaces})")
-          val r = meta.handler(toolUse.input)
-          log(s"   << Tool-Ergebnis ${toolUse.name} -> ${truncate(r)}")
-          r
-        case None       =>
-          log(s"   !! Modell versucht '${toolUse.name}' aufzurufen, ist aber (noch) nicht freigeschaltet.")
-          Json.obj("error" -> Json.fromString(s"Tool '${toolUse.name}' ist nicht verfügbar - nutze zuerst search_tools.")).noSpaces
-      ToolOutcome(ContentBlock.ToolResult(toolUseId = toolUse.id, content = resultText), Nil)
+    val callResult = ToolCatalog.find(toolUse.name) match
+      case Some(tool) =>
+        log(s"   >> ${toolUse.name}(${Json.fromFields(toolUse.input).noSpaces})")
+        val result = tool.handler(toolUse.input)
+        log(s"   << ${toolUse.name} -> ${truncate(result.output)}")
+        if result.enables.nonEmpty then log(s"      entdeckt: ${result.enables.map(_.name).mkString(", ")}")
+        result
+      case None       =>
+        log(s"   !! Modell versucht '${toolUse.name}' aufzurufen, ist aber (noch) nicht freigeschaltet.")
+        ToolCallResult(output = Json.obj("error" -> Json.fromString(s"Tool '${toolUse.name}' ist nicht verfügbar - nutze zuerst search_tools.")).noSpaces)
+    ToolOutcome(ContentBlock.ToolResult(toolUseId = toolUse.id, content = callResult.output), callResult.enables)
 
   /** Führt einen Model-Call aus, ggf. als Multi-Turn Tool-Search-Loop.
     *
     * Ablauf pro Turn:
-    *   1. Request wird MIT der aktuell freigeschalteten `tools`-Liste gesendet (Turn 1: nur `search_tools`).
-    *   1. Ruft das Modell `search_tools` auf: Handler durchsucht die `ToolRegistry`, das Ergebnis (Treffer-Namen + Descriptions) geht als `ToolResult` zurück, UND die gefundenen Tool-Definitionen
-    *      werden der `tools`-Liste für den NÄCHSTEN Turn hinzugefügt ("Freischaltung").
-    *   1. Ruft das Modell eines der freigeschalteten "echten" Tools auf (z. B. `roll_dice`): der zugehörige Handler wird ausgeführt, das Ergebnis geht als `ToolResult` zurück - ganz normaler
-    *      Tool-Use-Loop wie bei einem client-seitigen Tool.
+    *   1. Request wird MIT der aktuell freigeschalteten `tools`-Liste gesendet (Turn 1: nur `search_tools`, siehe `ToolCatalog.initiallyVisible`).
+    *   1. Für jeden `ToolUse`-Block im Response ruft `executeToolUse` generisch `ToolCatalog.find(name).handler(...)` auf - das Ergebnis (`ToolCallResult`) enthält sowohl den Text fürs `ToolResult`
+    *      als auch (nur bei `search_tools` nicht-leer) neu freigeschaltete Tools, die der `tools`-Liste des NÄCHSTEN Turns hinzugefügt werden.
     *   1. Die Schleife endet, sobald `stopReason != "tool_use"` ist.
     *
     * @param systemPrompt
@@ -145,9 +140,9 @@ object AnthropicClient:
         loop(nextMessages, nextActiveTools, turn + 1)
     end loop
 
-    log(s"===== Model-Call gestartet (model=$model) - Startwerkzeug: nur '${SearchToolsTool.Name}' =====")
+    log(s"===== Model-Call gestartet (model=$model) - Startwerkzeug: nur '${ToolCatalog.initiallyVisible.name}' =====")
     log(s"   system:  ${truncate(systemPrompt)}")
     log(s"   user:    ${truncate(userMessage)}")
-    loop(List(Message.user(userMessage)), activeTools = List(SearchToolsTool.definition), turn = 1)
+    loop(List(Message.user(userMessage)), activeTools = List(ToolCatalog.initiallyVisible), turn = 1)
 
   def close(): Unit = client.close()

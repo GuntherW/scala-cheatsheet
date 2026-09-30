@@ -40,9 +40,8 @@ lohnen würde.
 | `calculator`        | Wertet einen einfachen arithmetischen Ausdruck aus             |
 | `roll_dice`         | Würfelt `count`-mal einen Würfel mit `sides` Seiten            |
 
-Alle drei sind in `ToolRegistry.scala` registriert (Definition + Keywords für
-die Suche + Handler), implementiert in `Tools.scala`. Das Such-Meta-Tool
-selbst ist in `SearchToolsTool.scala` definiert.
+Implementiert (Definition + Handler) in `Tools.scala`. Registriert - inklusive
+des Meta-Tools `search_tools` selbst - in `ToolCatalog.scala`.
 
 ## Der Tool-Search-Flow im Detail
 
@@ -72,14 +71,20 @@ sequenceDiagram
 Wichtige Punkte:
 
 - `search_tools` ist selbst ein ganz normales client-seitiges Tool (genau wie
-  `calculate_tco` im Schwesterprojekt) - es hat nur die besondere Rolle,
-  weitere Tools "freizuschalten".
+  `calculate_tco` im Schwesterprojekt) - mit EINEM Unterschied: Sein Handler
+  liefert neben dem Ergebnistext auch eine Liste neu freizuschaltender Tools
+  zurück (`ToolCallResult.enables` in `ToolCatalog.scala`). Diese
+  Rückgabestruktur (`output`, `enables`) ist für ALLE Tools identisch - der
+  `AnthropicClient` behandelt `search_tools` also NICHT als Sonderfall,
+  sondern ruft für jeden `ToolUse`-Block einheitlich `ToolCatalog.find(name)`
+  und dessen `handler` auf. Bei den drei fachlichen Tools ist `enables`
+  einfach immer leer.
 - Die Freischaltung passiert rein clientseitig in
-  `AnthropicClient.chat`: Nach jedem Turn wird geprüft, ob `search_tools`
-  aufgerufen wurde, und falls ja, werden die gefundenen Tool-Definitionen der
-  `tools`-Liste des nächsten Requests hinzugefügt (dedupliziert - ruft das
-  Modell `search_tools` mehrmals im selben Turn mit überlappenden Treffern
-  auf, akzeptiert die API sonst keine doppelten Tool-Namen).
+  `AnthropicClient.chat`: Nach jedem Turn werden die `enables`-Listen aller
+  Tool-Aufrufe dieses Turns eingesammelt und der `tools`-Liste des nächsten
+  Requests hinzugefügt (dedupliziert via `distinctBy` - ruft das Modell
+  `search_tools` mehrmals im selben Turn mit überlappenden Treffern auf,
+  akzeptiert die API sonst keine doppelten Tool-Namen).
 - Freigeschaltete Tools bleiben für den Rest der Konversation aktiv - einmal
   gefunden, muss ein Tool nicht erneut gesucht werden.
 - Ruft das Modell ein Tool auf, das noch nicht freigeschaltet ist (sollte bei
@@ -202,10 +207,9 @@ das Verwerfen von Termen mit weniger als 3 Zeichen.
 ai-sttpai-agent-toolsearch/
 ├── project.scala        # scala-cli Direktiven: Scala-Version & Abhängigkeiten
 ├── Env.scala             # Liest ANTHROPIC_API_KEY aus .env (via os-lib)
-├── AnthropicClient.scala # Model-Call-Loop MIT dynamisch wachsender tools-Liste (Tool-Search-Kern) + ox.timeout
-├── ToolRegistry.scala    # Zentrale Liste aller "echten" Tools + Keyword-Suche
-├── SearchToolsTool.scala # Definition & Handler des Meta-Tools `search_tools`
-├── Tools.scala           # Definition & Handler der 3 echten Tools (get_current_time, calculator, roll_dice)
+├── AnthropicClient.scala # Model-Call-Loop MIT dynamisch wachsender tools-Liste (generisch, kein Sonderfall für search_tools) + ox.timeout
+├── ToolCatalog.scala     # RegisteredTool/ToolCallResult, ALLE Tools (inkl. search_tools) + Keyword-Suche - der einzige Ort, an dem Tool-Search passiert
+├── Tools.scala           # Definition & Handler der 3 fachlichen Tools (get_current_time, calculator, roll_dice)
 ├── Agent.scala           # Der einzige Agent (System-Prompt + Einstieg in AnthropicClient.chat)
 ├── Main.scala            # Einstiegspunkt (@main), schreibt output/answer.md via os-lib
 ├── output/               # wird beim Ausführen erzeugt
