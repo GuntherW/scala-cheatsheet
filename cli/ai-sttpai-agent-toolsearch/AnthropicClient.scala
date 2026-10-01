@@ -10,6 +10,7 @@ import ox.timeout
 import sttp.ai.claude.responses.MessageResponse
 
 import scala.concurrent.duration.*
+import scala.util.control.NonFatal
 
 /** Dünner Wrapper um den `ClaudeSyncClient` aus [[https://sttp-ai.softwaremill.com/ sttp-ai]] (Modul `claude`), analog zu `ai-sttpai-manual/AnthropicClient.scala` - mit einer zentralen Ergänzung: Der
   * Tool-Use-Loop hält hier nicht eine FESTE `tools`-Liste über alle Turns hinweg, sondern eine, die WÄCHST, sobald ein Tool-Aufruf neue Tools "freischaltet" (`ToolCallResult.enables`, siehe
@@ -18,35 +19,17 @@ import scala.concurrent.duration.*
   */
 object AnthropicClient:
 
-  private val AnthropicVersion = "2023-06-01"
-
   private val apiKey: String = Env.get("ANTHROPIC_AUTH_TOKEN")
     .orElse(Env.get("ANTHROPIC_API_KEY"))
     .getOrElse(sys.error("Weder ANTHROPIC_AUTH_TOKEN noch ANTHROPIC_API_KEY gesetzt."))
 
-  private val config = ClaudeConfig(
+  private val client = ClaudeSyncClient(ClaudeConfig(
     apiKey = apiKey,
-    anthropicVersion = AnthropicVersion,
+    anthropicVersion = "2023-06-01",
     baseUrl = Uri.unsafeParse("https://router.eu.requesty.ai"),
-  )
-
-  private val client = ClaudeSyncClient(config)
+  ))
 
   private val RequestTimeout = 60.seconds
-
-  private def log(msg: String): Unit = println(s"[Agent] $msg")
-
-  private def truncate(s: String, maxLen: Int = 300): String =
-    val safe      = Option(s).getOrElse("")
-    val flattened = safe.replaceAll("\\s+", " ").trim
-    if flattened.length > maxLen then flattened.take(maxLen) + "…" else flattened
-
-  private def textOf(content: List[ContentBlock]): String =
-    content
-      .collect { case ContentBlock.Text(text, _, _) => text }
-      .mkString("\n")
-
-  private def activeNamesOf(tools: List[Tool]): List[String] = tools.collect { case c: Tool.CustomRaw => c.name }
 
   /** Ergebnis der Ausführung eines einzelnen `ToolUse`-Blocks: das `ToolResult` (geht in die Historie zurück) sowie die dadurch neu "entdeckten" Tools (siehe `ToolCallResult.enables`).
     *
@@ -94,12 +77,7 @@ object AnthropicClient:
     def loop(messages: List[Message], activeTools: List[Tool], turn: Int): String =
       log(s"--- Turn $turn: sende ${messages.size} Nachricht(en), aktive Tools=[${activeNamesOf(activeTools).mkString(", ")}] ---")
 
-      val response =
-        try send(messages, activeTools)
-        catch
-          case e: Throwable =>
-            log(s"<- Fehler   ${truncate(e.getMessage)}")
-            throw e
+      val response = send(messages, activeTools).tapFailure(e => log(s"<- Fehler   ${truncate(e.getMessage)}"))
 
       log(s"<- Turn $turn Antwort: stop_reason=${response.stopReason.getOrElse("-")}")
       logResponse(response.content)
@@ -147,3 +125,28 @@ object AnthropicClient:
       case tu: ContentBlock.ToolUse        => log(s"   [tool_use]  name=${tu.name} id=${tu.id} input=${Json.fromFields(tu.input).noSpaces}")
       case other                           => log(s"   [$other]")
     }
+
+  private def log(msg: String): Unit = println(s"[Agent] $msg")
+
+  /** Führt `thunk` aus und loggt (via `onError`) sowie wirft jede nicht-fatale Exception unverändert weiter - ein kleiner, wiederverwendbarer Kombinator statt eines Inline-`try`/`catch` an der
+    * Aufrufstelle. `NonFatal` (statt `catch case e: Throwable`) vermeidet, Dinge wie `OutOfMemoryError`/`StackOverflowError`/`InterruptedException` fälschlich als "normalen" Fehler zu behandeln.
+    */
+  extension [T](thunk: => T)
+    private def tapFailure(onError: Throwable => Unit): T =
+      try thunk
+      catch
+        case NonFatal(e) =>
+          onError(e)
+          throw e
+
+  private def truncate(s: String, maxLen: Int = 300): String =
+    val safe      = Option(s).getOrElse("")
+    val flattened = safe.replaceAll("\\s+", " ").trim
+    if flattened.length > maxLen then flattened.take(maxLen) + "…" else flattened
+
+  private def textOf(content: List[ContentBlock]): String =
+    content
+      .collect { case ContentBlock.Text(text, _, _) => text }
+      .mkString("\n")
+
+  private def activeNamesOf(tools: List[Tool]): List[String] = tools.collect { case c: Tool.CustomRaw => c.name }
