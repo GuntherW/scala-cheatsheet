@@ -16,6 +16,12 @@ import sttp.tapir.Schema.annotations.description
   */
 case class ToolCallResult(output: String, isError: Boolean = false, enables: List[Tool.CustomRaw] = Nil)
 
+object ToolCallResult:
+  /** Baut ein einheitliches Fehler-`ToolCallResult`: `{"error": "<message>"}` als `output`, `isError = true`. Zentraler Baustein für alle Fehlerpfade (Decode-Fehler, Validierung, unbekanntes Tool,
+    * ...) in `Tools.scala` und `AnthropicClient.scala`, damit das Fehler-JSON-Format an EINER Stelle gepflegt wird statt an jeder Fehlerstelle einzeln dupliziert zu sein.
+    */
+  def error(message: String): ToolCallResult = ToolCallResult(output = Json.obj("error" -> message.asJson).noSpaces, isError = true)
+
 /** Ein im System registrierbares Tool: JSON-Schema fürs Modell (`definition`), Suchbegriffe für `search_tools` (`keywords`) und die eigentliche Ausführung (`handler`).
   */
 case class RegisteredTool(definition: Tool.CustomRaw, keywords: List[String], handler: Map[String, Json] => ToolCallResult)

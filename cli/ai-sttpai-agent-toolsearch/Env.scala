@@ -29,6 +29,3 @@ object Env:
     if isQuoted then value.substring(1, value.length - 1) else value
 
   def get(key: String): Option[String] = dotenvVars.get(key).orElse(sys.env.get(key))
-
-  def require(key: String): String = get(key)
-    .getOrElse(throw new RuntimeException(s"Umgebungsvariable '$key' ist weder in .env noch im Environment gesetzt."))

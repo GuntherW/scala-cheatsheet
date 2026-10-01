@@ -30,7 +30,7 @@ private[agent] def jsonSchemaOf[T](using schema: Schema[T]): Json =
   */
 private def decodeInput[A: Decoder](toolName: String, rawInput: Map[String, Json])(onInput: A => ToolCallResult): ToolCallResult =
   Json.fromFields(rawInput).as[A] match
-    case Left(error)  => ToolCallResult(output = Json.obj("error" -> s"Konnte $toolName-Eingabe nicht parsen: ${error.getMessage}".asJson).noSpaces, isError = true)
+    case Left(error)  => ToolCallResult.error(s"Konnte $toolName-Eingabe nicht parsen: ${error.getMessage}")
     case Right(input) => onInput(input)
 
 /** Tool 1: `get_current_time` - liefert Datum/Uhrzeit für eine optionale Zeitzone (IANA-ID, z. B. "Europe/Berlin"). Ohne Angabe wird UTC verwendet.
@@ -54,7 +54,7 @@ object CurrentTimeTool:
     decodeInput[CurrentTimeInput](definition.name, rawInput) { input =>
       val zoneId = input.timezone.getOrElse("UTC")
       Try(of(zoneId)) match
-        case Failure(_)    => ToolCallResult(output = Json.obj("error" -> s"Unbekannte Zeitzone: '$zoneId'".asJson).noSpaces, isError = true)
+        case Failure(_)    => ToolCallResult.error(s"Unbekannte Zeitzone: '$zoneId'")
         case Success(zone) =>
           val now = ZonedDateTime.now(zone)
           ToolCallResult(CurrentTimeResult(timezone = zoneId, iso8601 = now.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)).asJson.noSpaces)
@@ -80,7 +80,7 @@ object CalculatorTool:
   def handler(rawInput: Map[String, Json]): ToolCallResult =
     decodeInput[CalculatorInput](definition.name, rawInput) { input =>
       Try(ExpressionParser.evaluate(input.expression)) match
-        case Failure(e)      => ToolCallResult(output = Json.obj("error" -> s"Konnte Ausdruck nicht auswerten: ${e.getMessage}".asJson).noSpaces, isError = true)
+        case Failure(e)      => ToolCallResult.error(s"Konnte Ausdruck nicht auswerten: ${e.getMessage}")
         case Success(result) => ToolCallResult(CalculatorResult(expression = input.expression, result = result).asJson.noSpaces)
     }
 
@@ -153,7 +153,7 @@ object RollDiceTool:
   def handler(rawInput: Map[String, Json]): ToolCallResult =
     decodeInput[RollDiceInput](definition.name, rawInput) {
       case input if input.sides < 2 || input.count < 1 =>
-        ToolCallResult(output = Json.obj("error" -> "sides muss >= 2 und count muss >= 1 sein.".asJson).noSpaces, isError = true)
+        ToolCallResult.error("sides muss >= 2 und count muss >= 1 sein.")
       case input                                       =>
         val rolls = List.fill(input.count)(Random.nextInt(input.sides) + 1)
         ToolCallResult(RollDiceResult(sides = input.sides, count = input.count, rolls = rolls, sum = rolls.sum).asJson.noSpaces)

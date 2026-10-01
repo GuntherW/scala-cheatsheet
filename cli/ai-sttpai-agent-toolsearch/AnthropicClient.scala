@@ -22,7 +22,7 @@ object AnthropicClient:
 
   private val apiKey: String = Env.get("ANTHROPIC_AUTH_TOKEN")
     .orElse(Env.get("ANTHROPIC_API_KEY"))
-    .getOrElse(throw new RuntimeException("Weder ANTHROPIC_AUTH_TOKEN noch ANTHROPIC_API_KEY gesetzt."))
+    .getOrElse(sys.error("Weder ANTHROPIC_AUTH_TOKEN noch ANTHROPIC_API_KEY gesetzt."))
 
   private val config = ClaudeConfig(
     apiKey = apiKey,
@@ -65,7 +65,7 @@ object AnthropicClient:
         result
       case None       =>
         log(s"   !! Modell versucht '${toolUse.name}' aufzurufen, ist aber (noch) nicht freigeschaltet.")
-        ToolCallResult(output = Json.obj("error" -> Json.fromString(s"Tool '${toolUse.name}' ist nicht verfügbar - nutze zuerst search_tools.")).noSpaces, isError = true)
+        ToolCallResult.error(s"Tool '${toolUse.name}' ist nicht verfügbar - nutze zuerst search_tools.")
     ToolOutcome(ContentBlock.ToolResult(toolUseId = toolUse.id, content = callResult.output, isError = Some(callResult.isError)), callResult.enables)
 
   /** Führt einen Model-Call aus, ggf. als Multi-Turn Tool-Search-Loop.
