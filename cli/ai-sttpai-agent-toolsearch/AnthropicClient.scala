@@ -46,27 +46,27 @@ object AnthropicClient:
       .collect { case ContentBlock.Text(text, _, _) => text }
       .mkString("\n")
 
-  private def activeNamesOf(tools: List[Tool]): List[String] = tools.collect { case c: Tool.Custom => c.name }
+  private def activeNamesOf(tools: List[Tool]): List[String] = tools.collect { case c: Tool.CustomRaw => c.name }
 
   /** Ergebnis der Ausführung eines einzelnen `ToolUse`-Blocks: das `ToolResult` (geht in die Historie zurück) sowie die dadurch neu "entdeckten" Tools (siehe `ToolCallResult.enables`).
     *
     * WICHTIG: Dieser Client kennt `search_tools` NICHT als Sonderfall - er ruft für JEDEN `ToolUse`-Block einfach `ToolCatalog.find(...).handler(...)` auf. Ob und welche Tools dabei neu
     * freigeschaltet werden, entscheidet ausschließlich der jeweilige Handler (bei den drei fachlichen Tools immer keine, bei `search_tools` die gefundenen Treffer) - siehe `ToolCatalog.scala`.
     */
-  private case class ToolOutcome(result: ContentBlock.ToolResult, newlyEnabled: List[Tool.Custom])
+  private case class ToolOutcome(result: ContentBlock.ToolResult, newlyEnabled: List[Tool.CustomRaw])
 
   private def executeToolUse(toolUse: ContentBlock.ToolUse): ToolOutcome =
     val callResult = ToolCatalog.find(toolUse.name) match
       case Some(tool) =>
         log(s"   >> ${toolUse.name}(${Json.fromFields(toolUse.input).noSpaces})")
         val result = tool.handler(toolUse.input)
-        log(s"   << ${toolUse.name} -> ${truncate(result.output)}")
+        log(s"   << ${toolUse.name} -> ${truncate(result.output)}${if result.isError then " [isError]" else ""}")
         if result.enables.nonEmpty then log(s"      entdeckt: ${result.enables.map(_.name).mkString(", ")}")
         result
       case None       =>
         log(s"   !! Modell versucht '${toolUse.name}' aufzurufen, ist aber (noch) nicht freigeschaltet.")
-        ToolCallResult(output = Json.obj("error" -> Json.fromString(s"Tool '${toolUse.name}' ist nicht verfügbar - nutze zuerst search_tools.")).noSpaces)
-    ToolOutcome(ContentBlock.ToolResult(toolUseId = toolUse.id, content = callResult.output), callResult.enables)
+        ToolCallResult(output = Json.obj("error" -> Json.fromString(s"Tool '${toolUse.name}' ist nicht verfügbar - nutze zuerst search_tools.")).noSpaces, isError = true)
+    ToolOutcome(ContentBlock.ToolResult(toolUseId = toolUse.id, content = callResult.output, isError = Some(callResult.isError)), callResult.enables)
 
   /** Führt einen Model-Call aus, ggf. als Multi-Turn Tool-Search-Loop.
     *

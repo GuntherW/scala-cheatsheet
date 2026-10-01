@@ -2,3 +2,5 @@
 //> using dep com.softwaremill.sttp.ai::claude:0.11.3
 //> using dep com.lihaoyi::os-lib::0.11.8
 //> using dep com.softwaremill.ox::core:1.0.8
+//> using dep com.softwaremill.sttp.tapir::tapir-apispec-docs:1.13.31
+//> using dep com.softwaremill.sttp.apispec::jsonschema-circe:0.11.10

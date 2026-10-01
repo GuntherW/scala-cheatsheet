@@ -32,6 +32,40 @@ Dieses Lernprojekt hat bewusst nur 3 Tools - genug, um den Mechanismus zu
 zeigen, auch wenn sich Tool-Search bei nur 3 Tools in der Praxis noch nicht
 lohnen würde.
 
+## sttp-ai-idiomatische Tool-Definitionen
+
+Die JSON-Schemas der Tool-Inputs werden NICHT manuell aufgeschrieben (kein
+`ToolInputSchema.forObject(Map("x" -> PropertySchema.string(...)))`), sondern
+direkt aus den jeweiligen Input-Case-Classes via Tapir abgeleitet
+(`derives Schema`, Parameter-Beschreibungen per `@description`-Annotation) und
+als rohes JSON-Schema über `Tool.customRaw(...)` an Claude übergeben - der von
+sttp-ai dokumentierte Weg ("the easiest way: derive from a case class", siehe
+[JSON Schemas](https://sttp-ai.softwaremill.com/other/json-schemas.html)).
+Case Class und Tool-Schema haben dadurch EINE Quelle der Wahrheit statt zweier
+parallel gepflegter Strukturen (siehe `jsonSchemaOf[T]` in `Tools.scala`).
+
+Tool-Fehler (unbekannte Zeitzone, ungültiger Rechenausdruck, unbekanntes Tool,
+...) setzen zudem Claudes offizielles `tool_result.is_error`-Feld
+(`ContentBlock.ToolResult.isError`) statt die Fehlerinformation nur implizit
+im JSON-Text zu verstecken - das Modell erkennt Fehlschläge dadurch
+zuverlässiger (siehe `ToolCallResult.isError` in `ToolCatalog.scala`).
+
+Geprüft, aber bewusst NICHT genutzt:
+
+- **Der eingebaute `ClaudeAgent`-Loop** (`ClaudeAgent.synchronous(...).tools(...).build`)
+  wäre für normales Tool-Use komfortabler, legt den Tool-Satz aber einmalig
+  beim Bau des Agenten fest (`includeTools` ist pro Iteration nur ein
+  globaler An/Aus-Schalter für ALLE Tools, keine wachsende Teilmenge) - das
+  würde das Tool-Search-Paradigma unmöglich machen, ohne den kompletten
+  Loop über einen eigenen `AgentBackend` nachzubauen. Deshalb bleibt dieser
+  Loop handgeschrieben (`AnthropicClient.chat`).
+- **`Message.toolResult(id, content)`** als Ersatz für das manuelle Bauen von
+  `ContentBlock.ToolResult` - erzeugt aber eine KOMPLETTE `Message` pro
+  Aufruf. Bei mehreren Tool-Aufrufen in einem Turn müssen laut
+  Anthropic-Konvention alle `tool_result`-Blöcke in EINER User-Message
+  gebündelt sein, weshalb der aktuelle Ansatz (einzelne `ToolResult`-Blöcke
+  bauen, dann gebündelt in `Message.user(list)`) beibehalten wurde.
+
 ## Die 3 Tools
 
 | Tool               | Zweck                                                          |

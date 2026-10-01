@@ -37,11 +37,17 @@ Focus on three dimensions:
    imports), pattern matching over imperative branching, deep nesting.
 2. **Performance** — unnecessary allocations, inefficient collection ops (fusable multi-pass, `List` vs
    `Vector`/`Array` misuse, boxing, lazy vs eager, tail recursion, avoidable `.toList`/`.toSeq` round-trips).
-3. **Best Practices** — immutability, avoiding `var`/`return`/`null`/`asInstanceOf`/`isInstanceOf` (per
-   `.scalafix.conf`), proper error handling (`Try`/`Either`/`Option`), explicit return types on public methods,
-   avoiding universal equality without `Eq`/`CanEqual`, resource safety, correct `case class`/`sealed trait`/`enum` use,
-   preferring Scala 3 `derives` (e.g. `derives Encoder.AsObject`/`Decoder`/`Eq`/`Show`) over a manually written
+3. **Best Practices** — immutability, avoiding `var`/`return`/`while`/`null`/`asInstanceOf`/`isInstanceOf` (per
+   the project's `DisableSyntax` rules in `AGENTS.md`/`.scalafix.conf` — check there for the full, current list,
+   e.g. it may also cover xml literals, val-patterns, or `==`/`!=` universal equality), proper error handling
+   (`Try`/`Either`/`Option`), explicit return types on public methods, avoiding universal equality without
+   `Eq`/`CanEqual`, resource safety, correct `case class`/`sealed trait`/`enum` use, preferring Scala 3 `derives`
+   (e.g. `derives Encoder.AsObject`/`Decoder`/`Eq`/`Show`) over a manually written
    `given`/`Encoder.forProductN`/`Decoder.forProductN` instance when a type class provides an automatic derivation.
+   When flagging an imperative `while` loop over a mutable `var`, propose the idiomatic Scala 3 replacement
+   (tail-recursive local `def`, `@tailrec`, `LazyList`/`Iterator` combinators, or a fold/unfold over the input)
+   instead of just noting the `var`/`while` in isolation — the two almost always appear together and should be
+   fixed as one finding.
 
 ## Output format
 

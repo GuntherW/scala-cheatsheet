@@ -1,20 +1,24 @@
 package agent
 
 import io.circe.Json
+import io.circe.derivation.ConfiguredCodec
 import io.circe.syntax.*
-import sttp.ai.claude.models.{PropertySchema, Tool, ToolInputSchema}
+import sttp.ai.claude.models.Tool
+import sttp.tapir.Schema
+import sttp.tapir.Schema.annotations.description
 
-/** Ergebnis der Ausführung EINES Tool-Aufrufs: der Text, der als `ToolResult` ans Modell zurückgeht, sowie optional weitere Tools, die dadurch ab dem nächsten Turn sichtbar werden sollen.
+/** Ergebnis der Ausführung EINES Tool-Aufrufs: der Text, der als `ToolResult` ans Modell zurückgeht, ob es sich dabei um einen Fehlerfall handelt (`isError` - setzt Claudes offizielles
+  * `tool_result.is_error`-Feld, siehe `AnthropicClient.executeToolUse`), sowie optional weitere Tools, die dadurch ab dem nächsten Turn sichtbar werden sollen.
   *
   * `enables` ist der GESAMTE Mechanismus hinter dem Tool-Search-Paradigma - es gibt dafür keinen Sonderfall im `AnthropicClient`-Loop: Jeder Tool-Aufruf kann grundsätzlich weitere Tools freischalten,
   * bei den drei "fachlichen" Tools (`get_current_time`, `calculator`, `roll_dice`) ist diese Liste einfach immer leer. Nur `search_tools` befüllt sie - ist aber selbst ein ganz normales
   * `RegisteredTool` wie jedes andere auch.
   */
-case class ToolCallResult(output: String, enables: List[Tool.Custom] = Nil)
+case class ToolCallResult(output: String, isError: Boolean = false, enables: List[Tool.CustomRaw] = Nil)
 
 /** Ein im System registrierbares Tool: JSON-Schema fürs Modell (`definition`), Suchbegriffe für `search_tools` (`keywords`) und die eigentliche Ausführung (`handler`).
   */
-case class RegisteredTool(definition: Tool.Custom, keywords: List[String], handler: Map[String, Json] => ToolCallResult)
+case class RegisteredTool(definition: Tool.CustomRaw, keywords: List[String], handler: Map[String, Json] => ToolCallResult)
 
 /** Zentrale, einzige Anlaufstelle für alle Tools des Agenten - INKLUSIVE des Meta-Tools `search_tools` selbst. Sowohl die drei "fachlichen" Tools als auch `search_tools` sind `RegisteredTool`s und
   * werden vom `AnthropicClient` über denselben `find`/`handler`-Mechanismus aufgerufen. Das vereinheitlicht den Tool-Search-Ablauf zu einem einzigen generischen Muster ("ein Tool-Aufruf liefert einen
@@ -27,17 +31,17 @@ object ToolCatalog:
     RegisteredTool(
       definition = CurrentTimeTool.definition,
       keywords = List("zeit", "uhrzeit", "datum", "time", "date", "clock", "wie spät", "timezone", "zeitzone"),
-      handler = input => ToolCallResult(CurrentTimeTool.handler(input)),
+      handler = CurrentTimeTool.handler,
     ),
     RegisteredTool(
       definition = CalculatorTool.definition,
       keywords = List("rechnen", "berechne", "berechnung", "arithmetik", "math", "calculate", "plus", "minus", "mal", "geteilt", "summe", "addieren"),
-      handler = input => ToolCallResult(CalculatorTool.handler(input)),
+      handler = CalculatorTool.handler,
     ),
     RegisteredTool(
       definition = RollDiceTool.definition,
       keywords = List("würfel", "wuerfel", "würfeln", "dice", "roll", "zufall", "random", "zufallszahl"),
-      handler = input => ToolCallResult(RollDiceTool.handler(input)),
+      handler = RollDiceTool.handler,
     ),
   )
 
@@ -56,20 +60,26 @@ object ToolCatalog:
     val terms = query.toLowerCase.split("(?U)\\W+").filter(_.length >= 3)
     if terms.isEmpty then Nil else realTools.filter(t => terms.exists(searchableTextByTool(t).contains))
 
+  /** Eingabe von `search_tools` - wie die Input-Typen der fachlichen Tools (`Tools.scala`) per Tapir `Schema` annotiert, damit auch `search_tools` sein JSON-Schema aus der Case Class ableitet statt
+    * es manuell aufzuschreiben.
+    */
+  private case class SearchToolsInput(
+      @description("Kurze Beschreibung der benötigten Fähigkeit/Aufgabe, z. B. 'aktuelle Uhrzeit' oder 'Ausdruck berechnen'.")
+      query: String,
+  ) derives ConfiguredCodec,
+        Schema
+
   /** Das Meta-Tool `search_tools`: durchsucht die fachlichen Tools per Keyword-Suche und liefert die Treffer sowohl als JSON-Text (fürs Modell, in `output`) als auch als freizuschaltende
     * Tool-Definitionen (`enables`) - das ist der einzige Ort im gesamten Projekt, an dem "Tool-Search" tatsächlich passiert.
     */
   private val searchTool: RegisteredTool = RegisteredTool(
-    definition = Tool(
+    definition = Tool.customRaw(
       name = "search_tools",
       description = "Durchsucht die verfügbare Tool-Bibliothek nach passenden Werkzeugen für eine Aufgabe. " +
         "Rufe dieses Tool IMMER zuerst auf, bevor du ein spezifisches Werkzeug (z. B. für Zeit, Rechnen oder " +
         "Würfeln) benutzt - du siehst diese Werkzeuge sonst nicht direkt. Gib eine kurze Beschreibung dessen, " +
         "was du tun möchtest, als 'query' an, z. B. 'aktuelle Uhrzeit' oder 'zwei Würfel werfen'.",
-      inputSchema = ToolInputSchema.forObject(
-        properties = Map("query" -> PropertySchema.string("Kurze Beschreibung der benötigten Fähigkeit/Aufgabe, z. B. 'aktuelle Uhrzeit' oder 'Ausdruck berechnen'.")),
-        required = Some(List("query")),
-      ),
+      inputSchema = jsonSchemaOf[SearchToolsInput],
     ),
     keywords = Nil,
     handler = input =>
@@ -91,4 +101,4 @@ object ToolCatalog:
   def find(name: String): Option[RegisteredTool] = byName.get(name)
 
   /** Das einzige Tool, das der Agent zu Beginn der Konversation kennt (siehe `AnthropicClient.chat`). */
-  val initiallyVisible: Tool.Custom = searchTool.definition
+  val initiallyVisible: Tool.CustomRaw = searchTool.definition
