@@ -133,11 +133,10 @@ object AnthropicClient:
     */
   extension [T](thunk: => T)
     private def tapFailure(onError: Throwable => Unit): T =
-      try thunk
+      try
+        thunk
       catch
-        case NonFatal(e) =>
-          onError(e)
-          throw e
+        case NonFatal(e) => onError(e); throw e
 
   private def truncate(s: String, maxLen: Int = 300): String =
     val safe      = Option(s).getOrElse("")

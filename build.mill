@@ -89,7 +89,15 @@ object database extends CommonSbtModule:
     Dependency.osLib,
     Dependency.postgres,
     Dependency.h2,
+    Dependency.metricsCore,
+    Dependency.oakJcr,
+    Dependency.oakSegmentTar,
   )
+  object test extends SbtTests:
+    def mvnDeps       = Seq(
+      Dependency.munit,
+    )
+    def testFramework = "munit.Framework"
 
 object datatransformation extends CommonSbtModule:
   def mvnDeps = Seq(
@@ -258,10 +266,12 @@ object Version:
   val log4j                   = "2.26.1"
   val macwire                 = "2.6.7"
   val magnolia                = "1.3.24"
+  val metricsCore             = "4.2.40"
   val magnum                  = "2.0.0-M3"
   val mongo                   = "5.2.1"
   val monocle                 = "3.3.0"
   val neotype                 = "0.7.2"
+  val oak                     = "2.6.0"
   val openTelemetry           = "1.66.0"
   val osLib                   = "0.11.8"
   val ox                      = "1.0.8"
@@ -376,6 +386,7 @@ object Dependency:
   val log4jApi                  = mvn"org.apache.logging.log4j:log4j-api:${Version.log4j}"
   val log4jCore                 = mvn"org.apache.logging.log4j:log4j-core:${Version.log4j}"
   val log4jSlf4jImpl            = mvn"org.apache.logging.log4j:log4j-slf4j-impl:${Version.log4j}"
+  val metricsCore               = mvn"io.dropwizard.metrics:metrics-core:${Version.metricsCore}"
   val macwire                   = mvn"com.softwaremill.macwire::macros:${Version.macwire}"
   val magnolia                  = mvn"com.softwaremill.magnolia1_3::magnolia:${Version.magnolia}"
   val magnum                    = mvn"com.augustnagro::magnum:${Version.magnum}"
@@ -383,6 +394,8 @@ object Dependency:
   val mongoDriverJava           = mvn"org.mongodb:mongodb-driver-sync:${Version.mongo}"
   val monocle                   = mvn"dev.optics::monocle-core:${Version.monocle}"
   val neotype                   = mvn"io.github.kitlangton::neotype:${Version.neotype}"
+  val oakJcr                    = mvn"org.apache.jackrabbit:oak-jcr:${Version.oak}"
+  val oakSegmentTar             = mvn"org.apache.jackrabbit:oak-segment-tar:${Version.oak}"
   val openTelemtry              = mvn"io.opentelemetry:opentelemetry-exporter-otlp:${Version.openTelemetry}"
   val openTelemtryAutoConfigure = mvn"io.opentelemetry:opentelemetry-sdk-extension-autoconfigure:${Version.openTelemetry}"
   val osLib                     = mvn"com.lihaoyi::os-lib:${Version.osLib}"
