@@ -28,5 +28,9 @@ object Agent:
       |- Antworte auf Deutsch.
       |""".stripMargin
 
-  def run(userMessage: String, maxTokens: Int = 2000): String =
-    AnthropicClient.chat(model = Model, systemPrompt = systemPrompt, userMessage = userMessage, maxTokens = maxTokens)
+  def run(userMessage: String, maxTokens: Int = 2000): String = AnthropicClient.chat(
+    model = Model,
+    systemPrompt = systemPrompt,
+    userMessage = userMessage,
+    maxTokens = maxTokens
+  )

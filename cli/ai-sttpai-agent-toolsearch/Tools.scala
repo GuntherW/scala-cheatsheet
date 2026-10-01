@@ -4,9 +4,10 @@ import io.circe.{Decoder, Json}
 import io.circe.derivation.{Configuration, ConfiguredCodec}
 import io.circe.syntax.*
 import sttp.ai.claude.models.{PropertySchema, Tool, ToolInputSchema}
+
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import scala.util.{Failure, Success, Try}
+import scala.util.{Failure, Random, Success, Try}
 
 /** JSON-Feldnamen der Ein-/Ausgabetypen sollen `snake_case` folgen (passend zu den Tool-Schemas), die Scala-Felder selbst `camelCase` (Projekt-Konvention).
   */
@@ -84,8 +85,7 @@ object ExpressionParser:
 
     def peek: Option[Char]              = if pos < chars.length then Some(chars(pos)) else None
     def advance(): Char                 = { val c = chars(pos); pos += 1; c }
-    def expectAndAdvance(c: Char): Unit =
-      if peek.contains(c) then advance() else throw new IllegalArgumentException(s"Erwartete '$c' an Position $pos in '$expr'")
+    def expectAndAdvance(c: Char): Unit = if peek.contains(c) then advance() else throw new IllegalArgumentException(s"Erwartete '$c' an Position $pos in '$expr'")
 
     def parseNumber(): Double =
       val start = pos
@@ -142,6 +142,6 @@ object RollDiceTool:
       case input if input.sides < 2 || input.count < 1 =>
         Json.obj("error" -> "sides muss >= 2 und count muss >= 1 sein.".asJson).noSpaces
       case input                                       =>
-        val rolls = List.fill(input.count)(scala.util.Random.nextInt(input.sides) + 1)
+        val rolls = List.fill(input.count)(Random.nextInt(input.sides) + 1)
         RollDiceResult(sides = input.sides, count = input.count, rolls = rolls, sum = rolls.sum).asJson.noSpaces
     }

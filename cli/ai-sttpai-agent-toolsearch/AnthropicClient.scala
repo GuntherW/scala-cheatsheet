@@ -7,6 +7,7 @@ import sttp.ai.claude.models.{ContentBlock, Message, Tool}
 import sttp.ai.claude.requests.MessageRequest
 import sttp.model.Uri
 import ox.timeout
+import sttp.ai.claude.responses.MessageResponse
 
 import scala.concurrent.duration.*
 
@@ -82,19 +83,11 @@ object AnthropicClient:
     */
   def chat(model: String, systemPrompt: String, userMessage: String, maxTokens: Int = 2000): String =
 
-    def send(messages: List[Message], activeTools: List[Tool]) =
+    def send(messages: List[Message], activeTools: List[Tool]): MessageResponse =
       timeout(RequestTimeout) {
         client.createMessage(
           MessageRequest(model = model, messages = messages, system = Some(systemPrompt), maxTokens = maxTokens, tools = Some(activeTools)),
         )
-      }
-
-    def logResponse(turn: Int, content: List[ContentBlock]): Unit =
-      content.foreach {
-        case ContentBlock.Text(text, _, _)   => log(s"   [text]      ${truncate(text)}")
-        case ContentBlock.Thinking(thinking) => log(s"   [thinking]  ${truncate(thinking)}")
-        case tu: ContentBlock.ToolUse        => log(s"   [tool_use]  name=${tu.name} id=${tu.id} input=${Json.fromFields(tu.input).noSpaces}")
-        case other                           => log(s"   [$other]")
       }
 
     @annotation.tailrec
@@ -109,7 +102,7 @@ object AnthropicClient:
             throw e
 
       log(s"<- Turn $turn Antwort: stop_reason=${response.stopReason.getOrElse("-")}")
-      logResponse(turn, response.content)
+      logResponse(response.content)
 
       if !response.stopReason.contains("tool_use") then
         val finalText = textOf(response.content)
@@ -146,3 +139,11 @@ object AnthropicClient:
     loop(List(Message.user(userMessage)), activeTools = List(ToolCatalog.initiallyVisible), turn = 1)
 
   def close(): Unit = client.close()
+
+  private def logResponse(content: List[ContentBlock]): Unit =
+    content.foreach {
+      case ContentBlock.Text(text, _, _)   => log(s"   [text]      ${truncate(text)}")
+      case ContentBlock.Thinking(thinking) => log(s"   [thinking]  ${truncate(thinking)}")
+      case tu: ContentBlock.ToolUse        => log(s"   [tool_use]  name=${tu.name} id=${tu.id} input=${Json.fromFields(tu.input).noSpaces}")
+      case other                           => log(s"   [$other]")
+    }

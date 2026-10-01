@@ -11,7 +11,7 @@
 //> using dep io.opentelemetry:opentelemetry-exporter-otlp:1.66.0
 //> using dep io.opentelemetry.semconv:opentelemetry-semconv:1.44.0
 //> using dep io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:2.30.0-alpha
-//> using dep ch.qos.logback:logback-classic:1.6.4
+//> using dep ch.qos.logback:logback-classic:1.6.5
 
 import io.circe.generic.auto.*
 import io.opentelemetry.api.metrics.{LongCounter, LongHistogram}

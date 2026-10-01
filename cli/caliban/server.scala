@@ -1,4 +1,4 @@
-//> using dep com.github.ghostdogpr::caliban-quick:3.1.5
+//> using dep com.github.ghostdogpr::caliban-quick:3.2.0
 //> using toolkit 0.9.2
 
 import caliban.*
