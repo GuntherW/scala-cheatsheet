@@ -72,32 +72,31 @@ object ToolCatalog:
   private case class SearchToolsInput(
       @description("Kurze Beschreibung der benötigten Fähigkeit/Aufgabe, z. B. 'aktuelle Uhrzeit' oder 'Ausdruck berechnen'.")
       query: String,
-  ) derives ConfiguredCodec,
-        Schema
+  ) derives ConfiguredCodec, Schema
 
   /** Das Meta-Tool `search_tools`: durchsucht die fachlichen Tools per Keyword-Suche und liefert die Treffer sowohl als JSON-Text (fürs Modell, in `output`) als auch als freizuschaltende
-    * Tool-Definitionen (`enables`) - das ist der einzige Ort im gesamten Projekt, an dem "Tool-Search" tatsächlich passiert.
+    * Tool-Definitionen (`enables`) - das ist der einzige Ort im gesamten Projekt, an dem "Tool-Search" tatsächlich passiert. Nutzt wie die fachlichen Tools `JsonTool` als Basisklasse - dadurch
+    * bekommt auch `query` automatisch eine korrekte Decode-Fehlerbehandlung (vorher wurde ein fehlendes/falsch typisiertes `query`-Feld stillschweigend zu einem leeren String).
     */
-  private val searchTool: RegisteredTool = RegisteredTool(
-    definition = Tool.customRaw(
-      name = "search_tools",
-      description = "Durchsucht die verfügbare Tool-Bibliothek nach passenden Werkzeugen für eine Aufgabe. " +
-        "Rufe dieses Tool IMMER zuerst auf, bevor du ein spezifisches Werkzeug (z. B. für Zeit, Rechnen oder " +
-        "Würfeln) benutzt - du siehst diese Werkzeuge sonst nicht direkt. Gib eine kurze Beschreibung dessen, " +
-        "was du tun möchtest, als 'query' an, z. B. 'aktuelle Uhrzeit' oder 'zwei Würfel werfen'.",
-      inputSchema = jsonSchemaOf[SearchToolsInput],
-    ),
-    keywords = Nil,
-    handler = input =>
-      val query  = input.get("query").flatMap(_.asString).getOrElse("")
-      val hits   = searchRealTools(query)
+  private object SearchToolsTool
+      extends JsonTool[SearchToolsInput](
+        name = "search_tools",
+        description = "Durchsucht die verfügbare Tool-Bibliothek nach passenden Werkzeugen für eine Aufgabe. " +
+          "Rufe dieses Tool IMMER zuerst auf, bevor du ein spezifisches Werkzeug (z. B. für Zeit, Rechnen oder " +
+          "Würfeln) benutzt - du siehst diese Werkzeuge sonst nicht direkt. Gib eine kurze Beschreibung dessen, " +
+          "was du tun möchtest, als 'query' an, z. B. 'aktuelle Uhrzeit' oder 'zwei Würfel werfen'.",
+      ):
+
+    protected def run(input: SearchToolsInput): ToolCallResult =
+      val hits   = searchRealTools(input.query)
       val output =
         if hits.isEmpty then Json.obj("hits" -> Json.arr(), "note" -> "Keine passenden Tools gefunden.".asJson).noSpaces
         else
           val hitsJson = hits.map(h => Json.obj("name" -> h.definition.name.asJson, "description" -> h.definition.description.asJson))
           Json.obj("hits" -> hitsJson.asJson).noSpaces
-      ToolCallResult(output = output, enables = hits.map(_.definition)),
-  )
+      ToolCallResult(output = output, enables = hits.map(_.definition))
+
+  private val searchTool: RegisteredTool = RegisteredTool(definition = SearchToolsTool.definition, keywords = Nil, handler = SearchToolsTool.handler)
 
   /** ALLE registrierten Tools, `search_tools` inklusive - der `AnthropicClient` unterscheidet beim Aufruf nicht zwischen ihnen. */
   val all: List[RegisteredTool] = searchTool :: realTools

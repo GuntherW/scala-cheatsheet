@@ -25,64 +25,59 @@ given Configuration = Configuration.default.withSnakeCaseMemberNames
 private[agent] def jsonSchemaOf[T](using schema: Schema[T]): Json =
   TapirSchemaToJsonSchema(schema, markOptionsAsNullable = true).asJson
 
-/** Gemeinsamer Decode-/Fehlerbehandlungs-Baustein für alle Tool-Handler unten: dekodiert `rawInput` nach `A` und liefert bei Erfolg `onInput(input)`, bei einem Decode-Fehler ein `ToolCallResult` mit
-  * `isError = true` (statt nur eine `{"error": "..."}`-JSON-Konvention im Text zu verstecken, setzt es korrekt Claudes `tool_result.is_error`-Feld, siehe `AnthropicClient.executeToolUse`).
+/** Basisklasse für ein Tool, dessen Eingabe als Case Class `A` modelliert ist (abgeleiteter circe `Decoder` + Tapir `Schema`). Nimmt jedem konkreten Tool das manuelle
+  * `Json.fromFields(rawInput).as[A]`-Dekodieren samt Fehlerbehandlung ab - Unterklassen implementieren nur noch die fachliche Logik in `run(input: A)`, OHNE jedes Mal einen Decode-Aufruf wie
+  * `decodeInput[X](definition.name, rawInput) { input => ... }` zu wiederholen. Ein Decode-Fehler wird automatisch (via circes `Either.fold`) in ein `ToolCallResult.error(...)` übersetzt.
   */
-private def decodeInput[A: Decoder](toolName: String, rawInput: Map[String, Json])(onInput: A => ToolCallResult): ToolCallResult =
-  Json.fromFields(rawInput).as[A] match
-    case Left(error)  => ToolCallResult.error(s"Konnte $toolName-Eingabe nicht parsen: ${error.getMessage}")
-    case Right(input) => onInput(input)
+abstract class JsonTool[A](name: String, description: String)(using decoder: Decoder[A], schema: Schema[A]):
+  val definition: Tool.CustomRaw = Tool.customRaw(name, description, jsonSchemaOf[A])
+
+  /** Fachliche Tool-Logik - wird nur mit bereits erfolgreich dekodierter Eingabe aufgerufen. */
+  protected def run(input: A): ToolCallResult
+
+  final def handler(rawInput: Map[String, Json]): ToolCallResult =
+    Json.fromFields(rawInput).as[A](using decoder).fold(error => ToolCallResult.error(s"Konnte $name-Eingabe nicht parsen: ${error.getMessage}"), run)
 
 /** Tool 1: `get_current_time` - liefert Datum/Uhrzeit für eine optionale Zeitzone (IANA-ID, z. B. "Europe/Berlin"). Ohne Angabe wird UTC verwendet.
   */
 case class CurrentTimeInput(
     @description("IANA-Zeitzonen-ID, z. B. 'Europe/Berlin' oder 'America/New_York'. Optional, Standard: UTC.")
     timezone: Option[String],
-) derives ConfiguredCodec,
-      Schema
+) derives ConfiguredCodec, Schema
 case class CurrentTimeResult(timezone: String, iso8601: String) derives ConfiguredCodec
 
-object CurrentTimeTool:
+object CurrentTimeTool
+    extends JsonTool[CurrentTimeInput](
+      name = "get_current_time",
+      description = "Liefert das aktuelle Datum und die aktuelle Uhrzeit für eine Zeitzone (IANA-Zeitzonen-ID, z. B. 'Europe/Berlin'). Ohne Angabe wird UTC verwendet.",
+    ):
 
-  val definition: Tool.CustomRaw = Tool.customRaw(
-    name = "get_current_time",
-    description = "Liefert das aktuelle Datum und die aktuelle Uhrzeit für eine Zeitzone (IANA-Zeitzonen-ID, z. B. 'Europe/Berlin'). Ohne Angabe wird UTC verwendet.",
-    inputSchema = jsonSchemaOf[CurrentTimeInput],
-  )
-
-  def handler(rawInput: Map[String, Json]): ToolCallResult =
-    decodeInput[CurrentTimeInput](definition.name, rawInput) { input =>
-      val zoneId = input.timezone.getOrElse("UTC")
-      Try(of(zoneId)) match
-        case Failure(_)    => ToolCallResult.error(s"Unbekannte Zeitzone: '$zoneId'")
-        case Success(zone) =>
-          val now = ZonedDateTime.now(zone)
-          ToolCallResult(CurrentTimeResult(timezone = zoneId, iso8601 = now.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)).asJson.noSpaces)
-    }
+  protected def run(input: CurrentTimeInput): ToolCallResult =
+    val zoneId = input.timezone.getOrElse("UTC")
+    Try(of(zoneId)) match
+      case Failure(_)    => ToolCallResult.error(s"Unbekannte Zeitzone: '$zoneId'")
+      case Success(zone) =>
+        val now = ZonedDateTime.now(zone)
+        ToolCallResult(CurrentTimeResult(timezone = zoneId, iso8601 = now.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)).asJson.noSpaces)
 
 /** Tool 2: `calculator` - wertet einen einfachen arithmetischen Ausdruck aus (+, -, *, /, Klammern). Bewusst simpel gehalten (keine Variablen/Funktionen) - dient nur der Veranschaulichung.
   */
 case class CalculatorInput(
     @description("Arithmetischer Ausdruck, z. B. '(3 + 4) * 2'.")
     expression: String,
-) derives ConfiguredCodec,
-      Schema
+) derives ConfiguredCodec, Schema
 case class CalculatorResult(expression: String, result: Double) derives ConfiguredCodec
 
-object CalculatorTool:
+object CalculatorTool
+    extends JsonTool[CalculatorInput](
+      name = "calculator",
+      description = "Wertet einen einfachen arithmetischen Ausdruck aus (Zahlen, +, -, *, /, Klammern), z. B. '(3 + 4) * 2'.",
+    ):
 
-  val definition: Tool.CustomRaw = Tool.customRaw(
-    name = "calculator",
-    description = "Wertet einen einfachen arithmetischen Ausdruck aus (Zahlen, +, -, *, /, Klammern), z. B. '(3 + 4) * 2'.",
-    inputSchema = jsonSchemaOf[CalculatorInput],
-  )
-
-  def handler(rawInput: Map[String, Json]): ToolCallResult =
-    decodeInput[CalculatorInput](definition.name, rawInput) { input =>
-      Try(ExpressionParser.evaluate(input.expression)) match
-        case Failure(e)      => ToolCallResult.error(s"Konnte Ausdruck nicht auswerten: ${e.getMessage}")
-        case Success(result) => ToolCallResult(CalculatorResult(expression = input.expression, result = result).asJson.noSpaces)
-    }
+  protected def run(input: CalculatorInput): ToolCallResult =
+    Try(ExpressionParser.evaluate(input.expression)) match
+      case Failure(e)      => ToolCallResult.error(s"Konnte Ausdruck nicht auswerten: ${e.getMessage}")
+      case Success(result) => ToolCallResult(CalculatorResult(expression = input.expression, result = result).asJson.noSpaces)
 
 /** Winziger, rekursiver Parser/Evaluator für arithmetische Ausdrücke (+, -, *, /, Klammern, unäres Minus). Bewusst ohne externe Bibliothek - dieses Lernprojekt soll den Tool-Search-Flow zeigen, nicht
   * einen produktionsreifen Parser. Rein funktional: Jede `parseX`-Funktion bekommt die aktuelle Position explizit übergeben und liefert `(Wert, neue Position)` zurück - kein `var`, keine `while`-
@@ -138,23 +133,17 @@ case class RollDiceInput(
     sides: Int,
     @description("Anzahl der Würfe.")
     count: Int,
-) derives ConfiguredCodec,
-      Schema
+) derives ConfiguredCodec, Schema
 case class RollDiceResult(sides: Int, count: Int, rolls: List[Int], sum: Int) derives ConfiguredCodec
 
-object RollDiceTool:
+object RollDiceTool
+    extends JsonTool[RollDiceInput](
+      name = "roll_dice",
+      description = "Würfelt 'count'-mal einen Würfel mit 'sides' Seiten und liefert die Einzelwürfe sowie die Summe.",
+    ):
 
-  val definition: Tool.CustomRaw = Tool.customRaw(
-    name = "roll_dice",
-    description = "Würfelt 'count'-mal einen Würfel mit 'sides' Seiten und liefert die Einzelwürfe sowie die Summe.",
-    inputSchema = jsonSchemaOf[RollDiceInput],
-  )
-
-  def handler(rawInput: Map[String, Json]): ToolCallResult =
-    decodeInput[RollDiceInput](definition.name, rawInput) {
-      case input if input.sides < 2 || input.count < 1 =>
-        ToolCallResult.error("sides muss >= 2 und count muss >= 1 sein.")
-      case input                                       =>
-        val rolls = List.fill(input.count)(Random.nextInt(input.sides) + 1)
-        ToolCallResult(RollDiceResult(sides = input.sides, count = input.count, rolls = rolls, sum = rolls.sum).asJson.noSpaces)
-    }
+  protected def run(input: RollDiceInput): ToolCallResult =
+    if input.sides < 2 || input.count < 1 then ToolCallResult.error("sides muss >= 2 und count muss >= 1 sein.")
+    else
+      val rolls = List.fill(input.count)(Random.nextInt(input.sides) + 1)
+      ToolCallResult(RollDiceResult(sides = input.sides, count = input.count, rolls = rolls, sum = rolls.sum).asJson.noSpaces)
