@@ -63,7 +63,7 @@ lazy val myProject = project
 ## Test Frameworks
 
 | Framework  | Usage                                           |
-|------------|--------------------------------------------------|
+|------------|-------------------------------------------------|
 | MUnit      | `extends FunSuite` or `extends ScalaCheckSuite` |
 | ZIO Test   | `extends ZIOSpecDefault`                        |
 | ScalaTest  | `extends AnyFunSuite`                           |
@@ -74,7 +74,8 @@ Location: `src/test/scala/<package>/`
 ## Scalafix Rules (enabled)
 
 - `LeakingImplicitClassVal`
-- `DisableSyntax`: no `var`/`return`/`while`/`asInstanceOf`/`isInstanceOf`/xml/val-patterns/`==`,`!=` (universal equality) — some rules commented out in `.scalafix.conf`, check before assuming active
+- `DisableSyntax`: no `var`/`return`/`while`/`asInstanceOf`/`isInstanceOf`/xml/val-patterns/`==`,`!=` (universal
+  equality) — some rules commented out in `.scalafix.conf`, check before assuming active
 - `OrganizeImports` (Scala3 dialect)
 
 ## Project Modules (SBT)
@@ -82,7 +83,8 @@ Location: `src/test/scala/<package>/`
 Core: `core`, `zio`, `zioHttp`, `zioKafka`, `zioSchema`, `http4s`, `sttp`, `tapir`, `caliban`
 Data: `database`, `mongo`, `kafka`, `datatransformation`, `parsers`
 Testing: `munit`, `scalacheck`, `gatling`, `cucumber`
-Other: `akka`, `json`, `macros`, `macwire`, `magnolia`, `scalajs`, `spring`, `grpcFs2`, `osLib`, `openAI`, `cdk`, `direct`, `config`
+Other: `akka`, `json`, `macros`, `macwire`, `magnolia`, `scalajs`, `spring`, `grpcFs2`, `osLib`, `openAI`, `cdk`,
+`direct`, `config`
 
 ## Important Files
 
