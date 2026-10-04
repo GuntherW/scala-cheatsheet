@@ -45,7 +45,7 @@ object Version {
   val oak                     = "2.6.0"
   val openTelemetry           = "1.66.0"
   val osLib                   = "0.11.8"
-  val ox                      = "1.0.8"
+  val ox                      = "1.0.9"
   val parserCombinators       = "2.5.0"
   val proteus                 = "0.6.0"
   val postgres                = "42.7.13"
