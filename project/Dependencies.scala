@@ -25,7 +25,7 @@ object Version {
   val grpcNetty               = "1.84.0"
   val hash4j                  = "0.31.0"
   val h2                      = "2.5.252"
-  val http4s                  = "0.23.37"
+  val http4s                  = "0.23.38"
   val jackson                 = "3.2.3"
   val jwtHttp4s               = "2.0.15"
   val jwtScala                = "11.0.4"
