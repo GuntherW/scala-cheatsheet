@@ -72,7 +72,7 @@ object Version {
   val xstream                 = "1.4.21"
   val xml                     = "2.5.0"
   val zio                     = "2.1.26"
-  val zioBlocks               = "0.0.51"
+  val zioBlocks               = "0.0.55"
   val zioJson                 = "1.1.0"
   val zioKafka                = "3.8.0"
   val zioHttp                 = "3.11.6"
