@@ -20,7 +20,7 @@ object Version {
   val ducktape                = "0.2.13"
   val duckdb                  = "1.5.5.1"
   val fs2                     = "3.14.0"
-  val gatling                 = "3.15.1"
+  val gatling                 = "3.16.0"
   val gears                   = "0.3.1"
   val grpcNetty               = "1.84.0"
   val hash4j                  = "0.31.0"
