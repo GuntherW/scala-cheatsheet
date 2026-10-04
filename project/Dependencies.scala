@@ -36,7 +36,7 @@ object Version {
   val logback                 = "1.6.4"
   val log4j                   = "2.26.1"
   val macwire                 = "2.6.7"
-  val magnolia                = "1.3.23"
+  val magnolia                = "1.3.24"
   val magnum                  = "2.0.0-M3"
   val mongo                   = "5.13.0"
   val metricsCore             = "4.2.40"
