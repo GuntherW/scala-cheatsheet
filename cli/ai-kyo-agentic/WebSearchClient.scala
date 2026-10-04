@@ -7,7 +7,7 @@ import kyo.*
   * '''Warum nicht einfach `Tool.init`/`AI.enable`?''' kyo-ai bindet jedes über `AI.enable`/`Tool.init` registrierte Tool intern als `internal.Info[?, ?, LLM]` mit lokalem Round-Trip in das jeweilige
   * `Completion`-Backend ein: Das Modell ruft das Tool auf (`tool_use`), WIR führen die `run`-Funktion lokal aus und senden das Ergebnis zurück - der Eval-Loop kümmert sich um diesen Hin-und-Her.
   * `web_search_20250305` ist aber ein Anthropic-'''Server'''-Tool: Der Server löst die Suche komplett selbst innerhalb EINES HTTP-Response auf, es gibt nie einen lokal zu beantwortenden Tool-Call
-  *   - strukturell also das Gegenteil dessen, was `Tool[S]`/`AI.gen`'s Eval-Loop erwartet. Es gibt in `kyo-ai` (Stand 1.0.0-RC6) keinen öffentlichen Weg, ein solches providernatives Server-Tool in
+  *   - strukturell also das Gegenteil dessen, was `Tool[S]`/`AI.gen`'s Eval-Loop erwartet. Es gibt in `kyo-ai` (Stand 1.0.0-RC7) keinen öffentlichen Weg, ein solches providernatives Server-Tool in
   *     den Tool-Katalog eines `AI.gen`-Aufrufs einzuschleusen.
   *
   * Für dieses eine Tool bypassen wir daher den `LLM`-Effekt komplett und sprechen `POST /v1/messages` direkt über `kyo-http` an - exakt dieselbe Notlösung, die das sttp-ai-Original
