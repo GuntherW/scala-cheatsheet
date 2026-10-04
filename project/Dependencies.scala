@@ -7,7 +7,7 @@ object Version {
   val blake3                  = "3.1.2"
   val borer                   = "1.18.0"
   val bouncyCastle            = "1.86"
-  val caliban                 = "3.1.5"
+  val caliban                 = "3.2.0"
   val catsEffect              = "3.7.1"
   val catsEffectCps           = "0.5.0"
   val catsVersion             = "2.13.0"
