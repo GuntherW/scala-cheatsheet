@@ -14,7 +14,7 @@ object Version {
   val catsConsole             = "0.8.1"
   val circeVersion            = "0.14.16"
   val cirisVersion            = "3.15.1"
-  val chimney                 = "2.0.0"
+  val chimney                 = "2.1.0"
   val constructs              = "10.8.1"
   val doobie                  = "1.0.0-RC12"
   val ducktape                = "0.2.13"
