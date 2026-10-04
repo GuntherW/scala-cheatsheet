@@ -1,5 +1,5 @@
-//> using dep org.apache.tika:tika-core:4.0.0
-//> using dep org.apache.tika:tika-parsers-standard-package:4.0.0
+//> using dep org.apache.tika:tika-core:4.1.0
+//> using dep org.apache.tika:tika-parsers-standard-package:4.1.0
 //> using dep org.slf4j:slf4j-nop:2.0.20
 
 import org.apache.tika.Tika
