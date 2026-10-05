@@ -16,8 +16,7 @@ import scala.util.Using
   */
 @main def mainTypedDecisions(): Unit =
   Using.resource(LayaClient("typed-decisions")) { client =>
-    val state =
-      "Customer: The app crashes every time I try to upload a photo larger than 5MB. This started after yesterday's update."
+    val state = "Customer: The app crashes every time I try to upload a photo larger than 5MB. This started after yesterday's update."
 
     val severity        = Score(
       "How severe is this problem?",

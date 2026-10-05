@@ -16,8 +16,7 @@ import scala.util.Using
   */
 @main def mainMultilingual(): Unit =
   Using.resource(LayaClient("multilingual")) { client =>
-    val state =
-      "Hallo, wir wurden im März zweimal belastet. Bitte erstatten Sie die doppelte Abbuchung umgehend zurück, sonst kündigen wir unseren Vertrag."
+    val state = "Hallo, wir wurden im März zweimal belastet. Bitte erstatten Sie die doppelte Abbuchung umgehend zurück, sonst kündigen wir unseren Vertrag."
 
     val department = Choice.described(
       "Which department should handle this?",
