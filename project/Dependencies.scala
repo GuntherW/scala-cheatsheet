@@ -37,7 +37,7 @@ object Version {
   val log4j                   = "2.26.1"
   val macwire                 = "2.6.7"
   val magnolia                = "1.3.24"
-  val magnum                  = "2.0.0-M3"
+  val magnum                  = "2.0.0-M4"
   val mongo                   = "5.13.0"
   val metricsCore             = "4.2.40"
   val monocle                 = "3.3.0"
@@ -85,8 +85,8 @@ object Version {
   val uTest      = "0.9.5"
 
   // Test
-  val cucumber              = "8.0.3"
-  val cucumberScala         = "9.0.0"
+  val cucumber              = "8.0.4"
+  val cucumberScala         = "9.2.0"
   val junit                 = "6.1.3"
   val junitJupiterInterface = "0.19.0"
   val mockito               = "5.24.0"
