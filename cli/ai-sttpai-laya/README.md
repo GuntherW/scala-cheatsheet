@@ -58,19 +58,58 @@ curl -s localhost:8000/health
 
 ### Wichtige Umgebungsvariablen von `laya-serve`
 
-| Variable       | Bedeutung                                                                                          | Default                      |
-|----------------|----------------------------------------------------------------------------------------------------|------------------------------|
-| `LAYA_HOST`    | Bind-Adresse                                                                                       | `0.0.0.0`                    |
-| `LAYA_PORT`    | Bind-Port                                                                                          | `8000`                       |
-| `LAYA_DEVICE`  | Torch-Device für jeden Checkpoint (`cpu`, `cuda`, ...)                                             | auto                         |
-| `LAYA_PRELOAD` | Checkpoints beim Start laden statt lazy beim ersten Request                                        | `1`                          |
-| `LAYA_MODELS`  | Kommagetrennte Liste zu ladender Modelle (`english`,`multilingual`,`typed-decisions`); leer = alle | alle                         |
-| `LAYA_API_KEY` | Bearer-Token, das Clients mitschicken müssen                                                       | nicht gesetzt (= keine Auth) |
+| Variable          | Bedeutung                                                                                                    | Default                      |
+|-------------------|--------------------------------------------------------------------------------------------------------------|------------------------------|
+| `LAYA_HOST`       | Bind-Adresse                                                                                                 | `0.0.0.0`                    |
+| `LAYA_PORT`       | Bind-Port                                                                                                    | `8000`                       |
+| `LAYA_DEVICE`     | Torch-Device für jeden Checkpoint (`cpu`, `cuda`, ...)                                                       | auto                         |
+| `LAYA_PRELOAD`    | Checkpoints beim Start laden statt lazy beim ersten Request                                                  | `1`                          |
+| `LAYA_MODELS`     | Kommagetrennte Liste **vorab** zu ladender Modelle (`english`,`multilingual`,`typed-decisions`); leer = alle | alle                         |
+| `LAYA_MAX_LOADED` | Anzahl Checkpoints, die gleichzeitig resident im Speicher bleiben                                            | `2`                          |
+| `LAYA_API_KEY`    | Bearer-Token, das Clients mitschicken müssen                                                                 | nicht gesetzt (= keine Auth) |
+
+**Wichtig: `LAYA_MODELS` ist keine Zugriffsbeschränkung.** Es legt nur fest,
+welche Checkpoints beim Start vorab geladen werden (Preload). Ein Request
+mit einem anderen Modell (z. B. `model=multilingual`, während nur mit
+`LAYA_MODELS=english` gestartet wurde) wird trotzdem bedient - der
+Checkpoint wird dann beim ersten Request dieses Modells einfach **lazy
+nachgeladen**. Das erklärt z. B., warum `/health` nach dem Ausführen von
+`laya.mainMultilingual`/`laya.mainTypedDecisions` plötzlich mehr geladene
+Modelle zeigt, als beim Start von `laya-serve` angegeben wurden.
+
+`LAYA_MAX_LOADED` (Default `2`) begrenzt, wie viele Checkpoints
+gleichzeitig resident bleiben. Nutzt du - wie die drei Beispiele in diesem
+Projekt - alle drei Modelle, wird bei jedem Wechsel zum dritten Modell ein
+anderer Checkpoint wieder verdrängt (LRU) und beim nächsten Request neu
+geladen (spürbar langsamer). Um alle drei dauerhaft resident zu halten:
+
+```bash
+pushd ~/bin/laya
+LAYA_HOST=127.0.0.1 LAYA_PORT=8000 \
+  LAYA_MODELS=english,multilingual,typed-decisions LAYA_MAX_LOADED=3 \
+  .venv/bin/laya-serve
+popd
+```
 
 **Sicherheitshinweis:** Ohne `LAYA_API_KEY` ist der Server komplett
 unauthentifiziert. Lokal auf `127.0.0.1` ist das für einen Testlauf okay;
 sobald `LAYA_HOST=0.0.0.0` (Default!) gesetzt und der Rechner im Netz
 erreichbar ist, unbedingt `LAYA_API_KEY` setzen (siehe Laya `SECURITY.md`).
+
+### `laya-serve` wieder stoppen
+
+Da `laya-serve` im Vordergrund läuft, genügt im selben Terminal `Ctrl+C`
+(sendet `SIGINT`, uvicorn fährt sauber herunter - siehe `INFO: Shutting
+down` in der Ausgabe).
+
+Läuft der Prozess stattdessen im Hintergrund (z. B. gestartet mit `&` oder
+in einem anderen Terminal-Tab), lässt er sich über die PID beenden:
+
+```bash
+pgrep -af laya-serve        # PID finden
+kill <PID>                  # SIGTERM, sauberes Herunterfahren
+# notfalls: kill -9 <PID>   # SIGKILL, falls er nicht reagiert
+```
 
 ## 3. Dieses Scala-Projekt ausführen
 
