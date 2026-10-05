@@ -36,9 +36,14 @@ sowie `GET /health`.
 
 ```bash
 pushd ~/bin/laya
-LAYA_HOST=127.0.0.1 LAYA_PORT=8000 LAYA_MODELS=english .venv/bin/python -m laya.serve
-popd 
+LAYA_HOST=127.0.0.1 LAYA_PORT=8000 LAYA_MODELS=english .venv/bin/laya-serve
+popd
 ```
+
+`laya-serve` blockiert den Terminal im Vordergrund (Server-Prozess), bis er
+mit `Ctrl+C` beendet wird - `popd` wird daher erst nach dem Beenden des
+Servers ausgeführt und bringt dich dann zurück ins ursprüngliche
+Verzeichnis.
 
 Beim ersten Request (bzw. beim Start, falls `LAYA_PRELOAD=1`) wird der
 Checkpoint des gewählten Modells von Hugging Face heruntergeladen - das
@@ -69,12 +74,29 @@ erreichbar ist, unbedingt `LAYA_API_KEY` setzen (siehe Laya `SECURITY.md`).
 
 ## 3. Dieses Scala-Projekt ausführen
 
+Das Projekt enthält drei Beispiele, je eines pro Laya-Checkpoint. Da
+mehrere `@main`-Methoden im selben Verzeichnis liegen, muss die gewünschte
+explizit über `--main-class` ausgewählt werden:
+
 ```bash
 cd cli/ai-sttpai-laya
-scala-cli run .
+
+# "english"-Checkpoint (Main.scala)
+scala-cli run . --main-class laya.main
+
+# "multilingual"-Checkpoint, deutschsprachiges Ticket (MainMultilingual.scala)
+scala-cli run . --main-class laya.mainMultilingual
+
+# "typed-decisions"-Checkpoint, auf Entscheidungs-Workflows feingetunt (MainTypedDecisions.scala)
+scala-cli run . --main-class laya.mainTypedDecisions
 ```
 
-Erwartete Ausgabe (Werte können je nach Modell leicht variieren):
+Damit alle drei funktionieren, muss `laya-serve` mit allen drei Modellen
+gestartet werden, z. B. `LAYA_MODELS=english,multilingual,typed-decisions`
+(oder `LAYA_MODELS` ganz weglassen, dann lädt `laya-serve` alle).
+
+Erwartete Ausgabe von `laya.main` (Werte können je nach Modell leicht
+variieren):
 
 ```
 Department: billing (confidence 0.94)
@@ -97,6 +119,10 @@ Siehe `LayaClient.scala`.
 
 - **`Connection refused`**: `laya-serve` läuft nicht, oder `LAYA_BASE_URL`
   zeigt auf den falschen Host/Port.
+- **`ModuleNotFoundError: No module named 'uvicorn'`**: Das `serve`-Extra
+  wurde nicht (vollständig) installiert. Erneut ausführen:
+  `.venv/bin/python -m pip install "laya[serve]"` (Anführungszeichen nicht
+  vergessen, sonst interpretiert die Shell die eckigen Klammern selbst).
 - **Erster Request sehr langsam / scheint zu hängen**: Checkpoint-Download
   von Hugging Face läuft noch (siehe oben). Mit `LAYA_PRELOAD=1` passiert
   das bereits beim Start von `laya-serve`, nicht erst beim ersten Request.
@@ -108,8 +134,10 @@ Siehe `LayaClient.scala`.
 
 ```
 ai-sttpai-laya/
-├── project.scala     # scala-cli Direktiven: Scala-Version & Abhängigkeiten
-├── LayaClient.scala  # JevSyncClient, baseUrl auf lokalen laya-serve umgebogen
-├── Main.scala        # @main, Beispiel-Request (Choice/Score/Noul)
+├── project.scala           # scala-cli Direktiven: Scala-Version & Abhängigkeiten
+├── LayaClient.scala        # JevSyncClient, baseUrl auf lokalen laya-serve umgebogen
+├── Main.scala               # @main laya.main: Checkpoint "english" (Choice/Score/Noul)
+├── MainMultilingual.scala  # @main laya.mainMultilingual: Checkpoint "multilingual"
+├── MainTypedDecisions.scala # @main laya.mainTypedDecisions: Checkpoint "typed-decisions"
 └── README.md
 ```

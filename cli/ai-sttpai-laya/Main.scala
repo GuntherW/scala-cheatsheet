@@ -1,6 +1,10 @@
 package laya
 
-import sttp.ai.jev.{Choice, Noul, Score}
+import sttp.ai.jev.{Choice, JevSyncClient, Noul, Score}
+
+import scala.util.Using
+
+given Using.Releasable[JevSyncClient] = _.close()
 
 /** Einstiegspunkt: Stellt drei typisierte Fragen (Choice/Score/Noul) zu einem Beispiel-Ticket an einen lokal laufenden `laya-serve`.
   *
@@ -12,10 +16,8 @@ import sttp.ai.jev.{Choice, Noul, Score}
   * }}}
   */
 @main def main(): Unit =
-  val client = LayaClient()
-  try
-    val state =
-      "Hi, we were billed twice for March. Please refund the duplicate today or we will cancel our plan."
+  Using.resource(LayaClient()) { client =>
+    val state = "Hi, we were billed twice for March. Please refund the duplicate today or we will cancel our plan."
 
     val department = Choice.described(
       "Which department should handle this?",
@@ -33,5 +35,4 @@ import sttp.ai.jev.{Choice, Noul, Score}
     println(s"Urgency score: ${urgencyAnswer.score} -> ${urgencyAnswer.mostLikely}")
     println(s"Churn risk probability: ${churnAnswer.probability}")
     println(s"Model used: ${response.model}, requestId: ${response.requestId}")
-  finally
-    client.close()
+  }
