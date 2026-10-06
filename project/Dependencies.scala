@@ -86,7 +86,7 @@ object Version {
 
   // Test
   val cucumber              = "8.0.4"
-  val cucumberScala         = "9.2.0"
+  val cucumberScala         = "9.2.1"
   val junit                 = "6.1.3"
   val junitJupiterInterface = "0.19.0"
   val mockito               = "5.24.0"

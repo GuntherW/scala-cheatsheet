@@ -60,3 +60,5 @@ out/
 cli/multi-agent-agentic-orchestrator/output/
 cli/ai-kyo-agentic/output/
 cli/multi-agent-manual-orchestrator/output/
+cli/ai-rag-sttpai/output/
+cli/ai-rag-sttpai/docs/*.pdf

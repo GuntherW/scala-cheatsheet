@@ -135,6 +135,24 @@ services:
 
     command: [ "postgres", "-c", "log_statement=all", "-c", "log_destination=stderr" ]
 
+  postgres-rag:
+    image: pgvector/pgvector:pg18
+    container_name: postgres-rag
+    ports:
+      - "5434:5432"
+    expose:
+      - "5434"
+    env_file:
+      - ./.env
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: 'ragdb'
+    volumes:
+      - dataRag:/var/lib/postgresql
+      - "./sql-rag:/docker-entrypoint-initdb.d"
+    command: [ "postgres", "-c", "log_statement=all", "-c", "log_destination=stderr" ]
+
   pulsar:
     image: apachepulsar/pulsar
     container_name: pulsar
@@ -161,6 +179,8 @@ services:
 
 volumes:
   data:
+    driver: local
+  dataRag:
     driver: local
   dataPgmq:
     driver: local
