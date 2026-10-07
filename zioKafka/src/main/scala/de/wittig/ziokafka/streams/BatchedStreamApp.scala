@@ -36,7 +36,7 @@ object BatchedStreamApp extends ZIOAppDefault {
         .mapZIO { batch =>
           processBatch(batch) *>
             batch.map(_.offset)
-              .foldLeft(OffsetBatch.empty)(_ add _)
+              .foldLeft(OffsetBatch.empty)(_.add(_))
               .commit
         }
         .drain
