@@ -35,8 +35,8 @@ object Ingestion:
       document
     }.toList
 
-    val embeddingStore = VectorStore.build(dropTableFirst = true)
     val splitter       = DocumentSplitters.recursive(chunkSize, chunkOverlap)
+    val embeddingStore = VectorStore.build(dropTableFirst = true)
 
     val ingestor = EmbeddingStoreIngestor
       .builder()

@@ -4,6 +4,8 @@ import org.apache.pdfbox.pdmodel.{PDDocument, PDPage, PDPageContentStream}
 import org.apache.pdfbox.pdmodel.common.PDRectangle
 import org.apache.pdfbox.pdmodel.font.{PDType1Font, Standard14Fonts}
 
+import scala.util.Using
+
 /** Erzeugt die 10 Beispiel-PDFs in `docs/` (einmalig auszuführen, siehe `Main.scala`, Subcommand `generate-docs`).
   *
   * Die Inhalte sind bewusst frei erfunden/vereinfacht und enthalten ein paar konkrete, eindeutig abfragbare Fakten (Zahlen, Namen, Daten) - so lässt sich beim Testen der Pipeline leicht prüfen, ob
@@ -45,7 +47,7 @@ private def writePdf(path: os.Path, paragraphs: List[String]): Unit =
 
   // `Using.resource` schließt das PDDocument auch dann zuverlässig, wenn beim Schreiben (z. B. `stream.showText`) eine Exception auftritt - wichtig, weil PDFBox bei einem offen gebliebenen
   // `PDDocument` sonst stillschweigend eine unvollständige/korrupte Datei zurücklassen kann.
-  scala.util.Using.resource(new PDDocument()) { doc =>
+  Using.resource(new PDDocument()) { doc =>
     var page   = new PDPage(PDRectangle.A4)
     doc.addPage(page)
     var stream = new PDPageContentStream(doc, page)

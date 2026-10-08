@@ -212,18 +212,18 @@ ANTHROPIC_API_KEY="rqsty-sk-..."`.
 cd cli/ai-rag-langchain4j
 
 # 1. einmalig: die 10 Beispiel-PDFs erzeugen
-scala-cli run . -- generate-docs
+scala-cli run --suppress-experimental-warning . -- generate-docs
 
 # 2. PDFs laden, splitten, embedden, in pgvector schreiben (jederzeit wiederholbar,
 #    löscht/erzeugt die Tabelle dabei jedes Mal neu - keine Duplikate)
-scala-cli run . -- ingest
+scala-cli run --suppress-experimental-warning . -- ingest
 
 # 3. Fragen stellen
-scala-cli run . -- ask "Wie viele Kilometer lang ist das Great Barrier Reef und wie viele Riffe umfasst es?"
-scala-cli run . -- ask "Wer hält den Marathon-Weltrekord der Frauen und wo wurde er aufgestellt?"
+scala-cli run --suppress-experimental-warning . -- ask "Wie viele Kilometer lang ist das Great Barrier Reef und wie viele Riffe umfasst es?"
+scala-cli run --suppress-experimental-warning . -- ask "Wer hält den Marathon-Weltrekord der Frauen und wo wurde er aufgestellt?"
 
 # Tests (reine Splitter-Logik, kein API-/DB-Call nötig)
-scala-cli test .
+scala-cli test --suppress-experimental-warning .
 ```
 
 Der erste `ingest`- bzw. `ask`-Lauf dauert spürbar länger, weil
@@ -282,9 +282,47 @@ ist nur, eine **andere** Tabelle als `document_chunks` zu wählen
 (`langchain4j_pdf_chunks`), da beide Projekte sich sonst denselben Tabellennamen
 mit inkompatibler Vektordimension (512 vs. 384) teilen würden.
 
-**4. Die `all-MiniLM-L6-v2`-Abhängigkeit bringt eine native ONNX-Runtime-Bibliothek
-mit:** Beim ersten Aufruf lädt `ai.onnxruntime.OnnxRuntime` eine native
-Bibliothek per `System::load` - auf neueren JDKs (Project Panama/Integrity-by-default)
-erscheint dafür eine Warnung ("restricted method called"), die sich mit
-`--enable-native-access=ALL-UNNAMED` unterdrücken ließe. Für dieses Lernprojekt
-unkritisch, da nur eine Warnung, kein Fehler.
+**4. JDK-Warnungen beim Start (gelöst statt nur dokumentiert):** Auf neueren
+JDKs (hier getestet mit JDK 27) erscheinen ohne Gegenmaßnahme bei jedem
+`run`/`test` drei Arten von Warnungen, die nichts mit Programmfehlern zu tun
+haben, sondern mit JVM- bzw. Classpath-Details:
+
+- `WARNING: A terminally deprecated method in sun.misc.Unsafe has been
+  called ... by scala.runtime.LazyVals$` - `scala.runtime.LazyVals$` ist die
+  gemeinsame Laufzeit-Unterstützungsklasse für `lazy val` in der
+  `scala3-library`-JAR selbst. Ob sie beim Zugriff auf einen konkreten
+  `lazy val` den alten (`Unsafe`-basierten) oder neuen (`VarHandle`-basierten)
+  Codepfad nimmt, hängt nicht von der eigenen Scala-Version ab, sondern davon,
+  mit welcher Scala-3-Version die jeweilige `lazy val`-Stelle kompiliert wurde
+  - das kann auch eine transitive Abhängigkeit sein, die noch mit einer
+  älteren Scala-3.x-Version (< 3.8, dem Release, das den `Unsafe`-Zugriff
+  entfernt hat) gebaut wurde. Ab JDK 24 warnt die JVM standardmäßig davor
+  (JEP 498). Behoben über die scala-cli-Direktive `//> using sloth` (siehe
+  `project.scala`), die das `Unsafe`-basierte Bytecode-Muster über den
+  gesamten Klassenpfad hinweg (also auch in Abhängigkeiten) auf das
+  JDK-26-kompatible Muster patcht - kein eigener Workaround-Code nötig, nur
+  eine Zeile in `project.scala`.
+- `sloth`-Direktive selbst ist "experimental":** scala-cli druckt beim Start
+  für jede als experimentell markierte Direktive einen mehrzeiligen Hinweis
+  ("non-ideal user experience should be expected ..."). Das lässt sich nicht
+  über eine weitere `project.scala`-Direktive abstellen (es gibt dafür keine
+  `using`-Entsprechung, nur die CLI-Flag), sondern nur über die
+  Kommandozeilen-Option `--suppress-experimental-warning` (siehe die
+  `scala-cli run`/`test`-Aufrufe oben) - deshalb taucht sie in diesem Projekt
+  in jedem Befehl explizit mit auf, statt einmalig in `project.scala` zu
+  stehen.
+- `WARNING: A restricted method in java.lang.System has been called ... by
+  ai.onnxruntime.OnnxRuntime` - das Embedding-Modell (`all-MiniLM-L6-v2`, siehe
+  `EmbeddingModels.scala`) lädt eine native ONNX-Runtime-Bibliothek per
+  `System::load` (JEP 472, "Prepare to Restrict the Use of JNI"). Behoben über
+  `//> using javaOpt --enable-native-access=ALL-UNNAMED` in `project.scala`.
+- `SLF4J(W): No SLF4J providers were found` - langchain4j nutzt intern SLF4J
+  für Logging, ohne konkrete Implementierung auf dem Klassenpfad meldet SLF4J
+  das bei jedem Start. Behoben durch die zusätzliche Abhängigkeit
+  `org.slf4j:slf4j-nop` (ein No-Op-Logging-Backend) in `project.scala` - dieses
+  Projekt braucht keine Logs, nur die Konsolenausgaben von `Main.scala`.
+
+Alle vier Warnungen/Hinweise sind rein kosmetisch (sie ändern nichts am
+Verhalten des Programms) - für ein Lehrbeispiel lohnt es sich trotzdem, sie
+wegzuräumen, damit die tatsächlich relevante Ausgabe (die LLM-Antwort) nicht
+in Startup-Rauschen untergeht.

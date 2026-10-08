@@ -16,20 +16,14 @@ object Main:
 
   def main(args: Array[String]): Unit =
     args.toList match
-      case "generate-docs" :: Nil =>
-        GenerateSampleDocs.run(docsDir)
-
-      case "ingest" :: Nil =>
-        Ingestion.run(docsDir)
-
+      case "generate-docs" :: Nil   => GenerateSampleDocs.run(docsDir)
+      case "ingest" :: Nil          => Ingestion.run(docsDir)
       case "ask" :: question :: Nil =>
         val embeddingStore = VectorStore.build(dropTableFirst = false)
         val assistant      = RagAssistant.create(embeddingStore)
         println(assistant.answer(question))
-
-      case _ =>
-        println("""Verwendung:
-                  |  scala-cli run . -- generate-docs       # erzeugt die 10 Beispiel-PDFs in docs/
-                  |  scala-cli run . -- ingest               # indexiert docs/ in pgvector
-                  |  scala-cli run . -- ask "<Frage>"        # beantwortet eine Frage auf Basis der indexierten Dokumente
-                  |""".stripMargin)
+      case _                        => println("""Verwendung:
+                                                 |  scala-cli run . -- generate-docs       # erzeugt die 10 Beispiel-PDFs in docs/
+                                                 |  scala-cli run . -- ingest               # indexiert docs/ in pgvector
+                                                 |  scala-cli run . -- ask "<Frage>"        # beantwortet eine Frage auf Basis der indexierten Dokumente
+                                                 |""".stripMargin)

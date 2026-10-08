@@ -17,8 +17,5 @@ object PgConfig:
   val user: String     = sys.env.getOrElse("PGRAG_USER", "postgres")
   val password: String = sys.env.getOrElse("PGRAG_PASSWORD", "postgres")
 
-  /** Name der von `langchain4j-pgvector` selbst angelegten/verwalteten Tabelle - bewusst anders benannt als `document_chunks` aus `ai-rag-sttpai`, damit beide Lernprojekte denselben Postgres-
-    * Container nutzen können, ohne sich gegenseitig die Tabelle kaputtzumachen oder Dimension/Schema zu vermischen (dieses Projekt nutzt 384-dimensionale AllMiniLmL6V2-Embeddings statt der
-    * 512-dimensionalen Hashing-TF-IDF-Embeddings aus `ai-rag-sttpai`).
-    */
+  // Dieses Projekt nutzt 384-dimensionale AllMiniLmL6V2-Embeddings in dieser Tabelle
   val table: String = "langchain4j_pdf_chunks"
