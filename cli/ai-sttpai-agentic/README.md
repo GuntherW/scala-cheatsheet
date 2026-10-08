@@ -18,17 +18,17 @@ Identität der Agenten kennt). Siehe Abschnitt
 
 ## Tech-Stack
 
-| Zweck                                                             | Bibliothek                                                                                        |
-|-------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
-| Anthropic-/Claude-Client (Messages API, Tools, Structured Output) | [sttp-ai](https://sttp-ai.softwaremill.com/) (`claude`-Modul, `ClaudeClient` + `Agent`-Loop)      |
+| Zweck                                                             | Bibliothek                                                                                                                      |
+|-------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| Anthropic-/Claude-Client (Messages API, Tools, Structured Output) | [sttp-ai](https://sttp-ai.softwaremill.com/) (`claude`-Modul, `ClaudeClient` + `Agent`-Loop)                                    |
 | Interceptoren (Logging, Token-/Kosten-Tracking, Budgets)          | [sttp-ai](https://sttp-ai.softwaremill.com/agents/interceptors.html) `core`-Modul (`AgentInterceptor`, transitiv über `claude`) |
-| JSON-Serialisierung/-Deserialisierung                             | [circe](https://circe.github.io/circe/) (bringt `sttp-ai` bereits mit, keine eigene Abhängigkeit) |
-| JSON-Schema-Ableitung für Structured Output                       | [tapir](https://tapir.softwaremill.com/) `Schema` (bringt `sttp-ai` bereits mit)                  |
-| Dateisystemzugriff (`output/`-Ordner)                             | [os-lib](https://github.com/com-lihaoyi/os-lib)                                                   |
-| `.env`-Datei einlesen                                             | eigene, simple Implementierung (`object Env` in `AnthropicClient.scala`, siehe unten)             |
-| Nebenläufigkeit (paralleles Ausführen der Worker)                 | [ox](https://ox.softwaremill.com/) (`par`, strukturierte Nebenläufigkeit auf Virtual Threads)     |
-| Tests (Plan-Validierung/Executor-Logik, Interceptoren)            | [MUnit](https://scalameta.org/munit/) (`scala-cli test .`)                                        |
-| Build/Run ohne sbt-Projekt                                        | `scala-cli` mit `//> using` Direktiven                                                            |
+| JSON-Serialisierung/-Deserialisierung                             | [circe](https://circe.github.io/circe/) (bringt `sttp-ai` bereits mit, keine eigene Abhängigkeit)                               |
+| JSON-Schema-Ableitung für Structured Output                       | [tapir](https://tapir.softwaremill.com/) `Schema` (bringt `sttp-ai` bereits mit)                                                |
+| Dateisystemzugriff (`output/`-Ordner)                             | [os-lib](https://github.com/com-lihaoyi/os-lib)                                                                                 |
+| `.env`-Datei einlesen                                             | eigene, simple Implementierung (`object Env` in `AnthropicClient.scala`, siehe unten)                                           |
+| Nebenläufigkeit (paralleles Ausführen der Worker)                 | [ox](https://ox.softwaremill.com/) (`par`, strukturierte Nebenläufigkeit auf Virtual Threads)                                   |
+| Tests (Plan-Validierung/Executor-Logik, Interceptoren)            | [MUnit](https://scalameta.org/munit/) (`scala-cli test .`)                                                                      |
+| Build/Run ohne sbt-Projekt                                        | `scala-cli` mit `//> using` Direktiven                                                                                          |
 
 Keine sbt-`build.sbt` nötig - alle Abhängigkeiten werden per Direktive in
 `project.scala` deklariert; `scala-cli` löst sie automatisch über Coursier
@@ -62,14 +62,17 @@ ergänzt wird - weder `Orchestrator` (Execution) noch `AgentPlanner`
 ## Die Agenten & die generische Registry
 
 | Agent                            | Rolle                                                             | `hardDependsOn`               | `isMandatory` | Tools                                   |
-|----------------------------------|--------------------------------------------------------------------|--------------------------------|:-------------:|-----------------------------------------|
+|----------------------------------|-------------------------------------------------------------------|-------------------------------|:-------------:|-----------------------------------------|
 | **Fact-Researcher** (Worker)     | Sammelt Argumente, Fakten und Quellen *für* eine Technologie      | -                             |     nein      | `web_search` (server-seitig)            |
 | **Risk-Analyst** (Worker)        | Sucht gezielt Fallstricke, Kosten, Sicherheitsbedenken, Nachteile | -                             |     nein      | `calculate_tco` (client-seitig, custom) |
 | **Synthesis-Agent** (Aggregator) | Liest beide Outputs, löst Widersprüche auf, erstellt Endbericht   | Fact-Researcher, Risk-Analyst |    **ja**     | -                                       |
 
-**Wichtig zur `id`:** `AgentSpec.id` ist einfach der `name` des jeweiligen `Agent` (z. B. `"Fact-Researcher"`) - es gibt bewusst KEINE separate, zusätzliche id-Konstante mehr. Ein Agent hat damit
-genau EINEN Bezeichner, der sowohl für Menschen (Logs, Dateinamen) als auch für den Planungs-Agent (LLM) und den `PlanValidator` (Set-Vergleiche in `hardDependsOn`) verwendet wird. Das spart
-Duplikation, hat aber eine Konsequenz: Ändert sich `name`, ändert sich automatisch auch die `id` - und damit potenziell auch alle `hardDependsOn`-Referenzen darauf (siehe `AgentSynthesis.scala`,
+**Wichtig zur `id`:** `AgentSpec.id` ist einfach der `name` des jeweiligen `Agent` (z. B. `"Fact-Researcher"`) - es gibt
+bewusst KEINE separate, zusätzliche id-Konstante mehr. Ein Agent hat damit
+genau EINEN Bezeichner, der sowohl für Menschen (Logs, Dateinamen) als auch für den Planungs-Agent (LLM) und den
+`PlanValidator` (Set-Vergleiche in `hardDependsOn`) verwendet wird. Das spart
+Duplikation, hat aber eine Konsequenz: Ändert sich `name`, ändert sich automatisch auch die `id` - und damit potenziell
+auch alle `hardDependsOn`-Referenzen darauf (siehe `AgentSynthesis.scala`,
 `Set(AgentFactResearcher.name, AgentRiskAnalyst.name)`).
 
 Jeder Agent registriert sich über eine `AgentSpec` (`AgentSpec.scala`) in
@@ -169,11 +172,11 @@ Iteration, jeden LLM-Call und jeden Tool-Aufruf legt (siehe
 Dieses Projekt nutzt sie für genau die Dinge, die für ein Lernprojekt
 rund um Kosten/Tokenverbrauch interessant sind:
 
-| Interceptor                                          | Zweck                                                                                                     |
-|-------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
-| `LoggingInterceptor` (sttp-ai)                       | Ersetzt das frühere handgeschriebene `[LLM:<Aufrufer>] ...`-Logging (`Interceptors.loggingFor`).            |
-| `UsageTrackingInterceptor` (dieses Projekt)          | Schreibt Tokens/Modell/Dauer jedes LLM-Calls in einen pipeline-weiten `UsageCollector`.                     |
-| `BudgetInterceptor` (sttp-ai)                        | Generöses Token-Limit pro Agent-Aufruf (`Interceptors.Pricing.perCallTokenBudget`) als Sicherheitsnetz.     |
+| Interceptor                                 | Zweck                                                                                                   |
+|---------------------------------------------|---------------------------------------------------------------------------------------------------------|
+| `LoggingInterceptor` (sttp-ai)              | Ersetzt das frühere handgeschriebene `[LLM:<Aufrufer>] ...`-Logging (`Interceptors.loggingFor`).        |
+| `UsageTrackingInterceptor` (dieses Projekt) | Schreibt Tokens/Modell/Dauer jedes LLM-Calls in einen pipeline-weiten `UsageCollector`.                 |
+| `BudgetInterceptor` (sttp-ai)               | Generöses Token-Limit pro Agent-Aufruf (`Interceptors.Pricing.perCallTokenBudget`) als Sicherheitsnetz. |
 
 Jeder Agent (inkl. `AgentPlanner`) bekommt diesen Interceptor-Stack über
 `AnthropicClient.buildAgent`/`buildStructuredAgent` mit - siehe
@@ -223,12 +226,12 @@ fundamental darin, WER das Tool ausführt - und das bestimmt, welchen der
 beiden folgenden Pfade `AnthropicClient.buildAgent` intern wählt (anhand
 des `useWebSearch`-Flags, das `Agent.scala` durchreicht):
 
-| | `web_search` (server-seitig) | `calculate_tco` (client-seitig) |
-|---|---|---|
-| Wer führt das Tool aus? | Anthropic-Server, intern | Wir selbst (`CalculateTcoTool.handler`) |
-| Braucht die API dafür einen `ToolCall`, den WIR beantworten? | Nein | Ja (Multi-Turn) |
-| Genügt ein einzelner Request? | Ja, immer (siehe unten) | Nein, i. d. R. mehrere Turns |
-| Interne Implementierung in `buildAgent` | `webSearchAgent` (eigene, schlanke `Agent`-Implementierung, Einzel-Request) | eingebaute `ClaudeAgent.synchronous(...)` (`sttp.ai.core.agent.LoopAgent`) |
+|                                                              | `web_search` (server-seitig)                                                | `calculate_tco` (client-seitig)                                            |
+|--------------------------------------------------------------|-----------------------------------------------------------------------------|----------------------------------------------------------------------------|
+| Wer führt das Tool aus?                                      | Anthropic-Server, intern                                                    | Wir selbst (`CalculateTcoTool.handler`)                                    |
+| Braucht die API dafür einen `ToolCall`, den WIR beantworten? | Nein                                                                        | Ja (Multi-Turn)                                                            |
+| Genügt ein einzelner Request?                                | Ja, immer (siehe unten)                                                     | Nein, i. d. R. mehrere Turns                                               |
+| Interne Implementierung in `buildAgent`                      | `webSearchAgent` (eigene, schlanke `Agent`-Implementierung, Einzel-Request) | eingebaute `ClaudeAgent.synchronous(...)` (`sttp.ai.core.agent.LoopAgent`) |
 
 Warum lässt sich `Tool.WebSearch.default` nicht einfach zusätzlich in die
 `tools`-Liste von `buildAgent` mitgeben? `Tool.WebSearch.default` hat den
@@ -250,14 +253,14 @@ Interceptor-Hook (Logging/Usage-Tracking) und derselben "unsauberes
 Ende"-Erkennung (`FinishReason.TokenLimit` bei abgeschnittener Antwort),
 die `Agent.scala` einheitlich für BEIDE Tool-Typen auswertet - dadurch
 bekommt z. B. der Fact-Researcher (`web_search`) dieselbe `WARN`-Log-Zeile
-bei einer durch `maxTokens` abgeschnittenen Antwort wie der Risk-Analyst
-(`calculate_tco`), was mit einer schlichten `String`-Rückgabe nicht möglich
+bei einer durch `maxTokens` abgeschnittenen Antwort wie der Risk-Analyst (`calculate_tco`), was mit einer schlichten
+`String`-Rückgabe nicht möglich
 gewesen wäre.
 
 **`ClaudeAgent.synchronous(...)`:** Für `calculate_tco` (und alle anderen
 client-seitigen Tools) genügt dagegen die eingebaute `ClaudeAgent`-Fabrik
-von sttp-ai unverändert - das Modell liefert nur den Aufrufwunsch zurück
-(`ContentBlock.ToolUse` in der `AgentResponse`), WIR führen
+von sttp-ai unverändert - das Modell liefert nur den Aufrufwunsch zurück (`ContentBlock.ToolUse` in der
+`AgentResponse`), WIR führen
 `CalculateTcoTool.handler` lokal aus und der generische `LoopAgent` sendet
 das Ergebnis automatisch als `ContentBlock.ToolResult` zurück (Multi-Turn):
 
@@ -287,8 +290,8 @@ Wichtige Punkte zu `calculate_tco`/`buildAgent`:
 - Die Original-Antwort des Modells (inkl. `ToolUse`-Block) muss als
   `assistant`-Nachricht unverändert in die Historie zurück, damit das
   Modell im nächsten Turn weiß, worauf sich das `ToolResult` bezieht - das
-  übernimmt die eingebaute `ClaudeAgentBackend`/`LoopAgent` automatisch
-  (siehe aber Stolperstein zu `Thinking`-Blöcken unten).
+  übernimmt die eingebaute `ClaudeAgentBackend`/`LoopAgent` automatisch (siehe aber Stolperstein zu `Thinking`-Blöcken
+  unten).
 - Das `ToolResult` wird über die `toolUseId` dem passenden Aufruf
   zugeordnet.
 - Die Schleife (`sttp.ai.core.agent.LoopAgent`) läuft so lange, bis eine
@@ -310,7 +313,6 @@ nur mit "kein Handler registriert" antworten - die Suche findet dann de
 facto nicht statt). Deshalb nutzt der Risk-Analyst in diesem Beispiel
 bewusst ausschließlich `calculate_tco`, der Fact-Researcher ausschließlich
 `web_search`.
-
 
 ## Planning-Phase: Der Orchestrator-Agent
 
@@ -494,7 +496,8 @@ Error-Handling für beide Zweige einzeln.
   ausgeführt werden können. Man unterscheidet:
 - **Server-seitiges Tool**: Ein Tool wie `web_search_20250305`, das direkt
   vom Anthropic-Server ausgeführt wird - der Client muss den Tool-Aufruf
-  nicht selbst abfangen und beantworten. Ein einzelner Request genügt (`AnthropicClient.buildAgent` mit `useWebSearch = true`, intern `webSearchAgent`).
+  nicht selbst abfangen und beantworten. Ein einzelner Request genügt (`AnthropicClient.buildAgent` mit
+  `useWebSearch = true`, intern `webSearchAgent`).
 - **Client-seitiges (custom) Tool**: Ein selbst definiertes Tool (z. B.
   `calculate_tco` beim Risk-Analyst), an den Agent-Loop übergeben als
   `sttp.ai.core.agent.AgentTool` (`CalculateTcoTool.agentTool`). Das Modell liefert nur den *Wunsch*, das
@@ -509,8 +512,8 @@ Error-Handling für beide Zweige einzeln.
   `Map[String, io.circe.Json]` und liefert einen String (meist JSON) als Ergebnis zurück.
 - **Interceptor** (`sttp.ai.core.agent.AgentInterceptor`): Middleware um
   den Agent-Loop, die onion-style Iterationen/LLM-Calls/Tool-Aufrufe
-  umschließt (siehe Abschnitt "Interceptoren" oben) - genutzt für Logging
-  (`LoggingInterceptor`), Token-/Kosten-Tracking (`UsageTrackingInterceptor`,
+  umschließt (siehe Abschnitt "Interceptoren" oben) - genutzt für Logging (`LoggingInterceptor`), Token-/Kosten-Tracking
+  (`UsageTrackingInterceptor`,
   dieses Projekt) und Budgets (`BudgetInterceptor`).
 - **`ToolUse` / `ToolResult` Block**: Content-Block-Typen im
   Anthropic-Message-Format (in `sttp-ai` als `ContentBlock.ToolUse` /
@@ -527,7 +530,8 @@ Error-Handling für beide Zweige einzeln.
   Liste von Content-Blöcken unterschiedlichen Typs (`Text`, `ServerToolUse`,
   `WebSearchToolResult`, ...), in `sttp-ai` als `sealed trait ContentBlock`
   mit Fallklassen abgebildet. Für den finalen Bericht werden nur die
-  `Text`-Blöcke extrahiert (`AnthropicClient.webSearchAgent` bzw. die eingebaute `ClaudeAgentBackend`, je nach `useWebSearch`).
+  `Text`-Blöcke extrahiert (`AnthropicClient.webSearchAgent` bzw. die eingebaute `ClaudeAgentBackend`, je nach
+  `useWebSearch`).
 - **Codec (circe)**: Typklassen-basierte Serialisierungs-/
   Deserialisierungslogik für einen bestimmten Typ (`Codec[T]` bzw.
   `Codec.AsObject[T]`), von `sttp-ai` selbst für alle API-Modelle
@@ -539,8 +543,8 @@ Error-Handling für beide Zweige einzeln.
   zurück); das eigentliche Senden übernimmt ein separat gehaltener
   `sttp.client4.SyncBackend` (`AnthropicClient.backend`, gewrappt in
   `RetryingBackend` für automatische Retries bei transienten Fehlern). Diese
-  Trennung ist Voraussetzung dafür, dass der Interceptor-fähige Agent-Loop
-  (`Agent.run(in)(backend)`) den Backend explizit entgegennehmen kann - die
+  Trennung ist Voraussetzung dafür, dass der Interceptor-fähige Agent-Loop (`Agent.run(in)(backend)`) den Backend
+  explizit entgegennehmen kann - die
   bequemere, aber dafür ungeeignete Alternative `ClaudeSyncClient` versteckt
   den Backend intern.
 - **Virtual Thread**: Ein von der JVM (ab JDK 21) verwalteter, extrem
@@ -594,11 +598,13 @@ in `output/<Nummer>_<agent-id>.md` (z. B. `01_Fact-Researcher.md`,
 
 ## Credentials
 
-Der API-Key wird aus der `.env`-Datei in diesem Projektordner (`cli/multi-agent-agentic-orchestrator/.env`, Variable `ANTHROPIC_AUTH_TOKEN`, alternativ `ANTHROPIC_API_KEY`) geladen (`object Env`
-am Ende von `AnthropicClient.scala`, eigene, simple `os-lib`-basierte Implementierung ohne zusätzliche Dependency). `Env.get` liest dabei zuerst `.env` (relativ zu `os.pwd`, also dem Verzeichnis, aus
+Der API-Key wird aus der `.env`-Datei in diesem Projektordner (`cli/multi-agent-agentic-orchestrator/.env`, Variable
+`ANTHROPIC_AUTH_TOKEN`, alternativ `ANTHROPIC_API_KEY`) geladen (`object Env`
+am Ende von `AnthropicClient.scala`, eigene, simple `os-lib`-basierte Implementierung ohne zusätzliche Dependency).
+`Env.get` liest dabei zuerst `.env` (relativ zu `os.pwd`, also dem Verzeichnis, aus
 dem `scala-cli run .` gestartet wird) und fällt andernfalls auf eine echte Umgebungsvariable zurück. Genutzt
 wird der Requesty-Router (`https://router.eu.requesty.ai`) mit dem Modell
-`vertex/claude-sonnet-5@eu`, konfiguriert über `ClaudeConfig(baseUrl = ...)`
+`vertex/claude-sonnet-5-5@eu`, konfiguriert über `ClaudeConfig(baseUrl = ...)`
 aus `sttp-ai`. Authentifiziert wird - wie im offiziellen Anthropic-SDK -
 über die Header `x-api-key` und `anthropic-version: 2023-06-01`, die
 `sttp-ai` automatisch setzt.
@@ -616,25 +622,41 @@ Projekt liest den API-Key stattdessen über das projekteigene `object Env`
 (am Ende von `AnthropicClient.scala`, liest zusätzlich `.env` und
 unterstützt den Fallback-Namen `ANTHROPIC_AUTH_TOKEN`).
 
-**2. `ContentBlock.Thinking` ohne `signature`-Feld (Problem entfällt seit Umstieg auf die eingebaute `ClaudeAgentBackend`):** Anthropic
-verlangt beim Zurücksenden von `thinking`-Blöcken (z. B. nach einem `tool_use`-Turn) eigentlich die unverändert erhaltene `signature`, um
-die Integrität der Reasoning-Kette zu prüfen - `sttp-ai` 0.11.0 bildet `ContentBlock.Thinking` aber nur mit einem einzigen Feld ab
-(`thinking: String`, keine `signature`). Mit dem früheren, selbstgeschriebenen Backend (`ClaudeToolLoopBackend`, mittlerweile entfernt)
-mussten wir deshalb leere `Thinking`-Blöcke vor dem Zurücksenden manuell herausfiltern, sonst lehnte die API den Request mit `"each
-thinking block must contain thinking"` ab. Die eingebaute `ClaudeAgentBackend` (jetzt genutzt über `AnthropicClient.buildAgent`) hat dieses
-Problem strukturell nicht: Sie rekonstruiert die `assistant`-Nachricht der Historie ausschließlich aus dem extrahierten `textContent` und
-den `toolCalls` (`AgentResponse`), nie aus den rohen Content-Blöcken der Original-Antwort - `Thinking`-Blöcke werden also nie zurückgesendet,
-ob leer oder nicht. Für Modelle mit **erzwungener** Signatur-Prüfung bei echtem, nicht-leerem Extended Thinking bliebe das dennoch
-grundsätzlich ungelöst (mangels `signature`-Feld in `sttp-ai` 0.11.0) - dieses Projekt nutzt aber kein Extended Thinking, daher bislang nur
+**2. `ContentBlock.Thinking` ohne `signature`-Feld (Problem entfällt seit Umstieg auf die eingebaute
+`ClaudeAgentBackend`):** Anthropic
+verlangt beim Zurücksenden von `thinking`-Blöcken (z. B. nach einem `tool_use`-Turn) eigentlich die unverändert
+erhaltene `signature`, um
+die Integrität der Reasoning-Kette zu prüfen - `sttp-ai` 0.11.0 bildet `ContentBlock.Thinking` aber nur mit einem
+einzigen Feld ab (`thinking: String`, keine `signature`). Mit dem früheren, selbstgeschriebenen Backend
+(`ClaudeToolLoopBackend`, mittlerweile entfernt)
+mussten wir deshalb leere `Thinking`-Blöcke vor dem Zurücksenden manuell herausfiltern, sonst lehnte die API den Request
+mit `"each
+thinking block must contain thinking"` ab. Die eingebaute `ClaudeAgentBackend` (jetzt genutzt über
+`AnthropicClient.buildAgent`) hat dieses
+Problem strukturell nicht: Sie rekonstruiert die `assistant`-Nachricht der Historie ausschließlich aus dem extrahierten
+`textContent` und
+den `toolCalls` (`AgentResponse`), nie aus den rohen Content-Blöcken der Original-Antwort - `Thinking`-Blöcke werden
+also nie zurückgesendet,
+ob leer oder nicht. Für Modelle mit **erzwungener** Signatur-Prüfung bei echtem, nicht-leerem Extended Thinking bliebe
+das dennoch
+grundsätzlich ungelöst (mangels `signature`-Feld in `sttp-ai` 0.11.0) - dieses Projekt nutzt aber kein Extended
+Thinking, daher bislang nur
 theoretisch relevant.
 
-**3. Mischen von server- und client-seitigen Tools:** Mischt man in einer Anfrage server-seitige (`web_search`) und client-seitige Tools,
-verhält sich `web_search` bei diesem Router-Endpunkt NICHT wie ein automatisch vom Server aufgelöstes Tool, sondern wie ein ganz normales
-`ContentBlock.ToolUse` (Name `web_search`), das der Client selbst per `ToolResult` beantworten müsste - das haben wir per Smoke-Test
-verifiziert. Da uns keine eigene Websuch-Implementierung zur Verfügung steht, würde ein solcher `ToolCall` unbeantwortet bleiben bzw. im
-generischen Agent-Loop nur mit "Tool not found: web_search" quittiert. `Agent.scala` verbietet die Kombination deshalb per `require`
-(`useWebSearch` und `clientTools` sind gegenseitig exklusiv) - unabhängig davon läuft `web_search` ohnehin über einen komplett anderen
-internen Pfad in `buildAgent` (`webSearchAgent`, Einzel-Request) als client-seitige Tools (`ClaudeAgent.synchronous(...)`, Agent-Loop),
+**3. Mischen von server- und client-seitigen Tools:** Mischt man in einer Anfrage server-seitige (`web_search`) und
+client-seitige Tools,
+verhält sich `web_search` bei diesem Router-Endpunkt NICHT wie ein automatisch vom Server aufgelöstes Tool, sondern wie
+ein ganz normales
+`ContentBlock.ToolUse` (Name `web_search`), das der Client selbst per `ToolResult` beantworten müsste - das haben wir
+per Smoke-Test
+verifiziert. Da uns keine eigene Websuch-Implementierung zur Verfügung steht, würde ein solcher `ToolCall` unbeantwortet
+bleiben bzw. im
+generischen Agent-Loop nur mit "Tool not found: web_search" quittiert. `Agent.scala` verbietet die Kombination deshalb
+per `require`
+(`useWebSearch` und `clientTools` sind gegenseitig exklusiv) - unabhängig davon läuft `web_search` ohnehin über einen
+komplett anderen
+internen Pfad in `buildAgent` (`webSearchAgent`, Einzel-Request) als client-seitige Tools
+(`ClaudeAgent.synchronous(...)`, Agent-Loop),
 sodass eine versehentliche Vermischung technisch gar nicht erst entstehen kann.
 
 **4. Eigene Tool-Eingabe-/Ergebnis-Typen bleiben nötig:** `sttp-ai` liefert

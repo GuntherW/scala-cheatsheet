@@ -1,6 +1,8 @@
 # Entscheidungsbericht mit Orca
 
-Gleiche Aufgabe wie [`../multi-agent-manual-orchestrator`](../multi-agent-manual-orchestrator): zu einem Thema einen ausgewogenen Bericht schreiben. Andere Schicht. Orca steuert die `claude`-CLI. Es spricht nicht die Anthropic Messages API.
+Gleiche Aufgabe wie [`../multi-agent-manual-orchestrator`](../multi-agent-manual-orchestrator): zu einem Thema einen
+ausgewogenen Bericht schreiben. Andere Schicht. Orca steuert die `claude`-CLI. Es spricht nicht die Anthropic Messages
+API.
 
 ## Ablauf
 
@@ -8,26 +10,30 @@ Gleiche Aufgabe wie [`../multi-agent-manual-orchestrator`](../multi-agent-manual
 2. **Synthesis-Agent**, sobald beide fertig sind.
 3. Drei Markdown-Dateien im Worktree.
 
-| Agent | Orca | Entspricht im Manual-Projekt |
-|---|---|---|
-| Fact-Researcher | `claude` mit `vertex/claude-sonnet-5@eu`, `withNetworkOnly` | server-seitiges `web_search` |
-| Risk-Analyst | dasselbe Modell, `withReadOnly`, plus vorab gerechnetes JSON | client-seitiges `calculate_tco` |
-| Synthesis | dasselbe Modell, `withReadOnly`, kein Tool | Aggregator ohne Tool |
+| Agent           | Orca                                                          | Entspricht im Manual-Projekt    |
+|-----------------|---------------------------------------------------------------|---------------------------------|
+| Fact-Researcher | `claude` mit `vertex/claude-sonnet-5-5@eu`, `withNetworkOnly` | server-seitiges `web_search`    |
+| Risk-Analyst    | dasselbe Modell, `withReadOnly`, plus vorab gerechnetes JSON  | client-seitiges `calculate_tco` |
+| Synthesis       | dasselbe Modell, `withReadOnly`, kein Tool                    | Aggregator ohne Tool            |
 
-`calculate_tco` ist hier eine Scala-Funktion (`CalculateTco.estimate`, Formel `350 * teamSize + 500`, Teamgröße 5). Das Modell ruft sie nicht auf. Orca hat keinen Tool-Use-Loop.
+`calculate_tco` ist hier eine Scala-Funktion (`CalculateTco.estimate`, Formel `350 * teamSize + 500`, Teamgröße 5). Das
+Modell ruft sie nicht auf. Orca hat keinen Tool-Use-Loop.
 
-Schlägt ein Worker fehl, bricht `Par.mapUnordered` den anderen laufenden Worker ab. Beide teilen sich eine Stage: ein Resume wiederholt beide, nicht nur den gescheiterten. Synthesis ist eine eigene Stage.
+Schlägt ein Worker fehl, bricht `Par.mapUnordered` den anderen laufenden Worker ab. Beide teilen sich eine Stage: ein
+Resume wiederholt beide, nicht nur den gescheiterten. Synthesis ist eine eigene Stage.
 
 ## Start
 
-Voraussetzung: `orca` 0.1.10, JDK 21+, `claude` eingeloggt, dieses Git-Repo. Nicht der Requesty-Key aus `.env`. Das Modell ist `vertex/claude-sonnet-5@eu` — `claude.sonnet` (`claude-sonnet-5`) lehnt dieser Router ab.
+Voraussetzung: `orca` 0.1.10, JDK 21+, `claude` eingeloggt, dieses Git-Repo. Nicht der Requesty-Key aus `.env`. Das
+Modell ist `vertex/claude-sonnet-5-5@eu` — `claude.sonnet` (`claude-sonnet-5`) lehnt dieser Router ab.
 
 ```bash
 orca run cli/multi-agent-manual-orca/report.sc \
   "Sollten wir Kubernetes für unser 5-Personen-Startup einführen?"
 ```
 
-Der Flow steht nicht in `orca list` (nur eingebaute und abgelegte Flows). Der Pfad reicht. Ohne Prompt gilt dasselbe Default-Thema wie im Manual-Projekt.
+Der Flow steht nicht in `orca list` (nur eingebaute und abgelegte Flows). Der Pfad reicht. Ohne Prompt gilt dasselbe
+Default-Thema wie im Manual-Projekt.
 
 Ohne `orca`-Binary, direkt über scala-cli:
 
@@ -36,7 +42,8 @@ scala-cli run --workspace "$(mktemp -d)" cli/multi-agent-manual-orca/report.sc -
   "Sollten wir Kubernetes für unser 5-Personen-Startup einführen?"
 ```
 
-Der Flow setzt `RunTarget.Worktree` selbst. Der aktuelle Checkout wechselt keinen Branch. Nicht `--skip-branch` übergeben (committet auf den aktuellen Branch, und die Kombination mit Worktree lehnt Orca ab).
+Der Flow setzt `RunTarget.Worktree` selbst. Der aktuelle Checkout wechselt keinen Branch. Nicht `--skip-branch`
+übergeben (committet auf den aktuellen Branch, und die Kombination mit Worktree lehnt Orca ab).
 
 Die Berichte liegen im Worktree, nicht im Arbeitsverzeichnis:
 
@@ -46,7 +53,8 @@ Die Berichte liegen im Worktree, nicht im Arbeitsverzeichnis:
 
 Der Abschluss von Orca nennt den Pfad.
 
-Gleicher Prompt noch einmal: fertige Stages werden übersprungen. Für einen frischen Lauf Worktree und Branches löschen (Orca räumt sie nicht auf):
+Gleicher Prompt noch einmal: fertige Stages werden übersprungen. Für einen frischen Lauf Worktree und Branches löschen
+(Orca räumt sie nicht auf):
 
 ```bash
 git worktree remove .orca/worktrees/<hash>

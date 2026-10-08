@@ -13,7 +13,7 @@ object LlmConfig:
   /** Basis-URL für `WebSearchClient` (siehe dort), das selbst `$baseUrl/v1/messages` zusammensetzt - OHNE das abschließende `/v1`. */
   val baseUrl: String = "https://router.eu.requesty.ai"
 
-  val model: String = "vertex/claude-sonnet-5@eu"
+  val model: String = "vertex/claude-sonnet-5-5@eu"
 
   val apiKey: String = Env.get("ANTHROPIC_AUTH_TOKEN")
     .orElse(Env.get("ANTHROPIC_API_KEY"))

@@ -12,7 +12,7 @@ import orca.{*, given}
 
 val DefaultTopic = "Sollten wir für unser Backend von REST auf GraphQL wechseln?"
 
-val ReportModel = Model("vertex/claude-sonnet-5@eu")
+val ReportModel = Model("vertex/claude-sonnet-5-5@eu")
 
 val OutputDir = "cli/multi-agent-manual-orca/output"
 

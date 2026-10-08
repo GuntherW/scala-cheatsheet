@@ -1,6 +1,5 @@
 package de.wittig.sttp
 
-import io.circe.generic.auto.*
 import sttp.client4.*
 import sttp.client4.circe.*
 import sttp.client4.httpclient.HttpClientFutureBackend

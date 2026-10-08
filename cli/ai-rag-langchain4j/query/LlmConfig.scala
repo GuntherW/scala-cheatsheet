@@ -15,7 +15,7 @@ object LlmConfig:
   val baseUrl: String = "https://router.eu.requesty.ai/v1"
 
   /** `claude.sonnet`/`claude-sonnet-5` lehnt dieser Router ab - benötigt wird die Vertex-Modell-Id, siehe auch `ai-sttpai-agentic`/`ai-orca-agentic`. */
-  val model: String = "vertex/claude-sonnet-5@eu"
+  val model: String = "vertex/claude-sonnet-5-5@eu"
 
   def chatModel(): ChatModel =
     AnthropicChatModel

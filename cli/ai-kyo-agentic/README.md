@@ -1,36 +1,38 @@
 # Agentischer, generischer Multi-Agenten-Orchestrator (Scala 3.9.0 / scala-cli / kyo-ai)
 
-Dies ist die **kyo-ai-Variante** des Lern-/Lehrbeispiels aus [`cli/multi-agent-agentic-orchestrator`](../multi-agent-agentic-orchestrator)
+Dies ist die **kyo-ai-Variante** des Lern-/Lehrbeispiels aus [
+`cli/multi-agent-agentic-orchestrator`](../multi-agent-agentic-orchestrator)
 (sttp-ai). Gleicher fachlicher Umfang, gleiche CCAF-Terminologie und Domänen-Konzepte - andere LLM-Bibliothek
 ([kyo-ai](https://github.com/getkyo/kyo/tree/main/kyo-ai), Teil des [Kyo](https://getkyo.io)-Toolkits). Diese README
 konzentriert sich auf die Unterschiede zum sttp-ai-Original; für die ausführliche CCAF-Begriffserklärung siehe dort.
 
 ## Tech-Stack
 
-| Baustein | Bibliothek |
-|---|---|
-| LLM-Integration (Agent-Loop, Structured Output, Tools) | [`kyo-ai`](https://github.com/getkyo/kyo/tree/main/kyo-ai) `1.0.0-RC6` |
+| Baustein                                                     | Bibliothek                                                                               |
+|--------------------------------------------------------------|------------------------------------------------------------------------------------------|
+| LLM-Integration (Agent-Loop, Structured Output, Tools)       | [`kyo-ai`](https://github.com/getkyo/kyo/tree/main/kyo-ai) `1.0.0-RC6`                   |
 | Effekt-System / Nebenläufigkeit (`Async.foreach`, `LLM.run`) | [`kyo-core`](https://github.com/getkyo/kyo/tree/main/kyo-core) (transitiv über `kyo-ai`) |
-| HTTP-Client für den handgerollten `web_search`-Pfad | [`kyo-http`](https://github.com/getkyo/kyo/tree/main/kyo-http) |
-| JSON-Encode/Decode außerhalb von `AI.gen` | [`kyo-schema-json`](https://github.com/getkyo/kyo/tree/main/kyo-schema-json) |
-| Dateizugriff (`.env`, `output/`) | [`os-lib`](https://github.com/com-lihaoyi/os-lib) |
-| Tests | [MUnit](https://scalameta.org/munit/) |
+| HTTP-Client für den handgerollten `web_search`-Pfad          | [`kyo-http`](https://github.com/getkyo/kyo/tree/main/kyo-http)                           |
+| JSON-Encode/Decode außerhalb von `AI.gen`                    | [`kyo-schema-json`](https://github.com/getkyo/kyo/tree/main/kyo-schema-json)             |
+| Dateizugriff (`.env`, `output/`)                             | [`os-lib`](https://github.com/com-lihaoyi/os-lib)                                        |
+| Tests                                                        | [MUnit](https://scalameta.org/munit/)                                                    |
 
 ## Warum kyo-ai statt sttp-ai? Was ändert sich dadurch?
 
-kyo-ai verfolgt einen deklarativeren Ansatz: ein LLM-Aufruf ist ein **typisierter Wert** (`A < LLM`), den man komponiert,
+kyo-ai verfolgt einen deklarativeren Ansatz: ein LLM-Aufruf ist ein **typisierter Wert** (`A < LLM`), den man
+komponiert,
 statt eines Requests, den man orchestriert. Das räumt viel Boilerplate ab, die im sttp-ai-Original noch von Hand
 geschrieben werden musste:
 
-| Baustein im sttp-ai-Original | Ersatz in dieser kyo-ai-Variante |
-|---|---|
-| `Agent.scala` (abstrakte Basisklasse, `require`-Invariante) | `Agents.scala` (freie Funktionen `run`/`runStructured`) |
-| `AnthropicClient.buildAgent`/`buildStructuredAgent` (sttp-ai `ClaudeAgent`-Fabrik) | `LlmConfig.config` (`AI.Config`) + `AI.gen[T]`/`AI.enable` |
-| `JsonExtraction.parseLenient` (manuelles JSON-Parsing für Worker-Reports) | **entfällt** für alle `AI.gen[T]`-Aufrufe (Structured Output erzwingt das Schema bereits API-seitig) - bleibt nur für den `web_search`-Sonderfall |
-| `CalculateTcoTool.scala` (manuelles JSON-Schema + `Map[String, Json]`-Handler) | `Tool.init[CalculateTcoInput](...)` - Schema wird aus dem Case-Class-Typ abgeleitet |
-| `Interceptors.scala` (`LoggingInterceptor`/`UsageTrackingInterceptor`/`BudgetInterceptor`) | `Observability.scala` (`Observe`-Enablements + `kyo.Log` + selbstgebauter `Abort`-Guard) |
-| `ox.par` (strukturierte Nebenläufigkeit für Fan-out/Fan-in pro Step) | `kyo.Async.foreach` |
-| `PlanValidator.scala` | **unverändert** (reine, LLM-freie Logik - keine Berührung mit `AI`/`LLM`) |
+| Baustein im sttp-ai-Original                                                               | Ersatz in dieser kyo-ai-Variante                                                                                                                  |
+|--------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Agent.scala` (abstrakte Basisklasse, `require`-Invariante)                                | `Agents.scala` (freie Funktionen `run`/`runStructured`)                                                                                           |
+| `AnthropicClient.buildAgent`/`buildStructuredAgent` (sttp-ai `ClaudeAgent`-Fabrik)         | `LlmConfig.config` (`AI.Config`) + `AI.gen[T]`/`AI.enable`                                                                                        |
+| `JsonExtraction.parseLenient` (manuelles JSON-Parsing für Worker-Reports)                  | **entfällt** für alle `AI.gen[T]`-Aufrufe (Structured Output erzwingt das Schema bereits API-seitig) - bleibt nur für den `web_search`-Sonderfall |
+| `CalculateTcoTool.scala` (manuelles JSON-Schema + `Map[String, Json]`-Handler)             | `Tool.init[CalculateTcoInput](...)` - Schema wird aus dem Case-Class-Typ abgeleitet                                                               |
+| `Interceptors.scala` (`LoggingInterceptor`/`UsageTrackingInterceptor`/`BudgetInterceptor`) | `Observability.scala` (`Observe`-Enablements + `kyo.Log` + selbstgebauter `Abort`-Guard)                                                          |
+| `ox.par` (strukturierte Nebenläufigkeit für Fan-out/Fan-in pro Step)                       | `kyo.Async.foreach`                                                                                                                               |
+| `PlanValidator.scala`                                                                      | **unverändert** (reine, LLM-freie Logik - keine Berührung mit `AI`/`LLM`)                                                                         |
 
 ## Der eine echte Stolperstein: server-seitiges `web_search`
 
@@ -51,11 +53,11 @@ Alle anderen Agenten (`Planner`, `Risk-Analyst`, `Synthesis-Agent`) laufen ganz 
 
 ## Die Agenten & die generische Registry
 
-| Agent | Tool | Abhängigkeiten | Pflicht | Ergebnistyp |
-|---|---|---|---|---|
-| `Fact-Researcher` | `web_search` (handgerollt, siehe oben) | keine | nein | `FactReport` (JSON) |
-| `Risk-Analyst` | `calculate_tco` (`Tool.init`, client-seitig) | keine | nein | `RiskReport` (JSON) |
-| `Synthesis-Agent` | keins | Fact-Researcher, Risk-Analyst | ja | Freitext-Bericht |
+| Agent             | Tool                                         | Abhängigkeiten                | Pflicht | Ergebnistyp         |
+|-------------------|----------------------------------------------|-------------------------------|---------|---------------------|
+| `Fact-Researcher` | `web_search` (handgerollt, siehe oben)       | keine                         | nein    | `FactReport` (JSON) |
+| `Risk-Analyst`    | `calculate_tco` (`Tool.init`, client-seitig) | keine                         | nein    | `RiskReport` (JSON) |
+| `Synthesis-Agent` | keins                                        | Fact-Researcher, Risk-Analyst | ja      | Freitext-Bericht    |
 
 Ein neuer Agent wird eingebunden, indem lediglich eine neue `AgentSpec`-Instanz in `AgentRegistry.specs` ergänzt wird -
 weder `Orchestrator` noch `AgentPlanner` müssen dafür angepasst werden (siehe `AgentSpec.scala`).
@@ -84,8 +86,8 @@ mitgeteilt und muss es im finalen Bericht als "Datenabdeckung"-Abschnitt ausweis
 
 ## Observability: Logging, Usage-Tracking, Budget-Guard
 
-Ersatz für die drei sttp-ai-Interceptoren (`Observability.scala`), aufgebaut auf kyo-ais `Observe`-Enablement
-(wire-tier Turn-Benachrichtigung, siehe kyo-ai-README "Tracking usage"):
+Ersatz für die drei sttp-ai-Interceptoren (`Observability.scala`), aufgebaut auf kyo-ais `Observe`-Enablement (wire-tier
+Turn-Benachrichtigung, siehe kyo-ai-README "Tracking usage"):
 
 - **Logging**: `Observe.init` + `kyo.Log.info` protokolliert jeden abgeschlossenen Model-Turn.
 - **Usage-Tracking**: ein zweites `Observe` sammelt Tokens/Modell pro Aufruf in einem pipeline-weiten,
@@ -98,10 +100,10 @@ Ersatz für die drei sttp-ai-Interceptoren (`Observability.scala`), aufgebaut au
 
 ## Bekannter Stolperstein: Reasoning + großer Kontext + Requesty-Router
 
-Bei der Entwicklung zeigte sich: Mit `disableReasoning` liefert das Modell (`vertex/claude-sonnet-5@eu` über
+Bei der Entwicklung zeigte sich: Mit `disableReasoning` liefert das Modell (`vertex/claude-sonnet-5-5@eu` über
 `router.eu.requesty.ai`) bei einem größeren Input-Kontext (die beiden JSON-Reports im Synthesis-Prompt) wiederholt
-eine nicht schema-konforme Antwort über den von kyo-ai erzwungenen "Result-Tool"-Mechanismus
-(`AIEvalExhaustedException` nach 5 Iterationen + Repair-Turn). Mit aktivem Reasoning (kyo-ai-Default) gelingt
+eine nicht schema-konforme Antwort über den von kyo-ai erzwungenen "Result-Tool"-Mechanismus (`AIEvalExhaustedException`
+nach 5 Iterationen + Repair-Turn). Mit aktivem Reasoning (kyo-ai-Default) gelingt
 derselbe Aufruf zuverlässig öfter, aber nicht immer: gelegentlich (wenn das Modell die erzwungene Tool-Antwort im
 ersten Versuch verfehlt und kyo-ai einen internen "Repair-Turn" mit Assistant-Message-Prefill einleitet) lehnt dieser
 Router/dieses Modell den Request mit `"This model does not support assistant message prefill"` ab - ein bekanntes

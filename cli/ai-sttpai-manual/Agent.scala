@@ -22,7 +22,7 @@ abstract class Agent(
     val useWebSearch: Boolean = false,
     val clientTools: List[Tool] = Nil,
     val toolHandlers: Map[String, Map[String, Json] => String] = Map.empty,
-    val model: String = "vertex/claude-sonnet-5@eu",
+    val model: String = "vertex/claude-sonnet-5-5@eu",
 ):
 
   /** Führt den Model-Call aus (bei Bedarf als Multi-Turn Tool-Use-Loop - siehe `AnthropicClient.chat`). Eine einzige Methode deckt dabei sowohl server-seitige (`useWebSearch`) als auch client-seitige

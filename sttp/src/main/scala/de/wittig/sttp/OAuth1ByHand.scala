@@ -36,7 +36,7 @@ class Signer(consumerKey: String, accessToken: String, consumerPrivateKey: Strin
 
   private val mac           = Mac.getInstance("HmacSHA1")
   private val signingKey    = s"${encode(consumerPrivateKey)}&${encode(accessTokenSecret)}"
-  private val secretKeySpec = new SecretKeySpec(signingKey.getBytes("UTF-8"), "HmacSHA1")
+  private val secretKeySpec = new SecretKeySpec(signingKey.getBytes(java.nio.charset.StandardCharsets.UTF_8), "HmacSHA1")
   mac.init(secretKeySpec)
 
   def sign[L, A](request: Request[Either[L, A]]): Request[Either[L, A]] =
@@ -69,7 +69,7 @@ class Signer(consumerKey: String, accessToken: String, consumerPrivateKey: Strin
 
   // Generate signature using HMAC-SHA1
   private def generateSignature(baseString: String, secretKeySpec: SecretKeySpec): String =
-    val rawSignature = mac.doFinal(baseString.getBytes("UTF-8"))
+    val rawSignature = mac.doFinal(baseString.getBytes(java.nio.charset.StandardCharsets.UTF_8))
     Base64.getEncoder.encodeToString(rawSignature)
 
   // Generate Authorization header

@@ -8,7 +8,7 @@ object AgentRegistry:
 
   // `claude.sonnet` pinnt `claude-sonnet-5`. Die lokale Claude-CLI geht über Requesty
   // und darf nur die Vertex-ID aus `~/.claude/settings.json`.
-  val model = Model("vertex/claude-sonnet-5@eu")
+  val model = Model("vertex/claude-sonnet-5-5@eu")
 
   val factId      = "Fact-Researcher"
   val riskId      = "Risk-Analyst"

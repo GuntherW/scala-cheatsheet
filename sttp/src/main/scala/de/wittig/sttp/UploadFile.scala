@@ -2,11 +2,13 @@ package de.wittig.sttp
 
 import sttp.client4.*
 
+import java.nio.charset.StandardCharsets
+
 import de.wittig.sttp.TempFiles.withTemporaryFile
 
 @main
 def uploadFile(): Unit =
-  withTemporaryFile("Hello, World!".getBytes) { file =>
+  withTemporaryFile("Hello, World!".getBytes(StandardCharsets.UTF_8)) { file =>
     val request = basicRequest
       .body(file)
       .post(uri"https://httpbin.org/post")

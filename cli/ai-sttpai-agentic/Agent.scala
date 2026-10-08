@@ -104,7 +104,7 @@ abstract class Agent(
     val systemPrompt: String,
     val useWebSearch: Boolean = false,
     val clientTools: Seq[AgentTool[Identity, ?]] = Seq.empty,
-    val model: String = "vertex/claude-sonnet-5@eu",
+    val model: String = "vertex/claude-sonnet-5-5@eu",
 ):
 
   require(

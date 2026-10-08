@@ -52,7 +52,7 @@ class InterceptorsTest extends munit.FunSuite:
   test("Pricing.table enthält für jedes ClaudeModel und den projekteigenen Router-Modellstring einen Preiseintrag") {
     import sttp.ai.claude.models.ClaudeModel
     ClaudeModel.values.foreach(m => assert(Interceptors.Pricing.table.prices.contains(m.value), s"kein Preis für ${m.value}"))
-    assert(Interceptors.Pricing.table.prices.contains("vertex/claude-sonnet-5@eu"))
+    assert(Interceptors.Pricing.table.prices.contains("vertex/claude-sonnet-5-5@eu"))
   }
 
   test("BudgetInterceptor.decide beendet den Loop erst, wenn das Token-Budget erreicht ist") {

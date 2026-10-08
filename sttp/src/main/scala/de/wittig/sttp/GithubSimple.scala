@@ -1,11 +1,11 @@
 package de.wittig.sttp
 
-import io.circe.generic.auto.*
+import io.circe.Decoder
 import sttp.client4.*
 import sttp.client4.circe.*
 
-case class GitHubResponse(total_count: Int, items: List[GitHubItem])
-case class GitHubItem(name: String, stargazers_count: Int, html_url: String)
+case class GitHubItem(name: String, stargazers_count: Int, html_url: String) derives Decoder
+case class GitHubResponse(total_count: Int, items: List[GitHubItem]) derives Decoder
 
 @main
 def githubSimple(): Unit =

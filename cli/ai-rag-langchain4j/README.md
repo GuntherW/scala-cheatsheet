@@ -2,8 +2,8 @@
 
 Ziel: Verstehen, wie sich eine **Retrieval-Augmented-Generation (RAG)**-Pipeline
 aufbauen lässt, wenn man dafür eine fertige Library (**langchain4j**) statt
-eigenem Code nutzt - von der PDF-Ingestion über eine echte Vektordatenbank
-(Postgres + pgvector) bis zur Antwortgenerierung mit einem LLM.
+eigenem Code nutzt - von der PDF-Ingestion über eine echte Vektordatenbank (Postgres + pgvector) bis zur
+Antwortgenerierung mit einem LLM.
 
 Dieses Projekt ist das bewusste **Gegenstück zu [`ai-rag-sttpai`](../ai-rag-sttpai)**:
 Dort wird jeder Schritt (PDF-Parsing, Chunking, Embeddings, Vektorsuche,
@@ -12,8 +12,8 @@ machen. Hier übernimmt `langchain4j` fast die komplette Pipeline - der
 Lerneffekt liegt darin, zu sehen, *welche* Bausteine eine RAG-Library
 mitbringt und wie wenig eigener Code dafür nötig ist.
 
-Aufgabe des Systems: 10 lokale, thematisch völlig unterschiedliche PDF-Dateien
-(`docs/`, z. B. zu Vulkanen, Schach, Kaffee oder dem Great Barrier Reef) werden
+Aufgabe des Systems: 10 lokale, thematisch völlig unterschiedliche PDF-Dateien (`docs/`, z. B. zu Vulkanen, Schach,
+Kaffee oder dem Great Barrier Reef) werden
 in Textchunks zerlegt, lokal (ohne API-Call) mit einem Embedding-Modell
 vektorisiert und in eine pgvector-Datenbank geschrieben. Eine Nutzerfrage wird
 anschließend ebenfalls eingebettet, die ähnlichsten Chunks werden gesucht und
@@ -22,43 +22,43 @@ generiert.
 
 ## Tech-Stack
 
-| Zweck                            | Bibliothek                                                                                                                  |
-|-----------------------------------|------------------------------------------------------------------------------------------------------------------------------|
-| RAG-Orchestrierung                | [langchain4j](https://docs.langchain4j.dev/) (`dev.langchain4j:langchain4j`)                                                |
-| PDF -> `Document`                 | `langchain4j-document-parser-apache-pdfbox` (nutzt intern Apache PDFBox)                                                     |
-| Chunking                          | `DocumentSplitters.recursive(...)` (eingebaut, versucht Absatz-/Satz-/Wortgrenzen einzuhalten)                               |
-| Embeddings                        | `langchain4j-embeddings-all-minilm-l6-v2` - **in-process**, läuft lokal über ONNX Runtime, **kein** API-Key nötig            |
-| Vektordatenbank                   | [pgvector](https://github.com/pgvector/pgvector) auf Postgres 18 (`docker/sql-rag/`, Container `postgres-rag`)               |
-| Anbindung an pgvector             | `langchain4j-pgvector` - legt Tabelle/Index selbst an, kein eigenes SQL nötig                                                |
-| LLM (Antwortgenerierung)          | `langchain4j-anthropic`, Requesty-Router, Modell `vertex/claude-sonnet-5@eu` (wie die anderen `ai-*`-Projekte)               |
-| Verdrahtung Retrieval + LLM       | `AiServices` + `EmbeddingStoreContentRetriever` (beides langchain4j-Bordmittel, siehe unten)                                 |
-| Dateisystemzugriff (`docs/`)      | [os-lib](https://github.com/com-lihaoyi/os-lib)                                                                              |
-| PDF-Erzeugung der Beispieldaten   | [Apache PDFBox](https://pdfbox.apache.org/) 3.x (nur für `generate-docs`, nicht Teil der eigentlichen RAG-Pipeline)           |
-| Umgebungsvariablen                 | `sys.env` direkt (keine eigene `.env`-Datei-Logik, siehe Abschnitt "Credentials")                                           |
-| Tests (Chunking, ohne LLM-/DB-Call) | [MUnit](https://scalameta.org/munit/) (`scala-cli test .`)                                                                 |
-| Build/Run ohne sbt-Projekt        | `scala-cli` mit `//> using`-Direktiven                                                                                       |
+| Zweck                               | Bibliothek                                                                                                          |
+|-------------------------------------|---------------------------------------------------------------------------------------------------------------------|
+| RAG-Orchestrierung                  | [langchain4j](https://docs.langchain4j.dev/) (`dev.langchain4j:langchain4j`)                                        |
+| PDF -> `Document`                   | `langchain4j-document-parser-apache-pdfbox` (nutzt intern Apache PDFBox)                                            |
+| Chunking                            | `DocumentSplitters.recursive(...)` (eingebaut, versucht Absatz-/Satz-/Wortgrenzen einzuhalten)                      |
+| Embeddings                          | `langchain4j-embeddings-all-minilm-l6-v2` - **in-process**, läuft lokal über ONNX Runtime, **kein** API-Key nötig   |
+| Vektordatenbank                     | [pgvector](https://github.com/pgvector/pgvector) auf Postgres 18 (`docker/sql-rag/`, Container `postgres-rag`)      |
+| Anbindung an pgvector               | `langchain4j-pgvector` - legt Tabelle/Index selbst an, kein eigenes SQL nötig                                       |
+| LLM (Antwortgenerierung)            | `langchain4j-anthropic`, Requesty-Router, Modell `vertex/claude-sonnet-5-5@eu` (wie die anderen `ai-*`-Projekte)    |
+| Verdrahtung Retrieval + LLM         | `AiServices` + `EmbeddingStoreContentRetriever` (beides langchain4j-Bordmittel, siehe unten)                        |
+| Dateisystemzugriff (`docs/`)        | [os-lib](https://github.com/com-lihaoyi/os-lib)                                                                     |
+| PDF-Erzeugung der Beispieldaten     | [Apache PDFBox](https://pdfbox.apache.org/) 3.x (nur für `generate-docs`, nicht Teil der eigentlichen RAG-Pipeline) |
+| Umgebungsvariablen                  | `sys.env` direkt (keine eigene `.env`-Datei-Logik, siehe Abschnitt "Credentials")                                   |
+| Tests (Chunking, ohne LLM-/DB-Call) | [MUnit](https://scalameta.org/munit/) (`scala-cli test .`)                                                          |
+| Build/Run ohne sbt-Projekt          | `scala-cli` mit `//> using`-Direktiven                                                                              |
 
 Keine sbt-`build.sbt` nötig - alle Abhängigkeiten werden per Direktive in
 `project.scala` deklariert.
 
 ## Vergleich: `ai-rag-sttpai` (von Hand) vs. `ai-rag-langchain4j` (Library)
 
-| Schritt                     | `ai-rag-sttpai`                                                        | `ai-rag-langchain4j`                                                            |
-|------------------------------|-------------------------------------------------------------------------|------------------------------------------------------------------------------------|
-| PDF -> Text                | eigener `PdfTextExtractor` (PDFBox direkt)                             | `ApachePdfBoxDocumentParser` + `FileSystemDocumentLoader.loadDocument(...)`        |
-| Chunking                   | eigene `Chunking.scala` (feste Zeichenfenster + Overlap)                | `DocumentSplitters.recursive(chunkSize, chunkOverlap)`                             |
-| Embeddings                 | selbstgebauter Hashing-Trick + TF-IDF (`HashingTfIdfEmbedder`)          | fertiges, lokales ONNX-Modell `all-MiniLM-L6-v2` (384 Dimensionen)                 |
-| IDF-Modell/Vokabular        | muss manuell gefittet und in `tfidf_model` persistiert werden            | entfällt komplett - das Embedding-Modell ist bereits trainiert, kein Fit-Schritt   |
-| Vektordatenbank-Zugriff     | reines SQL/JDBC, Tabelle `document_chunks`, Index per Hand angelegt     | `PgVectorEmbeddingStore` legt Tabelle `langchain4j_pdf_chunks` + Index selbst an   |
-| Verdrahtung Ingestion       | `ingestion/Ingestion.scala` ruft Chunking/Embedder/VectorStore einzeln auf         | `EmbeddingStoreIngestor` kapselt Splitten + Embedden + Schreiben in einem Aufruf   |
-| Verdrahtung Retrieval + LLM | 3-stufige Agenten-Pipeline (Query-Rewriter -> Relevance-Grader -> Synthesis), jede Stufe ein eigener LLM-Call | `AiServices` + `EmbeddingStoreContentRetriever`, EIN LLM-Call pro Frage |
-| Code-Umfang (ca.)           | ~15 Scala-Dateien, viel Infrastruktur-Code                               | ~10 Dateien, die meisten nur wenige Zeilen Verdrahtung                             |
+| Schritt                     | `ai-rag-sttpai`                                                                                               | `ai-rag-langchain4j`                                                             |
+|-----------------------------|---------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
+| PDF -> Text                 | eigener `PdfTextExtractor` (PDFBox direkt)                                                                    | `ApachePdfBoxDocumentParser` + `FileSystemDocumentLoader.loadDocument(...)`      |
+| Chunking                    | eigene `Chunking.scala` (feste Zeichenfenster + Overlap)                                                      | `DocumentSplitters.recursive(chunkSize, chunkOverlap)`                           |
+| Embeddings                  | selbstgebauter Hashing-Trick + TF-IDF (`HashingTfIdfEmbedder`)                                                | fertiges, lokales ONNX-Modell `all-MiniLM-L6-v2` (384 Dimensionen)               |
+| IDF-Modell/Vokabular        | muss manuell gefittet und in `tfidf_model` persistiert werden                                                 | entfällt komplett - das Embedding-Modell ist bereits trainiert, kein Fit-Schritt |
+| Vektordatenbank-Zugriff     | reines SQL/JDBC, Tabelle `document_chunks`, Index per Hand angelegt                                           | `PgVectorEmbeddingStore` legt Tabelle `langchain4j_pdf_chunks` + Index selbst an |
+| Verdrahtung Ingestion       | `ingestion/Ingestion.scala` ruft Chunking/Embedder/VectorStore einzeln auf                                    | `EmbeddingStoreIngestor` kapselt Splitten + Embedden + Schreiben in einem Aufruf |
+| Verdrahtung Retrieval + LLM | 3-stufige Agenten-Pipeline (Query-Rewriter -> Relevance-Grader -> Synthesis), jede Stufe ein eigener LLM-Call | `AiServices` + `EmbeddingStoreContentRetriever`, EIN LLM-Call pro Frage          |
+| Code-Umfang (ca.)           | ~15 Scala-Dateien, viel Infrastruktur-Code                                                                    | ~10 Dateien, die meisten nur wenige Zeilen Verdrahtung                           |
 
 **Kein Projekt ist "besser"** - `ai-rag-sttpai` zeigt, *wie* TF-IDF-Embeddings,
 Cosine-Similarity-Suche und eine Agenten-Pipeline im Detail funktionieren.
 Dieses Projekt zeigt, wie viel davon man sich mit einer ausgereiften Library
-sparen kann - und wo man dafür Kontrolle/Transparenz gegen Komfort eintauscht
-(z. B.: Welche Prompt-Vorlage nutzt `AiServices` intern genau? Siehe
+sparen kann - und wo man dafür Kontrolle/Transparenz gegen Komfort eintauscht (z. B.: Welche Prompt-Vorlage nutzt
+`AiServices` intern genau? Siehe
 "Stolpersteine" unten).
 
 ## Infrastruktur: derselbe `postgres-rag`-Container wie `ai-rag-sttpai`
@@ -89,12 +89,10 @@ sequenceDiagram
     participant VS as PgVectorEmbeddingStore
     participant CR as EmbeddingStoreContentRetriever
     participant LLM as AnthropicChatModel (Requesty)
-
-    Note over U,VS: Ingestion (einmalig, "scala-cli run . -- ingest")
+    Note over U, VS: Ingestion (einmalig, "scala-cli run . -- ingest")
     U ->> EM: PDF-Chunks einbetten
     EM -->> VS: Embeddings + Chunk-Text schreiben
-
-    Note over U,LLM: Frage beantworten ("scala-cli run . -- ask ...")
+    Note over U, LLM: Frage beantworten ("scala-cli run . -- ask ...")
     U ->> CR: Nutzerfrage
     CR ->> EM: Frage einbetten
     CR ->> VS: Top-K Cosine-Similarity-Suche
@@ -114,23 +112,23 @@ nachrüsten.
 
 ### Die zentralen langchain4j-Bausteine
 
-| Baustein                         | Rolle                                                                                                      | Datei                  |
-|-----------------------------------|---------------------------------------------------------------------------------------------------------|-------------------------|
-| `Document` / `FileSystemDocumentLoader` | Lädt eine Datei + Parser in ein einheitliches `Document`-Objekt (Text + Metadaten)                 | `ingestion/Ingestion.scala`        |
-| `ApachePdfBoxDocumentParser`      | Wandelt den Byte-Inhalt einer PDF-Datei in reinen Text um                                                  | `ingestion/Ingestion.scala`        |
-| `DocumentSplitter`                | Zerlegt ein `Document` in `TextSegment`-Chunks mit konfigurierbarer Größe/Overlap                           | `ingestion/Ingestion.scala`        |
-| `EmbeddingModel`                  | Bildet Text auf einen festdimensionalen Vektor ab (`all-MiniLM-L6-v2`, 384 Dimensionen, läuft lokal)        | `EmbeddingModels.scala`  |
-| `EmbeddingStore[TextSegment]`     | Abstraktion für "Vektordatenbank" - hier `PgVectorEmbeddingStore`, legt Tabelle/Index selbst an             | `VectorStore.scala`      |
-| `EmbeddingStoreIngestor`          | Verdrahtet Splitter + Embedding-Modell + Store zu einem einzigen `ingest(documents)`-Aufruf                 | `ingestion/Ingestion.scala`        |
-| `EmbeddingStoreContentRetriever`  | Bettet eine Frage ein, sucht die ähnlichsten Chunks im Store und liefert sie als `Content`-Liste zurück     | `query/RagAssistant.scala`     |
-| `AiServices`                      | Erzeugt zur Laufzeit eine Proxy-Implementierung eines eigenen Interfaces, die Retrieval + Prompt-Bau + LLM-Call automatisch verknüpft | `query/RagAssistant.scala` |
-| `@SystemMessage`                  | Annotation auf der Interface-Methode - legt den System-Prompt fest, den `AiServices` bei jedem Call voranstellt | `query/RagAssistant.scala` |
+| Baustein                                | Rolle                                                                                                                                 | Datei                       |
+|-----------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|-----------------------------|
+| `Document` / `FileSystemDocumentLoader` | Lädt eine Datei + Parser in ein einheitliches `Document`-Objekt (Text + Metadaten)                                                    | `ingestion/Ingestion.scala` |
+| `ApachePdfBoxDocumentParser`            | Wandelt den Byte-Inhalt einer PDF-Datei in reinen Text um                                                                             | `ingestion/Ingestion.scala` |
+| `DocumentSplitter`                      | Zerlegt ein `Document` in `TextSegment`-Chunks mit konfigurierbarer Größe/Overlap                                                     | `ingestion/Ingestion.scala` |
+| `EmbeddingModel`                        | Bildet Text auf einen festdimensionalen Vektor ab (`all-MiniLM-L6-v2`, 384 Dimensionen, läuft lokal)                                  | `EmbeddingModels.scala`     |
+| `EmbeddingStore[TextSegment]`           | Abstraktion für "Vektordatenbank" - hier `PgVectorEmbeddingStore`, legt Tabelle/Index selbst an                                       | `VectorStore.scala`         |
+| `EmbeddingStoreIngestor`                | Verdrahtet Splitter + Embedding-Modell + Store zu einem einzigen `ingest(documents)`-Aufruf                                           | `ingestion/Ingestion.scala` |
+| `EmbeddingStoreContentRetriever`        | Bettet eine Frage ein, sucht die ähnlichsten Chunks im Store und liefert sie als `Content`-Liste zurück                               | `query/RagAssistant.scala`  |
+| `AiServices`                            | Erzeugt zur Laufzeit eine Proxy-Implementierung eines eigenen Interfaces, die Retrieval + Prompt-Bau + LLM-Call automatisch verknüpft | `query/RagAssistant.scala`  |
+| `@SystemMessage`                        | Annotation auf der Interface-Methode - legt den System-Prompt fest, den `AiServices` bei jedem Call voranstellt                       | `query/RagAssistant.scala`  |
 
 ## Wichtige Begriffe / Terminologie
 
 - **RAG (Retrieval-Augmented Generation)**: Ein LLM beantwortet Fragen nicht
-  nur aus seinem Trainingswissen, sondern bekommt zusätzlich per Suche
-  (Retrieval) gefundene, externe Textstellen als Kontext mitgegeben -
+  nur aus seinem Trainingswissen, sondern bekommt zusätzlich per Suche (Retrieval) gefundene, externe Textstellen als
+  Kontext mitgegeben -
   reduziert Halluzinationen und ermöglicht Antworten zu Dokumenten, die dem
   Modell beim Training unbekannt waren.
 - **Chunking**: Zerlegen eines langen Textes in kleinere, in sich
@@ -179,7 +177,7 @@ ai-rag-langchain4j/
 │   ├── GenerateSampleDocs.scala #   erzeugt die Beispiel-PDFs in docs/ (PDFBox)
 │   └── Ingestion.scala         #   PDFs laden -> splitten -> embedden -> in pgvector schreiben
 ├── query/                      # Hauptfunktion 2: Frage einlesen, Vektorsuche, Antwort vom LLM
-│   ├── LlmConfig.scala         #   AnthropicChatModel (Requesty-Router, vertex/claude-sonnet-5@eu)
+│   ├── LlmConfig.scala         #   AnthropicChatModel (Requesty-Router, vertex/claude-sonnet-5-5@eu)
 │   └── RagAssistant.scala      #   AiServices-Interface + ContentRetriever-Verdrahtung
 ├── Main.scala                  # Einstiegspunkt mit Subcommands: generate-docs / ingest / ask
 ├── test/
@@ -235,7 +233,7 @@ aus der Dependency geladen und initialisiert wird.
 Der API-Key wird direkt aus der echten Umgebungsvariable `ANTHROPIC_API_KEY`
 gelesen (`sys.env("ANTHROPIC_API_KEY")`, siehe `query/LlmConfig.scala`) und
 gegen den Requesty-Router (`https://router.eu.requesty.ai`, Modell
-`vertex/claude-sonnet-5@eu`) authentifiziert. Fehlt die Variable, bricht der
+`vertex/claude-sonnet-5-5@eu`) authentifiziert. Fehlt die Variable, bricht der
 Zugriff mit einer `NoSuchElementException` ab, die den fehlenden Variablennamen
 nennt - bewusst **keine** eigene `.env`-Parser-Klasse wie in `ai-rag-sttpai`
 (`object Env`): Für ein Lernbeispiel genügt eine einzige, vom Betriebssystem
@@ -278,8 +276,8 @@ diese Werte hier einzeln in `PgConfig.scala`.
 Zieltabelle selbst anlegen (`createTable(true)`, Default) und bei Bedarf vorher
 leeren (`dropTableFirst(true)`) - ein eigenes SQL-Init-Skript wie
 `docker/sql-rag/01-ragdb.sql` in `ai-rag-sttpai` ist dafür nicht nötig. Wichtig
-ist nur, eine **andere** Tabelle als `document_chunks` zu wählen
-(`langchain4j_pdf_chunks`), da beide Projekte sich sonst denselben Tabellennamen
+ist nur, eine **andere** Tabelle als `document_chunks` zu wählen (`langchain4j_pdf_chunks`), da beide Projekte sich
+sonst denselben Tabellennamen
 mit inkompatibler Vektordimension (512 vs. 384) teilen würden.
 
 **4. JDK-Warnungen beim Start (gelöst statt nur dokumentiert):** Auf neueren
@@ -294,17 +292,17 @@ haben, sondern mit JVM- bzw. Classpath-Details:
   `lazy val` den alten (`Unsafe`-basierten) oder neuen (`VarHandle`-basierten)
   Codepfad nimmt, hängt nicht von der eigenen Scala-Version ab, sondern davon,
   mit welcher Scala-3-Version die jeweilige `lazy val`-Stelle kompiliert wurde
-  - das kann auch eine transitive Abhängigkeit sein, die noch mit einer
-  älteren Scala-3.x-Version (< 3.8, dem Release, das den `Unsafe`-Zugriff
-  entfernt hat) gebaut wurde. Ab JDK 24 warnt die JVM standardmäßig davor
-  (JEP 498). Behoben über die scala-cli-Direktive `//> using sloth` (siehe
-  `project.scala`), die das `Unsafe`-basierte Bytecode-Muster über den
-  gesamten Klassenpfad hinweg (also auch in Abhängigkeiten) auf das
-  JDK-26-kompatible Muster patcht - kein eigener Workaround-Code nötig, nur
-  eine Zeile in `project.scala`.
+    - das kann auch eine transitive Abhängigkeit sein, die noch mit einer
+      älteren Scala-3.x-Version (< 3.8, dem Release, das den `Unsafe`-Zugriff
+      entfernt hat) gebaut wurde. Ab JDK 24 warnt die JVM standardmäßig davor (JEP 498). Behoben über die
+      scala-cli-Direktive `//> using sloth` (siehe
+      `project.scala`), die das `Unsafe`-basierte Bytecode-Muster über den
+      gesamten Klassenpfad hinweg (also auch in Abhängigkeiten) auf das
+      JDK-26-kompatible Muster patcht - kein eigener Workaround-Code nötig, nur
+      eine Zeile in `project.scala`.
 - `sloth`-Direktive selbst ist "experimental":** scala-cli druckt beim Start
-  für jede als experimentell markierte Direktive einen mehrzeiligen Hinweis
-  ("non-ideal user experience should be expected ..."). Das lässt sich nicht
+  für jede als experimentell markierte Direktive einen mehrzeiligen Hinweis ("non-ideal user experience should be
+  expected ..."). Das lässt sich nicht
   über eine weitere `project.scala`-Direktive abstellen (es gibt dafür keine
   `using`-Entsprechung, nur die CLI-Flag), sondern nur über die
   Kommandozeilen-Option `--suppress-experimental-warning` (siehe die

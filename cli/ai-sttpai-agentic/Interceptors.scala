@@ -119,11 +119,11 @@ object Interceptors:
       else if lower.contains("opus") then opus(modelId)
       else sonnet(modelId) // Sonnet als Default-Annahme, da dieses Projekt standardmäßig ein Sonnet-Modell nutzt (siehe Agent.scala)
 
-    /** Preistabelle für alle bekannten `ClaudeModel`-Ids '''plus''' den in diesem Projekt via Router genutzten Modell-String (`"vertex/claude-sonnet-5@eu"`, siehe `Agent.scala`) - Letzterer ist eine
+    /** Preistabelle für alle bekannten `ClaudeModel`-Ids '''plus''' den in diesem Projekt via Router genutzten Modell-String (`"vertex/claude-sonnet-5-5@eu"`, siehe `Agent.scala`) - Letzterer ist eine
       * Schätzung (Sonnet-Tarif), bis ein echter Lauf zeigt, welche Modell-Id der Router tatsächlich zurückmeldet.
       */
     val table: PriceTable = PriceTable(
-      (ClaudeModel.values.toList.map(_.value) :+ "vertex/claude-sonnet-5@eu").map(guessPrice).toMap
+      (ClaudeModel.values.toList.map(_.value) :+ "vertex/claude-sonnet-5-5@eu").map(guessPrice).toMap
     )
 
     /** Generöses, pro Agent-Aufruf geltendes Token-Limit als Sicherheitsnetz (siehe `BudgetInterceptor` in sttp-ai) - soll im Normalfall nie greifen, demonstriert aber den "graceful stop"-Mechanismus

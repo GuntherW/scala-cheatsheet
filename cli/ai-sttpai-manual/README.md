@@ -240,7 +240,8 @@ Error-Handling für beide Zweige einzeln.
 - **Codec (circe)**: Typklassen-basierte Serialisierungs-/
   Deserialisierungslogik für einen bestimmten Typ (`Codec[T]` bzw.
   `Codec.AsObject[T]`), von `sttp-ai` selbst für alle API-Modelle
-  bereitgestellt bzw. per `derives ConfiguredCodec` (mit implizitem `Configuration` für snake_case-JSON-Feldnamen) für eigene Typen (`CalculateTcoInput`/`CalculateTcoResult` in
+  bereitgestellt bzw. per `derives ConfiguredCodec` (mit implizitem `Configuration` für snake_case-JSON-Feldnamen) für
+  eigene Typen (`CalculateTcoInput`/`CalculateTcoResult` in
   `CalculateTcoTool.scala`)
   ableitbar.
 - **`ClaudeSyncClient` (sttp-ai)**: Der blockierende, hochsprachliche
@@ -292,7 +293,7 @@ Projektordner, Variable `ANTHROPIC_API_KEY`, alternativ
 `os-lib`-basierte Implementierung ohne zusätzliche Dependency) - analog zum
 Python-Pendant in `../tutorial/init.py` bzw. `../research/init.py`. Genutzt
 wird der Requesty-Router (`https://router.eu.requesty.ai`) mit dem Modell
-`vertex/claude-sonnet-5@eu`, konfiguriert über `ClaudeConfig(baseUrl = ...)`
+`vertex/claude-sonnet-5-5@eu`, konfiguriert über `ClaudeConfig(baseUrl = ...)`
 aus `sttp-ai`. Authentifiziert wird - wie im offiziellen Anthropic-SDK -
 über die Header `x-api-key` und `anthropic-version: 2023-06-01`, die
 `sttp-ai` automatisch setzt.
@@ -327,7 +328,8 @@ korrekte Lösung anbietet - das wäre nur durch ein Upstream-Fix in
 `sttp-ai` behebbar.
 
 **3. Mischen von server- und client-seitigen Tools:** Unabhängig von der
-Bibliothek gilt weiterhin: Mischt man in einer Anfrage server-seitige (`web_search`) und client-seitige Tools, verhält sich `web_search`
+Bibliothek gilt weiterhin: Mischt man in einer Anfrage server-seitige (`web_search`) und client-seitige Tools, verhält
+sich `web_search`
 NICHT wie ein automatisch vom Server aufgelöstes Tool, sondern wie ein
 ganz normales `ContentBlock.ToolUse` (Name `web_search`), das der Client
 selbst per `ToolResult` beantworten müsste - das haben wir per Smoke-Test

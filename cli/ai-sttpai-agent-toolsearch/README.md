@@ -1,14 +1,14 @@
 # Einfaches Agentensystem mit Tool-Search (Scala 3.9.0 / scala-cli)
 
-Ziel: Verstehen, wie ein **einzelner Agent** (kein Multi-Agenten-System) mit dem
-**Tool-Search-Paradigma** (auch "Progressive Tool Disclosure" genannt)
+Ziel: Verstehen, wie ein **einzelner Agent** (kein Multi-Agenten-System) mit dem **Tool-Search-Paradigma** (auch
+"Progressive Tool Disclosure" genannt)
 arbeitet - als Lernbeispiel neben `../ai-sttpai-manual` (dort: Multi-Agenten-
 System mit statischer Tool-Liste).
 
 ## Was ist "Tool-Search"?
 
-Im "klassischen" Ansatz (siehe `ai-sttpai-manual`) bekommt das Modell bei
-**jedem** Request die kompletten JSON-Schemas **aller** verfügbaren Tools
+Im "klassischen" Ansatz (siehe `ai-sttpai-manual`) bekommt das Modell bei **jedem** Request die kompletten JSON-Schemas
+**aller** verfügbaren Tools
 mitgeschickt. Bei 3 Tools ist das kein Problem - aber echte Agentensysteme
 haben teils hunderte Tools (interne APIs, Integrationen, ...). Alle Schemas
 bei jedem Call mitzuschicken verbraucht unnötig Context-Budget und lenkt das
@@ -36,8 +36,8 @@ lohnen würde.
 
 Die JSON-Schemas der Tool-Inputs werden NICHT manuell aufgeschrieben (kein
 `ToolInputSchema.forObject(Map("x" -> PropertySchema.string(...)))`), sondern
-direkt aus den jeweiligen Input-Case-Classes via Tapir abgeleitet
-(`derives Schema`, Parameter-Beschreibungen per `@description`-Annotation) und
+direkt aus den jeweiligen Input-Case-Classes via Tapir abgeleitet (`derives Schema`, Parameter-Beschreibungen per
+`@description`-Annotation) und
 als rohes JSON-Schema über `Tool.customRaw(...)` an Claude übergeben - der von
 sttp-ai dokumentierte Weg ("the easiest way: derive from a case class", siehe
 [JSON Schemas](https://sttp-ai.softwaremill.com/other/json-schemas.html)).
@@ -45,8 +45,8 @@ Case Class und Tool-Schema haben dadurch EINE Quelle der Wahrheit statt zweier
 parallel gepflegter Strukturen (siehe `jsonSchemaOf[T]` in `Tools.scala`).
 
 Tool-Fehler (unbekannte Zeitzone, ungültiger Rechenausdruck, unbekanntes Tool,
-...) setzen zudem Claudes offizielles `tool_result.is_error`-Feld
-(`ContentBlock.ToolResult.isError`) statt die Fehlerinformation nur implizit
+...) setzen zudem Claudes offizielles `tool_result.is_error`-Feld (`ContentBlock.ToolResult.isError`) statt die
+Fehlerinformation nur implizit
 im JSON-Text zu verstecken - das Modell erkennt Fehlschläge dadurch
 zuverlässiger (siehe `ToolCallResult.isError` in `ToolCatalog.scala`).
 
@@ -69,10 +69,10 @@ Geprüft, aber bewusst NICHT genutzt:
 ## Die 3 Tools
 
 | Tool               | Zweck                                                          |
-|---------------------|-----------------------------------------------------------------|
-| `get_current_time`  | Aktuelles Datum/Uhrzeit für eine IANA-Zeitzone (Standard: UTC) |
-| `calculator`        | Wertet einen einfachen arithmetischen Ausdruck aus             |
-| `roll_dice`         | Würfelt `count`-mal einen Würfel mit `sides` Seiten            |
+|--------------------|----------------------------------------------------------------|
+| `get_current_time` | Aktuelles Datum/Uhrzeit für eine IANA-Zeitzone (Standard: UTC) |
+| `calculator`       | Wertet einen einfachen arithmetischen Ausdruck aus             |
+| `roll_dice`        | Würfelt `count`-mal einen Würfel mit `sides` Seiten            |
 
 Implementiert (Definition + Handler) in `Tools.scala`. Registriert - inklusive
 des Meta-Tools `search_tools` selbst - in `ToolCatalog.scala`.
@@ -153,7 +153,7 @@ scala-cli run . -- "Wie spät ist es gerade in Europe/Berlin, und würfle danach
 Tatsächliche (leicht gekürzte) Konsolenausgabe eines Testlaufs:
 
 ```
-[Agent] ===== Model-Call gestartet (model=vertex/claude-sonnet-5@eu) - Startwerkzeug: nur 'search_tools' =====
+[Agent] ===== Model-Call gestartet (model=vertex/claude-sonnet-5-5@eu) - Startwerkzeug: nur 'search_tools' =====
 [Agent]    user:    Wie spät ist es gerade in Europe/Berlin, und würfle danach zweimal einen 20-seitigen Würfel und addiere das Ergebnis?
 [Agent] --- Turn 1: sende 1 Nachricht(en), aktive Tools=[search_tools] ---
 [Agent] <- Turn 1 Antwort: stop_reason=tool_use
@@ -216,8 +216,8 @@ das Verwerfen von Termen mit weniger als 3 Zeichen.
   aufrufbar werden. Reduziert Context-Verbrauch bei großen Tool-Inventaren
   und kann die Tool-Auswahl-Genauigkeit des Modells verbessern (weniger
   irrelevante Optionen pro Request).
-- **Tool-Registry**: Zentrale, lokale Liste aller tatsächlich verfügbaren
-  (aber anfangs verborgenen) Tools inkl. Suchbegriffen, hier `ToolRegistry`.
+- **Tool-Registry**: Zentrale, lokale Liste aller tatsächlich verfügbaren (aber anfangs verborgenen) Tools inkl.
+  Suchbegriffen, hier `ToolRegistry`.
 - **Meta-Tool**: Ein Tool, dessen Zweck nicht die eigentliche Fachaufgabe
   ist, sondern die Steuerung des Agenten-Verhaltens selbst - hier
   `search_tools`, das weitere Tools freischaltet.
@@ -262,13 +262,13 @@ scala-cli run . -- "Deine Frage hier"
 Wie im Schwesterprojekt: API-Key wird aus der `.env`-Datei im Projektordner
 gelesen (`ANTHROPIC_API_KEY`, alternativ `ANTHROPIC_AUTH_TOKEN`), genutzt wird
 der Requesty-Router (`https://router.eu.requesty.ai`) mit dem Modell
-`vertex/claude-sonnet-5@eu`.
+`vertex/claude-sonnet-5-5@eu`.
 
 ## Abgrenzung zu `ai-sttpai-manual`
 
-| Aspekt              | `ai-sttpai-manual`                          | `ai-sttpai-agent-toolsearch`                     |
-|---------------------|----------------------------------------------|---------------------------------------------------|
-| Agenten             | 3 (Fact-Researcher, Risk-Analyst, Synthesis) | 1                                                   |
-| Steuerung           | Orchestrator (Fan-out/Fan-in via `ox.par`)   | keine (direkter Aufruf)                            |
-| Tool-Sichtbarkeit   | alle Tools sofort in jedem Request           | nur `search_tools` sichtbar, Rest wird "entdeckt"  |
-| `ox`-Nutzung        | `ox.par` für Parallelität zwischen Agenten   | `ox.timeout` für Timeout-Absicherung eines Calls   |
+| Aspekt            | `ai-sttpai-manual`                           | `ai-sttpai-agent-toolsearch`                      |
+|-------------------|----------------------------------------------|---------------------------------------------------|
+| Agenten           | 3 (Fact-Researcher, Risk-Analyst, Synthesis) | 1                                                 |
+| Steuerung         | Orchestrator (Fan-out/Fan-in via `ox.par`)   | keine (direkter Aufruf)                           |
+| Tool-Sichtbarkeit | alle Tools sofort in jedem Request           | nur `search_tools` sichtbar, Rest wird "entdeckt" |
+| `ox`-Nutzung      | `ox.par` für Parallelität zwischen Agenten   | `ox.timeout` für Timeout-Absicherung eines Calls  |

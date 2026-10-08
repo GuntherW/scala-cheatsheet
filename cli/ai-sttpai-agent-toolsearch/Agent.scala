@@ -10,7 +10,7 @@ package agent
   */
 object Agent:
 
-  val Model = "vertex/claude-sonnet-5@eu"
+  val Model = "vertex/claude-sonnet-5-5@eu"
 
   private val systemPrompt =
     """Du bist ein hilfreicher Assistent mit Zugriff auf Werkzeuge (Tools).

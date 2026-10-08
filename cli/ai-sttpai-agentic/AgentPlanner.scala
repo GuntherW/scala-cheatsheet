@@ -16,7 +16,7 @@ package agents
   */
 object AgentPlanner:
 
-  private val model = "vertex/claude-sonnet-5@eu"
+  private val model = "vertex/claude-sonnet-5-5@eu"
 
   private def systemPrompt(specs: List[AgentSpec]): String =
     val catalogue = specs
