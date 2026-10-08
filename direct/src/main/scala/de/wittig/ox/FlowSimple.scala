@@ -42,7 +42,7 @@ def flowSimple(): Unit =
   }
 
   def namesFlow = Flow
-    .fromInputStream(this.getClass.getResourceAsStream("/names.txt"))
+    .fromInputStream(Thread.currentThread().getContextClassLoader.getResourceAsStream("names.txt"))
     .linesUtf8
     .map(_.toLowerCase.capitalize)
 

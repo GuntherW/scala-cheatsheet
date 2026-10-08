@@ -4,7 +4,7 @@ import kyo.*
 
 object Main extends KyoApp {
 
-  val programm = defer {
+  private val programm = defer {
 
     // Effectful value
     val b: Int = IO(10_000).now

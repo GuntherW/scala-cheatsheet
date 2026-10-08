@@ -7,8 +7,7 @@ object Parallel extends KyoApp {
   private val programm = defer {
 
     // An example computation
-    val a: Int =
-      IO(Math.cos(42).toInt).now
+    val a: Int = IO(Math.cos(42).toInt).now
 
     // There are method overloadings for up to four
     // parallel computations. Parameters taken by

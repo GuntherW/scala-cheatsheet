@@ -1,5 +1,5 @@
 //> using scala 2.13.18
-//> using lib "ch.epfl.scala::scalafix-core:0.14.7"
+//> using dep "ch.epfl.scala::scalafix-core:0.14.7"
 
 import scalafix.v1._
 import scala.meta._
