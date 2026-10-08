@@ -12,21 +12,34 @@ siehe [`docs/ai/jev.md`](../../docs/ai/jev.md) im Projekt-Root.
 ## Voraussetzungen
 
 - JDK 17+ und [`scala-cli`](https://scala-cli.virtuslab.org/)
-- Python 3.10+ (für Laya)
+- [`uv`](https://docs.astral.sh/uv/) (holt bei Bedarf selbst ein passendes Python 3.10+)
 
-## 1. Laya lokal installieren
+## 1. Laya lokal installieren (mit uv)
 
 ```bash
-mkdir -p ~/bin/laya && cd ~/bin/laya
+mkdir -p ~/bin/laya && pushd ~/bin/laya
 
-python3 -m venv .venv
-.venv/bin/python -m pip install --upgrade pip
+# uv-Projekt anlegen; Python 3.12 explizit, da PyTorch neue Python-Versionen oft verzögert unterstützt.
+# --name ist nötig: Der Projektname darf nicht "laya" sein (= Verzeichnisname), sonst
+# scheitert "uv add" mit "self-dependencies are not permitted".
+uv init --bare --name laya-local --python 3.12 .
 
 # "serve"-Extra installiert zusätzlich FastAPI/uvicorn für laya-serve
-.venv/bin/python -m pip install "laya[serve]"
+uv add "laya[serve]"
 
 # Installation prüfen (lädt noch kein Modell herunter)
-.venv/bin/python -I -c "import laya; print(laya.__version__)"
+uv run python -I -c "import laya; print(laya.__version__)"
+popd
+```
+
+Kein manuelles `venv`/`pip` nötig: `uv` legt `.venv` und `uv.lock` selbst an.
+
+### 1 a Laya lokal updaten
+
+```bash
+pushd ~/bin/laya
+uv lock --upgrade-package laya && uv sync
+popd
 ```
 
 ## 2. `laya-serve` starten
@@ -34,16 +47,21 @@ python3 -m venv .venv
 `laya-serve` implementiert den Jev-kompatiblen Endpunkt `POST /v1/systemone`
 sowie `GET /health`.
 
+Im Vordergrund (blockiert das Terminal bis `Ctrl+C`):
+
 ```bash
 pushd ~/bin/laya
-LAYA_HOST=127.0.0.1 LAYA_PORT=8000 LAYA_MODELS=english .venv/bin/laya-serve
+LAYA_HOST=127.0.0.1 LAYA_PORT=8000 LAYA_MODELS=english uv run laya-serve
 popd
 ```
 
-`laya-serve` blockiert den Terminal im Vordergrund (Server-Prozess), bis er
-mit `Ctrl+C` beendet wird - `popd` wird daher erst nach dem Beenden des
-Servers ausgeführt und bringt dich dann zurück ins ursprüngliche
-Verzeichnis.
+Im Hintergrund (Terminal bleibt frei, Log in `laya-serve.log`):
+
+```bash
+cd ~/bin/laya
+LAYA_HOST=127.0.0.1 LAYA_PORT=8000 LAYA_MODELS=english \
+  nohup uv run laya-serve > laya-serve.log 2>&1 &
+```
 
 Beim ersten Request (bzw. beim Start, falls `LAYA_PRELOAD=1`) wird der
 Checkpoint des gewählten Modells von Hugging Face heruntergeladen - das
@@ -87,7 +105,7 @@ geladen (spürbar langsamer). Um alle drei dauerhaft resident zu halten:
 pushd ~/bin/laya
 LAYA_HOST=127.0.0.1 LAYA_PORT=8000 \
   LAYA_MODELS=english,multilingual,typed-decisions LAYA_MAX_LOADED=3 \
-  .venv/bin/laya-serve
+  uv run laya-serve
 popd
 ```
 
@@ -98,18 +116,29 @@ erreichbar ist, unbedingt `LAYA_API_KEY` setzen (siehe Laya `SECURITY.md`).
 
 ### `laya-serve` wieder stoppen
 
-Da `laya-serve` im Vordergrund läuft, genügt im selben Terminal `Ctrl+C`
-(sendet `SIGINT`, uvicorn fährt sauber herunter - siehe `INFO: Shutting
-down` in der Ausgabe).
+Im Vordergrund: `Ctrl+C` im selben Terminal (uvicorn fährt sauber herunter,
+`INFO: Shutting down` in der Ausgabe).
 
-Läuft der Prozess stattdessen im Hintergrund (z. B. gestartet mit `&` oder
-in einem anderen Terminal-Tab), lässt er sich über die PID beenden:
+Von überall, mit einem einzigen Befehl:
 
 ```bash
-pgrep -af laya-serve        # PID finden
-kill <PID>                  # SIGTERM, sauberes Herunterfahren
-# notfalls: kill -9 <PID>   # SIGKILL, falls er nicht reagiert
+pkill -f '[l]aya-serve'     # SIGTERM, sauberes Herunterfahren
 ```
+
+Die eckigen Klammern verhindern, dass `pkill` die eigene Shell trifft (deren
+Kommandozeile sonst ebenfalls `laya-serve` enthielte). Prüfen:
+
+```bash
+curl -sf localhost:8000/health || echo "gestoppt"
+```
+
+Alternativ gezielt über den Port (nützlich bei mehreren Instanzen):
+
+```bash
+kill $(lsof -t -iTCP:8000 -sTCP:LISTEN)
+```
+
+Notfalls hart beenden: `pkill -9 -f '[l]aya-serve'`.
 
 ## 3. Dieses Scala-Projekt ausführen
 
@@ -138,10 +167,10 @@ Erwartete Ausgabe von `laya.main` (Werte können je nach Modell leicht
 variieren):
 
 ```
-Department: billing (confidence 0.94)
-Urgency score: 1.42 -> soon
-Churn risk probability: 0.86
-Model used: english, requestId: None
+Department: billing (confidence 0.9266)
+Urgency score: 1.5912 -> 2
+Churn risk probability: 0.878
+Model used: laya-rl-agent, requestId: None
 ```
 
 ## 4. Konfiguration dieses Projekts (Umgebungsvariablen)
@@ -160,14 +189,15 @@ Siehe `LayaClient.scala`.
   zeigt auf den falschen Host/Port.
 - **`ModuleNotFoundError: No module named 'uvicorn'`**: Das `serve`-Extra
   wurde nicht (vollständig) installiert. Erneut ausführen:
-  `.venv/bin/python -m pip install "laya[serve]"` (Anführungszeichen nicht
+  `uv add "laya[serve]"` im Laya-Verzeichnis (Anführungszeichen nicht
   vergessen, sonst interpretiert die Shell die eckigen Klammern selbst).
+- **Port belegt / alter Server läuft noch**: `pkill -f '[l]aya-serve'`.
 - **Erster Request sehr langsam / scheint zu hängen**: Checkpoint-Download
   von Hugging Face läuft noch (siehe oben). Mit `LAYA_PRELOAD=1` passiert
   das bereits beim Start von `laya-serve`, nicht erst beim ersten Request.
 - **"model not found" o. Ä.**: Gültige Modellnamen sind `english`,
-  `multilingual`, `typed-decisions` - und müssen zusätzlich über
-  `LAYA_MODELS` beim Start von `laya-serve` freigegeben worden sein.
+  `multilingual`, `typed-decisions`. `LAYA_MODELS` steuert nur das Preload;
+  andere Modelle werden lazy nachgeladen.
 
 ## Projektstruktur
 
