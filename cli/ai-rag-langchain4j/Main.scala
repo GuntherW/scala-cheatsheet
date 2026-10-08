@@ -19,7 +19,7 @@ import rag.query.RagAssistant
     case "ingest" :: Nil          => Ingestion.run(docsDir)
     case "ask" :: question :: Nil => println(RagAssistant.ask(question))
     case _                        => println("""Verwendung:
-                                               |  scala-cli run . -- generate-docs       # erzeugt die 10 Beispiel-PDFs in docs/
-                                               |  scala-cli run . -- ingest               # indexiert docs/ in pgvector
-                                               |  scala-cli run . -- ask "<Frage>"        # beantwortet eine Frage auf Basis der indexierten Dokumente
+                                               |  scala-cli run . -- generate-docs  # erzeugt die 10 Beispiel-PDFs in docs/
+                                               |  scala-cli run . -- ingest         # indexiert docs/ in pgvector
+                                               |  scala-cli run . -- ask "<Frage>"  # beantwortet eine Frage auf Basis der indexierten Dokumente
                                                |""".stripMargin)
