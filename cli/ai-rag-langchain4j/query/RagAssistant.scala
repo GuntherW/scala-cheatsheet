@@ -1,6 +1,6 @@
 package rag.query
 
-import rag.EmbeddingModels
+import rag.{EmbeddingModels, VectorStore}
 
 import dev.langchain4j.data.segment.TextSegment
 import dev.langchain4j.service.{AiServices, SystemMessage}
@@ -41,3 +41,11 @@ object RagAssistant:
       .chatModel(LlmConfig.chatModel())
       .contentRetriever(contentRetriever)
       .build()
+
+  /** Beantwortet eine einzelne Nutzerfrage auf Basis der zuvor indexierten Dokumente (siehe `ingestion/Ingestion.scala`) - baut dafür den `EmbeddingStore` auf die bestehende pgvector-Tabelle auf
+    * (`dropTableFirst = false`, im Unterschied zur Ingestion-Seite bleibt der Inhalt hier unangetastet) und erzeugt daraus einen `RagAssistant` für genau diesen einen Aufruf.
+    */
+  def ask(question: String): String =
+    val embeddingStore = VectorStore.build(dropTableFirst = false)
+    val assistant      = create(embeddingStore)
+    assistant.answer(question)

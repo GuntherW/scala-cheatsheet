@@ -9,21 +9,17 @@ import rag.query.RagAssistant
   *   - `ask "<Frage>"`: beantwortet eine Frage auf Basis der zuvor indexierten Dokumente (siehe `query/RagAssistant.scala`).
   *
   * Voraussetzung für `ingest`/`ask`: der `postgres-rag`-Container läuft (`cd docker && docker compose up -d postgres-rag`).
+  *
   */
-object Main:
+@main def main(args: String*): Unit =
+  val docsDir = os.pwd / "docs"
 
-  private val docsDir = os.pwd / "docs"
-
-  def main(args: Array[String]): Unit =
-    args.toList match
-      case "generate-docs" :: Nil   => GenerateSampleDocs.run(docsDir)
-      case "ingest" :: Nil          => Ingestion.run(docsDir)
-      case "ask" :: question :: Nil =>
-        val embeddingStore = VectorStore.build(dropTableFirst = false)
-        val assistant      = RagAssistant.create(embeddingStore)
-        println(assistant.answer(question))
-      case _                        => println("""Verwendung:
-                                                 |  scala-cli run . -- generate-docs       # erzeugt die 10 Beispiel-PDFs in docs/
-                                                 |  scala-cli run . -- ingest               # indexiert docs/ in pgvector
-                                                 |  scala-cli run . -- ask "<Frage>"        # beantwortet eine Frage auf Basis der indexierten Dokumente
-                                                 |""".stripMargin)
+  args.toList match
+    case "generate-docs" :: Nil   => GenerateSampleDocs.run(docsDir)
+    case "ingest" :: Nil          => Ingestion.run(docsDir)
+    case "ask" :: question :: Nil => println(RagAssistant.ask(question))
+    case _                        => println("""Verwendung:
+                                               |  scala-cli run . -- generate-docs       # erzeugt die 10 Beispiel-PDFs in docs/
+                                               |  scala-cli run . -- ingest               # indexiert docs/ in pgvector
+                                               |  scala-cli run . -- ask "<Frage>"        # beantwortet eine Frage auf Basis der indexierten Dokumente
+                                               |""".stripMargin)
