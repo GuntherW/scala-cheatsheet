@@ -1,4 +1,4 @@
-package rag
+package rag.ingestion
 
 import org.apache.pdfbox.pdmodel.{PDDocument, PDPage, PDPageContentStream}
 import org.apache.pdfbox.pdmodel.common.PDRectangle

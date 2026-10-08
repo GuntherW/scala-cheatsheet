@@ -21,7 +21,7 @@ Relevance-Grader -> Synthesis) befragt.
 | DB-Zugriff                                                      | `org.postgresql:postgresql` (JDBC), reines SQL (kein ORM)                                 |
 | Anthropic-/Claude-Client (Structured Output, einfache Requests) | [sttp-ai](https://sttp-ai.softwaremill.com/) (`claude`-Modul)                             |
 | Dateisystemzugriff (`docs/`, `output/`)                         | [os-lib](https://github.com/com-lihaoyi/os-lib)                                           |
-| `.env`-Datei einlesen                                           | eigene, simple Implementierung (`object Env`, analog zu `ai-sttpai-agentic`)              |
+| Umgebungsvariablen                                               | `sys.env` direkt (keine eigene `.env`-Datei-Logik, siehe Abschnitt "Credentials")         |
 | Tests (Chunking/TF-IDF-Mathe, ohne LLM-/DB-Call)                | [MUnit](https://scalameta.org/munit/) (`scala-cli test .`)                                |
 | Build/Run ohne sbt-Projekt                                      | `scala-cli` mit `//> using`-Direktiven                                                    |
 
@@ -226,7 +226,6 @@ einzigen, kurzen Request pro Aufruf.
 ai-rag-sttpai/
 ├── project.scala              # scala-cli Direktiven: Scala-Version, Abhängigkeiten, MUnit
 ├── docs/                      # generierte Beispiel-PDFs (siehe `generate-docs`)
-├── Env.scala                  # .env-Reader (ANTHROPIC_*, PGRAG_*)
 ├── AnthropicClient.scala      # ClaudeClient + SyncBackend, buildAgent/buildStructuredAgent
 ├── Interceptors.scala         # minimaler Logging-Interceptor (kein Usage-/Budget-Tracking nötig)
 ├── Db.scala                   # JDBC-Verbindungsaufbau zu postgres-rag/ragdb
@@ -252,9 +251,17 @@ ai-rag-sttpai/
 ## Ausführen
 
 Voraussetzung: `postgres-rag`-Container läuft (siehe oben,
-`docker compose up -d postgres-rag` im `docker/`-Ordner) sowie eine `.env` in
-diesem Projektordner mit `ANTHROPIC_AUTH_TOKEN` bzw. `ANTHROPIC_API_KEY`
-(Requesty-Key, analog zu `ai-sttpai-agentic/.env`).
+`docker compose up -d postgres-rag` im `docker/`-Ordner) sowie die
+Umgebungsvariable `ANTHROPIC_AUTH_TOKEN` bzw. `ANTHROPIC_API_KEY` ist gesetzt
+(Requesty-Key). Dieses Projekt liest Umgebungsvariablen direkt über `sys.env`
+(keine eigene `.env`-Parser-Klasse, siehe Abschnitt "Credentials") - die
+`.env`-Datei in diesem Projektordner wird stattdessen über
+[direnv](https://direnv.net/) automatisch in echte Umgebungsvariablen geladen
+(`.envrc` enthält dafür nur die eine Zeile `dotenv`, analog zu
+`ai-rag-langchain4j`): einmalig `direnv allow` in diesem Ordner ausführen,
+danach setzt direnv die Variablen beim Betreten des Ordners automatisch. Ohne
+direnv funktioniert es genauso mit einem manuellen `export
+ANTHROPIC_AUTH_TOKEN="rqsty-sk-..."`.
 
 ```bash
 cd cli/ai-rag-sttpai
@@ -278,16 +285,29 @@ Suchanfrage und genutzter Quellen).
 
 ## Credentials
 
-Der API-Key wird wie in den anderen `ai-sttpai-*`-Projekten aus der
-`.env`-Datei in diesem Projektordner gelesen (`ANTHROPIC_AUTH_TOKEN`,
-alternativ `ANTHROPIC_API_KEY`) und gegen den Requesty-Router (`https://router.eu.requesty.ai`, Modell
-`vertex/claude-sonnet-5@eu`)
-authentifiziert.
+Der API-Key wird direkt aus der echten Umgebungsvariable
+`ANTHROPIC_AUTH_TOKEN` (alternativ `ANTHROPIC_API_KEY`) gelesen
+(`sys.env.get(...)`, siehe `AnthropicClient.scala`) und gegen den
+Requesty-Router (`https://router.eu.requesty.ai`, Modell
+`vertex/claude-sonnet-5@eu`) authentifiziert. Sind beide Variablen nicht
+gesetzt, bricht der Zugriff mit einer klaren `RuntimeException` ab - bewusst
+**keine** eigene `.env`-Parser-Klasse mehr (vormals `object Env`): Für ein
+Lernbeispiel genügen vom Betriebssystem bereitgestellte Umgebungsvariablen;
+eine zusätzliche Parser-Klasse dafür wäre nur zusätzlicher Code ohne
+didaktischen Mehrwert (analog zu `ai-rag-langchain4j`, siehe dortiges
+`LlmConfig.scala`/`PgConfig.scala`).
+
+Die `.env`-Datei in diesem Ordner bleibt trotzdem bestehen - sie wird nur
+nicht mehr von eigenem Scala-Code gelesen, sondern von
+[direnv](https://direnv.net/) über `.envrc` (`dotenv`) automatisch in echte
+Umgebungsvariablen umgewandelt, sobald man in diesen Ordner wechselt (einmalig
+`direnv allow` nötig).
 
 Die Postgres-Zugangsdaten (`postgres-rag`, Port 5434, DB `ragdb`) sind als
 Dev-Defaults direkt in `Db.scala` hinterlegt (passend zu
 `docker/docker-compose.yml`) und lassen sich bei Bedarf über `PGRAG_URL`,
-`PGRAG_USER`, `PGRAG_PASSWORD` in derselben `.env`-Datei überschreiben.
+`PGRAG_USER`, `PGRAG_PASSWORD` überschreiben (z. B. ebenfalls über dieselbe
+`.env`-Datei).
 
 ## Stolpersteine
 

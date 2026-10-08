@@ -1,4 +1,4 @@
-package rag
+package rag.query
 
 /** Agent 3 (Aggregator/Finalschritt) der RAG-Pipeline: Erhält die Nutzerfrage sowie die als relevant eingestuften Chunks (`AgentRelevanceGrader`) als Kontext und erzeugt daraus die finale Antwort -
   * inklusive Quellenangaben, damit nachvollziehbar bleibt, aus welchem PDF/Chunk welche Information stammt (Grounding).

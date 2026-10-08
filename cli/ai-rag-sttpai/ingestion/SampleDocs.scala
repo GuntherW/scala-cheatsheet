@@ -1,4 +1,4 @@
-package rag
+package rag.ingestion
 
 /** Inhalte der generierten Beispiel-PDFs (siehe `GenerateSampleDocs.scala`) - drei thematisch getrennte, kurze Fachtexte mit jeweils ein paar konkreten, eindeutig überprüfbaren Fakten. */
 object SampleDocs:

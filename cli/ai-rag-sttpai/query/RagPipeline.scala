@@ -1,4 +1,6 @@
-package rag
+package rag.query
+
+import rag.{Db, HashingTfIdfEmbedder, VectorStore}
 
 /** Verdrahtet die RAG-Pipeline (siehe README für das Ablaufdiagramm):
   *

@@ -1,4 +1,4 @@
-package rag
+package rag.query
 
 /** Agent 1 der RAG-Pipeline: Formuliert die (ggf. umgangssprachliche, mehrdeutige) Nutzerfrage in eine knappe, stichwortreiche Suchanfrage um, die besser zu den TF-IDF-Embeddings der Vektordatenbank
   * passt (siehe `HashingTfIdfEmbedder` - rein wortbasiert, kein semantisches Verständnis wie ein echtes Embedding-Modell; profitiert daher besonders von expliziten Fachbegriffen statt ganzer Sätze).

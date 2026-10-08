@@ -1,4 +1,4 @@
-package rag
+package rag.ingestion
 
 import org.apache.pdfbox.Loader
 import org.apache.pdfbox.text.PDFTextStripper

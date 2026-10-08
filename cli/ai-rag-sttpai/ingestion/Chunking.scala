@@ -1,4 +1,4 @@
-package rag
+package rag.ingestion
 
 /** Teilt einen langen Text in überlappende Chunks - reine, LLM-freie Logik (daher gut testbar, siehe `ChunkingTest.test.scala`).
   *

@@ -1,5 +1,7 @@
 package rag
 
+import rag.ingestion.Chunking
+
 import munit.FunSuite
 
 class ChunkingTest extends FunSuite:

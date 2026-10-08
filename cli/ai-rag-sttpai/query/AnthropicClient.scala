@@ -1,4 +1,4 @@
-package rag
+package rag.query
 
 import io.circe.Codec
 import sttp.ai.claude.ClaudeClient
@@ -14,6 +14,8 @@ import sttp.tapir.Schema
 /** Dünner Wrapper um den `ClaudeClient` aus [[https://sttp-ai.softwaremill.com/ sttp-ai]] (Modul `claude`) - identisches Setup wie in `ai-sttpai-agentic`/`ai-sttpai-manual` (Requesty-Router statt der
   * offiziellen Anthropic-Basis-URL, Modell `vertex/claude-sonnet-5@eu`). Dieses Projekt braucht keine Tools/Interceptoren/Usage-Tracking - nur einfache, strukturierte Einzel-Requests für die drei
   * RAG-Agenten (Query-Rewriter, Relevance-Grader, Synthesis), daher ein bewusst schlankeres Setup ohne `Interceptors.scala`.
+  *
+  * Liest den API-Key direkt aus `sys.env` (echte Umgebungsvariablen, siehe `.envrc`/direnv) statt über eine eigene `.env`-Datei-Logik - analog zu `LlmConfig.scala` in `ai-rag-langchain4j`.
   */
 object AnthropicClient:
 
@@ -21,8 +23,9 @@ object AnthropicClient:
 
   private val AnthropicVersion = "2023-06-01"
 
-  private val apiKey: String = Env.get("ANTHROPIC_AUTH_TOKEN")
-    .orElse(Env.get("ANTHROPIC_API_KEY"))
+  private val apiKey: String = sys.env
+    .get("ANTHROPIC_AUTH_TOKEN")
+    .orElse(sys.env.get("ANTHROPIC_API_KEY"))
     .getOrElse(throw new RuntimeException("Weder ANTHROPIC_AUTH_TOKEN noch ANTHROPIC_API_KEY gesetzt."))
 
   private val config = ClaudeConfig(

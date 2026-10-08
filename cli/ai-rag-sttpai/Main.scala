@@ -1,5 +1,8 @@
 package rag
 
+import rag.ingestion.{GenerateSampleDocs, Ingestion}
+import rag.query.{AnthropicClient, RagPipeline}
+
 /** Einstiegspunkt mit drei Subcommands:
   *
   * {{{

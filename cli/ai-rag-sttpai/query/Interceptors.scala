@@ -1,4 +1,4 @@
-package rag
+package rag.query
 
 import sttp.ai.core.agent.interceptor.{LogLevel, LoggingInterceptor}
 import sttp.monad.IdentityMonad

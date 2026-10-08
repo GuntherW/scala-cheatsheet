@@ -1,4 +1,4 @@
-package rag
+package rag.query
 
 import io.circe.Codec
 import sttp.tapir.Schema

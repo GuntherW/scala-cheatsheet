@@ -1,4 +1,6 @@
-package rag
+package rag.ingestion
+
+import rag.{Db, HashingTfIdfEmbedder, VectorStore}
 
 /** Orchestriert die Ingestion-Phase (einmalig vor dem eigentlichen Fragen-Beantworten auszuführen, siehe `Main.scala`, Subcommand `ingest`):
   *
