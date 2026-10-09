@@ -1,6 +1,6 @@
 import orca.{*, given}
 
-val ReportModel = Model("vertex/claude-sonnet-5-5@eu")
+val model: Model = Model("vertex/claude-sonnet-5-5@eu")
 
 enum Worker:
   case Fact, Risk
@@ -15,8 +15,12 @@ object Agents:
       |Antworte nur mit dem Berichtstext.
       |""".stripMargin
 
-  private val FactPrompt =
-    s"""Du bist der Fact-Researcher in einem Multi-Agenten-System.
+  def factResearcher(topic: String)(using FlowContext, InStage): String =  claude
+      .withModel(model)
+      .withName("Fact-Researcher")
+      .withNetworkOnly
+      .withSystemPrompt(
+        s"""Du bist der Fact-Researcher in einem Multi-Agenten-System.
        |
        |Deine EINZIGE Aufgabe: Sammle objektive Fakten, Argumente und Quellen für die
        |gegebene Technologie oder Entscheidung.
@@ -27,10 +31,15 @@ object Agents:
        |- Bewerte KEINE Risiken, Kosten oder Nachteile — das übernimmt ein anderer Agent.
        |- Sei präzise und strukturiere die Antwort in Stichpunkten mit Quellenangaben.
        |- Antworte auf Deutsch.
-       |$IgnoreRepo""".stripMargin
+       |$IgnoreRepo""".stripMargin)
+      .run(s"Sammle Fakten, Argumente und Quellen zu folgendem Thema:\n\n$topic")
 
-  private val RiskPrompt =
-    s"""Du bist der Risk-Analyst in einem Multi-Agenten-System.
+  def riskAnalyst(topic: String, tco: String)(using FlowContext, InStage): String = claude
+      .withModel(model)
+      .withName("Risk-Analyst")
+      .withReadOnly
+      .withSystemPrompt(
+        s"""Du bist der Risk-Analyst in einem Multi-Agenten-System.
        |
        |Deine EINZIGE Aufgabe: Finde Risiken, Fallstricke, Kosten, Sicherheitsbedenken
        |und Nachteile der gegebenen Technologie oder Entscheidung.
@@ -43,38 +52,7 @@ object Agents:
        |- Nenne KEINE Vorteile oder positiven Argumente — das übernimmt ein anderer Agent.
        |- Sei präzise und strukturiere die Antwort in Stichpunkten.
        |- Antworte auf Deutsch.
-       |$IgnoreRepo""".stripMargin
-
-  private val SynthesisPrompt =
-    s"""Du bist der Synthesis-Agent in einem Multi-Agenten-System.
-       |
-       |Du erhältst zwei Berichte:
-       |1. Fakten & Argumente vom Fact-Researcher
-       |2. Risiken & Nachteile vom Risk-Analyst
-       |
-       |Deine Aufgabe:
-       |- Fasse beide Perspektiven zu einem einzigen, ausgewogenen Bericht zusammen.
-       |- Löse inhaltliche Widersprüche zwischen den beiden Berichten transparent auf.
-       |- Gliedere den finalen Bericht in: Zusammenfassung, Fakten & Argumente,
-       |  Risiken & Nachteile, Abwägung/Widersprüche, Empfehlung.
-       |- Sei sachlich und begründe die Empfehlung nachvollziehbar.
-       |- Antworte auf Deutsch.
-       |$IgnoreRepo""".stripMargin
-
-  def factResearcher(topic: String)(using FlowContext, InStage): String =
-    claude
-      .withModel(ReportModel)
-      .withName("Fact-Researcher")
-      .withNetworkOnly
-      .withSystemPrompt(FactPrompt)
-      .run(s"Sammle Fakten, Argumente und Quellen zu folgendem Thema:\n\n$topic")
-
-  def riskAnalyst(topic: String, tco: String)(using FlowContext, InStage): String =
-    claude
-      .withModel(ReportModel)
-      .withName("Risk-Analyst")
-      .withReadOnly
-      .withSystemPrompt(RiskPrompt)
+       |$IgnoreRepo""".stripMargin)
       .run(
         s"""Analysiere Risiken, Fallstricke und Nachteile zu folgendem Thema:
            |
@@ -87,12 +65,25 @@ object Agents:
            |Die TCO-Schätzung ist eine lokale Demo-Berechnung für ein Team von ${CalculateTco.DemoTeamSize} Personen. Übernimm sie in den Bericht.""".stripMargin
       )
 
-  def synthesis(topic: String, reports: WorkerReports)(using FlowContext, InStage): String =
-    claude
-      .withModel(ReportModel)
+  def synthesis(topic: String, reports: WorkerReports)(using FlowContext, InStage): String = claude
+      .withModel(model)
       .withName("Synthesis-Agent")
       .withReadOnly
-      .withSystemPrompt(SynthesisPrompt)
+      .withSystemPrompt(
+        s"""Du bist der Synthesis-Agent in einem Multi-Agenten-System.
+       |
+       |Du erhältst zwei Berichte:
+       |1. Fakten & Argumente vom Fact-Researcher
+       |2. Risiken & Nachteile vom Risk-Analyst
+       |
+       |Deine Aufgabe:
+       |- Fasse beide Perspektiven zu einem einzigen, ausgewogenen Bericht zusammen.
+       |- Löse inhaltliche Widersprüche zwischen den beiden Berichten transparent auf.
+       |- Gliedere den finalen Bericht in: Zusammenfassung, Fakten & Argumente,
+       |  Risiken & Nachteile, Abwägung/Widersprüche, Empfehlung.
+       |- Sei sachlich und begründe die Empfehlung nachvollziehbar.
+       |- Antworte auf Deutsch.
+       |$IgnoreRepo""".stripMargin)
       .run(
         s"""Thema: $topic
            |
