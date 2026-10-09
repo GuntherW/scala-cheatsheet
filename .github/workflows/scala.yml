@@ -19,7 +19,7 @@ jobs:
           java-version: '26'
           distribution: 'temurin'
       - name: Set up Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: '24'
       - name: Set up sbt
