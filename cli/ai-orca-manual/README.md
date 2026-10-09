@@ -24,11 +24,11 @@ Resume wiederholt beide, nicht nur den gescheiterten. Synthesis ist eine eigene 
 
 ## Start
 
-Voraussetzung: `orca` 0.1.10, JDK 21+, `claude` eingeloggt, dieses Git-Repo. Nicht der Requesty-Key aus `.env`. Das
+Voraussetzung: `orca` 0.2.0, JDK 21+, `claude` eingeloggt, dieses Git-Repo. Nicht der Requesty-Key aus `.env`. Das
 Modell ist `vertex/claude-sonnet-5-5@eu` — `claude.sonnet` (`claude-sonnet-5`) lehnt dieser Router ab.
 
 ```bash
-orca run cli/multi-agent-manual-orca/main.scala \
+orca run main.scala \
   "Sollten wir Kubernetes für unser 5-Personen-Startup einführen?"
 ```
 
@@ -38,7 +38,7 @@ Default-Thema wie im Manual-Projekt.
 Ohne `orca`-Binary, direkt über scala-cli:
 
 ```bash
-scala-cli run --workspace "$(mktemp -d)" cli/multi-agent-manual-orca/main.scala -- \
+scala-cli run --workspace "$(mktemp -d)" main.scala -- \
   "Sollten wir Kubernetes für unser 5-Personen-Startup einführen?"
 ```
 
