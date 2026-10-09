@@ -1,6 +1,6 @@
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:7.2.2
+    image: confluentinc/cp-zookeeper:7.9.10
     hostname: zookeeper
     container_name: zookeeper
     ports:
@@ -10,7 +10,7 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
 
   kafka:
-    image: confluentinc/cp-kafka:7.2.2
+    image: confluentinc/cp-kafka:7.9.10
     hostname: kafka
     container_name: kafka
     depends_on:
@@ -33,7 +33,7 @@ services:
 
   kafka-connect:
     container_name: kafka-connect
-    #    image: confluentinc/cp-kafka-connect:7.2.1
+    #    image: confluentinc/cp-kafka-connect:7.9.10
     #    image: confluentinc/kafka-connect-datagen:latest
     build:
       context: connect
@@ -70,7 +70,7 @@ services:
       - ./connect/postgres-source.json:/connect/postgres-source.json
 
   schemaregistry:
-    image: confluentinc/cp-schema-registry:5.2.1
+    image: confluentinc/cp-schema-registry:7.9.10
     restart: always
     depends_on:
       - zookeeper
@@ -162,7 +162,7 @@ services:
     entrypoint: "bin/pulsar standalone"
 
   mongodb:
-    image: mongo:8.2
+    image: mongo:9.0
     container_name: mongodb-cheatsheet
     ports:
       - '27117:27017'
@@ -170,7 +170,7 @@ services:
       - dbdata6:/data/db
 
   valkey:
-    image: valkey/valkey:9.1.2
+    image: valkey/valkey:9.2
     container_name: valkey-cheatsheet
     ports:
       - '6379:6379'

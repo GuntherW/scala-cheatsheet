@@ -1,5 +1,5 @@
 # Basis-Image - Ubuntu 24.04 LTS (neueste LTS-Version)
-FROM ubuntu:24.04
+FROM ubuntu:26.04
 
 # Vermeidung von Interaktionen während der Installation
 ENV DEBIAN_FRONTEND=noninteractive
