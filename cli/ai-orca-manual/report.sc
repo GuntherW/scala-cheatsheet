@@ -1,5 +1,4 @@
 //> using scala 3.9.0
-//> using jvm 21
 //> using dep org.virtuslab::orca:0.1.10
 //> using file CalculateTco.scala
 
