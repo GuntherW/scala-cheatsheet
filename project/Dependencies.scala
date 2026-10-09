@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.8"
-  val aws                     = "2.272.0"
+  val aws                     = "2.273.0"
   val avro4s                  = "5.0.15"
   val blake3                  = "3.1.2"
   val borer                   = "1.18.0"
@@ -22,7 +22,7 @@ object Version {
   val fs2                     = "3.14.0"
   val gatling                 = "3.16.0"
   val gears                   = "0.3.1"
-  val grpcNetty               = "1.84.1"
+  val grpcNetty               = "1.84.2"
   val hash4j                  = "0.31.0"
   val h2                      = "2.5.252"
   val http4s                  = "0.23.38"
