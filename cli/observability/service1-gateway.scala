@@ -2,7 +2,7 @@
 //> using resourceDir .
 //> using dep com.softwaremill.sttp.tapir::tapir-netty-server-sync:1.13.30
 //> using dep com.softwaremill.sttp.tapir::tapir-json-circe:1.13.33
-//> using dep com.softwaremill.sttp.tapir::tapir-opentelemetry-tracing:1.13.32
+//> using dep com.softwaremill.sttp.tapir::tapir-opentelemetry-tracing:1.13.33
 //> using dep com.softwaremill.sttp.client4::core:4.0.27
 //> using dep com.softwaremill.sttp.client4::circe:4.0.27
 //> using dep io.circe::circe-generic:0.14.17
@@ -33,13 +33,13 @@ case class GatewayResponse(n: Int, fibonacci: Long, traceSteps: List[String], du
 
 @main
 def service1Gateway(): Unit =
-  val port      = 8081
-  val svcName   = "service1-gateway"
-  val svc2Url   = sys.env.getOrElse("SERVICE2_URL", "http://localhost:8082")
-  val otel      = setupOtel(svcName)
-  val meter     = otel.getMeter(svcName)
-  val backend   = DefaultSyncBackend()
-  val log       = LoggerFactory.getLogger(svcName)
+  val port    = 8081
+  val svcName = "service1-gateway"
+  val svc2Url = sys.env.getOrElse("SERVICE2_URL", "http://localhost:8082")
+  val otel    = setupOtel(svcName)
+  val meter   = otel.getMeter(svcName)
+  val backend = DefaultSyncBackend()
+  val log     = LoggerFactory.getLogger(svcName)
 
   val requestCounter: LongCounter = meter
     .counterBuilder("gateway.requests.total")
@@ -71,25 +71,25 @@ def service1Gateway(): Unit =
       .response(asJson[ProcessResult])
       .send(backend)
       .body match
-        case Right(proc) =>
-          val duration = System.currentTimeMillis() - start
-          e2eLatency.record(duration)
-          log.info("Request complete: fibonacci({}) = {}, total {}ms", req.n, proc.result, duration)
-          Right(GatewayResponse(req.n, proc.result, proc.steps, duration))
-        case Left(err) =>
-          log.warn("Downstream error: {}", err)
-          Left(s"service2 error: $err")
+      case Right(proc) =>
+        val duration = System.currentTimeMillis() - start
+        e2eLatency.record(duration)
+        log.info("Request complete: fibonacci({}) = {}, total {}ms", req.n, proc.result, duration)
+        Right(GatewayResponse(req.n, proc.result, proc.steps, duration))
+      case Left(err)   =>
+        log.warn("Downstream error: {}", err)
+        Left(s"service2 error: $err")
 
   println(s"""
-    |=========================================
-    | $svcName starting on port $port
-    |
-    | Example:
-    |   curl -X POST http://localhost:$port/fibonacci \\
-    |        -H 'Content-Type: application/json' \\
-    |        -d '{"n": 10}'
-    |=========================================
-    |""".stripMargin)
+             |=========================================
+             | $svcName starting on port $port
+             |
+             | Example:
+             |   curl -X POST http://localhost:$port/fibonacci \\
+             |        -H 'Content-Type: application/json' \\
+             |        -d '{"n": 10}'
+             |=========================================
+             |""".stripMargin)
 
   runServer(port, svcName, otel, fibServerEndpoint)(log)
   otel.close()
