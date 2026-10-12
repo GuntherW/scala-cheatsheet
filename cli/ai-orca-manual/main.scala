@@ -5,13 +5,10 @@
 
 import orca.{*, given}
 
-// Entscheidungsbericht als Orca-Flow. Gleiche Aufgabe wie cli/multi-agent-manual-orchestrator,
-// andere Schicht: Orca steuert die claude-CLI, nicht die Messages API.
 // Der Flow erzwingt einen Worktree, damit der Checkout dieses Repos keinen Branch wechselt.
 // Reports landen im Worktree unter cli/ai-orca-manual/output/.
 
 val defaultTopic = "Sollten wir für unser Backend von REST auf GraphQL wechseln?"
-
 val outputDir = "cli/ai-orca-manual/output"
 
 @main def main(args: String*): Unit =

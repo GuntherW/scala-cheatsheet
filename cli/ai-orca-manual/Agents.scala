@@ -1,7 +1,5 @@
 import orca.{*, given}
 
-val model: Model = Model("vertex/claude-sonnet-5-5@eu")
-
 enum Worker:
   case Fact, Risk
 
@@ -15,7 +13,10 @@ object Agents:
       |Antworte nur mit dem Berichtstext.
       |""".stripMargin
 
-  private def base(name: String)(using FlowContext, InStage) = claude.withModel(model).withName(name)
+  private def base(name: String)(using FlowContext, InStage) =
+    claude
+      .withModel(Model("vertex/claude-sonnet-5-5@eu"))
+      .withName(name)
 
   def factResearcher(topic: String)(using FlowContext, InStage): String =
     base("Fact-Researcher")
