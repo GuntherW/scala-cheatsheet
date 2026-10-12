@@ -11,6 +11,7 @@ import org.http4s.implicits.*
 import org.http4s.server.*
 import org.http4s.server.middleware.authentication.DigestAuth
 import org.http4s.server.middleware.authentication.DigestAuth.Md5HashedAuthStore
+import org.http4s.crypto.HashAccess.given
 
 import java.nio.charset.StandardCharsets
 import java.time.LocalDateTime
