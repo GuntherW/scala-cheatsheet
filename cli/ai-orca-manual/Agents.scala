@@ -15,9 +15,10 @@ object Agents:
       |Antworte nur mit dem Berichtstext.
       |""".stripMargin
 
-  def factResearcher(topic: String)(using FlowContext, InStage): String =  claude
-      .withModel(model)
-      .withName("Fact-Researcher")
+  private def base(name: String)(using FlowContext, InStage) = claude.withModel(model).withName(name)
+
+  def factResearcher(topic: String)(using FlowContext, InStage): String =
+    base("Fact-Researcher")
       .withNetworkOnly
       .withSystemPrompt(
         s"""Du bist der Fact-Researcher in einem Multi-Agenten-System.
@@ -34,9 +35,8 @@ object Agents:
        |$IgnoreRepo""".stripMargin)
       .run(s"Sammle Fakten, Argumente und Quellen zu folgendem Thema:\n\n$topic")
 
-  def riskAnalyst(topic: String, tco: String)(using FlowContext, InStage): String = claude
-      .withModel(model)
-      .withName("Risk-Analyst")
+  def riskAnalyst(topic: String, tco: String)(using FlowContext, InStage): String =
+    base("Risk-Analyst")
       .withReadOnly
       .withSystemPrompt(
         s"""Du bist der Risk-Analyst in einem Multi-Agenten-System.
@@ -65,9 +65,8 @@ object Agents:
            |Die TCO-Schätzung ist eine lokale Demo-Berechnung für ein Team von ${CalculateTco.DemoTeamSize} Personen. Übernimm sie in den Bericht.""".stripMargin
       )
 
-  def synthesis(topic: String, reports: WorkerReports)(using FlowContext, InStage): String = claude
-      .withModel(model)
-      .withName("Synthesis-Agent")
+  def synthesis(topic: String, reports: WorkerReports)(using FlowContext, InStage): String =
+    base("Synthesis-Agent")
       .withReadOnly
       .withSystemPrompt(
         s"""Du bist der Synthesis-Agent in einem Multi-Agenten-System.

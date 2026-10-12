@@ -48,7 +48,7 @@ Der Flow setzt `RunTarget.Worktree` selbst. Der aktuelle Checkout wechselt keine
 Die Berichte liegen im Worktree, nicht im Arbeitsverzeichnis:
 
 ```text
-.orca/worktrees/<hash>/cli/multi-agent-manual-orca/output/
+.orca/worktrees/<hash>/cli/ai-orca-manual/output/
 ```
 
 Der Abschluss von Orca nennt den Pfad.
