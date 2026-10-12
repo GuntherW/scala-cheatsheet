@@ -78,7 +78,6 @@ object Version {
   val zioHttp                 = "3.11.6"
   val zioPrelude              = "1.0.0-RC48"
   val zioSchema               = "1.9.0"
-  val zioOpenAI               = "0.4.1"
 
   // ScalaJS
   val scalaJsDom = "2.8.1"
@@ -239,7 +238,6 @@ object Library {
   val zioSchemaProtobuf         = "dev.zio"                               %% "zio-schema-protobuf"                       % Version.zioSchema
   val zioSchemaDerivation       = "dev.zio"                               %% "zio-schema-derivation"                     % Version.zioSchema
   val zioHttp                   = "dev.zio"                               %% "zio-http"                                  % Version.zioHttp
-  val zioOpenAI                 = "dev.zio"                               %% "zio-openai"                                % Version.zioOpenAI
 
   // test
   val cucumberScala         = "io.cucumber"                 %% "cucumber-scala"                 % Version.cucumberScala

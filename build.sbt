@@ -77,7 +77,6 @@ lazy val `scala-cheatsheet` = rootProject
     magnolia,
     mongo,
     munit,
-    openAI,
     osLib,
     parsers,
     proteus,
@@ -332,13 +331,6 @@ lazy val osLib = project
     )
   )
 
-lazy val openAI = project
-  .settings(
-    libraryDependencies ++= Seq(
-      Library.zioOpenAI,
-      Library.sttpOpenAi,
-    )
-  )
 
 lazy val parsers = project
   .settings(
