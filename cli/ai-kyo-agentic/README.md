@@ -14,7 +14,7 @@ konzentriert sich auf die Unterschiede zum sttp-ai-Original; für die ausführli
 | Effekt-System / Nebenläufigkeit (`Async.foreach`, `LLM.run`) | [`kyo-core`](https://github.com/getkyo/kyo/tree/main/kyo-core) (transitiv über `kyo-ai`) |
 | HTTP-Client für den handgerollten `web_search`-Pfad          | [`kyo-http`](https://github.com/getkyo/kyo/tree/main/kyo-http)                           |
 | JSON-Encode/Decode außerhalb von `AI.gen`                    | [`kyo-schema-json`](https://github.com/getkyo/kyo/tree/main/kyo-schema-json)             |
-| Dateizugriff (`.env`, `output/`)                             | [`os-lib`](https://github.com/com-lihaoyi/os-lib)                                        |
+| Dateizugriff (`output/`)                                    | [`os-lib`](https://github.com/com-lihaoyi/os-lib)                                        |
 | Tests                                                        | [MUnit](https://scalameta.org/munit/)                                                    |
 
 ## Warum kyo-ai statt sttp-ai? Was ändert sich dadurch?
@@ -121,7 +121,7 @@ AgentSpec.scala            generischer Agenten-Knoten (id, deps, mandatory, exec
 AgentRegistry.scala        zentrale Liste aller Agenten
 ExecutionPlan.scala        Structured-Output-Ergebnis der Planungsphase
 FactReport.scala / RiskReport.scala   strukturierte Worker-Ergebnisse
-LlmConfig.scala             AI.Config (Requesty-Router, Modell, Key aus .env) + .env-Parser
+LlmConfig.scala             AI.Config (Requesty-Router, Modell, Key aus sys.env)
 Agents.scala                 run/runStructured (Ersatz für die Agent-Basisklasse)
 Observability.scala        Observe-basiertes Logging/Usage-Tracking/Budget-Guard
 WebSearchClient.scala       handgerollter web_search-Einzel-Request-Pfad (kyo-http)
@@ -144,10 +144,10 @@ Ergebnisse landen in `output/` (pro Agent eine Datei, `99_final_report.md`, `99_
 
 ## Credentials
 
-`.env` im Projektordner (git-ignoriert), analog zum Original:
+Der Key wird per `sys.env("ANTHROPIC_API_KEY")` aus der Umgebung gelesen:
 
 ```
-ANTHROPIC_API_KEY="..."
+export ANTHROPIC_API_KEY="..."
 ```
 
 Alternativ `ANTHROPIC_AUTH_TOKEN` oder eine echte Umgebungsvariable.

@@ -17,9 +17,7 @@ object AnthropicClient:
 
   private val AnthropicVersion = "2023-06-01"
 
-  private val apiKey: String = Env.get("ANTHROPIC_AUTH_TOKEN")
-    .orElse(Env.get("ANTHROPIC_API_KEY"))
-    .getOrElse(throw new RuntimeException("Weder ANTHROPIC_AUTH_TOKEN noch ANTHROPIC_API_KEY gesetzt."))
+  private val apiKey: String = sys.env("ANTHROPIC_API_KEY")
 
   // Dieses Projekt spricht (wie im Python-Pendant) einen requesty.ai-Router statt der offiziellen
   // Anthropic-Basis-URL an. sttp-ai unterstützt das direkt über `ClaudeConfig.baseUrl` (Standard wäre
@@ -150,36 +148,3 @@ object AnthropicClient:
     loop(List(Message.user(userMessage)), turn = 1)
 
   def close(): Unit = client.close()
-
-/** Lädt Umgebungsvariablen aus der `.env`-Datei im Projekt-Root (eine Ebene über diesem Ordner), analog zum Python-Pendant (`python-dotenv`).
-  *
-  * Eigene, bewusst simple Implementierung auf Basis von `os-lib` statt der Java-Bibliothek `dotenv-java`: Letztere ist reines JVM-Java und würde als einzige Abhängigkeit dieses Projekts die
-  * Scala-Native-Kompatibilität der übrigen Abhängigkeiten (`sttp-ai`, `os-lib`, `ox`) brechen. Unterstütztes Format: `SCHLÜSSEL=WERT` pro Zeile, `#`-Kommentare und Leerzeilen werden ignoriert, ein-
-  * oder doppelte Anführungszeichen um den Wert werden entfernt. Fällt automatisch auf echte Umgebungsvariablen zurück, falls die `.env`-Datei fehlt oder der Schlüssel dort nicht gesetzt ist.
-  */
-object Env:
-
-  private val dotenvPath = os.pwd / ".env"
-
-  private val dotenvVars: Map[String, String] =
-    if os.exists(dotenvPath) then
-      os.read
-        .lines(dotenvPath)
-        .iterator
-        .map(_.trim)
-        .filter(line => line.nonEmpty && !line.startsWith("#"))
-        .flatMap(_.split("=", 2) match
-          case Array(key, value) => Some(key.trim -> unquote(value.trim))
-          case _                 => None,
-        )
-        .toMap
-    else Map.empty
-
-  private def unquote(value: String): String =
-    val isQuoted = value.length >= 2 && ((value.startsWith("\"") && value.endsWith("\"")) || (value.startsWith("'") && value.endsWith("'")))
-    if isQuoted then value.substring(1, value.length - 1) else value
-
-  def get(key: String): Option[String] = dotenvVars.get(key).orElse(sys.env.get(key))
-
-  def require(key: String): String = get(key)
-    .getOrElse(throw new RuntimeException(s"Umgebungsvariable '$key' ist weder in .env noch im Environment gesetzt."))

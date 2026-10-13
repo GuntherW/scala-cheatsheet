@@ -240,7 +240,6 @@ das Verwerfen von Termen mit weniger als 3 Zeichen.
 ```
 ai-sttpai-agent-toolsearch/
 ├── project.scala        # scala-cli Direktiven: Scala-Version & Abhängigkeiten
-├── Env.scala             # Liest ANTHROPIC_API_KEY aus .env (via os-lib)
 ├── AnthropicClient.scala # Model-Call-Loop MIT dynamisch wachsender tools-Liste (generisch, kein Sonderfall für search_tools) + ox.timeout
 ├── ToolCatalog.scala     # RegisteredTool/ToolCallResult, ALLE Tools (inkl. search_tools) + Keyword-Suche - der einzige Ort, an dem Tool-Search passiert
 ├── Tools.scala           # Definition & Handler der 3 fachlichen Tools (get_current_time, calculator, roll_dice)
@@ -259,8 +258,8 @@ scala-cli run . -- "Deine Frage hier"
 
 ## Credentials
 
-Wie im Schwesterprojekt: API-Key wird aus der `.env`-Datei im Projektordner
-gelesen (`ANTHROPIC_API_KEY`, alternativ `ANTHROPIC_AUTH_TOKEN`), genutzt wird
+Wie im Schwesterprojekt: API-Key wird per `sys.env("ANTHROPIC_API_KEY")` aus der Umgebung
+gelesen, genutzt wird
 der Requesty-Router (`https://router.eu.requesty.ai`) mit dem Modell
 `vertex/claude-sonnet-5-5@eu`.
 

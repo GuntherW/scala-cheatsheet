@@ -25,7 +25,7 @@ Identität der Agenten kennt). Siehe Abschnitt
 | JSON-Serialisierung/-Deserialisierung                             | [circe](https://circe.github.io/circe/) (bringt `sttp-ai` bereits mit, keine eigene Abhängigkeit)                               |
 | JSON-Schema-Ableitung für Structured Output                       | [tapir](https://tapir.softwaremill.com/) `Schema` (bringt `sttp-ai` bereits mit)                                                |
 | Dateisystemzugriff (`output/`-Ordner)                             | [os-lib](https://github.com/com-lihaoyi/os-lib)                                                                                 |
-| `.env`-Datei einlesen                                             | eigene, simple Implementierung (`object Env` in `AnthropicClient.scala`, siehe unten)                                           |
+| API-Key                                                           | `sys.env("ANTHROPIC_API_KEY")` in `AnthropicClient.scala` (siehe unten)                                           |
 | Nebenläufigkeit (paralleles Ausführen der Worker)                 | [ox](https://ox.softwaremill.com/) (`par`, strukturierte Nebenläufigkeit auf Virtual Threads)                                   |
 | Tests (Plan-Validierung/Executor-Logik, Interceptoren)            | [MUnit](https://scalameta.org/munit/) (`scala-cli test .`)                                                                      |
 | Build/Run ohne sbt-Projekt                                        | `scala-cli` mit `//> using` Direktiven                                                                                          |
@@ -560,7 +560,6 @@ multi-agent-agentic-orchestrator/
 ├── project.scala             # scala-cli Direktiven: Scala-Version, Abhängigkeiten & Test-Framework (MUnit)
 ├── AnthropicClient.scala     # ClaudeClient + SyncBackend, buildAgent (eingebaute ClaudeAgent-Fabrik ODER webSearchAgent-Einzel-Request,
 │                             #   je nach useWebSearch)/buildStructuredAgent (Interceptor-Stack), usageCollector
-│                             #   + object Env am Dateiende: liest ANTHROPIC_AUTH_TOKEN/ANTHROPIC_API_KEY aus .env (via os-lib)
 ├── Interceptors.scala        # Logging-/Usage-Tracking-/Budget-Interceptoren + PriceTable (Kostenschätzung)
 ├── Agent.scala               # Basisklasse Agent (kapselt Model-Call + Tools über AnthropicClient.buildAgent)
 ├── AgentSpec.scala           # Generische Agenten-Beschreibung (id, hardDependsOn, isMandatory, execute) für Registry/Planner
@@ -598,11 +597,8 @@ in `output/<Nummer>_<agent-id>.md` (z. B. `01_Fact-Researcher.md`,
 
 ## Credentials
 
-Der API-Key wird aus der `.env`-Datei in diesem Projektordner (`cli/multi-agent-agentic-orchestrator/.env`, Variable
-`ANTHROPIC_AUTH_TOKEN`, alternativ `ANTHROPIC_API_KEY`) geladen (`object Env`
-am Ende von `AnthropicClient.scala`, eigene, simple `os-lib`-basierte Implementierung ohne zusätzliche Dependency).
-`Env.get` liest dabei zuerst `.env` (relativ zu `os.pwd`, also dem Verzeichnis, aus
-dem `scala-cli run .` gestartet wird) und fällt andernfalls auf eine echte Umgebungsvariable zurück. Genutzt
+Der API-Key wird bewusst simpel per `sys.env("ANTHROPIC_API_KEY")` aus der Umgebung gelesen
+(z. B. `export ANTHROPIC_API_KEY=...`; fehlt die Variable, bricht das Programm mit `NoSuchElementException` ab). Genutzt
 wird der Requesty-Router (`https://router.eu.requesty.ai`) mit dem Modell
 `vertex/claude-sonnet-5-5@eu`, konfiguriert über `ClaudeConfig(baseUrl = ...)`
 aus `sttp-ai`. Authentifiziert wird - wie im offiziellen Anthropic-SDK -
@@ -617,10 +613,9 @@ spricht (wie das Python-Pendant) einen Requesty-Router statt
 direkt über den `baseUrl`-Parameter (`Uri`) - `v1/messages` wird vom Client
 selbst angehängt, man darf den Pfad also NICHT mit angeben (siehe
 `AnthropicClient.scala`). `ClaudeConfig.fromEnv`/`ClaudeSyncClient.fromEnv`
-wurden hier bewusst NICHT genutzt, da sie nur `sys.env` lesen - dieses
-Projekt liest den API-Key stattdessen über das projekteigene `object Env`
-(am Ende von `AnthropicClient.scala`, liest zusätzlich `.env` und
-unterstützt den Fallback-Namen `ANTHROPIC_AUTH_TOKEN`).
+wurden hier bewusst NICHT genutzt, da sie `ANTHROPIC_API_KEY` erwarten, aber
+keinen Zugriff auf die Router-`baseUrl` bieten - der Key wird daher selbst per
+`sys.env` gelesen und in `ClaudeConfig` übergeben.
 
 **2. `ContentBlock.Thinking` ohne `signature`-Feld (Problem entfällt seit Umstieg auf die eingebaute
 `ClaudeAgentBackend`):** Anthropic

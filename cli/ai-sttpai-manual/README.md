@@ -15,7 +15,7 @@ erstellt.
 | Anthropic-/Claude-Client (Messages API, Tools)    | [sttp-ai](https://sttp-ai.softwaremill.com/) (`claude`-Modul, `ClaudeSyncClient`)                 |
 | JSON-Serialisierung/-Deserialisierung             | [circe](https://circe.github.io/circe/) (bringt `sttp-ai` bereits mit, keine eigene Abhängigkeit) |
 | Dateisystemzugriff (`output/`-Ordner)             | [os-lib](https://github.com/com-lihaoyi/os-lib)                                                   |
-| `.env`-Datei einlesen                             | eigene, simple Implementierung (`Env.scala`, siehe unten)                                         |
+| API-Key                                           | `sys.env("ANTHROPIC_API_KEY")` (siehe unten)                                                      |
 | Nebenläufigkeit (paralleles Ausführen der Worker) | [ox](https://ox.softwaremill.com/) (`par`, strukturierte Nebenläufigkeit auf Virtual Threads)     |
 | Build/Run ohne sbt-Projekt                        | `scala-cli` mit `//> using` Direktiven                                                            |
 
@@ -261,7 +261,6 @@ Error-Handling für beide Zweige einzeln.
 ```
 research_scala/
 ├── project.scala        # scala-cli Direktiven: Scala-Version & Abhängigkeiten
-├── Env.scala             # Liest ANTHROPIC_API_KEY aus ../.env (via os-lib)
 ├── AnthropicClient.scala  # Wrapper um sttp-ai's ClaudeSyncClient + Logging + Tool-Use-Loop
 ├── Agent.scala            # Basisklasse Agent (kapselt Model-Call + Tools)
 ├── AgentFactResearcher.scala # Worker 1 (web_search, server-seitig)
@@ -287,11 +286,9 @@ Ohne Argument wird ein Standardthema verwendet. Die Ergebnisse landen in
 
 ## Credentials
 
-Der API-Key wird aus der `.env`-Datei im Projekt-Root (`.env` im
-Projektordner, Variable `ANTHROPIC_API_KEY`, alternativ
-`ANTHROPIC_AUTH_TOKEN`) geladen (`Env.scala`, eigene, simple
-`os-lib`-basierte Implementierung ohne zusätzliche Dependency) - analog zum
-Python-Pendant in `../tutorial/init.py` bzw. `../research/init.py`. Genutzt
+Der API-Key wird bewusst simpel per `sys.env("ANTHROPIC_API_KEY")` aus der
+Umgebung gelesen (z. B. `export ANTHROPIC_API_KEY=...`; fehlt die Variable, bricht
+das Programm mit `NoSuchElementException` ab). Genutzt
 wird der Requesty-Router (`https://router.eu.requesty.ai`) mit dem Modell
 `vertex/claude-sonnet-5-5@eu`, konfiguriert über `ClaudeConfig(baseUrl = ...)`
 aus `sttp-ai`. Authentifiziert wird - wie im offiziellen Anthropic-SDK -
@@ -306,10 +303,9 @@ spricht (wie das Python-Pendant) einen Requesty-Router statt
 direkt über den `baseUrl`-Parameter (`Uri`) - `v1/messages` wird vom Client
 selbst angehängt, man darf den Pfad also NICHT mit angeben (siehe
 `AnthropicClient.scala`). `ClaudeConfig.fromEnv`/`ClaudeSyncClient.fromEnv`
-wurden hier bewusst NICHT genutzt, da sie nur `sys.env` lesen - dieses
-Projekt liest den API-Key stattdessen über die projekteigene
-`Env.scala` (die zusätzlich `../.env` einliest und den Fallback-Namen
-`ANTHROPIC_AUTH_TOKEN` unterstützt).
+wurden hier bewusst NICHT genutzt, da sie `ANTHROPIC_API_KEY` erwarten, aber
+keinen Zugriff auf die Router-`baseUrl` bieten - der Key wird daher selbst per
+`sys.env` gelesen und in `ClaudeConfig` übergeben.
 
 **2. `ContentBlock.Thinking` ohne `signature`-Feld:** Anthropic verlangt beim
 Zurücksenden von `thinking`-Blöcken (z. B. nach einem `tool_use`-Turn)

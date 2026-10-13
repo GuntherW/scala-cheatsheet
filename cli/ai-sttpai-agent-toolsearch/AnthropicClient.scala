@@ -19,9 +19,7 @@ import scala.util.control.NonFatal
   */
 object AnthropicClient:
 
-  private val apiKey: String = Env.get("ANTHROPIC_AUTH_TOKEN")
-    .orElse(Env.get("ANTHROPIC_API_KEY"))
-    .getOrElse(sys.error("Weder ANTHROPIC_AUTH_TOKEN noch ANTHROPIC_API_KEY gesetzt."))
+  private val apiKey: String = sys.env("ANTHROPIC_API_KEY")
 
   private val client = ClaudeSyncClient(ClaudeConfig(
     apiKey = apiKey,
