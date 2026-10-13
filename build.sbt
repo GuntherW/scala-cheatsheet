@@ -120,6 +120,7 @@ lazy val cdk = project
 
 lazy val core = project
   .settings(
+    scalacOptions += "-preview", // Scala 3.10 preview features (@unroll, relaxed lambdas, package object values)
     scalafixOnCompile := false,
     libraryDependencies ++= Dependencies.dependencies ++ Dependencies.testDependencies ++ Seq(Library.ox),
     Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-s", "4")
