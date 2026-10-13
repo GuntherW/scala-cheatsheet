@@ -11,7 +11,8 @@ import orca.{*, given}
 val defaultTopic = "Sollten wir für unser Backend von REST auf GraphQL wechseln?"
 val outputDir = "cli/ai-orca-manual/output"
 
-@main def main(args: String*): Unit =
+@main
+def main(args: String*): Unit =
   val parsed = OrcaArgs(args.toArray)
   val topic  = if parsed.userPrompt.isBlank then defaultTopic else parsed.userPrompt
 
