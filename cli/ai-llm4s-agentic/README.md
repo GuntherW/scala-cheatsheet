@@ -29,7 +29,7 @@ Der `Orchestrator` ist reiner Code (kein LLM-Call): Fan-out/Fan-in mit `ox.par`.
 
 ```
 project.scala           scala-cli Direktiven (llm4s-core, ox)
-resources/logback.xml   Logging auf WARN (sonst flutet llm4s die Konsole mit DEBUG)
+logback.xml             Logging auf WARN (sonst flutet llm4s die Konsole mit DEBUG)
 Llm.scala               LLMClient für den Requesty-Router
 Agent.scala             Basisklasse: Rolle (System-Prompt) + Tools -> llm4s Agent
 CalculateTcoTool.scala  Custom-Tool
