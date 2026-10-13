@@ -4,7 +4,8 @@ import org.llm4s.agent.{Agent as Llm4sAgent, AgentStatus}
 import org.llm4s.llmconnect.model.{AssistantMessage, CompletionOptions}
 import org.llm4s.toolapi.{ToolFunction, ToolRegistry}
 
-/** Basisklasse für alle Agenten: Rolle (System-Prompt) + Tools. llm4s' `Agent` übernimmt den Tool-Use-Loop (führt die Tool-Handler selbst aus und iteriert, bis das Modell ohne Tool-Aufruf antwortet). */
+/** Basisklasse für alle Agenten: Rolle (System-Prompt) + Tools. llm4s' `Agent` übernimmt den Tool-Use-Loop (führt die Tool-Handler selbst aus und iteriert, bis das Modell ohne Tool-Aufruf antwortet).
+  */
 abstract class Agent(name: String, systemPrompt: String, tools: Seq[ToolFunction[?, ?]] = Nil, maxSteps: Int = 10):
 
   private val llm4sAgent = new Llm4sAgent(Llm.client)

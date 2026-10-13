@@ -21,10 +21,11 @@ object Llm:
   private val apiKey: String = sys.env("ANTHROPIC_API_KEY")
 
   val client: LLMClient =
-    val created = for
-      registry <- Llm4sConfig.modelRegistryService()
-      given ModelRegistryService = registry
-      given ContextWindowResolver = ContextWindowResolver(registry)
-      client <- OpenRouterClient(OpenAIConfig.fromValues(Model, apiKey, None, BaseUrl))
-    yield client
+    val created =
+      for
+        registry                   <- Llm4sConfig.modelRegistryService()
+        given ModelRegistryService  = registry
+        given ContextWindowResolver = ContextWindowResolver(registry)
+        client                     <- OpenRouterClient(OpenAIConfig.fromValues(Model, apiKey, None, BaseUrl))
+      yield client
     created.fold(error => throw new RuntimeException(s"LLM-Client konnte nicht erstellt werden: ${error.formatted}"), identity)

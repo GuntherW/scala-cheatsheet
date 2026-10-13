@@ -1,6 +1,6 @@
 package agents
 
-import org.llm4s.toolapi.{Schema, SafeParameterExtractor, ToolBuilder, ToolFunction}
+import org.llm4s.toolapi.{SafeParameterExtractor, Schema, ToolBuilder, ToolFunction}
 import upickle.default.{macroRW, ReadWriter}
 
 case class CalculateTcoResult(technology: String, teamSize: Int, estimatedMonthlyCostEur: Int, note: String)

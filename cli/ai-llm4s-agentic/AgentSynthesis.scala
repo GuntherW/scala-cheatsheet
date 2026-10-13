@@ -21,8 +21,7 @@ object AgentSynthesis extends Agent(
                        |""".stripMargin,
     ):
 
-  def synthesize(topic: String, facts: String, risks: String): String =
-    run(
+  def synthesize(topic: String, facts: String, risks: String): String = run(
       s"""Thema: $topic
          |
          |<reportOfFactResearcher>
