@@ -1,9 +1,10 @@
 package rag
 
+import munit.FunSuite
 import org.llm4s.chunking.{ChunkerFactory, ChunkingConfig}
 
 /** Testet nur den reinen Chunking-Schritt (`ChunkerFactory.sentence`, auch von `RagFactory` genutzt) - ohne LLM-/DB-Call. */
-class ChunkingTest extends munit.FunSuite:
+class ChunkingTest extends FunSuite:
 
   private val config = ChunkingConfig(targetSize = 200, maxSize = 300, overlap = 20)
 

@@ -177,6 +177,27 @@ services:
     volumes:
       - valkeydata:/data
 
+  # ---------------------------------------------------------------------------
+  # Observability fuer cli/ai-rag-llm4s (siehe cli/ai-rag-llm4s/Readme_Usage.md)
+  #   docker compose --env-file .env --env-file .env.observability --profile otel up -d openobserve
+  #   -> OpenObserve UI http://localhost:5080, OTLP/gRPC :5081
+  # Secrets stehen in ./.env.observability (OPENOBSERVE_*).
+  # ---------------------------------------------------------------------------
+  openobserve:
+    image: public.ecr.aws/zinclabs/openobserve:latest
+    container_name: openobserve
+    profiles: ["otel"]
+    restart: unless-stopped
+    ports:
+      - "5080:5080"   # UI + OTLP/HTTP
+      - "5081:5081"   # OTLP/gRPC
+    environment:
+      ZO_ROOT_USER_EMAIL: ${OPENOBSERVE_ROOT_EMAIL:-}
+      ZO_ROOT_USER_PASSWORD: ${OPENOBSERVE_ROOT_PASSWORD:-}
+      ZO_DATA_DIR: /data
+    volumes:
+      - openobserve_data:/data
+
 volumes:
   data:
     driver: local
@@ -187,4 +208,6 @@ volumes:
   dbdata6:
     driver: local
   valkeydata:
+    driver: local
+  openobserve_data:
     driver: local

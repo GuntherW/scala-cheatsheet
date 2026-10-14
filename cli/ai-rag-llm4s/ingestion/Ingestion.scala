@@ -1,17 +1,18 @@
 package rag.ingestion
 
 import rag.{PgConfig, RagFactory}
+import rag.observability.Observability
 
 import org.llm4s.types.Result
 
 object Ingestion:
 
-  def run(docsDir: os.Path): Result[Int] =
+  def run(docsDir: os.Path, obs: Observability): Result[Int] =
     val pdfFiles = os.list(docsDir).filter(_.ext == "pdf").sorted
     require(pdfFiles.nonEmpty, s"Keine PDFs in $docsDir gefunden - zuerst 'generate-docs' ausführen.")
 
     for
-      rag    <- RagFactory.build()
+      rag    <- RagFactory.build(obs)
       _      <- rag.clear()
       counts <- pdfFiles.foldLeft[Result[Int]](Right(0)) { (acc, path) =>
         for

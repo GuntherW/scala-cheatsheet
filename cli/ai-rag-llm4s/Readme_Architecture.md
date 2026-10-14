@@ -1,4 +1,7 @@
-# RAG-Lernbeispiel: PDFs, pgvector & llm4s (Scala 3.7.1 / scala-cli)
+# Architektur: RAG mit PDFs, pgvector & llm4s (Scala 3.7.1 / scala-cli)
+
+> Dieses Dokument erklärt **wie** die Anwendung aufgebaut ist und **warum**. Zum Starten, zu den Containern und zum Ansehen von
+> Traces/Metriken siehe [Readme_Usage.md](Readme_Usage.md).
 
 Gleiche Aufgabe wie [`ai-rag-langchain4j`](../ai-rag-langchain4j), nur mit **[llm4s](https://llm4s.org/)**
 (`org.llm4s::llm4s-core:0.4.1`): 10 PDFs (`docs/`) werden gechunkt, embedded und in pgvector gespeichert;
@@ -40,26 +43,43 @@ ai-rag-llm4s/
 ├── resources/application.conf # Provider (Chat) + Embeddings -> Requesty
 ├── logback.xml
 ├── PgConfig.scala             # Postgres-Verbindung (sys.env mit Dev-Defaults)
-├── RagFactory.scala           # baut LLM-Client + RAG aus Config
+├── RagFactory.scala           # baut LLM-Client + RAG aus Config (hängt Observability ein)
+├── ErrorReport.scala          # llm4s-Fehler nach Art einordnen (Rate-Limit, Timeout, Netzwerk, Auth, ...)
+├── observability/             # OpenTelemetry-Tracing nach OpenObserve (siehe Abschnitt Observability)
 ├── ingestion/                 # SampleDocs, GenerateSampleDocs, Ingestion
 ├── query/RagAssistant.scala   # Frage beantworten
 ├── Main.scala                 # generate-docs | ingest | ask
-└── test/ChunkingTest.test.scala
+├── test/                      # ChunkingTest, ObservabilityTest (ohne LLM/DB/Netz)
+├── Readme_Architecture.md     # dieses Dokument
+└── Readme_Usage.md            # Starten, Container, Traces/Metriken ansehen
 ```
 
-## Ausführen
+## Observability
 
-Voraussetzungen: `postgres-rag` läuft (`cd docker && docker compose up -d postgres-rag`), JDK 21 (wird von
-scala-cli bei Bedarf geladen), `ANTHROPIC_API_KEY` (Requesty-Key) gesetzt - per `.env` + direnv (`direnv allow`)
-oder `export`.
+Traces gehen per **OpenTelemetry (OTLP/gRPC)** an **OpenObserve**. Der Code liegt in `observability/`:
 
-```bash
-cd cli/ai-rag-llm4s
-scala-cli run . -- generate-docs
-scala-cli run . -- ingest
-scala-cli run . -- ask "Wie viele Kilometer lang ist das Great Barrier Reef und wie viele Riffe umfasst es?"
-scala-cli test .
 ```
+  RAG (RAGConfig.withTracing) --> OtelSink --> OTLP/gRPC :5081 --> OpenObserve  http://localhost:5080
+        ^
+        +-- RagTracing: meldet nach der Antwort zusätzlich LLM-Tokens und Gesamtdauer nach
+```
+
+| Datei                              | Aufgabe                                                                                        |
+|------------------------------------|------------------------------------------------------------------------------------------------|
+| `observability/Observability.scala` | Verdrahtung: baut den Tracer aus der Config, `shutdown()` flusht den Batch-Exporter            |
+| `observability/OtelSink.scala`     | `OpenTelemetryTracing` (llm4s) mit Endpoint, Basic-Auth-Header und Stream-Header für OpenObserve |
+| `observability/RagTracing.scala`   | ergänzende Events, die `RAG` in llm4s 0.4.1 nicht selbst meldet                                |
+
+Schalter: `rag.observability.enable.otel` (Env `RAG_OBS_OTEL`, Standard an; `false` = NoOp-Tracer). Start, Logins und Ansicht der
+Traces: [Readme_Usage.md](Readme_Usage.md).
+
+### Was llm4s 0.4.1 meldet - und was nicht
+
+- `RAG` (mit `withTracing`) meldet **nur die Embedding-Nutzung**. Der LLM-Call der Antwort und die Gesamtdauer fehlen. Deshalb meldet
+  `RagTracing` nach `queryWithAnswer` Retrieval (Anzahl Chunks), Token-Nutzung und RAG-Dauer manuell an denselben Tracer.
+- Der OTel-Exporter von llm4s 0.4.1 exportiert **nur Traces** (`OtlpGrpcSpanExporter`), keine Metriken und keine Logs.
+- **Beenden:** Der Exporter sendet gebündelt; ohne `Observability.shutdown()` (in `Main` per `finally`) gingen bei einem kurzen CLI-Lauf
+  Spans verloren.
 
 ## Stolpersteine (llm4s 0.4.1)
 
@@ -77,3 +97,8 @@ scala-cli test .
    `langchain4j_pdf_chunks` (384).
 7. **Neuere llm4s-Module** (`llm4s-rag`, `llm4s-openai`, ...) sind noch nicht veröffentlicht; 0.4.1 enthält alles
    in `llm4s-core`.
+8. **OpenObserve-Passwort:** Der Root-Account verlangt ein starkes Passwort (Groß-/Kleinbuchstaben, Ziffer, Sonderzeichen), sonst crasht der
+   Container in einer Restart-Schleife (Fehler steht nur tief im Log: `ZO_ROOT_USER_PASSWORD is too weak`).
+9. **OpenObserve-OTLP:** gRPC-Port `5081` mit Basic-Auth im Header `authorization` sowie `organization` und `stream-name` - der OTel-Exporter von
+   llm4s 0.4.1 (`OpenTelemetryConfig.headers`) reicht diese Header durch. Die Stream-Statistik in der API hängt dem Eingang etwas hinterher.
+10. **Scala-Kommentare:** `/*` innerhalb eines Kommentars (z. B. ein Pfad mit `*.jsonl`) öffnet einen verschachtelten Kommentar -> `unclosed comment`.

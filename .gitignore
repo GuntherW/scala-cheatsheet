@@ -63,3 +63,5 @@ cli/ai-llm4s-agentic/output/
 cli/multi-agent-manual-orchestrator/output/
 cli/ai-rag-sttpai/output/
 cli/ai-rag-sttpai/docs/*.pdf
+# Secrets fuer OpenObserve (cli/ai-rag-llm4s), nicht committen
+docker/.env.observability
