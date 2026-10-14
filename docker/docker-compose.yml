@@ -186,7 +186,7 @@ services:
   openobserve:
     image: public.ecr.aws/zinclabs/openobserve:latest
     container_name: openobserve
-    profiles: ["otel"]
+    profiles: [ "otel" ]
     restart: unless-stopped
     ports:
       - "5080:5080"   # UI + OTLP/HTTP
