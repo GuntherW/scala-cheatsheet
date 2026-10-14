@@ -3,9 +3,8 @@
 > Dieses Dokument erklärt **wie** die Anwendung aufgebaut ist und **warum**. Zum Starten, zu den Containern und zum Ansehen von
 > Traces/Metriken siehe [Readme_Usage.md](Readme_Usage.md).
 
-Gleiche Aufgabe wie [`ai-rag-langchain4j`](../ai-rag-langchain4j), nur mit **[llm4s](https://llm4s.org/)**
-(`org.llm4s::llm4s-core:0.4.1`): 10 PDFs (`docs/`) werden gechunkt, embedded und in pgvector gespeichert;
-eine Frage wird eingebettet, die ähnlichsten Chunks werden gesucht und zusammen mit der Frage an ein LLM
+10 PDFs (`docs/`) werden gechunkt, embedded und in pgvector gespeichert;
+Eine Frage wird eingebettet, die ähnlichsten Chunks werden gesucht und zusammen mit der Frage an ein LLM
 geschickt.
 
 ## Tech-Stack
