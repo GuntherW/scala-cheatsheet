@@ -93,8 +93,9 @@ Abschalten: `RAG_OBS_OTEL=false scala-cli run . -- ask "..."`.
 1. http://localhost:5080 öffnen, anmelden.
 2. Links **Traces** wählen, Organisation `default`, Stream `default`, Zeitraum z. B. *Last 1 hour*, **Run query**.
 3. Pro Lauf erscheinen Spans des Services `ai-rag-llm4s`: `Embedding Usage - rag` (Embedding der Frage), `rag.retrieved` (Anzahl Chunks),
-   `Token Usage - rag-answer` (Prompt-/Completion-Tokens) und `RAG answer` (Gesamtdauer). Zeile anklicken für Details und
-   `gen_ai_*`-Attribute (Modell, Tokens, Kosten).
+   `Token Usage - rag-answer` (Prompt-/Completion-Tokens) und `RAG answer` (Gesamtdauer). Sie sind **nicht verbunden**: jeder Span ist ein eigener
+   Trace (llm4s 0.4.1 setzt keinen Parent, siehe Readme_Architecture.md). Die echte Dauer steht im Attribut `duration_ms`, nicht im Span selbst.
+   Zeile anklicken für Details und `gen_ai_*`-Attribute (Modell, Tokens, Kosten).
 
 Alternativ per API:
 

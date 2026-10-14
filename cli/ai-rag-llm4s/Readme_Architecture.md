@@ -76,7 +76,10 @@ Traces: [Readme_Usage.md](Readme_Usage.md).
 
 - `RAG` (mit `withTracing`) meldet **nur die Embedding-Nutzung**. Der LLM-Call der Antwort und die Gesamtdauer fehlen. Deshalb meldet
   `RagTracing` nach `queryWithAnswer` Retrieval (Anzahl Chunks), Token-Nutzung und RAG-Dauer manuell an denselben Tracer.
-- Der OTel-Exporter von llm4s 0.4.1 exportiert **nur Traces** (`OtlpGrpcSpanExporter`), keine Metriken und keine Logs.
+- Der OTel-Exporter von llm4s 0.4.1 startet für **jedes Event einen eigenen Span** ohne Parent und ohne gemeinsame `trace_id`: Ein `ask` ergibt
+  in OpenObserve vier getrennte Traces mit Dauern von wenigen Millisekunden (die echte Dauer steht nur im Attribut `duration_ms`).
+  Das ist eine Einschränkung von llm4s (auch in `main`), kein Konfigurationsfehler.
+- Der Exporter exportiert **nur Traces** (`OtlpGrpcSpanExporter`), keine Metriken und keine Logs.
 - **Beenden:** Der Exporter sendet gebündelt; ohne `Observability.shutdown()` (in `Main` per `finally`) gingen bei einem kurzen CLI-Lauf
   Spans verloren.
 

@@ -1,5 +1,7 @@
 package rag.query
 
+import rag.observability.Observability
+
 import dev.langchain4j.model.anthropic.AnthropicChatModel
 import dev.langchain4j.model.chat.ChatModel
 
@@ -23,4 +25,5 @@ object LlmConfig:
       .baseUrl(baseUrl)
       .apiKey(sys.env("ANTHROPIC_API_KEY"))
       .modelName(model)
+      .listeners(Observability.chatListeners)
       .build()

@@ -1,5 +1,7 @@
 package rag
 
+import rag.observability.Observability
+
 import dev.langchain4j.model.embedding.EmbeddingModel
 import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel
 
@@ -8,4 +10,4 @@ import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2Embedding
   * offline und kostenlos, nur die eigentliche Antwortgenerierung (siehe `LlmConfig.scala`) braucht einen LLM-Call.
   */
 object EmbeddingModels:
-  val allMiniLm: EmbeddingModel = new AllMiniLmL6V2EmbeddingModel()
+  val allMiniLm: EmbeddingModel = Observability.traced(new AllMiniLmL6V2EmbeddingModel(), "all-MiniLM-L6-v2")

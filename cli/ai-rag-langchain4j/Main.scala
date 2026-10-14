@@ -1,6 +1,7 @@
 package rag
 
 import rag.ingestion.{GenerateSampleDocs, Ingestion}
+import rag.observability.Observability
 import rag.query.RagAssistant
 
 import scala.util.CommandLineParser
@@ -14,14 +15,16 @@ import scala.util.CommandLineParser
   */
 @main def main(command: Command, rest: String*): Unit =
   val docsDir = os.pwd / "docs"
+  println(s"[Observability] ${Observability.status}")
 
-  command match
-    case Command.GenerateDocs => GenerateSampleDocs.run(docsDir)
-    case Command.Ingest       => Ingestion.run(docsDir)
-    case Command.Ask          => rest.headOption match
-        case Some(question) => println(RagAssistant.ask(question))
-        case None           => println("""Bitte eine Frage angeben:
-                                         |  scala-cli run . -- ask "<Frage>"""".stripMargin)
+  try command match
+      case Command.GenerateDocs => GenerateSampleDocs.run(docsDir)
+      case Command.Ingest       => Observability.span("rag.ingest")(_ => Ingestion.run(docsDir))
+      case Command.Ask          => rest.headOption match
+          case Some(question) => println(Observability.span("rag.ask", "rag.question" -> question)(_ => RagAssistant.ask(question)))
+          case None           => println("""Bitte eine Frage angeben:
+                                           |  scala-cli run . -- ask "<Frage>"""".stripMargin)
+  finally Observability.shutdown()
 
 enum Command:
   case GenerateDocs, Ingest, Ask

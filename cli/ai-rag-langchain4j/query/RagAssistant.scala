@@ -1,10 +1,11 @@
 package rag.query
 
+import rag.observability.Observability
 import rag.{EmbeddingModels, VectorStore}
 
 import dev.langchain4j.data.segment.TextSegment
-import dev.langchain4j.service.{AiServices, SystemMessage}
 import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever
+import dev.langchain4j.service.{AiServices, SystemMessage}
 import dev.langchain4j.store.embedding.EmbeddingStore
 
 /** Der eigentliche RAG-Assistent als `AiServices`-Interface: langchain4j generiert zur Laufzeit eine Implementierung, die bei jedem Aufruf von `answer(...)` automatisch
@@ -39,7 +40,7 @@ object RagAssistant:
     AiServices
       .builder(classOf[RagAssistant])
       .chatModel(LlmConfig.chatModel())
-      .contentRetriever(contentRetriever)
+      .contentRetriever(Observability.traced(contentRetriever))
       .build()
 
   /** Beantwortet eine einzelne Nutzerfrage auf Basis der zuvor indexierten Dokumente (siehe `ingestion/Ingestion.scala`) - baut dafür den `EmbeddingStore` auf die bestehende pgvector-Tabelle auf
