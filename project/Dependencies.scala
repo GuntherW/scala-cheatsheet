@@ -22,7 +22,7 @@ object Version {
   val fs2                     = "3.14.0"
   val gatling                 = "3.16.0"
   val gears                   = "0.3.1"
-  val grpcNetty               = "1.84.2"
+  val grpcNetty               = "1.84.3"
   val hash4j                  = "0.31.0"
   val h2                      = "2.5.252"
   val http4s                  = "0.23.38"
