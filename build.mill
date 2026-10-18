@@ -277,7 +277,7 @@ object Version:
   val ox                      = "1.0.9"
   val proteus                 = "0.6.0"
   val postgres                = "42.7.14"
-  val pureConfig              = "0.17.10"
+  val pureConfig              = "0.17.11"
   val pulsar4s                = "2.10.0"
   val quill                   = "4.8.6"
   val refined                 = "0.11.4"
