@@ -1,7 +1,7 @@
 //> using file AppState.scala
 //> using file CounterView.scala
 //> using file ItemListView.scala
-//> using dep "org.scalafx::scalafx:26.0.0-R38"
+//> using dep "org.scalafx::scalafx:27.0.0-R39"
 
 import scalafx.application.JFXApp3
 import scalafx.geometry.{Insets, Pos}
