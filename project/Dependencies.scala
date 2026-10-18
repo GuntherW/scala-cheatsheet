@@ -49,7 +49,7 @@ object Version {
   val parserCombinators       = "2.5.0"
   val proteus                 = "0.6.0"
   val postgres                = "42.7.14"
-  val pureConfig              = "0.17.10"
+  val pureConfig              = "0.17.11"
   val pulsar4s                = "2.12.0.1"
   val refined                 = "0.11.4"
   val resilience4j            = "2.4.0"
