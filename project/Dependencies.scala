@@ -177,6 +177,7 @@ object Library {
   val parserCombinators         = "org.scala-lang.modules"                %% "scala-parser-combinators"                  % Version.parserCombinators
   val proteusGrpc               = "com.github.ghostdogpr"                 %% "proteus-grpc"                              % Version.proteus
   val grpcNetty                 = "io.grpc"                                % "grpc-netty"                                % Version.grpcNetty
+  val scala3Staging             = "org.scala-lang"                         %% "scala3-staging"                            % Version.scala
   val postgres                  = "org.postgresql"                         % "postgresql"                                % Version.postgres
   val pureConfig                = "com.github.pureconfig"                 %% "pureconfig-generic-scala3"                 % Version.pureConfig
   val pulsar4s                  = "com.clever-cloud.pulsar4s"             %% "pulsar4s-core"                             % Version.pulsar4s

@@ -275,7 +275,8 @@ lazy val json = project
 lazy val macros = project
   .settings(
     libraryDependencies ++= Seq(
-      Library.postgres
+      Library.postgres,
+      Library.scala3Staging
     ),
     scalacOptions ++= Seq(
       "-Xprint:postInlining", // Wichtiger output bei "compile", um zu sehen, ob/wie Inline funktioniert
