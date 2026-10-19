@@ -1,5 +1,5 @@
-//> using scala 3.7.1
-//> using jvm 21
+//> using scala 3.10.0
+//> using jvm 27
 //> using dep org.llm4s::llm4s-core:0.5.1
 //> using dep org.llm4s::llm4s-agent:0.5.1
 //> using dep org.llm4s::llm4s-agent-tools:0.5.1
