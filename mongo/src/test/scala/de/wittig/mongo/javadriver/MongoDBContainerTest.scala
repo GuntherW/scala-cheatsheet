@@ -10,7 +10,7 @@ import org.testcontainers.utility.DockerImageName
 class MongoDBContainerTest extends AnyFunSuite with ForAllTestContainer with Matchers {
 
   // Define the MongoDB container
-  override val container: MongoDBContainer = MongoDBContainer(DockerImageName.parse("mongo:8.0"))
+  override val container: MongoDBContainer = MongoDBContainer(DockerImageName.parse("mongo:9"))
 
   // Create MongoDB client using the container's connection string
   lazy val mongoClient: MongoClient = MongoClients.create(container.container.getConnectionString)
