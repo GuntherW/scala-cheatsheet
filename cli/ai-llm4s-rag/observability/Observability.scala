@@ -1,6 +1,6 @@
 package rag.observability
 
-import org.llm4s.llmconnect.config.{LangfuseConfig, TracingSettings}
+import org.llm4s.llmconnect.config.TracingSettings
 import org.llm4s.trace.{Tracing, TracingMode}
 
 import com.typesafe.config.{Config, ConfigFactory}
@@ -26,7 +26,7 @@ object Observability:
     val obs = config.getConfig("rag.observability")
 
     if obs.getBoolean("enable.otel") then Observability(OtelSink.create(otelSettings(obs.getConfig("otel"))), otelActive = true)
-    else Observability(Tracing.create(TracingSettings(TracingMode.NoOp, LangfuseConfig())), otelActive = false)
+    else Observability(Tracing.create(TracingSettings(TracingMode.NoOp)), otelActive = false)
 
   private def otelSettings(c: Config): OtelSink.Settings =
     OtelSink.Settings(c.getString("serviceName"), c.getString("endpoint"), c.getString("authorization"), c.getString("organization"), c.getString("stream"))

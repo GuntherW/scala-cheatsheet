@@ -100,7 +100,7 @@ Abschalten: `RAG_OBS_OTEL=false scala-cli run . -- ask "..."`.
    (Anzahl Chunks),
    `Token Usage - rag-answer` (Prompt-/Completion-Tokens) und `RAG answer` (Gesamtdauer). Sie sind **nicht verbunden**:
    jeder Span ist ein eigener
-   Trace (llm4s 0.4.1 setzt keinen Parent, siehe Readme_Architecture.md). Die echte Dauer steht im Attribut
+   Trace (llm4s 0.4.1 setzte keinen Parent, mit 0.5.1 nicht neu geprüft; siehe Readme_Architecture.md). Die echte Dauer steht im Attribut
    `duration_ms`, nicht im Span selbst.
    Zeile anklicken für Details und `gen_ai_*`-Attribute (Modell, Tokens, Kosten).
 

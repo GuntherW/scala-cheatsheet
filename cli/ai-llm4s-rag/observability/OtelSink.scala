@@ -1,7 +1,7 @@
 package rag.observability
 
-import org.llm4s.llmconnect.config.{LangfuseConfig, OpenTelemetryConfig, TracingSettings}
-import org.llm4s.trace.{Tracing, TracingMode}
+import org.llm4s.llmconnect.config.OpenTelemetryConfig
+import org.llm4s.trace.{OpenTelemetryTracing, Tracing}
 
 /** Ziel: OpenTelemetry (OTLP/gRPC) nach OpenObserve (`docker compose --profile otel up -d openobserve`).
   *
@@ -11,6 +11,9 @@ import org.llm4s.trace.{Tracing, TracingMode}
   * Schalter:     `rag.observability.enable.otel` (Env `RAG_OBS_OTEL`, Standard an).
   *
   * OpenObserve erwartet am gRPC-Port (5081) Basic-Auth sowie die Header `organization` und `stream-name`.
+  *
+  * llm4s 0.5.1: Der OTel-Backend liegt in `llm4s-observability-otel`; der Tracer wird direkt über
+  * `OpenTelemetryTracing.from(OpenTelemetryConfig(...))` gebaut (statt über das entfernte `TracingMode.OpenTelemetry`).
   */
 object OtelSink:
 
@@ -18,6 +21,4 @@ object OtelSink:
 
   def create(settings: Settings): Tracing =
     val headers = Map("authorization" -> settings.authorization, "organization" -> settings.organization, "stream-name" -> settings.stream)
-    Tracing.create(
-      TracingSettings(TracingMode.OpenTelemetry, LangfuseConfig(), OpenTelemetryConfig(settings.serviceName, settings.endpoint, headers))
-    )
+    OpenTelemetryTracing.from(OpenTelemetryConfig(settings.serviceName, settings.endpoint, headers))

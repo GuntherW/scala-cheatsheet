@@ -6,7 +6,7 @@ import org.llm4s.chunking.ChunkerFactory
 import org.llm4s.config.Llm4sConfig
 import org.llm4s.llmconnect.LLMConnect
 import org.llm4s.model.ModelRegistryService
-import org.llm4s.rag.{EmbeddingProvider, RAG}
+import org.llm4s.rag.RAG
 import org.llm4s.rag.RAG.RAGConfigOps
 import org.llm4s.types.Result
 
@@ -36,7 +36,7 @@ object RagFactory:
       (_, embeddingConfig) = embeddings
       rag <- RAG
         .builder()
-        .withEmbeddings(EmbeddingProvider.OpenAI, embeddingModel, embeddingDimensions)
+        .withEmbeddings("openai", embeddingModel, embeddingDimensions)
         .withChunking(ChunkerFactory.Strategy.Sentence, chunkSize, chunkOverlap)
         .withPgVector(PgConfig.jdbcUrl, PgConfig.user, PgConfig.password, PgConfig.table)
         .withTopK(topK)

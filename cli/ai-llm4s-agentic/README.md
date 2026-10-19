@@ -1,7 +1,7 @@
 # Multi-Agenten-System mit llm4s (Scala 3 / scala-cli)
 
 Gleiche Aufgabe wie `../ai-sttpai-manual`: zu einer technischen Entscheidung wird ein ausgewogener Bericht erstellt -
-diesmal mit [llm4s](https://github.com/llm4s/llm4s) (`llm4s-core` 0.4.1) statt `sttp-ai`.
+diesmal mit [llm4s](https://github.com/llm4s/llm4s) (0.5.1) statt `sttp-ai`.
 
 ## Agenten
 
@@ -17,7 +17,7 @@ Der `Orchestrator` ist reiner Code (kein LLM-Call): Fan-out/Fan-in mit `ox.par`.
 
 | Thema                  | sttp-ai-manual                                  | llm4s                                                                  |
 |------------------------|-------------------------------------------------|------------------------------------------------------------------------|
-| Tool-Use-Loop          | selbst geschrieben (`AnthropicClient.chat`)     | `Agent.run(query, tools, ...)` iteriert und führt Tool-Handler aus    |
+| Tool-Use-Loop          | selbst geschrieben (`AnthropicClient.chat`)     | `Agent.builder(id, client).withTools(...).build()`, dann `run(query)` iteriert und führt Tool-Handler aus |
 | Tool-Schema            | `ToolInputSchema` + circe-Codec                 | `Schema.object...` + `ToolBuilder(...).withHandler(...)` (upickle)    |
 | Tool-Fehler            | Handler gibt JSON-Fehlerobjekt zurück           | Handler gibt `Left(msg)` zurück - wird dem Modell als Fehler gezeigt   |
 | Web-Suche              | server-seitig (Anthropic `web_search`)          | client-seitig `DuckDuckGoSearchTool` (nur Kurzantworten/Definitionen)  |
@@ -28,7 +28,7 @@ Der `Orchestrator` ist reiner Code (kein LLM-Call): Fan-out/Fan-in mit `ox.par`.
 ## Dateien
 
 ```
-project.scala           scala-cli Direktiven (llm4s-core, ox)
+project.scala           scala-cli Direktiven (llm4s-core/-agent/-agent-tools/-openai-compatible, ox, logback)
 logback.xml             Logging auf WARN (sonst flutet llm4s die Konsole mit DEBUG)
 Llm.scala               LLMClient für den Requesty-Router
 Agent.scala             Basisklasse: Rolle (System-Prompt) + Tools -> llm4s Agent
@@ -51,18 +51,19 @@ Ergebnisse: `output/01_fact_researcher.md`, `02_risk_analyst.md`, `03_final_repo
 
 ## Stolpersteine
 
-- **Provider-Wahl in llm4s 0.4.1 (Requesty-Router, OpenAI-kompatibel):**
-  - `openai`/`requesty`: nutzt das Azure-SDK, das den Pfad `/openai/deployments/<model>/chat/completions` baut -> **404**.
-  - `anthropic`: verwirft Assistant-Nachrichten mit Tool-Calls und schickt Tool-Ergebnisse als Text
-    (`[Tool result for ...]`) -> das Modell ruft das Tool **endlos erneut auf** ("Maximum step limit reached").
-  - Lösung: `OpenRouterClient` direkt instanziieren (`Llm.scala`). Er postet an `${baseUrl}/chat/completions` im
-    OpenAI-Format und funktioniert mit jedem OpenAI-kompatiblen Endpunkt. Über `LLMConnect` wäre er nur bei einer
-    `baseUrl` mit `openrouter.ai` erreichbar.
+- **Provider-Wahl in llm4s 0.5.1 (Requesty-Router, OpenAI-kompatibel):**
+  - `requesty` (aus `llm4s-openai`): baut in 0.5.1 einen `OpenAIConfig`; gegen den EU-Router hier nicht verifiziert.
+  - `anthropic` (aus `llm4s-anthropic`): verwirft Assistant-Nachrichten mit Tool-Calls und schickt Tool-Ergebnisse als
+    Text (`[Tool result for ...]`) -> das Modell ruft das Tool **endlos erneut auf** ("Maximum step limit reached").
+  - Lösung: `OpenRouterClient` (aus `llm4s-openai-compatible`) direkt instanziieren (`Llm.scala`). Er postet an
+    `${baseUrl}/chat/completions` im OpenAI-Format und funktioniert mit jedem OpenAI-kompatiblen Endpunkt. Über
+    `LLMConnect` wäre er nur bei einer `baseUrl` mit `openrouter.ai` erreichbar.
 - **Prompt vs. Tool-Aufrufe:** Bei Vergleichsfragen ("A oder B") ruft das Modell `calculate_tco` pro Option auf. Der
   Prompt erlaubt deshalb einen Aufruf je Option, `maxSteps` liegt bei 10.
 - **API-Key:** bewusst simpel per `sys.env("ANTHROPIC_API_KEY")` gelesen (kein `.env`-Support, wirft `NoSuchElementException` wenn nicht gesetzt).
-- **Versionen:** llm4s 0.4.1 (Scala 3.7.1, JDK 21) - API wird bis 1.0 noch umgebaut (`Agent.builder` auf `main` ist in
-  0.4.1 noch nicht vorhanden; hier: `new Agent(client)`).
+- **Versionen:** llm4s 0.5.1 (Scala 3.7.1, JDK 21). Seit 0.5.1 ist die Bibliothek modularisiert: `llm4s-core` enthält
+  keinen Provider und keine Agent-Runtime mehr. Der Agent wird über `Agent.builder(id, client)....build()` gebaut
+  (`new Agent(client)` und `AgentState` gibt es nicht mehr), Ergebnis ist ein `AgentResult` mit `messages`/`answer`.
 - **`duckduckgo_search`** nutzt die Instant-Answer-API: gut für Definitionen, keine echte Websuche.
 - **Mix aus Tools:** llm4s führt alle Tools client-seitig aus, daher entfällt die Einschränkung "server-seitig vs.
   client-seitig" aus dem sttp-ai-Projekt.

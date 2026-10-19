@@ -8,9 +8,9 @@ import org.llm4s.model.ModelRegistryService
 
 /** Baut den llm4s-`LLMClient` für den Requesty-Router (EU, OpenAI-kompatible API).
   *
-  * Bewusst NICHT über `LLMConnect`/`application.conf`, sondern direkt als `OpenRouterClient` (llm4s 0.4.1):
-  *   - Provider `openai`/`requesty` nutzen das Azure-SDK und bauen Azure-Pfade (`/openai/deployments/<model>/chat/completions`) -> 404 beim Router.
-  *   - Provider `anthropic` verwirft Assistant-Nachrichten mit Tool-Calls und schickt Tool-Ergebnisse als einfachen User-Text -> das Modell ruft das Tool endlos erneut auf.
+  * Bewusst NICHT über `LLMConnect`/`application.conf`, sondern direkt als `OpenRouterClient` (llm4s 0.5.1, aus `llm4s-openai-compatible`):
+  *   - `requesty` (aus `llm4s-openai`) baut einen eigenen Pfad und funktionierte gegen den EU-Router nicht zuverlässig.
+  *   - `anthropic` verwirft Assistant-Nachrichten mit Tool-Calls und schickt Tool-Ergebnisse als einfachen User-Text -> das Modell ruft das Tool endlos erneut auf.
   *   - `OpenRouterClient` postet schlicht an `${baseUrl}/chat/completions` im OpenAI-Format (inkl. korrekter Tool-Calls) und funktioniert damit mit jedem OpenAI-kompatiblen Endpunkt.
   */
 object Llm:
@@ -25,7 +25,8 @@ object Llm:
       for
         registry                   <- Llm4sConfig.modelRegistryService()
         given ModelRegistryService  = registry
-        given ContextWindowResolver = ContextWindowResolver(registry)
-        client                     <- OpenRouterClient(OpenAIConfig.fromValues(Model, apiKey, None, BaseUrl))
+        given ContextWindowResolver = new ContextWindowResolver(registry)
+        config                     <- OpenAIConfig.fromValues(Model, apiKey, None, BaseUrl)
+        client                     <- OpenRouterClient(config)
       yield client
     created.fold(error => throw new RuntimeException(s"LLM-Client konnte nicht erstellt werden: ${error.formatted}"), identity)

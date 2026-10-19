@@ -3,7 +3,9 @@ package rag.observability
 import org.llm4s.rag.RAGAnswerResult
 import org.llm4s.trace.{TraceEvent, Tracing}
 
-/** Ergänzende Trace-Events für das, was `RAG` in llm4s 0.4.1 NICHT selbst meldet.
+import scala.concurrent.duration.*
+
+/** Ergänzende Trace-Events für das, was `RAG` in llm4s nicht selbst meldet.
   *
   * `RAG` (mit `withTracing`) meldet nur die Embedding-Nutzung. Der LLM-Call der Antwortgenerierung und die Gesamtdauer fehlen - sie werden
   * hier nach `queryWithAnswer` manuell an denselben Tracer gemeldet und landen dadurch im OTel-Export (OpenObserve).
@@ -17,7 +19,7 @@ object RagTracing:
     usage.foreach(u => tracer.traceTokenUsage(u, model, "rag-answer"))
     tracer.traceRAGOperation(
       operation           = "answer",
-      durationMs          = durationMs,
+      duration            = durationMs.millis,
       llmPromptTokens     = usage.map(_.promptTokens),
       llmCompletionTokens = usage.map(_.completionTokens)
     )

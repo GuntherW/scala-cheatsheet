@@ -19,6 +19,7 @@ object AgentSynthesis extends Agent(
                        |- Sei sachlich und begründe die Empfehlung nachvollziehbar.
                        |- Antworte auf Deutsch.
                        |""".stripMargin,
+      maxTokens = 3000,
     ):
 
   def synthesize(topic: String, facts: String, risks: String): String = run(
@@ -33,5 +34,4 @@ object AgentSynthesis extends Agent(
          |</reportOfRiskAnalyst>
          |
          |Erstelle nun den finalen, konsolidierten Bericht.""".stripMargin,
-      maxTokens = 3000,
     )
