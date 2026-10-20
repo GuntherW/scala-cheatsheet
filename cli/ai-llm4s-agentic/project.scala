@@ -4,6 +4,6 @@
 //> using dep org.llm4s::llm4s-agent:0.5.1
 //> using dep org.llm4s::llm4s-agent-tools:0.5.1
 //> using dep org.llm4s::llm4s-openai-compatible:0.5.1
-//> using dep com.softwaremill.ox::core:1.0.9
+//> using dep com.softwaremill.ox::core:1.1.0
 //> using dep ch.qos.logback:logback-classic:1.6.5
 //> using javaOpt -Dlogback.configurationFile=logback.xml
