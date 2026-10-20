@@ -1,5 +1,3 @@
-//> using scala 3.9.0
-
 // Dezimiert Laufzeit-Warnungen auf neueren JDKs (hier JDK 27) - rein kosmetisch, ändert nichts am Programmverhalten:
 //   - `sloth` patcht das von Scala 3 erzeugte Bytecode-Muster für `lazy val`, das sonst `sun.misc.Unsafe::objectFieldOffset`
 //     nutzt (siehe `LazyVals$`-Warnung) und ab JDK 24 eine "terminally deprecated"-Warnung auslöst (JEP 498).

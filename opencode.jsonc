@@ -1,21 +1,39 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugins": ["@devtheops/opencode-plugin-otel"],
+  "plugins": [
+    "@devtheops/opencode-plugin-otel"
+  ],
   "mcp": {
     "servers": {
-      "filesystem": {
+      //      "filesystem": {
+      //        "type": "local",
+      //        "command": [
+      //          "scala-cli",
+      //          "run",
+      //          "/home/gunther/projekte/scala/scala-cheatsheet/cli/mcp-filesystem",
+      //          "--main-class",
+      //          "filesystemMcpServerStdio"
+      //        ],
+      //        "disabled": false,
+      //        "timeout": {
+      //          "catalog": 120000,
+      //          "execution": 120000
+      //        }
+      //      },
+      // cs install metals-mcp
+      "metals": {
         "type": "local",
         "command": [
-          "scala-cli",
-          "run",
-          "/home/gunther/projekte/scala/scala-cheatsheet/cli/mcp-filesystem",
-          "--main-class",
-          "filesystemMcpServerStdio"
+          "metals-mcp",
+          "--workspace",
+          ".",
+          "--transport",
+          "stdio"
         ],
         "disabled": false,
         "timeout": {
-          "catalog": 120000,
-          "execution": 120000
+          "startup": 60000,
+          "catalog": 60000
         }
       }
     }

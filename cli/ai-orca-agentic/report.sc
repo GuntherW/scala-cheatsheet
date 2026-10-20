@@ -1,4 +1,3 @@
-//> using scala 3.9.0
 //> using jvm 27
 //> using dep org.virtuslab::orca:0.2.0
 //> using file AgentSpec.scala

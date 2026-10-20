@@ -1,4 +1,3 @@
-//> using scala 3.9.0
 //> using dep io.getkyo::kyo-ai::1.0.0-RC7
 //> using dep io.getkyo::kyo-http::1.0.0-RC7
 //> using dep io.getkyo::kyo-schema-json::1.0.0-RC7

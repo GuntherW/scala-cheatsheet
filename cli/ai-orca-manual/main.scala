@@ -1,4 +1,3 @@
-//> using scala 3.9.0
 //> using dep org.virtuslab::orca:0.2.0
 //> using file CalculateTco.scala
 //> using file Agents.scala
