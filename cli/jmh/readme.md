@@ -20,3 +20,9 @@ Die Datei enthält zwei Benchmarks:
 - `allocateWithCompactHeaders` (`-XX:+UseCompactObjectHeaders`)
 
 Beide Varianten werden über `@Fork(... jvmArgsAppend = ...)` getrennt gestartet und sind damit direkt vergleichbar.
+
+CPU vs. GPU (Cyfra, benötigt Vulkan):
+
+```shell
+scala-cli --jmh CpuVsGpuBenchmark.scala
+```
