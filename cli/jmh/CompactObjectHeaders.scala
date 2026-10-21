@@ -12,7 +12,7 @@ class Benchmarks:
 
   private def runAllocationLoop(objectCount: Int, blackhole: Blackhole): Long =
     val objects = new Array[TinyObject](objectCount)
-    var i = 0
+    var i       = 0
     while i < objectCount do
       objects(i) = new TinyObject(i, i ^ 0x5a5a5a5a)
       i += 1
