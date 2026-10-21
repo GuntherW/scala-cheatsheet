@@ -4,6 +4,7 @@
 package benchmark
 
 import io.computenode.cyfra.dsl.{*, given}
+import io.computenode.cyfra.dsl.collections.GSeq
 import io.computenode.cyfra.foton.GFunction
 import io.computenode.cyfra.runtime.VkCyfraRuntime
 import org.openjdk.jmh.annotations.*
@@ -30,6 +31,13 @@ class CpuVsGpuBenchmark:
   val cpuFn: Float => Float                             = x => x * x * 0.5f + x * 2.0f + 1.0f
   val gpuFn: GFunction[GStruct.Empty, Float32, Float32] = GFunction[Float32, Float32](x => x * x * 0.5f + x * 2.0f + 1.0f)
 
+  // Rechenintensiv: iterations Schritte pro Element, damit die Rechenzeit die Transferzeit übersteigt
+  val iterations = 200
+  val cpuHeavyFn: Float => Float =
+    x => (0 until iterations).foldLeft(x)((acc, _) => acc * 0.999f + x * 0.001f)
+  val gpuHeavyFn: GFunction[GStruct.Empty, Float32, Float32] =
+    GFunction[Float32, Float32](x => GSeq.gen[Int32](0, _ + 1).limit(iterations).fold[Float32](x, (acc, _) => acc * 0.999f + x * 0.001f))
+
   @Setup(Level.Trial)
   def setup(): Unit =
     val rnd = new Random(42)
@@ -41,6 +49,11 @@ class CpuVsGpuBenchmark:
     val maxDiff = cpu.indices.iterator.map(i => math.abs(cpu(i) - gpu(i))).max
     require(maxDiff < 1e-3f, s"CPU/GPU Ergebnisse weichen ab (maxDiff=$maxDiff)")
 
+    val cpuHeavy     = cpuHeavyMap()
+    val gpuHeavy     = gpuHeavyMap()
+    val maxDiffHeavy = cpuHeavy.indices.iterator.map(i => math.abs(cpuHeavy(i) - gpuHeavy(i))).max
+    require(maxDiffHeavy < 1e-3f, s"CPU/GPU Ergebnisse (heavy) weichen ab (maxDiff=$maxDiffHeavy)")
+
   @TearDown(Level.Trial)
   def tearDown(): Unit = runtime.close()
 
@@ -48,9 +61,18 @@ class CpuVsGpuBenchmark:
 
   private def gpuMap(): Array[Float] = gpuFn.run(input)
 
+  private def cpuHeavyMap(): Array[Float] = input.map(cpuHeavyFn)
+
+  private def gpuHeavyMap(): Array[Float] = gpuHeavyFn.run(input)
+
   @Benchmark
   def cpu(): Array[Float] = cpuMap()
 
-  // Enthält Host->Device Upload, Kernel, Device->Host Download
   @Benchmark
   def gpu(): Array[Float] = gpuMap()
+
+  @Benchmark
+  def cpuHeavy(): Array[Float] = cpuHeavyMap()
+
+  @Benchmark
+  def gpuHeavy(): Array[Float] = gpuHeavyMap()
