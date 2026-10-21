@@ -78,16 +78,16 @@ class SearchCacheBenchmark {
 
 /** Statische Map von Long-Keys (aus einem begrenzten Bereich 0..maxKey) auf Werte, ohne Hashing und ohne Zeiger-Ketten.
   *
-  * Idee: Statt jeden Key zu hashen, steht ein Bit pro möglichem Key in einem Bitset: Bit gesetzt = Key vorhanden. Die Werte liegen dicht (ohne Lücken) in
-  * einem Array, sortiert nach Key. Der Index eines Werts ist die Anzahl der gesetzten Bits vor seinem Key (der "Rang"), also per Popcount berechenbar.
+  * Idee: Statt jeden Key zu hashen, steht ein Bit pro möglichem Key in einem Bitset: Bit gesetzt = Key vorhanden. Die Werte liegen dicht (ohne Lücken) in einem Array, sortiert nach Key. Der Index
+  * eines Werts ist die Anzahl der gesetzten Bits vor seinem Key (der "Rang"), also per Popcount berechenbar.
   *
   * Beispiel: Keys {1, 5, 6} -> Bits 0110 0010 (Bit 1, 5, 6 gesetzt). Key 6 hat 2 gesetzte Bits davor -> values(2).
   *
-  * Warum schnell: Bitset und Werte liegen in flachen Arrays. Ein Lookup braucht nur wenige, vorhersehbare Speicherzugriffe (statt mehrerer Zeiger-Sprünge
-  * wie in Hash-Maps oder Bäumen) und das kleine Bitset passt oft in den CPU-Cache.
+  * Warum schnell: Bitset und Werte liegen in flachen Arrays. Ein Lookup braucht nur wenige, vorhersehbare Speicherzugriffe (statt mehrerer Zeiger-Sprünge wie in Hash-Maps oder Bäumen) und das kleine
+  * Bitset passt oft in den CPU-Cache.
   *
-  * Voraussetzungen: Keys müssen nicht-negativ sein und in einem begrenzten Bereich liegen (Speicher ~ größter Key / 8 Bytes). Die Sortierung nach Key passiert
-  * im Konstruktor, die Map ist danach unveränderlich.
+  * Voraussetzungen: Keys müssen nicht-negativ sein und in einem begrenzten Bereich liegen (Speicher ~ größter Key / 8 Bytes). Die Sortierung nach Key passiert im Konstruktor, die Map ist danach
+  * unveränderlich.
   */
 final class MappedBitset(entries: Map[Long, String]) {
   // Nach Key sortieren: Die Reihenfolge der Werte im Array muss der Reihenfolge der Bits entsprechen (Rang = Index).
