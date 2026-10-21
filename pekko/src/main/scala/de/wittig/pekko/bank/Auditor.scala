@@ -21,16 +21,17 @@ object Auditor:
 
       Behaviors.withTimers { timers =>
         timers.startTimerWithFixedDelay(Tick, 1.second)
-        counting(0)
+        counting(0L)
       }
     }
 
-  private def counting(count: Int): Behavior[Command] =
-    Behaviors.receiveMessage {
-      case Audited(tx) =>
-        println(s"[Audit] ${tx.accountId}: ${tx.description} -> Stand ${tx.balance}")
-        counting(count + 1)
-      case Tick        =>
-        println(s"[Audit] Zwischenstand: $count Transaktionen")
-        Behaviors.same
+  private def counting(count: Long): Behavior[Command] =
+    Behaviors.receive { (ctx, msg) =>
+      msg match
+        case Audited(tx) =>
+          ctx.log.info("[Audit] {}: {} -> Stand {}", tx.accountId, tx.description, tx.balance)
+          counting(count + 1)
+        case Tick        =>
+          ctx.log.info("[Audit] Zwischenstand: {} Transaktionen", count)
+          Behaviors.same
     }

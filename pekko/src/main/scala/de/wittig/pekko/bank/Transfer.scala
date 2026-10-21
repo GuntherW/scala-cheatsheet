@@ -25,15 +25,22 @@ object Transfer:
         replyTo ! Failed(reason)
         Behaviors.stopped
 
+      def awaitingRefund(reason: String): Behavior[Command] =
+        Behaviors.receiveMessage {
+          case AccountReply(Account.Done(_)) => fail(s"Einzahlung fehlgeschlagen, zurueckgebucht: $reason")
+          case _                             => fail(s"Einzahlung fehlgeschlagen, Rueckbuchung unklar (manuell pruefen): $reason")
+        }
+
       def awaitingDeposit: Behavior[Command] =
         Behaviors.receiveMessage {
           case AccountReply(Account.Done(_))          =>
             replyTo ! Completed
             Behaviors.stopped
           case AccountReply(Account.Rejected(reason)) =>
-            from ! Account.Deposit(amount, ctx.system.ignoreRef) // Rueckbuchung, Antwort egal
-            fail(s"Einzahlung fehlgeschlagen: $reason")
-          case TimedOut                               => fail("Timeout bei der Einzahlung")
+            from ! Account.Deposit(amount, adapter) // Rueckbuchung, wird bestaetigt
+            awaitingRefund(reason)
+          // Ergebnis unbekannt: nicht zurueckbuchen, sonst droht doppeltes Gutschreiben
+          case TimedOut                               => fail("Timeout bei der Einzahlung, Ergebnis unklar (manuell pruefen)")
         }
 
       def awaitingWithdraw: Behavior[Command] =

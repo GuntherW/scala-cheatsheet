@@ -1,11 +1,25 @@
 package de.wittig.pekko.bank
 
 import munit.FunSuite
+import org.apache.pekko.actor.testkit.typed.FishingOutcome
 import org.apache.pekko.actor.testkit.typed.scaladsl.ActorTestKit
+import org.apache.pekko.actor.typed.eventstream.EventStream
+
+import scala.concurrent.duration.*
 
 class BankTest extends FunSuite:
 
   private val testKit = ActorTestKit()
+
+  private def assertRejected(result: Account.Result): Unit =
+    result match
+      case Account.Rejected(_) => ()
+      case other               => fail(s"Rejected erwartet, war: $other")
+
+  private def assertFailed(reply: Transfer.Reply): Unit =
+    reply match
+      case Transfer.Failed(_) => ()
+      case other              => fail(s"Failed erwartet, war: $other")
 
   override def afterAll(): Unit = testKit.shutdownTestKit()
 
@@ -24,7 +38,7 @@ class BankTest extends FunSuite:
     val probe   = testKit.createTestProbe[Account.Result]()
 
     account ! Account.Withdraw(10, probe.ref)
-    assert(probe.receiveMessage().isInstanceOf[Account.Rejected])
+    assertRejected(probe.receiveMessage())
   }
 
   test("Negative Einzahlung wird abgelehnt") {
@@ -32,7 +46,7 @@ class BankTest extends FunSuite:
     val probe   = testKit.createTestProbe[Account.Result]()
 
     account ! Account.Deposit(-5, probe.ref)
-    assert(probe.receiveMessage().isInstanceOf[Account.Rejected])
+    assertRejected(probe.receiveMessage())
   }
 
   test("Nach einem Absturz startet das Konto mit Stand 0 neu") {
@@ -48,11 +62,16 @@ class BankTest extends FunSuite:
 
   test("Konto veroeffentlicht Transaktionen auf dem EventStream") {
     val events  = testKit.createTestProbe[Account.Transaction]()
-    testKit.system.eventStream ! org.apache.pekko.actor.typed.eventstream.EventStream.Subscribe(events.ref)
+    testKit.system.eventStream ! EventStream.Subscribe(events.ref)
     val account = testKit.spawn(Account("a5"))
 
     account ! Account.Deposit(20, testKit.system.ignoreRef)
-    assertEquals(events.receiveMessage().balance, BigDecimal(20))
+    val seen = events.fishForMessage(3.seconds) { tx =>
+      tx.accountId match
+        case "a5" => FishingOutcome.Complete
+        case _    => FishingOutcome.ContinueAndIgnore
+    }
+    assertEquals(seen.lastOption.map(_.balance), Some(BigDecimal(20)))
   }
 
   test("Ueberweisung zwischen zwei Konten gelingt") {
@@ -80,7 +99,7 @@ class BankTest extends FunSuite:
     val reply = testKit.createTestProbe[Transfer.Reply]()
 
     testKit.spawn(Transfer(from, to, 40, reply.ref))
-    assert(reply.receiveMessage().isInstanceOf[Transfer.Failed])
+    assertFailed(reply.receiveMessage())
 
     to ! Account.GetBalance(probe.ref)
     probe.expectMessage(Account.Done(0))
@@ -91,7 +110,7 @@ class BankTest extends FunSuite:
     val reply = testKit.createTestProbe[Transfer.Reply]()
 
     bank ! Bank.MakeTransfer("x", "y", 1, reply.ref)
-    assert(reply.receiveMessage().isInstanceOf[Transfer.Failed])
+    assertFailed(reply.receiveMessage())
   }
 
   test("Bank: eroeffnet Konten und leitet Nachrichten weiter") {

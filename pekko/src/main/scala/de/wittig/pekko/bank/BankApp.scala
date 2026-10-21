@@ -38,6 +38,5 @@ import scala.concurrent.{Await, Future}
 
   try Await.result(program, 15.seconds)
   finally
-    Thread.sleep(1200) // damit der Auditor-Timer noch einmal feuert
     system.terminate()
     Await.result(system.whenTerminated, 10.seconds)

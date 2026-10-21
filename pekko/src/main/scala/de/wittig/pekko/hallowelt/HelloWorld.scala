@@ -4,7 +4,7 @@ import org.apache.pekko.actor.typed.{ActorRef, ActorSystem, Behavior}
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
 
 import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, ExecutionContext}
+import scala.concurrent.Await
 
 final case class Greet(name: String, replyTo: ActorRef[Greeted])
 final case class Greeted(message: String)
@@ -27,5 +27,4 @@ val greeter: Behavior[Greet] = Behaviors.receiveMessage {
   }
 
   val system = ActorSystem(root, "hello-pekko")
-  system.whenTerminated.foreach(_ => ())(using ExecutionContext.global)
   Await.result(system.whenTerminated, Duration.Inf)

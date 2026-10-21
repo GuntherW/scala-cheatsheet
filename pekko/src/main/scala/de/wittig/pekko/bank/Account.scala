@@ -4,6 +4,8 @@ import org.apache.pekko.actor.typed.eventstream.EventStream
 import org.apache.pekko.actor.typed.scaladsl.{ActorContext, Behaviors}
 import org.apache.pekko.actor.typed.{ActorRef, Behavior, SupervisorStrategy}
 
+import scala.concurrent.duration.*
+
 /** Ein Konto = ein Actor. Der Kontostand lebt nur im Behavior (kein `var`): jede Nachricht liefert das naechste Behavior zurueck. */
 object Account:
 
@@ -24,7 +26,7 @@ object Account:
     // Supervision: bei IllegalStateException wird der Actor neu gestartet -> Kontostand ist wieder 0
     Behaviors
       .supervise(Behaviors.setup[Command](ctx => active(ctx, id, BigDecimal(0))))
-      .onFailure[IllegalStateException](SupervisorStrategy.restart)
+      .onFailure[IllegalStateException](SupervisorStrategy.restart.withLimit(3, 1.minute))
 
   private def active(ctx: ActorContext[Command], id: String, balance: BigDecimal): Behavior[Command] =
     Behaviors.receiveMessage {

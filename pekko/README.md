@@ -4,7 +4,7 @@ Lernmodul für [Apache Pekko](https://pekko.apache.org/) (Fork von Akka 2.6.x) m
 
 | Package | Inhalt |
 |---|---|
-| `de.wittig.pekko` | Minimales Hello-World (`helloPekko`) |
+| `de.wittig.pekko.hallowelt` | Minimales Hello-World (`helloPekko`) |
 | `de.wittig.pekko.bank` | Größeres Beispiel: eine kleine Bank aus Actors (`bankApp`) |
 
 ```bash
@@ -63,7 +63,7 @@ sequenceDiagram
     Note over T: stoppt sich selbst
 ```
 
-Schlägt die Einzahlung fehl, bucht `Transfer` den Betrag auf alice zurück und meldet `Failed`.
+Schlägt die Einzahlung fehl, bucht `Transfer` den Betrag auf alice zurück, wartet auf die Bestätigung und meldet `Failed`. Bei einem Timeout wird bewusst *nicht* zurückgebucht (Ergebnis unklar, sonst droht doppeltes Gutschreiben).
 
 ### Zustandsautomat von `Transfer`
 
@@ -73,7 +73,9 @@ stateDiagram-v2
     AwaitingWithdraw --> AwaitingDeposit: Done
     AwaitingWithdraw --> [*]: Rejected / Timeout -> Failed
     AwaitingDeposit --> [*]: Done -> Completed
-    AwaitingDeposit --> [*]: Rejected / Timeout -> Rückbuchung + Failed
+    AwaitingDeposit --> AwaitingRefund: Rejected -> Rückbuchung
+    AwaitingDeposit --> [*]: Timeout -> Failed (Ergebnis unklar)
+    AwaitingRefund --> [*]: Bestätigt oder nicht -> Failed
 ```
 
 ### Die Dateien
@@ -94,8 +96,8 @@ stateDiagram-v2
 | **Protokoll als ADT** | Alle erlaubten Nachrichten sind ein `sealed trait`; der Compiler prüft Vollständigkeit. | `Account.Command` |
 | **Zustand im Behavior** | Neue Nachricht -> neues Behavior mit neuem Zustand. | `Account.active` |
 | **`replyTo`** | Der Absender schickt seine `ActorRef` mit, die Antwort geht dorthin. | `Deposit(amount, replyTo)` |
-| **Kind-Actors** | `ctx.spawn` / `spawnAnonymous`; Lebenszyklus gehört dem Elternteil. | `Bank` |
-| **Supervision** | `supervise(...).onFailure[...](restart)`: bei Exception wird neu gestartet, der Zustand ist danach wieder der Anfangszustand. | `Account.apply`, `Crash` |
+| **Kind-Actors** | `ctx.spawn` / `spawnAnonymous`; Lebenszyklus gehört dem Elternteil. `watchWith` meldet das Ende eines Kindes als eigene Nachricht. | `Bank` |
+| **Supervision** | `supervise(...).onFailure[...](restart.withLimit(3, 1.minute))`: bei Exception wird (max. 3x pro Minute) neu gestartet, der Zustand ist danach wieder der Anfangszustand. | `Account.apply`, `Crash` |
 | **EventStream (Pub/Sub)** | `Publish` / `Subscribe` entkoppelt Sender und Empfänger. | `Account.publish`, `Auditor` |
 | **`messageAdapter`** | Übersetzt fremde Antworttypen in das eigene Protokoll. | `Auditor`, `Transfer` |
 | **Timer** | `withTimers` / `startTimerWithFixedDelay` für periodische Nachrichten. | `Auditor` |
