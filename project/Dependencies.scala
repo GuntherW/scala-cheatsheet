@@ -2,7 +2,7 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.8"
-  val aws                     = "2.273.0"
+  val aws                     = "2.274.0"
   val avro4s                  = "5.0.15"
   val blake3                  = "3.1.2"
   val borer                   = "1.18.0"
@@ -22,7 +22,7 @@ object Version {
   val fs2                     = "3.14.0"
   val gatling                 = "3.16.0"
   val gears                   = "0.3.1"
-  val grpcNetty               = "1.85.0"
+  val grpcNetty               = "1.85.1"
   val hash4j                  = "0.31.0"
   val h2                      = "2.5.252"
   val http4s                  = "0.23.38"
@@ -30,7 +30,7 @@ object Version {
   val jwtHttp4s               = "2.0.15"
   val jwtScala                = "11.0.4"
   val jsonSchemaValidator     = "3.0.8"
-  val jsoniter                = "2.41.6"
+  val jsoniter                = "2.41.7"
   val kafka                   = "4.4.0"
   val kyo                     = "0.19.0"
   val logback                 = "1.6.5"
@@ -42,12 +42,12 @@ object Version {
   val metricsCore             = "4.2.40"
   val monocle                 = "3.3.0"
   val neotype                 = "0.7.2"
-  val oak                     = "2.6.0"
+  val oak                     = "2.8.0"
   val openTelemetry           = "1.67.0"
   val osLib                   = "0.11.8"
   val ox                      = "1.1.0"
   val parserCombinators       = "2.5.0"
-  val proteus                 = "0.6.0"
+  val proteus                 = "0.7.0"
   val postgres                = "42.7.14"
   val pureConfig              = "0.17.11"
   val pulsar4s                = "2.12.0.1"
@@ -177,7 +177,7 @@ object Library {
   val parserCombinators         = "org.scala-lang.modules"                %% "scala-parser-combinators"                  % Version.parserCombinators
   val proteusGrpc               = "com.github.ghostdogpr"                 %% "proteus-grpc"                              % Version.proteus
   val grpcNetty                 = "io.grpc"                                % "grpc-netty"                                % Version.grpcNetty
-  val scala3Staging             = "org.scala-lang"                         %% "scala3-staging"                            % Version.scala
+  val scala3Staging             = "org.scala-lang"                        %% "scala3-staging"                            % Version.scala
   val postgres                  = "org.postgresql"                         % "postgresql"                                % Version.postgres
   val pureConfig                = "com.github.pureconfig"                 %% "pureconfig-generic-scala3"                 % Version.pureConfig
   val pulsar4s                  = "com.clever-cloud.pulsar4s"             %% "pulsar4s-core"                             % Version.pulsar4s

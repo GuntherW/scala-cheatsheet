@@ -1,10 +1,9 @@
 package proteus.examples.greeter
 
-import java.util.concurrent.TimeUnit
 import io.grpc.{ManagedChannel, ManagedChannelBuilder}
 import proteus.client.DirectClientBackend
 
-import scala.util.chaining.scalaUtilChainingOps
+import java.util.concurrent.TimeUnit
 
 class GreeterClient(host: String, port: Int) {
   val channel: ManagedChannel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build()

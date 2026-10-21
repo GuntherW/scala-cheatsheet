@@ -79,7 +79,7 @@ lazy val `scala-cheatsheet` = rootProject
     munit,
     osLib,
     parsers,
-//    proteus,
+    proteus,
     scalacheck,
     scalajs,
     spring,
