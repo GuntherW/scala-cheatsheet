@@ -79,6 +79,7 @@ lazy val `scala-cheatsheet` = rootProject
     munit,
     osLib,
     parsers,
+    pekko,
     proteus,
     scalacheck,
     scalajs,
@@ -97,6 +98,16 @@ lazy val akka = project
     libraryDependencies ++= Seq(
       Library.akka,
       Library.logback
+    )
+  )
+
+lazy val pekko = project
+  .settings(
+    libraryDependencies ++= Seq(
+      Library.pekko,
+      Library.logback,
+      Library.munit        % Test,
+      Library.pekkoTestkit % Test
     )
   )
 

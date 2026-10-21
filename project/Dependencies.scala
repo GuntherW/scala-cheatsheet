@@ -46,6 +46,7 @@ object Version {
   val openTelemetry           = "1.67.0"
   val osLib                   = "0.11.8"
   val ox                      = "1.1.0"
+  val pekko                   = "1.7.1"
   val parserCombinators       = "2.5.0"
   val proteus                 = "0.7.0"
   val postgres                = "42.7.14"
@@ -172,6 +173,7 @@ object Library {
   val oakSegmentTar             = "org.apache.jackrabbit"                  % "oak-segment-tar"                           % Version.oak
   val openTelemtry              = "io.opentelemetry"                       % "opentelemetry-exporter-otlp"               % Version.openTelemetry
   val openTelemtryAutoConfigure = "io.opentelemetry"                       % "opentelemetry-sdk-extension-autoconfigure" % Version.openTelemetry
+  val pekko                     = "org.apache.pekko"                      %% "pekko-actor-typed"                         % Version.pekko
   val osLib                     = "com.lihaoyi"                           %% "os-lib"                                    % Version.osLib
   val ox                        = "com.softwaremill.ox"                   %% "core"                                      % Version.ox
   val parserCombinators         = "org.scala-lang.modules"                %% "scala-parser-combinators"                  % Version.parserCombinators
@@ -256,6 +258,7 @@ object Library {
   val mockito               = "org.mockito"                  % "mockito-core"                   % Version.mockito
   val munit                 = "org.scalameta"               %% "munit"                          % Version.munit
   val munitScalaCheck       = "org.scalameta"               %% "munit-scalacheck"               % Version.munitScalaCheck
+  val pekkoTestkit          = "org.apache.pekko"            %% "pekko-actor-testkit-typed"      % Version.pekko
   val scalaCheck            = "org.scalacheck"              %% "scalacheck"                     % Version.scalaCheck
   val scalaMock             = "org.scalamock"               %% "scalamock"                      % Version.scalaMock
   val scalatest             = "org.scalatest"               %% "scalatest"                      % Version.scalaTest
