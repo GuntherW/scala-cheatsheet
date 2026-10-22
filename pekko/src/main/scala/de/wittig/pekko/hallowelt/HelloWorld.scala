@@ -20,9 +20,10 @@ val greeter: Behavior[Greet] = Behaviors.receiveMessage {
   val root: Behavior[Greeted] = Behaviors.setup { ctx =>
     val greeterRef = ctx.spawn(greeter, "greeter")
     greeterRef ! Greet("Welt", ctx.self)
-    Behaviors.receiveMessage { case Greeted(message) =>
-      println(message)
-      Behaviors.stopped
+    Behaviors.receiveMessage {
+      case Greeted(message) =>
+        println(message)
+        Behaviors.stopped
     }
   }
 
