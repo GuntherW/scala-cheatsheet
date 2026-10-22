@@ -1,6 +1,6 @@
 //| mvnDeps: ["com.lihaoyi::mill-contrib-jmh:1.3.1"]
 
-import mill._, scalalib._
+import mill._, scalalib._, scalajslib._, scalajslib.api._
 import contrib.jmh.JmhModule
 
 trait CommonSbtModule extends SbtModule:
@@ -397,6 +397,40 @@ object zioSchema extends CommonSbtModule:
     Dependency.zioSchemaDerivation,
   )
 
+object caliban extends CommonSbtModule:
+  // Der Client in src/main/.../generated ist bereits generiert (sbt: CalibanPlugin); Mill hat keinen Codegen-Task
+  def mvnDeps = Seq(
+    Dependency.calibanQuick,
+    Dependency.calibanClient,
+    Dependency.osLib,
+    Dependency.sttpCore,
+  )
+
+object docs extends CommonSbtModule:
+  // mdoc als Bibliothek: mill docs.run --in <dir> --out <dir> --site.VERSION=1.0
+  def moduleDir = build.moduleDir / "mdocs"
+  def mvnDeps   = Seq(Dependency.mdoc)
+  def mainClass = Some("mdoc.Main")
+
+object gatling extends CommonSbtModule:
+  // Simulationen liegen (wie bei sbt) in src/test; Start: mill gatling.run -s de.wittig.gatling.BasicSimulation
+  // Kein TestModule, da Gatling kein sbt-Test-Framework ist
+  def sources   = Task.Sources(moduleDir / "src" / "test" / "scala")
+  def mvnDeps   = Seq(
+    Dependency.gatling,
+    Dependency.gatlingCharts,
+  )
+  def mainClass = Some("io.gatling.app.Gatling")
+
+object scalajs extends CommonSbtModule with ScalaJSModule:
+  def scalaJSVersion = Version.scalaJs
+  def mainClass      = Some("TutorialApp")
+  def mvnDeps        = Seq(Dependency.scalajsDom)
+  object test extends ScalaJSTests with SbtTests:
+    def mvnDeps       = Seq(Dependency.uTest)
+    def testFramework = "utest.runner.Framework"
+    def jsEnvConfig   = Task { JsEnvConfig.JsDom() }
+
 object Version:
   val akka                    = "2.8.8"
   val avro4s                  = "5.0.15"
@@ -427,6 +461,8 @@ object Version:
   val jwtScala                = "12.0.0"
   val jsonSchemaValidator     = "3.0.8"
   val jsoniter                = "2.41.7"
+  val mdoc                    = "2.9.2"
+  val scalaJs                 = "1.22.0"
   val kafka                   = "4.4.0"
   val kyo                     = "0.19.0"
   val logback                 = "1.6.5"
@@ -501,6 +537,9 @@ object Version:
 object Dependency:
   val akka                      = mvn"com.typesafe.akka::akka-actor-typed:${Version.akka}"
   val avro4s                    = mvn"com.sksamuel.avro4s::avro4s-core:${Version.avro4s}"
+  val mdoc                      = mvn"org.scalameta::mdoc:${Version.mdoc}"
+  val scalajsDom                = mvn"org.scala-js::scalajs-dom::${Version.scalaJsDom}"
+  val uTest                     = mvn"com.lihaoyi::utest::${Version.uTest}"
   val awsCdk                    = mvn"software.amazon.awscdk:aws-cdk-lib:${Version.aws}"
   val constructs                    = mvn"software.constructs:constructs:${Version.constructs}"
   val blake3                    = mvn"pt.kcry::blake3:${Version.blake3}"
@@ -529,8 +568,8 @@ object Dependency:
   val fs2IO                     = mvn"co.fs2::fs2-io:${Version.fs2}"
   val fs2ReactiveStreams        = mvn"co.fs2::fs2-reactive-streams:${Version.fs2}"
   val gears                     = mvn"ch.epfl.lamp::gears:${Version.gears}"
-  val mongoReactiveStreams      = mvn"org.mongodb:mongodb-driver-reactivestreams:5.1.2"
-  val mongoScalaBson            = mvn"org.mongodb.scala:mongo-scala-bson_2.13:5.1.2"
+  val mongoReactiveStreams      = mvn"org.mongodb:mongodb-driver-reactivestreams:${Version.mongo}"
+  val mongoScalaBson            = mvn"org.mongodb.scala:mongo-scala-bson_2.13:${Version.mongo}"
   val greenLeafMongoCirce           = mvn"io.github.greenleafoss::green-leaf-mongo-circe:3.1"
   val grpcNetty                 = mvn"io.grpc:grpc-netty:${Version.grpcNetty}"
   val hash4j                    = mvn"com.dynatrace.hash4j:hash4j:${Version.hash4j}"
