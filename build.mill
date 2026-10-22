@@ -188,6 +188,18 @@ object osLib extends CommonSbtModule:
     Dependency.osLib
   )
 
+object pekko extends CommonSbtModule:
+  def mvnDeps = Seq(
+    Dependency.pekko,
+    Dependency.logback,
+  )
+  object test extends SbtTests:
+    def mvnDeps       = Seq(
+      Dependency.munit,
+      Dependency.pekkoTestkit,
+    )
+    def testFramework = "munit.Framework"
+
 object proteus extends CommonSbtModule:
   def mvnDeps = Seq(
     Dependency.proteusGrpc,
@@ -275,6 +287,7 @@ object Version:
   val openTelemetry           = "1.67.0"
   val osLib                   = "0.11.8"
   val ox                      = "1.1.0"
+  val pekko                   = "1.7.1"
   val proteus                 = "0.7.0"
   val postgres                = "42.7.14"
   val pureConfig              = "0.17.11"
@@ -400,6 +413,7 @@ object Dependency:
   val openTelemtryAutoConfigure = mvn"io.opentelemetry:opentelemetry-sdk-extension-autoconfigure:${Version.openTelemetry}"
   val osLib                     = mvn"com.lihaoyi::os-lib:${Version.osLib}"
   val ox                        = mvn"com.softwaremill.ox::core:${Version.ox}"
+  val pekko                     = mvn"org.apache.pekko::pekko-actor-typed:${Version.pekko}"
   val proteusGrpc               = mvn"com.github.ghostdogpr::proteus-grpc:${Version.proteus}"
   val postgres                  = mvn"org.postgresql:postgresql:${Version.postgres}"
   val pureConfig                = mvn"com.github.pureconfig::pureconfig-generic-scala3:${Version.pureConfig}"
@@ -476,6 +490,7 @@ object Dependency:
   val mockito               = mvn"org.mockito:mockito-core:${Version.mockito}"
   val munit                 = mvn"org.scalameta::munit:${Version.munit}"
   val munitScalaCheck       = mvn"org.scalameta::munit-scalacheck:${Version.munitScalaCheck}"
+  val pekkoTestkit          = mvn"org.apache.pekko::pekko-actor-testkit-typed:${Version.pekko}"
   val scalatest             = mvn"org.scalatest::scalatest:${Version.scalaTest}"
   val scalaCheck            = mvn"org.scalacheck::scalacheck:${Version.scalaCheck}"
   val scalaMock             = mvn"org.scalamock::scalamock:${Version.scalaMock}"
