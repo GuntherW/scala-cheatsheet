@@ -1,5 +1,5 @@
 //> using jvm 27
-//> using dep org.virtuslab::orca:0.2.0
+//> using dep org.virtuslab::orca:0.2.1
 //> using file AgentSpec.scala
 //> using file ExecutionPlan.scala
 //> using file PlanValidator.scala
