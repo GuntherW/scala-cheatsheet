@@ -47,7 +47,7 @@ object Version {
   val osLib                   = "0.11.8"
   val ox                      = "1.0.9"
   val parserCombinators       = "2.5.0"
-  val proteus                 = "0.6.0"
+  val proteus                 = "0.7.0"
   val postgres                = "42.7.14"
   val pureConfig              = "0.17.10"
   val pulsar4s                = "2.12.0.1"
