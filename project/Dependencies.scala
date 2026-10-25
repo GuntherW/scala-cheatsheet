@@ -31,7 +31,7 @@ object Version {
   val jwtScala                = "11.0.4"
   val jsonSchemaValidator     = "3.0.8"
   val jsoniter                = "2.41.2"
-  val kafka                   = "4.3.1"
+  val kafka                   = "4.3.2"
   val kyo                     = "0.19.0"
   val logback                 = "1.6.5"
   val log4j                   = "2.26.1"
