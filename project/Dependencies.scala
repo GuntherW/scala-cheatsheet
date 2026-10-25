@@ -42,7 +42,7 @@ object Version {
   val metricsCore             = "4.2.40"
   val monocle                 = "3.3.0"
   val neotype                 = "0.7.2"
-  val oak                     = "2.6.0"
+  val oak                     = "2.8.0"
   val openTelemetry           = "1.66.0"
   val osLib                   = "0.11.8"
   val ox                      = "1.0.9"
