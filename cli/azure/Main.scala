@@ -1,5 +1,5 @@
 //> using dep com.azure:azure-sdk-bom:1.3.8
-//> using dep com.azure:azure-identity:1.18.7
+//> using dep com.azure:azure-identity:1.19.0
 //> using dep com.azure:azure-storage-blob:12.35.2
 
 import com.azure.identity.*
