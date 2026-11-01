@@ -12,8 +12,8 @@
 //> using javaOpt --enable-native-access=ALL-UNNAMED
 //> using dep org.slf4j:slf4j-nop:2.0.20
 
-//> using dep dev.langchain4j:langchain4j:1.21.0
-//> using dep dev.langchain4j:langchain4j-anthropic:1.21.0
+//> using dep dev.langchain4j:langchain4j:1.23.0
+//> using dep dev.langchain4j:langchain4j-anthropic:1.23.0
 //> using dep dev.langchain4j:langchain4j-document-parser-apache-pdfbox:1.21.0-beta31
 //> using dep dev.langchain4j:langchain4j-embeddings-all-minilm-l6-v2:1.21.0-beta31
 //> using dep dev.langchain4j:langchain4j-pgvector:1.21.0-beta31
