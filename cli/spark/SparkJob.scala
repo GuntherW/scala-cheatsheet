@@ -1,4 +1,4 @@
-//> using dep org.apache.spark::spark-sql:4.2.0
+//> using dep org.apache.spark::spark-sql:4.3.0
 //> using scala 2.13.18
 
 import org.apache.spark._
