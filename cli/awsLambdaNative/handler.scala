@@ -2,7 +2,7 @@
 //> using nativeVersion "0.5.12"
 //> using nativeMode "release-fast"
 //> using nativeGc "immix"
-//> using dep "com.softwaremill.sttp.client4::core_native0.5:4.1.0"
+//> using dep "com.softwaremill.sttp.client4::core_native0.5:4.1.1"
 
 import sttp.client4.*
 import sttp.client4.curl.CurlBackend
