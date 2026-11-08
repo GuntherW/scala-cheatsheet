@@ -43,7 +43,7 @@ object Version {
   val monocle                 = "3.3.0"
   val neotype                 = "0.7.2"
   val oak                     = "2.8.0"
-  val openTelemetry           = "1.67.0"
+  val openTelemetry           = "1.68.0"
   val osLib                   = "0.11.10"
   val ox                      = "1.1.0"
   val pekko                   = "1.7.1"
