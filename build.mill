@@ -496,7 +496,7 @@ object Version:
   val sttpOAuth               = "0.18.0"
   val sttpOpenAi              = "0.3.10"
   val squants                 = "1.8.3"
-  val springBoot                = "4.1.2"
+  val springBoot              = "4.1.2"
   val tapir                   = "1.14.1"
   val toml                    = "0.3.0"
   val tyqu                    = "0.1.0"
