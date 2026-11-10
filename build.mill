@@ -460,7 +460,7 @@ object Version:
   val jwtHttp4s               = "2.0.15"
   val jwtScala                = "12.0.0"
   val jsonSchemaValidator     = "3.0.9"
-  val jsoniter                = "2.42.3"
+  val jsoniter                = "2.43.0"
   val mdoc                    = "2.9.2"
   val scalaJs                 = "1.22.0"
   val kafka                   = "4.4.0"
