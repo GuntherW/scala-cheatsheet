@@ -19,10 +19,15 @@ siehe [`docs/ai/jev.md`](../../docs/ai/jev.md) im Projekt-Root.
 ```bash
 mkdir -p ~/bin/laya && pushd ~/bin/laya
 
-# uv-Projekt anlegen; Python 3.12 explizit, da PyTorch neue Python-Versionen oft verzögert unterstützt.
+# uv-Projekt anlegen; Python 3.14 explizit, da PyTorch neue Python-Versionen (z. B. 3.15) oft
+# verzögert unterstützt. Ohne --python würde uv den neuesten Interpreter nehmen (z. B. aus mise).
 # --name ist nötig: Der Projektname darf nicht "laya" sein (= Verzeichnisname), sonst
 # scheitert "uv add" mit "self-dependencies are not permitted".
-uv init --bare --name laya-local --python 3.12 .
+uv init --bare --name laya-local --python 3.14 .
+
+# --bare legt keine .python-version an; ohne Pin springt uv bei "uv sync" ggf. auf eine zu neue
+# Python-Version (Fehler: "torch ... doesn't have a wheel for the current platform").
+uv python pin 3.14
 
 # "serve"-Extra installiert zusätzlich FastAPI/uvicorn für laya-serve
 uv add "laya[serve]"
@@ -41,6 +46,18 @@ pushd ~/bin/laya
 uv lock --upgrade-package laya && uv sync
 popd
 ```
+
+Schlägt `uv sync` mit "torch ... doesn't have a wheel for the current platform" fehl,
+läuft das venv auf einer zu neuen Python-Version. Reparatur:
+
+```bash
+pushd ~/bin/laya
+uv python pin 3.14
+rm -rf .venv && uv sync
+popd
+```
+
+Die Modelle liegen im Hugging-Face-Cache (`~/.cache/huggingface`) und müssen nicht neu geladen werden.
 
 ## 2. `laya-serve` starten
 
