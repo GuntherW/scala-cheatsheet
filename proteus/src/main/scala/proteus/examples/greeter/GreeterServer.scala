@@ -1,10 +1,9 @@
 package proteus.examples.greeter
 
-import java.util.concurrent.TimeUnit
 import io.grpc.ServerBuilder
 import proteus.server.{DirectServerBackend, ServerService}
 
-import scala.util.chaining.scalaUtilChainingOps
+import java.util.concurrent.TimeUnit
 
 class GreeterServer(port: Int):
 

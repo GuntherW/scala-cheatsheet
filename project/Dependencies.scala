@@ -2,11 +2,11 @@ import sbt.*
 
 object Version {
   val akka                    = "2.8.8"
-  val aws                     = "2.275.0"
+  val aws                     = "2.276.0"
   val avro4s                  = "5.0.15"
   val blake3                  = "3.1.2"
   val borer                   = "1.19.0"
-  val bouncyCastle            = "1.86"
+  val bouncyCastle            = "1.87"
   val caliban                 = "3.2.1"
   val catsEffect              = "3.7.1"
   val catsEffectCps           = "0.5.0"
@@ -48,13 +48,13 @@ object Version {
   val ox                      = "1.1.0"
   val pekko                   = "2.0.0"
   val parserCombinators       = "2.5.0"
-  val proteus                 = "0.7.0"
+  val proteus                 = "0.8.0"
   val postgres                = "42.7.14"
   val pureConfig              = "0.17.11"
   val pulsar4s                = "2.12.0.1"
   val refined                 = "0.11.4"
   val resilience4j            = "2.4.0"
-  val scala                   = "3.10.0"
+  val scala                   = "3.10.1"
   val scalaParallelCollection = "1.3.0"
   val scalasql                = "0.3.2"
   val scodec                  = "2.3.3"
@@ -78,7 +78,7 @@ object Version {
   val zioKafka                = "4.0.0"
   val zioHttp                 = "3.11.6"
   val zioPrelude              = "1.0.0-RC48"
-  val zioSchema               = "1.9.0"
+  val zioSchema               = "1.9.1"
 
   // ScalaJS
   val scalaJsDom = "2.8.1"
