@@ -6,15 +6,15 @@ import org.llm4s.toolapi.{ToolFunction, ToolRegistry}
 
 /** Basisklasse für alle Agenten: Rolle (System-Prompt) + Tools. llm4s' `Agent` übernimmt den Tool-Use-Loop (führt die Tool-Handler selbst aus und iteriert, bis das Modell ohne Tool-Aufruf antwortet).
   *
-  * llm4s 0.5.1: Der Agent wird nicht mehr per `new Agent(client)` konstruiert, sondern mit `Agent.builder(id, client)` gebaut. System-Prompt, Tools, `maxSteps` und `CompletionOptions` sind
+  * llm4s 0.6.0: Der Agent wird nicht mehr per `new Agent(client)` konstruiert, sondern mit `Agent.builder(id, client)` gebaut. System-Prompt, Tools, `maxSteps` und `CompletionOptions` sind
   * Builder-Einstellungen (nicht mehr Argumente von `run`).
   */
 abstract class Agent(
-  name: String,
-  systemPrompt: String,
-  tools: Seq[ToolFunction[?, ?]] = Nil,
-  maxSteps: Int = 10,
-  maxTokens: Int = 2000,
+    name: String,
+    systemPrompt: String,
+    tools: Seq[ToolFunction[?, ?]] = Nil,
+    maxSteps: Int = 10,
+    maxTokens: Int = 2000,
 ):
 
   private val llm4sAgent: Llm4sAgent =

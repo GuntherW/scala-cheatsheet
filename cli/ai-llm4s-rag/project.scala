@@ -1,11 +1,11 @@
 //> using scala 3.10.0
 //> using jvm 27
 
-//> using dep org.llm4s::llm4s-core:0.5.1
-//> using dep org.llm4s::llm4s-rag:0.5.1
-//> using dep org.llm4s::llm4s-anthropic:0.5.1
-//> using dep org.llm4s::llm4s-openai:0.5.1
-//> using dep org.llm4s::llm4s-observability-otel:0.5.1
+//> using dep org.llm4s::llm4s-core:0.6.0
+//> using dep org.llm4s::llm4s-rag:0.6.0
+//> using dep org.llm4s::llm4s-anthropic:0.6.0
+//> using dep org.llm4s::llm4s-openai:0.6.0
+//> using dep org.llm4s::llm4s-observability-otel:0.6.0
 //> using dep org.apache.pdfbox:pdfbox:3.0.8
 //> using dep org.postgresql:postgresql:42.7.14
 //> using dep com.lihaoyi::os-lib::0.11.8
