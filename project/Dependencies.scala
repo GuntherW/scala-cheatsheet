@@ -18,7 +18,7 @@ object Version {
   val constructs              = "10.8.1"
   val doobie                  = "1.0.0-RC12"
   val ducktape                = "0.2.13"
-  val duckdb                  = "2.0.0.1"
+  val duckdb                  = "2.0.1.0"
   val fs2                     = "3.16.0"
   val gatling                 = "3.16.1"
   val gears                   = "0.3.1"
