@@ -7,7 +7,7 @@ addSbtPlugin("ch.epfl.scala"         % "sbt-scalafix"          % "0.14.10")
 addSbtPlugin("io.gatling"            % "gatling-sbt"           % "4.20.2")
 addSbtPlugin("com.github.ghostdogpr" % "caliban-codegen-sbt"   % "3.2.1")
 addSbtPlugin("com.github.sbt.junit"  % "sbt-jupiter-interface" % "0.20.0")
-addSbtPlugin("pl.project13.scala"    % "sbt-jmh"               % "0.4.8")
+addSbtPlugin("com.github.sbt"        % "sbt-jmh"               % "0.4.9")
 
 libraryDependencies += ("org.scala-js" % "scalajs-env-jsdom-nodejs_2.13" % "1.1.1")
   .exclude("org.scala-js", "scalajs-env-nodejs_2.13")
