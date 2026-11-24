@@ -49,7 +49,7 @@ object Version {
   val pekko                   = "2.0.0"
   val parserCombinators       = "2.5.0"
   val proteus                 = "0.8.0"
-  val postgres                = "42.7.14"
+  val postgres                = "42.7.15"
   val pureConfig              = "0.17.11"
   val pulsar4s                = "2.12.0.1"
   val refined                 = "0.11.4"
@@ -76,7 +76,7 @@ object Version {
   val zioBlocks               = "0.0.56"
   val zioJson                 = "1.1.3"
   val zioKafka                = "4.2.0"
-  val zioHttp                 = "3.11.6"
+  val zioHttp                 = "3.12.0"
   val zioPrelude              = "1.0.0-RC49"
   val zioSchema               = "1.9.2"
 
